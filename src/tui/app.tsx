@@ -259,6 +259,18 @@ export const App: React.FC<AppProps> = ({
     shellEnv: key === 'zai',
   });
 
+  // Default model mappings for providers that have standard models
+  const getDefaultModels = (key?: string | null): { opus: string; sonnet: string; haiku: string } => {
+    if (key === 'gatewayz') {
+      return {
+        opus: 'claude-opus-4-5-20251101',
+        sonnet: 'claude-sonnet-4-20250514',
+        haiku: 'claude-haiku-3-5-20241022',
+      };
+    }
+    return { opus: '', sonnet: '', haiku: '' };
+  };
+
   const resolveZaiApiKey = (): {
     value: string;
     detectedFrom: string | null;
@@ -539,6 +551,7 @@ export const App: React.FC<AppProps> = ({
         onSelect={(value) => {
           const selected = providers.getProvider(value);
           const defaults = providerDefaults(value);
+          const modelDefaults = getDefaultModels(value);
           const keyDefaults =
             value === 'zai' ? resolveZaiApiKey() : { value: '', detectedFrom: null, skipPrompt: false };
           setProviderKey(value);
@@ -546,9 +559,9 @@ export const App: React.FC<AppProps> = ({
           setBaseUrl(selected?.baseUrl || '');
           setApiKey(keyDefaults.value);
           setApiKeyDetectedFrom(keyDefaults.detectedFrom);
-          setModelSonnet('');
-          setModelOpus('');
-          setModelHaiku('');
+          setModelSonnet(modelDefaults.sonnet);
+          setModelOpus(modelDefaults.opus);
+          setModelHaiku(modelDefaults.haiku);
           setExtraEnv([]);
           setBrandKey('auto');
           setUsePromptPack(defaults.promptPack);
@@ -590,7 +603,7 @@ export const App: React.FC<AppProps> = ({
       <ApiKeyScreen
         providerLabel={provider?.label || 'Provider'}
         providerKey={providerKey || undefined}
-        envVarName={provider?.authMode === 'authToken' ? 'ANTHROPIC_AUTH_TOKEN' : 'ANTHROPIC_API_KEY'}
+        envVarName={provider?.apiKeyLabel || 'API Key'}
         value={apiKey}
         onChange={setApiKey}
         onSubmit={() => setScreen(provider?.requiresModelMapping ? 'quick-models' : 'quick-name')}
@@ -666,6 +679,7 @@ export const App: React.FC<AppProps> = ({
         onSelect={(value) => {
           const selected = providers.getProvider(value);
           const defaults = providerDefaults(value);
+          const modelDefaults = getDefaultModels(value);
           const keyDefaults =
             value === 'zai' ? resolveZaiApiKey() : { value: '', detectedFrom: null, skipPrompt: false };
           setProviderKey(value);
@@ -673,9 +687,9 @@ export const App: React.FC<AppProps> = ({
           setBaseUrl(selected?.baseUrl || '');
           setApiKey(keyDefaults.value);
           setApiKeyDetectedFrom(keyDefaults.detectedFrom);
-          setModelSonnet('');
-          setModelOpus('');
-          setModelHaiku('');
+          setModelSonnet(modelDefaults.sonnet);
+          setModelOpus(modelDefaults.opus);
+          setModelHaiku(modelDefaults.haiku);
           setExtraEnv([]);
           setBrandKey('auto');
           setUsePromptPack(defaults.promptPack);
@@ -799,7 +813,7 @@ export const App: React.FC<AppProps> = ({
       <ApiKeyScreen
         providerLabel={provider?.label || 'Provider'}
         providerKey={providerKey || undefined}
-        envVarName={provider?.authMode === 'authToken' ? 'ANTHROPIC_AUTH_TOKEN' : 'ANTHROPIC_API_KEY'}
+        envVarName={provider?.apiKeyLabel || 'API Key'}
         value={apiKey}
         onChange={setApiKey}
         onSubmit={() => setScreen(provider?.requiresModelMapping ? 'create-models' : nextScreen)}

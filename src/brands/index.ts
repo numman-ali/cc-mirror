@@ -1,6 +1,7 @@
 import type { TweakccConfig } from './types.js';
 import { buildZaiTweakccConfig } from './zai.js';
 import { buildMinimaxTweakccConfig } from './minimax.js';
+import { buildGatewayZTweakccConfig } from './gatewayz.js';
 import { buildOpenRouterTweakccConfig } from './openrouter.js';
 import { buildCCRouterTweakccConfig } from './ccrouter.js';
 
@@ -23,6 +24,12 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
     label: 'MiniMax Pulse',
     description: 'Vibrant spectrum accents (red/orange/pink/violet) with MiniMax toolset label.',
     buildTweakccConfig: buildMinimaxTweakccConfig,
+  },
+  gatewayz: {
+    key: 'gatewayz',
+    label: 'GatewayZ Portal',
+    description: 'Dark portal palette with violet/purple accents and cyan highlights.',
+    buildTweakccConfig: buildGatewayZTweakccConfig,
   },
   openrouter: {
     key: 'openrouter',
