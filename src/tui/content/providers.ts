@@ -94,7 +94,7 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
       apiKey: 'https://gatewayz.ai',
       docs: 'https://api.gatewayz.ai/docs',
     },
-    setupNote: 'Get your API key from GatewayZ. You must set model aliases (e.g., anthropic/claude-sonnet-4).',
+    setupNote: 'Get your API key from GatewayZ. You must set model aliases (e.g., claude-opus-4-5-@20251101).',
   },
 
   openrouter: {

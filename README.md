@@ -82,11 +82,11 @@ npx cc-mirror quick --provider openrouter --api-key "$OPENROUTER_API_KEY" \
   --model-opus "anthropic/claude-3-opus" \
   --model-haiku "anthropic/claude-3-haiku"
 
-# GatewayZ (OpenRouter gateway)
+# GatewayZ (OneRouter gateway)
 npx cc-mirror quick --provider gatewayz --api-key "$GATEWAYZ_API_KEY" \
-  --model-sonnet "anthropic/claude-sonnet-4" \
-  --model-opus "anthropic/claude-opus-4" \
-  --model-haiku "anthropic/claude-haiku"
+  --model-sonnet "claude-sonnet-4-@20250514" \
+  --model-opus "claude-opus-4-5-@20251101" \
+  --model-haiku "claude-haiku-3-5-@20241022"
 
 # Claude Code Router (local LLMs)
 npx cc-mirror quick --provider ccrouter
