@@ -167,7 +167,7 @@ export type OnboardingStateResult = {
 
 export const ensureOnboardingState = (
   configDir: string,
-  opts: { themeId?: string | null; forceTheme?: boolean } = {}
+  opts: { themeId?: string | null; forceTheme?: boolean; skipOnboardingFlag?: boolean } = {}
 ): OnboardingStateResult => {
   const configPath = path.join(configDir, CLAUDE_CONFIG_FILE);
   const exists = fs.existsSync(configPath);
@@ -194,7 +194,8 @@ export const ensureOnboardingState = (
     }
   }
 
-  if (config.hasCompletedOnboarding !== true) {
+  // Skip setting hasCompletedOnboarding for providers that want users to see login screen
+  if (!opts.skipOnboardingFlag && config.hasCompletedOnboarding !== true) {
     config.hasCompletedOnboarding = true;
     changed = true;
     onboardingChanged = true;

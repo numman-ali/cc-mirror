@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2025-01-04
+
+### Added
+
+- **Team Mode** - Multi-agent collaboration with shared task management
+  - `--enable-team-mode` flag for create and update commands
+  - Toggle team mode on/off in TUI variant management screen
+  - Patches Claude Code CLI to enable `TaskCreate`, `TaskGet`, `TaskUpdate`, `TaskList` tools
+  - Automatic backup of CLI before patching (`cli.js.backup`)
+
+- **Mirror Claude Provider** - Pure Claude Code variant with enhanced features
+  - No proxy - connects directly to Anthropic's API
+  - Team mode enabled by default
+  - Silver/chrome theme with electric blue accents
+  - OAuth or API key authentication (standard Claude Code auth flow)
+
+- **Multi-Agent Orchestrator Skill** - Automatically installed when team mode is enabled
+  - "The Conductor" identity for elegant multi-agent orchestration
+  - AskUserQuestion as mandatory tool (never text menus)
+  - Background agents by default (`run_in_background=True`)
+  - 8 domain-specific reference guides (code review, testing, devops, documentation, etc.)
+  - Managed skill marker (`.cc-mirror-managed`) for safe updates without overwriting user customizations
+
+- **Documentation**
+  - `docs/features/team-mode.md` - Complete team mode guide with architecture diagrams
+  - `docs/features/mirror-claude.md` - Mirror Claude provider documentation
+  - `docs/architecture/overview.md` - System architecture overview
+  - Updated `AGENTS.md` with team mode and orchestrator skill sections
+
+### Changed
+
+- Bundle script now copies skills to `dist/skills` for npm distribution
+- Enhanced TUI with team mode toggle in variant actions screen
+- Provider selection includes Mirror Claude with education content
+
 ## [1.0.4] - 2025-01-04
 
 ### Changed
@@ -28,7 +63,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Upgraded to Ink 6.6.0 and React 19
-- Updated all ink-* packages to latest versions
+- Updated all ink-\* packages to latest versions
 - Fresh dependency tree with improved compatibility
 
 ## [1.0.1] - 2025-01-03

@@ -41,6 +41,11 @@ test('parseArgs handles --simple as alias for --quick', () => {
   assert.equal(result.quick, true);
 });
 
+test('parseArgs handles --enable-team-mode flag', () => {
+  const result = parseArgs(['--enable-team-mode']);
+  assert.equal(result['enable-team-mode'], true);
+});
+
 test('parseArgs handles --env=VALUE syntax', () => {
   const result = parseArgs(['--env=FOO=bar', '--env=BAZ=qux']);
   assert.deepEqual(result.env, ['FOO=bar', 'BAZ=qux']);

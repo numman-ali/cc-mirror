@@ -47,4 +47,12 @@ await build({
 
 fs.chmodSync(path.join(distDir, 'cc-mirror.mjs'), 0o755);
 
+// Copy bundled skills to dist
+const skillsSrcDir = path.join(root, 'src', 'skills');
+const skillsDistDir = path.join(distDir, 'skills');
+if (fs.existsSync(skillsSrcDir)) {
+  fs.cpSync(skillsSrcDir, skillsDistDir, { recursive: true });
+  console.log('Copied skills to dist/skills');
+}
+
 console.log('Bundled to dist/cc-mirror.mjs and dist/tui.mjs');

@@ -2,7 +2,7 @@ export const DEFAULT_TIMEOUT_MS = '3000000';
 
 export type ProviderEnv = Record<string, string | number>;
 
-export type ProviderAuthMode = 'apiKey' | 'authToken';
+export type ProviderAuthMode = 'apiKey' | 'authToken' | 'none';
 
 export interface ProviderTemplate {
   key: string;
@@ -16,6 +16,10 @@ export interface ProviderTemplate {
   credentialOptional?: boolean;
   /** Mark as experimental/coming soon - hidden from main provider list */
   experimental?: boolean;
+  /** Auto-enable team mode patch for this provider */
+  enablesTeamMode?: boolean;
+  /** Skip prompt pack overlays (pure Claude experience) */
+  noPromptPack?: boolean;
 }
 
 export interface ModelOverrides {
@@ -96,6 +100,23 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     requiresModelMapping: false, // Models configured in ~/.claude-code-router/config.json
     credentialOptional: true, // No API key needed - CCRouter handles auth
   },
+  mirror: {
+    key: 'mirror',
+    label: 'Mirror Claude',
+    description: 'Pure Claude Code with advanced features (team mode, custom theme)',
+    baseUrl: '', // Empty = use Claude Code defaults (no ANTHROPIC_BASE_URL override)
+    env: {
+      // Only cosmetic settings - no auth or model overrides
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'Mirror Claude',
+      CC_MIRROR_SPLASH_STYLE: 'mirror',
+    },
+    apiKeyLabel: '', // Empty = skip API key prompt
+    authMode: 'none', // No auth handling - user authenticates via normal Claude flow
+    credentialOptional: true, // No credentials required at create time
+    enablesTeamMode: true, // Auto-enable team mode patch
+    noPromptPack: true, // Skip prompt pack (pure Claude experience)
+  },
   custom: {
     key: 'custom',
     label: 'Custom',
@@ -159,6 +180,23 @@ export const buildEnv = ({ providerKey, baseUrl, apiKey, extraEnv, modelOverride
 
   const env: ProviderEnv = { ...provider.env };
   const authMode = provider.authMode ?? 'apiKey';
+
+  // For 'none' authMode, only apply cosmetic env vars - no auth or base URL
+  if (authMode === 'none') {
+    // Still allow extraEnv for user customization
+    if (Array.isArray(extraEnv)) {
+      for (const entry of extraEnv) {
+        const idx = entry.indexOf('=');
+        if (idx === -1) continue;
+        const key = entry.slice(0, idx).trim();
+        const value = entry.slice(idx + 1).trim();
+        if (!key) continue;
+        env[key] = value;
+      }
+    }
+    return env;
+  }
+
   if (!Object.hasOwn(env, 'DISABLE_AUTOUPDATER')) {
     env.DISABLE_AUTOUPDATER = '1';
   }

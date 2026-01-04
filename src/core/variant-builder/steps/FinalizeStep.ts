@@ -21,7 +21,10 @@ export class FinalizeStep implements BuildStep {
   }
 
   private finalize(ctx: BuildContext): void {
-    const { params, paths, prefs, state } = ctx;
+    const { params, paths, prefs, state, provider } = ctx;
+
+    // Check if team mode was enabled (via params OR provider defaults)
+    const teamModeEnabled = Boolean(params.enableTeamMode) || Boolean(provider.enablesTeamMode);
 
     const meta: VariantMeta = {
       name: params.name,
@@ -42,6 +45,7 @@ export class FinalizeStep implements BuildStep {
       npmDir: paths.npmDir,
       npmPackage: prefs.resolvedNpmPackage,
       npmVersion: prefs.resolvedNpmVersion,
+      teamModeEnabled,
     };
 
     writeJson(path.join(paths.variantDir, 'variant.json'), meta);

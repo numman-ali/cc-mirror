@@ -66,6 +66,11 @@ export const writeWrapper = (
     ccrSecondary: '\x1b[38;5;45m', // Bright cyan
     ccrAccent: '\x1b[38;5;33m', // Deep blue
     ccrDim: '\x1b[38;5;31m', // Muted blue
+    // Mirror: Silver/Chrome with electric blue
+    mirPrimary: '\x1b[38;5;252m', // Silver/light gray
+    mirSecondary: '\x1b[38;5;250m', // Platinum
+    mirAccent: '\x1b[38;5;45m', // Electric cyan
+    mirDim: '\x1b[38;5;243m', // Muted silver
     // Default: White/Gray
     defPrimary: '\x1b[38;5;255m', // White
     defDim: '\x1b[38;5;245m', // Gray
@@ -147,6 +152,22 @@ export const writeWrapper = (
     `${C.ccrSecondary}      Claude Code Router ${C.ccrDim}━${C.ccrSecondary} Any Model${C.reset}`,
     '',
     'CCMCCR',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      mirror)',
+    "        cat <<'CCMMIR'",
+    '',
+    `${C.mirPrimary}    ███╗   ███╗██╗██████╗ ██████╗  ██████╗ ██████╗${C.reset}`,
+    `${C.mirPrimary}    ████╗ ████║██║██╔══██╗██╔══██╗██╔═══██╗██╔══██╗${C.reset}`,
+    `${C.mirSecondary}    ██╔████╔██║██║██████╔╝██████╔╝██║   ██║██████╔╝${C.reset}`,
+    `${C.mirSecondary}    ██║╚██╔╝██║██║██╔══██╗██╔══██╗██║   ██║██╔══██╗${C.reset}`,
+    `${C.mirAccent}    ██║ ╚═╝ ██║██║██║  ██║██║  ██║╚██████╔╝██║  ██║${C.reset}`,
+    `${C.mirAccent}    ╚═╝     ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝${C.reset}`,
+    '',
+    `${C.mirDim}    ━━━━━━━━━━━━${C.mirAccent}◇${C.mirDim}━━━━━━━━━━━━${C.reset}`,
+    `${C.mirSecondary}      Claude ${C.mirDim}━${C.mirSecondary} Pure Reflection${C.reset}`,
+    '',
+    'CCMMIR',
     '        __cc_show_label="0"',
     '        ;;',
     '      *)',

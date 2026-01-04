@@ -33,9 +33,12 @@ export class BrandThemeStep implements BuildStep {
     ensureTweakccConfig(paths.tweakDir, brandKey);
 
     const brandThemeId = !params.noTweak && brandKey ? getBrandThemeId(brandKey) : null;
+    // Mirror provider: skip onboarding flag so users see login screen
+    const skipOnboardingFlag = params.providerKey === 'mirror';
     const onboarding = ensureOnboardingState(paths.configDir, {
       themeId: brandThemeId ?? 'dark',
       forceTheme: Boolean(brandThemeId),
+      skipOnboardingFlag,
     });
 
     if (onboarding.themeChanged) {
@@ -43,6 +46,9 @@ export class BrandThemeStep implements BuildStep {
     }
     if (onboarding.onboardingChanged) {
       state.notes.push('Onboarding marked complete.');
+    }
+    if (skipOnboardingFlag) {
+      state.notes.push('Login screen enabled (authenticate when you run the variant).');
     }
 
     // Provider-specific MCP configuration

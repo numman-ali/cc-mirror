@@ -17,13 +17,21 @@ interface YesNoSelectProps {
   yesLabel?: string;
   /** Label for the no option */
   noLabel?: string;
+  /** Default to "No" instead of "Yes" */
+  defaultNo?: boolean;
 }
 
 /**
  * Yes/No selection with keyboard navigation
  */
-export const YesNoSelect: React.FC<YesNoSelectProps> = ({ title, onSelect, yesLabel = 'Yes', noLabel = 'No' }) => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+export const YesNoSelect: React.FC<YesNoSelectProps> = ({
+  title,
+  onSelect,
+  yesLabel = 'Yes',
+  noLabel = 'No',
+  defaultNo = false,
+}) => {
+  const [selectedIndex, setSelectedIndex] = useState(defaultNo ? 1 : 0);
 
   useInput((input, key) => {
     if (key.upArrow || key.downArrow) {

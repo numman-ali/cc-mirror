@@ -49,6 +49,18 @@ export const ProviderIntroScreen: React.FC<ProviderIntroScreenProps> = ({
       return steps;
     }
 
+    // Mirror is special - no API key at setup, uses normal Claude auth
+    if (providerKey === 'mirror') {
+      if (!isQuickSetup) {
+        steps.push('Choose a visual theme');
+        steps.push('Optional: dev-browser skill');
+      }
+      steps.push('Name your variant');
+      steps.push('Create!');
+      steps.push('Authenticate via Claude Code (OAuth or API key)');
+      return steps;
+    }
+
     // Standard providers
     steps.push('Enter your API key');
 
@@ -132,10 +144,15 @@ export const ProviderIntroScreen: React.FC<ProviderIntroScreenProps> = ({
         </Box>
       )}
 
-      {/* CCRouter GitHub link */}
-      {providerKey === 'ccrouter' && (
+      {/* Provider docs/GitHub link */}
+      {education?.setupLinks?.github && (
         <Box marginTop={1}>
-          <Text color={colors.primaryBright}>GitHub: https://github.com/musistudio/claude-code-router</Text>
+          <Text color={colors.primaryBright}>GitHub: {education.setupLinks.github}</Text>
+        </Box>
+      )}
+      {education?.setupLinks?.docs && !education?.setupLinks?.github && (
+        <Box marginTop={1}>
+          <Text color={colors.primaryBright}>Docs: {education.setupLinks.docs}</Text>
         </Box>
       )}
 

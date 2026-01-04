@@ -48,9 +48,10 @@
 - Variant root: `~/.cc-mirror/<variant>/`
   - `config/settings.json`: env overrides (API keys, base URLs, model defaults)
   - `config/.claude.json`: API-key approvals + onboarding/theme + MCP server entries
+  - `config/tasks/<team>/`: Team mode task storage (JSON files)
   - `tweakcc/config.json`: brand preset + theme list
   - `tweakcc/system-prompts/`: prompt-pack overlays (after tweakcc apply)
-  - `variant.json`: metadata for listing/updates
+  - `variant.json`: metadata for listing/updates (includes `teamModeEnabled` flag)
 - Wrapper: `~/.local/bin/<variant>`
   - Sets `CLAUDE_CONFIG_DIR`
   - Loads `settings.json` into env at runtime
@@ -60,6 +61,7 @@
 - Provider auth:
   - API-key providers (Zai Cloud, MiniMax Cloud, Custom) use `ANTHROPIC_API_KEY`.
   - Auth-token providers (OpenRouter, Local LLMs) use `ANTHROPIC_AUTH_TOKEN`.
+  - Mirror provider uses `authMode: 'none'` - no auth env vars set, user authenticates normally.
   - Local LLMs allow blank keys; cc-mirror injects a placeholder token (`local-llm`) so Claude Code starts.
   - Wrappers unset `ANTHROPIC_AUTH_TOKEN` only when `CC_MIRROR_UNSET_AUTH_TOKEN=1` (API-key variants).
 - Model mapping (aliases used by `/model`):
@@ -68,9 +70,96 @@
   - `ANTHROPIC_DEFAULT_HAIKU_MODEL`
   - Optional: `ANTHROPIC_SMALL_FAST_MODEL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_SUBAGENT_MODEL`
 
+## Team Mode
+
+Team mode enables multi-agent collaboration through shared task management tools.
+
+- **Enable on create**: `cc-mirror create --provider zai --name zai-team --enable-team-mode`
+- **Enable on update**: `cc-mirror update myvariant --enable-team-mode`
+- **Auto-enabled**: Mirror provider has team mode enabled by default
+
+### How it works
+
+Team mode patches `cli.js` to enable these tools:
+
+- `TaskCreate` - Create tasks with subject and description
+- `TaskGet` - Retrieve full task details by ID
+- `TaskUpdate` - Update status, add comments, set dependencies
+- `TaskList` - List all tasks with summary info
+
+### Technical details
+
+```javascript
+// Patch target in cli.js
+function sU() {
+  return !1;
+} // disabled (default)
+function sU() {
+  return !0;
+} // enabled (patched)
+```
+
+- Backup stored at `cli.js.backup` before patching
+- Task storage: `~/.cc-mirror/<variant>/config/tasks/<team_name>/`
+- Team name configurable via `CLAUDE_CODE_TEAM_NAME` env var
+
+### Orchestrator skill
+
+When team mode is enabled, cc-mirror installs a **multi-agent-orchestrator skill** to:
+
+- `~/.cc-mirror/<variant>/config/skills/multi-agent-orchestrator/`
+
+**Identity: "The Conductor"**
+
+- Warm, capable orchestrator who transforms requests into elegant execution
+- Philosophy: "Absorb complexity, radiate simplicity"
+- Signature: `─── ◈ Orchestrating ── [context] ──`
+
+The skill teaches Claude:
+
+- **AskUserQuestion** (MANDATORY): Rich visual options, never text menus
+- **Background agents** (DEFAULT): All agents run with `run_in_background=True`
+- **Task Graph**: Decompose work, set dependencies, process notifications
+- **Orchestration patterns**: Fan-Out, Pipeline, Map-Reduce, Speculative
+- **Communication**: Warm progress updates, milestone celebrations, active agent signatures
+- **Domain guidance**: 8 domains (code review, testing, devops, documentation, etc.)
+
+Skill is marked with `.cc-mirror-managed` - user can customize by removing that marker.
+
+### Agent identity env vars
+
+| Variable                 | Purpose                             |
+| ------------------------ | ----------------------------------- |
+| `CLAUDE_CODE_TEAM_NAME`  | Team namespace for task storage     |
+| `CLAUDE_CODE_AGENT_ID`   | Unique identifier for this agent    |
+| `CLAUDE_CODE_AGENT_TYPE` | Agent role: `team-lead` or `worker` |
+
+## Mirror Provider
+
+Mirror Claude is a "pure" Claude Code variant:
+
+- NO `ANTHROPIC_BASE_URL` override (uses Anthropic API directly)
+- NO `ANTHROPIC_API_KEY` override (user authenticates via OAuth or sets their own)
+- NO model mappings (uses Claude Code defaults)
+- NO prompt pack (pure Claude experience)
+- Team mode enabled by default
+- Silver/chrome theme via tweakcc
+
+```bash
+# Create a mirror variant
+cc-mirror create --provider mirror --name mclaude
+
+# Run it - authenticate via normal Claude flow
+mclaude
+```
+
 ## Debugging & Verification
 
 - Quick sanity: `cc-mirror doctor`
+- Team mode verification:
+  - Check if patched: `grep "function sU(){return" ~/.cc-mirror/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js`
+  - Should show: `function sU(){return!0}` (enabled) not `function sU(){return!1}` (disabled)
+  - List team tasks: `ls ~/.cc-mirror/<variant>/config/tasks/<team_name>/`
 - Confirm config values:
   - `~/.cc-mirror/<variant>/config/settings.json`
   - `~/.cc-mirror/<variant>/config/.claude.json`

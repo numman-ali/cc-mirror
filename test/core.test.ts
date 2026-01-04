@@ -185,6 +185,46 @@ test('ccrouter brand preset writes tweakcc config', () => {
   });
 });
 
+test('mirror brand preset writes tweakcc config and enables team mode', () => {
+  withFakeNpm(() => {
+    const rootDir = makeTempDir();
+    const binDir = makeTempDir();
+
+    core.createVariant({
+      name: 'mirror-test',
+      providerKey: 'mirror',
+      apiKey: '',
+      rootDir,
+      binDir,
+      brand: 'mirror',
+      noTweak: true,
+      tweakccStdio: 'pipe',
+    });
+
+    // Verify tweakcc config with mirror theme
+    const tweakConfigPath = path.join(rootDir, 'mirror-test', 'tweakcc', 'config.json');
+    assert.ok(fs.existsSync(tweakConfigPath));
+    const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
+    assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'mirror-claude');
+
+    // Verify variant.json has team mode enabled (mirror provider auto-enables)
+    const variantPath = path.join(rootDir, 'mirror-test', 'variant.json');
+    const variant = JSON.parse(readFile(variantPath)) as { teamModeEnabled?: boolean; promptPack?: boolean };
+    assert.equal(variant.teamModeEnabled, true, 'mirror provider should auto-enable team mode');
+    assert.equal(variant.promptPack, false, 'mirror provider should have promptPack disabled');
+
+    // Verify settings.json has no auth overrides (pure Claude Code)
+    const settingsPath = path.join(rootDir, 'mirror-test', 'config', 'settings.json');
+    const settings = JSON.parse(readFile(settingsPath)) as { env?: Record<string, unknown> };
+    assert.ok(!settings.env?.ANTHROPIC_BASE_URL, 'mirror should not set ANTHROPIC_BASE_URL');
+    assert.ok(!settings.env?.ANTHROPIC_API_KEY, 'mirror should not set ANTHROPIC_API_KEY');
+    assert.ok(settings.env?.CC_MIRROR_SPLASH, 'mirror should set splash env');
+
+    cleanup(rootDir);
+    cleanup(binDir);
+  });
+});
+
 test('api key approvals are written to .claude.json', () => {
   withFakeNpm(() => {
     const rootDir = makeTempDir();

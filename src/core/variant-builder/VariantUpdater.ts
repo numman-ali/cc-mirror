@@ -6,6 +6,7 @@
  */
 
 import path from 'node:path';
+import { getProvider } from '../../providers/index.js';
 import { DEFAULT_NPM_PACKAGE, DEFAULT_NPM_VERSION, DEFAULT_ROOT } from '../constants.js';
 import { expandTilde } from '../paths.js';
 import { loadVariantMeta } from '../variants.js';
@@ -14,6 +15,7 @@ import type { ReportFn, UpdateContext, UpdatePaths, UpdatePreferences, UpdateSta
 
 // Import steps
 import { InstallNpmUpdateStep } from './update-steps/InstallNpmUpdateStep.js';
+import { TeamModeUpdateStep } from './update-steps/TeamModeUpdateStep.js';
 import { ModelOverridesStep } from './update-steps/ModelOverridesStep.js';
 import { TweakccUpdateStep } from './update-steps/TweakccUpdateStep.js';
 import { WrapperUpdateStep } from './update-steps/WrapperUpdateStep.js';
@@ -27,7 +29,13 @@ const normalizeNpmPackage = (value?: string) => (value && value.trim().length > 
 
 const normalizeNpmVersion = () => DEFAULT_NPM_VERSION;
 
-const shouldEnablePromptPack = (providerKey: string) => providerKey === 'zai' || providerKey === 'minimax';
+const shouldEnablePromptPack = (providerKey: string) => {
+  // Check if provider has noPromptPack set (e.g., mirror provider)
+  const provider = getProvider(providerKey);
+  if (provider?.noPromptPack) return false;
+  // Only auto-enable for providers with prompt pack support
+  return providerKey === 'zai' || providerKey === 'minimax';
+};
 
 const defaultPromptPackMode = (providerKey: string): 'minimal' | 'maximal' =>
   providerKey === 'zai' || providerKey === 'minimax' ? 'maximal' : 'minimal';
@@ -49,6 +57,7 @@ export class VariantUpdater {
     // Register steps in execution order
     this.steps = [
       new InstallNpmUpdateStep(),
+      new TeamModeUpdateStep(), // Patches cli.js for team mode (if enabled)
       new ModelOverridesStep(),
       new TweakccUpdateStep(),
       new WrapperUpdateStep(),

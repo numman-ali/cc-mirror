@@ -76,14 +76,19 @@ export const ProviderSelectScreen: React.FC<ProviderSelectScreenProps> = ({ prov
       </Box>
 
       <Box flexDirection="column" marginY={1}>
-        {providers.map((provider, idx) => (
-          <ProviderCard
-            key={provider.key}
-            provider={provider}
-            selected={idx === selectedIndex && !provider.experimental}
-            disabled={provider.experimental}
-          />
-        ))}
+        {providers.map((provider, idx) => {
+          const providerEducation = getProviderEducation(provider.key);
+          const docsUrl = providerEducation?.setupLinks?.docs;
+          return (
+            <ProviderCard
+              key={provider.key}
+              provider={provider}
+              selected={idx === selectedIndex && !provider.experimental}
+              disabled={provider.experimental}
+              docsUrl={docsUrl}
+            />
+          );
+        })}
       </Box>
 
       {/* Details panel - shows when ? is pressed */}

@@ -113,6 +113,26 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     setupNote:
       'Install: npm i -g @musistudio/claude-code-router, run "ccr start". Configure models in ~/.claude-code-router/config.json',
   },
+  mirror: {
+    headline: 'Mirror Claude — Pure Claude Code, Enhanced',
+    tagline: 'Reflections of perfection',
+    features: [
+      'Pure Claude Code experience (no proxy)',
+      'Team mode enabled by default',
+      'Isolated config for experimentation',
+      'Premium silver/chrome theme',
+      'No API key required at setup',
+    ],
+    bestFor: 'Power users who want enhanced Claude Code without changing the AI',
+    requiresMapping: false,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://console.anthropic.com/settings/plans',
+      apiKey: 'https://console.anthropic.com/settings/keys',
+      docs: 'https://github.com/numman-ali/cc-mirror/blob/main/docs/features/mirror-claude.md',
+    },
+    setupNote: 'Uses normal Claude authentication. Sign in via OAuth or set ANTHROPIC_API_KEY.',
+  },
 };
 
 /**
@@ -130,4 +150,6 @@ export const PROVIDER_COMPARISON = {
   requiresMapping: ['openrouter', 'ccrouter'],
   hasPromptPack: ['zai', 'minimax'],
   localFirst: ['ccrouter'],
+  pureClaudeCode: ['mirror'],
+  teamModeDefault: ['mirror'],
 };

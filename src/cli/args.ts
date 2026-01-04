@@ -13,6 +13,7 @@ export interface ParsedArgs {
   ['skill-update']?: boolean;
   ['shell-env']?: boolean;
   ['no-shell-env']?: boolean;
+  ['enable-team-mode']?: boolean;
   [key: string]: string | boolean | string[] | undefined;
 }
 

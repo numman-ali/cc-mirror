@@ -107,6 +107,7 @@ test('TUI manage -> remove flow', async () => {
   await send(app.stdin, enter);
   await send(app.stdin, enter); // pick alpha
   await tick();
+  await send(app.stdin, down); // team mode
   await send(app.stdin, down); // tweak
   await send(app.stdin, down); // remove
   await send(app.stdin, enter);

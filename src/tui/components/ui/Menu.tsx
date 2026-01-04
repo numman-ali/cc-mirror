@@ -107,12 +107,13 @@ interface ProviderCardProps {
   };
   selected: boolean;
   disabled?: boolean;
+  docsUrl?: string;
 }
 
 /**
  * Provider selection card
  */
-export const ProviderCard: React.FC<ProviderCardProps> = ({ provider, selected, disabled = false }) => (
+export const ProviderCard: React.FC<ProviderCardProps> = ({ provider, selected, disabled = false, docsUrl }) => (
   <Box flexDirection="column" marginBottom={1}>
     <Box>
       <Text color={selected ? colors.gold : colors.textMuted}>{selected ? icons.pointer : icons.pointerEmpty} </Text>
@@ -134,6 +135,13 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({ provider, selected, 
       <Box marginLeft={3}>
         <Text color={colors.primaryBright} dimColor>
           {provider.baseUrl}
+        </Text>
+      </Box>
+    )}
+    {!provider.baseUrl && docsUrl && !disabled && (
+      <Box marginLeft={3}>
+        <Text color={colors.primaryBright} dimColor>
+          {docsUrl}
         </Text>
       </Box>
     )}

@@ -1,6 +1,6 @@
 {
   "name": "cc-mirror",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "type": "module",
   "description": "Create multiple isolated Claude Code variants with custom providers (Z.ai, MiniMax, OpenRouter, Claude Code Router)",
   "author": "Numman Ali",
@@ -47,7 +47,7 @@
     "lint:fix": "eslint --fix src test scripts",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\"",
-    "check": "npm run typecheck && npm run lint && npm run test",
+    "check": "npm run typecheck && npm run lint && npm run test:coverage && npm run bundle",
     "prepare": "lefthook install || true"
   },
   "dependencies": {

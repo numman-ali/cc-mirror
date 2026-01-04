@@ -148,6 +148,7 @@ async function handleQuickMode(opts: ParsedArgs, params: CreateParams): Promise<
     shellEnv,
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
+    enableTeamMode: Boolean(opts['enable-team-mode']),
   });
 
   const shareUrl = buildShareUrl(provider.label || params.providerKey, params.name, result.meta.promptPackMode);
@@ -229,6 +230,7 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
     shellEnv,
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
+    enableTeamMode: Boolean(opts['enable-team-mode']),
   });
 
   const shareUrl = buildShareUrl(provider.label || params.providerKey, result.meta.name, result.meta.promptPackMode);
@@ -278,6 +280,7 @@ async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams):
     shellEnv,
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
+    enableTeamMode: Boolean(opts['enable-team-mode']),
   });
 
   const shareUrl = buildShareUrl(provider.label || params.providerKey, result.meta.name, result.meta.promptPackMode);

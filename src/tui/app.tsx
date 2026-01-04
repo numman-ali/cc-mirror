@@ -24,6 +24,7 @@ import {
   useVariantUpdate,
   useUpdateAll,
   useModelConfig,
+  useTeamModeToggle,
   type CompletionResult,
 } from './hooks/index.js';
 
@@ -460,6 +461,19 @@ export const App: React.FC<AppProps> = ({
     onComplete: handleOperationComplete,
   });
 
+  // Team mode toggle operation
+  useTeamModeToggle({
+    screen,
+    selectedVariant,
+    rootDir,
+    binDir,
+    core,
+    setProgressLines,
+    setScreen,
+    onComplete: handleOperationComplete,
+    refreshVariants: () => setVariants(core.listVariants(rootDir)),
+  });
+
   // Update all variants operation (extracted to useUpdateAll hook)
   useUpdateAll({
     screen,
@@ -542,7 +556,7 @@ export const App: React.FC<AppProps> = ({
           const keyDefaults =
             value === 'zai' ? resolveZaiApiKey() : { value: '', detectedFrom: null, skipPrompt: false };
           setProviderKey(value);
-          setName(value);
+          setName(value === 'mirror' ? 'mclaude' : value);
           setBaseUrl(selected?.baseUrl || '');
           setApiKey(keyDefaults.value);
           setApiKeyDetectedFrom(keyDefaults.detectedFrom);
@@ -669,7 +683,7 @@ export const App: React.FC<AppProps> = ({
           const keyDefaults =
             value === 'zai' ? resolveZaiApiKey() : { value: '', detectedFrom: null, skipPrompt: false };
           setProviderKey(value);
-          setName(value);
+          setName(value === 'mirror' ? 'mclaude' : value);
           setBaseUrl(selected?.baseUrl || '');
           setApiKey(keyDefaults.value);
           setApiKeyDetectedFrom(keyDefaults.detectedFrom);
@@ -729,8 +743,13 @@ export const App: React.FC<AppProps> = ({
   }
 
   if (screen === 'create-name') {
-    // CCRouter goes to its own URL config screen
-    const nextScreen = providerKey === 'ccrouter' ? 'create-ccrouter-url' : 'create-base-url';
+    // CCRouter goes to its own URL config screen, mirror skips base URL entirely
+    const getNextScreen = () => {
+      if (providerKey === 'ccrouter') return 'create-ccrouter-url';
+      if (providerKey === 'mirror') return 'create-skill-install'; // Mirror: skip base URL and API key
+      return 'create-base-url';
+    };
+    const nextScreen = getNextScreen();
     return (
       <Frame>
         <Header title="Variant Name" subtitle="This becomes the CLI command name" />
@@ -933,6 +952,7 @@ export const App: React.FC<AppProps> = ({
         <Divider />
         <YesNoSelect
           title="Add custom env entries?"
+          defaultNo
           onSelect={(value) => {
             if (value) {
               setScreen('create-env-add');
@@ -1048,6 +1068,7 @@ export const App: React.FC<AppProps> = ({
           setModelHaiku('');
           setScreen('manage-models');
         }}
+        onToggleTeamMode={() => setScreen('manage-team-mode')}
         onTweak={() => setScreen('manage-tweak')}
         onRemove={() => setScreen('manage-remove')}
         onBack={() => setScreen('manage')}
@@ -1063,6 +1084,27 @@ export const App: React.FC<AppProps> = ({
     return (
       <CompletionScreen
         title="Update variant"
+        lines={doneLines}
+        summary={completionSummary}
+        nextSteps={completionNextSteps}
+        help={completionHelp}
+        onDone={(value) => {
+          if (value === 'home') setScreen('home');
+          else setScreen('exit');
+        }}
+      />
+    );
+  }
+
+  if (screen === 'manage-team-mode' && selectedVariant) {
+    const action = selectedVariant.teamModeEnabled ? 'Disabling' : 'Enabling';
+    return <ProgressScreen title={`${action} team mode`} lines={progressLines} />;
+  }
+
+  if (screen === 'manage-team-mode-done') {
+    return (
+      <CompletionScreen
+        title="Team Mode"
         lines={doneLines}
         summary={completionSummary}
         nextSteps={completionNextSteps}

@@ -42,6 +42,7 @@ export function runUpdateCommand({ opts }: UpdateCommandOptions): void {
       skillInstall,
       shellEnv,
       skillUpdate,
+      enableTeamMode: Boolean(opts['enable-team-mode']),
     });
     const wrapperPath = path.join(binDir, name);
     printSummary({

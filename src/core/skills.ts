@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { commandExists } from './paths.js';
 
 export type SkillInstallStatus = 'installed' | 'updated' | 'skipped' | 'failed';
@@ -111,6 +112,108 @@ export const ensureDevBrowserSkill = (opts: {
     return { status: 'failed', message };
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+};
+
+// ============================================================================
+// Multi-Agent Orchestrator Skill (bundled with cc-mirror)
+// ============================================================================
+
+const ORCHESTRATOR_SKILL_NAME = 'multi-agent-orchestrator';
+
+/**
+ * Find the bundled orchestrator skill directory
+ * Works both in development (src/skills) and production (dist/skills)
+ */
+const findBundledSkillDir = (): string | null => {
+  // Get the directory of this module
+  const thisFile = fileURLToPath(import.meta.url);
+  const thisDir = path.dirname(thisFile);
+
+  // Try development path: src/skills/multi-agent-orchestrator
+  const devPath = path.join(thisDir, '..', 'skills', ORCHESTRATOR_SKILL_NAME);
+  if (fs.existsSync(devPath)) return devPath;
+
+  // Try production path: dist/skills/multi-agent-orchestrator
+  const distPath = path.join(thisDir, 'skills', ORCHESTRATOR_SKILL_NAME);
+  if (fs.existsSync(distPath)) return distPath;
+
+  // Try relative to dist/cc-mirror.mjs
+  const distPath2 = path.join(thisDir, '..', 'skills', ORCHESTRATOR_SKILL_NAME);
+  if (fs.existsSync(distPath2)) return distPath2;
+
+  return null;
+};
+
+export interface OrchestratorSkillResult {
+  status: 'installed' | 'removed' | 'skipped' | 'failed';
+  message?: string;
+  path?: string;
+}
+
+/**
+ * Install the multi-agent-orchestrator skill to a variant's config directory
+ */
+export const installOrchestratorSkill = (configDir: string): OrchestratorSkillResult => {
+  const sourceDir = findBundledSkillDir();
+  if (!sourceDir) {
+    return { status: 'failed', message: 'bundled orchestrator skill not found' };
+  }
+
+  const skillsDir = path.join(configDir, 'skills');
+  const targetDir = path.join(skillsDir, ORCHESTRATOR_SKILL_NAME);
+  const markerPath = path.join(targetDir, MANAGED_MARKER);
+
+  try {
+    ensureDir(skillsDir);
+
+    // If exists and not managed by us, skip
+    if (fs.existsSync(targetDir) && !fs.existsSync(markerPath)) {
+      return { status: 'skipped', message: 'existing skill is user-managed', path: targetDir };
+    }
+
+    // Remove existing and copy fresh
+    if (fs.existsSync(targetDir)) {
+      fs.rmSync(targetDir, { recursive: true, force: true });
+    }
+
+    copyDir(sourceDir, targetDir);
+    fs.writeFileSync(
+      markerPath,
+      JSON.stringify({ managedBy: 'cc-mirror', updatedAt: new Date().toISOString() }, null, 2)
+    );
+
+    return { status: 'installed', path: targetDir };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { status: 'failed', message };
+  }
+};
+
+/**
+ * Remove the multi-agent-orchestrator skill from a variant's config directory
+ */
+export const removeOrchestratorSkill = (configDir: string): OrchestratorSkillResult => {
+  const skillsDir = path.join(configDir, 'skills');
+  const targetDir = path.join(skillsDir, ORCHESTRATOR_SKILL_NAME);
+  const markerPath = path.join(targetDir, MANAGED_MARKER);
+
+  // If doesn't exist, nothing to do
+  if (!fs.existsSync(targetDir)) {
+    return { status: 'skipped', message: 'skill not installed' };
+  }
+
+  // If exists but not managed by us, don't remove
+  if (!fs.existsSync(markerPath)) {
+    return { status: 'skipped', message: 'skill is user-managed, not removing' };
+  }
+
+  try {
+    fs.rmSync(targetDir, { recursive: true, force: true });
+    return { status: 'removed', path: targetDir };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { status: 'failed', message };
   }
 };
 
