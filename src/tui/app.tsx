@@ -590,7 +590,7 @@ export const App: React.FC<AppProps> = ({
       <ApiKeyScreen
         providerLabel={provider?.label || 'Provider'}
         providerKey={providerKey || undefined}
-        envVarName={provider?.authMode === 'authToken' ? 'ANTHROPIC_AUTH_TOKEN' : 'ANTHROPIC_API_KEY'}
+        envVarName={provider?.apiKeyLabel || 'API Key'}
         value={apiKey}
         onChange={setApiKey}
         onSubmit={() => setScreen(provider?.requiresModelMapping ? 'quick-models' : 'quick-name')}
@@ -799,7 +799,7 @@ export const App: React.FC<AppProps> = ({
       <ApiKeyScreen
         providerLabel={provider?.label || 'Provider'}
         providerKey={providerKey || undefined}
-        envVarName={provider?.authMode === 'authToken' ? 'ANTHROPIC_AUTH_TOKEN' : 'ANTHROPIC_API_KEY'}
+        envVarName={provider?.apiKeyLabel || 'API Key'}
         value={apiKey}
         onChange={setApiKey}
         onSubmit={() => setScreen(provider?.requiresModelMapping ? 'create-models' : nextScreen)}
