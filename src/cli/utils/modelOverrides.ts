@@ -21,6 +21,15 @@ export function getModelOverridesFromArgs(opts: ParsedArgs): ModelOverrides {
   };
 }
 
+/** Default model mappings for providers that have known defaults */
+const PROVIDER_MODEL_DEFAULTS: Record<string, { sonnet: string; opus: string; haiku: string }> = {
+  gatewayz: {
+    sonnet: 'claude-sonnet-4-20250514',
+    opus: 'claude-opus-4-5-20251101',
+    haiku: 'claude-haiku-3-5-20241022',
+  },
+};
+
 /**
  * Ensure model mapping for providers that require it (e.g., OpenRouter, LiteLLM)
  * Prompts for missing models if not in --yes mode
@@ -32,6 +41,15 @@ export async function ensureModelMapping(
 ): Promise<ModelOverrides> {
   const provider = getProvider(providerKey);
   if (!provider?.requiresModelMapping) return overrides;
+
+  // Apply provider-specific defaults if available
+  const defaults = PROVIDER_MODEL_DEFAULTS[providerKey];
+  if (defaults) {
+    if (!overrides.sonnet?.trim()) overrides.sonnet = defaults.sonnet;
+    if (!overrides.opus?.trim()) overrides.opus = defaults.opus;
+    if (!overrides.haiku?.trim()) overrides.haiku = defaults.haiku;
+  }
+
   const missing = {
     sonnet: (overrides.sonnet ?? '').trim().length === 0,
     opus: (overrides.opus ?? '').trim().length === 0,
