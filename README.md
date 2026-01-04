@@ -98,7 +98,7 @@ npx cc-mirror quick --provider ccrouter
 | -------------- | -------------------------------------------- | ---------- | ----------------------------------------------------- |
 | **Z.ai**       | GLM-4.7 via GLM Coding Plan                  | API Key    | Auto (GLM-4.7 for Sonnet/Opus, GLM-4.5-Air for Haiku) |
 | **MiniMax**    | MiniMax-M2.1 via MiniMax Coding Plan         | API Key    | Auto (single model for all tiers)                     |
-| **GatewayZ**   | OpenRouter-compatible gateway                | Auth Token | Required (you choose the models)                      |
+| **GatewayZ**   | OneRouter-compatible gateway                 | Auth Token | Required (you choose the models)                      |
 | **OpenRouter** | Access 100+ models through one API           | Auth Token | Required (you choose the models)                      |
 | **CCRouter**   | Route to local LLMs (Ollama, DeepSeek, etc.) | Optional   | Handled by CCRouter config                            |
 

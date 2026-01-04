@@ -81,7 +81,7 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     headline: 'GatewayZ — Your Gateway to AI',
     tagline: 'Your Gateway to AI',
     features: [
-      'Access to 100+ models via OpenRouter',
+      'Access to 100+ models via OneRouter',
       'Anthropic /messages API compatible',
       'Portal-themed interface',
       'Pay-per-use pricing',
