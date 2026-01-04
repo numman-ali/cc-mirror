@@ -208,10 +208,10 @@ test('gatewayz brand preset writes tweakcc config', () => {
     const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
     assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'gatewayz-portal');
 
-    // Verify settings.json has correct API key and base URL
+    // Verify settings.json has correct auth token and base URL (GatewayZ uses authToken mode)
     const configPath = path.join(rootDir, 'gatewayz', 'config', 'settings.json');
     const configJson = JSON.parse(readFile(configPath)) as { env: Record<string, string> };
-    assert.equal(configJson.env.ANTHROPIC_API_KEY, 'gz-test-key');
+    assert.equal(configJson.env.ANTHROPIC_AUTH_TOKEN, 'gz-test-key');
     assert.equal(configJson.env.ANTHROPIC_BASE_URL, 'https://api.gatewayz.ai/v1');
     assert.equal(configJson.env.CC_MIRROR_PROVIDER_LABEL, 'GatewayZ');
 

@@ -78,6 +78,7 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
       CC_MIRROR_SPLASH_STYLE: 'gatewayz',
     },
     apiKeyLabel: 'GatewayZ API key',
+    authMode: 'authToken',
   },
   openrouter: {
     key: 'openrouter',
