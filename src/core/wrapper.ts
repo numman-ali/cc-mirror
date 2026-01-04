@@ -66,6 +66,11 @@ export const writeWrapper = (
     ccrSecondary: '\x1b[38;5;45m', // Bright cyan
     ccrAccent: '\x1b[38;5;33m', // Deep blue
     ccrDim: '\x1b[38;5;31m', // Muted blue
+    // NanoGPT: Purple/Violet gradient
+    ngPrimary: '\x1b[38;5;135m', // Violet
+    ngSecondary: '\x1b[38;5;141m', // Light violet
+    ngAccent: '\x1b[38;5;99m', // Deep purple
+    ngDim: '\x1b[38;5;97m', // Muted purple
     // Default: White/Gray
     defPrimary: '\x1b[38;5;255m', // White
     defDim: '\x1b[38;5;245m', // Gray
@@ -131,6 +136,22 @@ export const writeWrapper = (
     `${C.orSecondary}      One API ${C.orDim}━${C.orSecondary} Any Model${C.reset}`,
     '',
     'CCMORT',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      nanogpt)',
+    "        cat <<'CCMNGPT'",
+    '',
+    `${C.ngPrimary}    ███╗   ██╗ █████╗ ███╗   ██╗ ██████╗  ██████╗ ██████╗ ████████╗${C.reset}`,
+    `${C.ngPrimary}    ████╗  ██║██╔══██╗████╗  ██║██╔═══██╗██╔════╝ ██╔══██╗╚══██╔══╝${C.reset}`,
+    `${C.ngSecondary}    ██╔██╗ ██║███████║██╔██╗ ██║██║   ██║██║  ███╗██████╔╝   ██║${C.reset}`,
+    `${C.ngSecondary}    ██║╚██╗██║██╔══██║██║╚██╗██║██║   ██║██║   ██║██╔═══╝    ██║${C.reset}`,
+    `${C.ngAccent}    ██║ ╚████║██║  ██║██║ ╚████║╚██████╔╝╚██████╔╝██║        ██║${C.reset}`,
+    `${C.ngAccent}    ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝  ╚═════╝ ╚═╝        ╚═╝${C.reset}`,
+    '',
+    `${C.ngDim}    ━━━━━━━━━━━━━━${C.ngPrimary}◆${C.ngDim}━━━━━━━━━━━━━━${C.reset}`,
+    `${C.ngSecondary}      One API ${C.ngDim}━${C.ngSecondary} Many Models${C.reset}`,
+    '',
+    'CCMNGPT',
     '        __cc_show_label="0"',
     '        ;;',
     '      ccrouter)',

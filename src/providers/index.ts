@@ -80,6 +80,21 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     authMode: 'authToken',
     requiresModelMapping: true,
   },
+  nanogpt: {
+    key: 'nanogpt',
+    label: 'NanoGPT',
+    description: 'NanoGPT gateway for OpenAI-compatible requests',
+    baseUrl: 'https://nano-gpt.com/api',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'NanoGPT',
+      CC_MIRROR_SPLASH_STYLE: 'nanogpt',
+    },
+    apiKeyLabel: 'NanoGPT API key',
+    authMode: 'authToken',
+    requiresModelMapping: true,
+  },
   ccrouter: {
     key: 'ccrouter',
     label: 'Claude Code Router',

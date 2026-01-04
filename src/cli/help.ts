@@ -27,7 +27,7 @@ COMMANDS
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
-  --provider <name>            Provider: zai | minimax | openrouter | ccrouter
+  --provider <name>            Provider: zai | minimax | openrouter | nanogpt | ccrouter
   --api-key <key>              Provider API key
   --brand <preset>             Theme: auto | none | zai | minimax
   --quick                      Fast path mode

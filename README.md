@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  Run Claude Code with Z.ai, MiniMax, OpenRouter, Claude Code Router, or any Anthropic-compatible API —<br>
+  Run Claude Code with Z.ai, MiniMax, OpenRouter, NanoGPT, Claude Code Router, or any Anthropic-compatible API —<br>
   each with its own config, themes, and session storage.
 </p>
 
@@ -35,7 +35,7 @@ Claude Code is powerful, but locked to Anthropic's API. **CC-MIRROR** lets you:
 
 ## Features
 
-- **Multiple Providers** — Z.ai, MiniMax, OpenRouter, Claude Code Router, or custom endpoints
+- **Multiple Providers** — Z.ai, MiniMax, OpenRouter, NanoGPT, Claude Code Router, or custom endpoints
 - **Complete Isolation** — Each variant has its own config, sessions, and themes
 - **Brand Themes** — Custom color schemes per provider via [tweakcc](https://github.com/Piebald-AI/tweakcc)
 - **Prompt Packs** — Enhanced system prompts for Z.ai and MiniMax
@@ -82,6 +82,12 @@ npx cc-mirror quick --provider openrouter --api-key "$OPENROUTER_API_KEY" \
   --model-opus "anthropic/claude-3-opus" \
   --model-haiku "anthropic/claude-3-haiku"
 
+# NanoGPT (100+ models)
+npx cc-mirror quick --provider nanogpt --api-key "$NANOGPT_API_KEY" \
+  --model-sonnet "zai-org/glm-4.7:thinking" \
+  --model-opus "zai-org/glm-4.7:thinking" \
+  --model-haiku "zai-org/glm-4.7:thinking"
+
 # Claude Code Router (local LLMs)
 npx cc-mirror quick --provider ccrouter
 ```
@@ -93,6 +99,7 @@ npx cc-mirror quick --provider ccrouter
 | **Z.ai**       | GLM-4.7 via GLM Coding Plan                  | API Key    | Auto (GLM-4.7 for Sonnet/Opus, GLM-4.5-Air for Haiku) |
 | **MiniMax**    | MiniMax-M2.1 via MiniMax Coding Plan         | API Key    | Auto (single model for all tiers)                     |
 | **OpenRouter** | Access 100+ models through one API           | Auth Token | Required (you choose the models)                      |
+| **NanoGPT**    | Access 100+ models with crypto support       | API Key    | Required (you choose the models)                      |
 | **CCRouter**   | Route to local LLMs (Ollama, DeepSeek, etc.) | Optional   | Handled by CCRouter config                            |
 
 ## Variant Structure
@@ -133,7 +140,7 @@ minimax                       # If you named it 'minimax'
 ## CLI Options
 
 ```
---provider <name>        zai | minimax | openrouter | ccrouter | custom
+--provider <name>        zai | minimax | openrouter | nanogpt | ccrouter | custom
 --api-key <key>          Provider API key
 --base-url <url>         Custom API endpoint
 --model-sonnet <name>    Map to sonnet model (for OpenRouter)
@@ -154,6 +161,7 @@ Each provider has an optional color theme applied via [tweakcc](https://github.c
 - **zai** — Dark carbon with gold accents
 - **minimax** — Coral/red/orange spectrum
 - **openrouter** — Teal/cyan gradient
+- **nanogpt** — Purple/violet gradient
 - **ccrouter** — Sky blue accents
 
 ## Updating Variants

@@ -99,6 +99,11 @@ export const providerColors = {
     border: 'cyan',
     accent: 'cyanBright',
   },
+  nanogpt: {
+    primary: 'magenta',
+    border: 'magenta',
+    accent: 'magentaBright',
+  },
   ccrouter: {
     primary: 'blue',
     border: 'blue',
