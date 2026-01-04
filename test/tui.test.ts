@@ -26,19 +26,52 @@ test('TUI create flow applies tweakcc by default', async () => {
   );
 
   await tick();
-  await send(app.stdin, down); // home -> create
-  await send(app.stdin, enter);
-  await send(app.stdin, enter); // provider select -> default (zai)
-  await send(app.stdin, enter); // intro screen -> continue
-  await send(app.stdin, enter); // brand preset (auto)
-  await send(app.stdin, enter); // name
-  await send(app.stdin, enter); // base url
-  await send(app.stdin, enter); // api key
-  await send(app.stdin, enter); // prompt pack mode (maximal) - skipped yes/no for zai/minimax
-  await send(app.stdin, enter); // install dev-browser? default Yes
-  await send(app.stdin, enter); // write Z_AI_API_KEY? default Yes
-  await send(app.stdin, down); // add env? select No
-  await send(app.stdin, enter);
+
+  // Navigate to create option and select
+  await send(app.stdin, down);
+  await send(app.stdin, enter); // create-provider
+  await tick();
+
+  // Select provider (zai is default)
+  await send(app.stdin, enter); // create-intro
+  await tick();
+
+  // Continue from intro screen
+  await send(app.stdin, enter); // create-brand
+  await tick();
+
+  // Select brand (auto is default)
+  await send(app.stdin, enter); // create-name
+  await tick();
+
+  // Enter name (just press enter for default "zai")
+  await send(app.stdin, enter); // create-base-url
+  await tick();
+
+  // Enter base URL (just press enter for default)
+  await send(app.stdin, enter); // create-api-key
+  await tick();
+
+  // Enter API key (just press enter for empty)
+  await send(app.stdin, enter); // create-prompt-pack-mode (zai supports prompt pack)
+  await tick();
+
+  // Select prompt pack mode (maximal is default)
+  await send(app.stdin, enter); // create-skill-install
+  await tick();
+
+  // Install dev-browser? Yes (default)
+  await send(app.stdin, enter); // create-shell-env (zai without detected key)
+  await tick();
+
+  // Write Z_AI_API_KEY? Yes (default)
+  await send(app.stdin, enter); // create-env-confirm
+  await tick();
+
+  // Add custom env? No
+  await send(app.stdin, down); // navigate to No
+  await send(app.stdin, enter); // create-summary
+  await tick();
 
   const reachedSummary = await waitFor(() => {
     const frame = app.lastFrame() || '';
