@@ -28,7 +28,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Upgraded to Ink 6.6.0 and React 19
-- Updated all ink-* packages to latest versions
+- Updated all ink-\* packages to latest versions
 - Fresh dependency tree with improved compatibility
 
 ## [1.0.1] - 2025-01-03

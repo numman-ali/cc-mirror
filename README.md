@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  Run Claude Code with Z.ai, MiniMax, OpenRouter, Claude Code Router, or any Anthropic-compatible API —<br>
+  Run Claude Code with Z.ai, MiniMax, GatewayZ, OpenRouter, Claude Code Router, or any Anthropic-compatible API —<br>
   each with its own config, themes, and session storage.
 </p>
 
@@ -35,7 +35,7 @@ Claude Code is powerful, but locked to Anthropic's API. **CC-MIRROR** lets you:
 
 ## Features
 
-- **Multiple Providers** — Z.ai, MiniMax, OpenRouter, Claude Code Router, or custom endpoints
+- **Multiple Providers** — Z.ai, MiniMax, GatewayZ, OpenRouter, Claude Code Router, or custom endpoints
 - **Complete Isolation** — Each variant has its own config, sessions, and themes
 - **Brand Themes** — Custom color schemes per provider via [tweakcc](https://github.com/Piebald-AI/tweakcc)
 - **Prompt Packs** — Enhanced system prompts for Z.ai and MiniMax
@@ -82,6 +82,12 @@ npx cc-mirror quick --provider openrouter --api-key "$OPENROUTER_API_KEY" \
   --model-opus "anthropic/claude-3-opus" \
   --model-haiku "anthropic/claude-3-haiku"
 
+# GatewayZ (OneRouter gateway)
+npx cc-mirror quick --provider gatewayz --api-key "$GATEWAYZ_API_KEY" \
+  --model-sonnet "claude-sonnet-4-20250514" \
+  --model-opus "claude-opus-4-5-20251101" \
+  --model-haiku "claude-haiku-3-5-20241022"
+
 # Claude Code Router (local LLMs)
 npx cc-mirror quick --provider ccrouter
 ```
@@ -92,6 +98,7 @@ npx cc-mirror quick --provider ccrouter
 | -------------- | -------------------------------------------- | ---------- | ----------------------------------------------------- |
 | **Z.ai**       | GLM-4.7 via GLM Coding Plan                  | API Key    | Auto (GLM-4.7 for Sonnet/Opus, GLM-4.5-Air for Haiku) |
 | **MiniMax**    | MiniMax-M2.1 via MiniMax Coding Plan         | API Key    | Auto (single model for all tiers)                     |
+| **GatewayZ**   | OneRouter-compatible gateway                 | Auth Token | Required (you choose the models)                      |
 | **OpenRouter** | Access 100+ models through one API           | Auth Token | Required (you choose the models)                      |
 | **CCRouter**   | Route to local LLMs (Ollama, DeepSeek, etc.) | Optional   | Handled by CCRouter config                            |
 
@@ -133,13 +140,13 @@ minimax                       # If you named it 'minimax'
 ## CLI Options
 
 ```
---provider <name>        zai | minimax | openrouter | ccrouter | custom
+--provider <name>        zai | minimax | gatewayz | openrouter | ccrouter | custom
 --api-key <key>          Provider API key
 --base-url <url>         Custom API endpoint
 --model-sonnet <name>    Map to sonnet model (for OpenRouter)
 --model-opus <name>      Map to opus model (for OpenRouter)
 --model-haiku <name>     Map to haiku model (for OpenRouter)
---brand <preset>         Theme: auto | none | zai | minimax | openrouter | ccrouter
+--brand <preset>         Theme: auto | none | zai | minimax | gatewayz | openrouter | ccrouter
 --root <path>            Variants root (default: ~/.cc-mirror)
 --bin-dir <path>         Wrapper dir (default: ~/.local/bin)
 --no-tweak               Skip tweakcc theme application
@@ -153,6 +160,7 @@ Each provider has an optional color theme applied via [tweakcc](https://github.c
 
 - **zai** — Dark carbon with gold accents
 - **minimax** — Coral/red/orange spectrum
+- **gatewayz** — Dark portal with violet/purple accents
 - **openrouter** — Teal/cyan gradient
 - **ccrouter** — Sky blue accents
 

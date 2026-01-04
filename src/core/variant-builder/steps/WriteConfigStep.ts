@@ -56,8 +56,8 @@ export class WriteConfigStep implements BuildStep {
       state.notes.push('ANTHROPIC_AUTH_TOKEN not set; provider auth may fail.');
     }
 
-    // OpenRouter needs model mapping; CCRouter handles routing internally via its own config
-    if (params.providerKey === 'openrouter') {
+    // Providers with requiresModelMapping need model configuration
+    if (provider.requiresModelMapping) {
       const missing: string[] = [];
       if (!env.ANTHROPIC_DEFAULT_SONNET_MODEL) missing.push('ANTHROPIC_DEFAULT_SONNET_MODEL');
       if (!env.ANTHROPIC_DEFAULT_OPUS_MODEL) missing.push('ANTHROPIC_DEFAULT_OPUS_MODEL');
