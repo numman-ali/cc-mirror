@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.5] - 2025-01-05
+
+### Added
+
+- **Role Detection** in orchestration skill
+  - Skill now detects if it's the main orchestrator or a spawned worker
+  - Workers skip orchestration and execute tasks directly
+  - Prevents recursive orchestration chaos
+
+- **Worker Agent Prompt Template**
+  - Required WORKER preamble for all spawned agents
+  - Clear rules: execute task, use tools directly, no sub-agents, no task management
+  - Example prompts included in SKILL.md and references/tools.md
+
+- **Tool Ownership section**
+  - Clear separation: orchestrator tools vs worker tools
+  - Orchestrator: TaskCreate, TaskUpdate, TaskGet, TaskList, AskUserQuestion, Task
+  - Workers: Read, Write, Edit, Bash, Glob, Grep, WebFetch, WebSearch, LSP
+
+- **Complete task lifecycle** in "What you DO"
+  - Expanded from 5 to 8 steps
+  - Added: Set dependencies, Find ready work (TaskList), Mark complete (TaskUpdate resolved)
+
+### Changed
+
+- **Flow diagram** now shows complete lifecycle
+  - Added "Find Ready Work" step with TaskList
+  - Added "Mark Complete" step with TaskUpdate(resolved)
+  - Shows loop back to find more ready work
+
+- **Agent scaling** is now guidance-based, not quota-based
+  - Replaced "3 agents minimum is non-negotiable"
+  - New table: Quick lookup (1-2), Multi-faceted (2-3), Full feature (4+ swarm)
+  - "Match the swarm to the challenge"
+
+- **Subagent Prompting Guide** in references/tools.md
+  - WORKER preamble now required first element
+  - "Four Elements" → "Five Elements" (added preamble)
+  - All examples updated with preamble
+
+### Fixed
+
+- Agents no longer try to re-orchestrate when spawned
+- Task lifecycle now explicitly includes resolution step
+- Clearer separation between orchestrator and worker responsibilities
+
 ## [1.1.4] - 2025-01-05
 
 ### Changed

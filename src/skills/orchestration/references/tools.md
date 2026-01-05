@@ -276,40 +276,81 @@ TaskOutput(task_id="abc123")
 
 Your agents are only as good as your prompts. Invest in clear instructions.
 
-### The Four Elements
+### The WORKER Preamble (Required)
 
-Every agent prompt should include:
+**Every agent prompt MUST start with this preamble:**
+
+```
+CONTEXT: You are a WORKER agent, not an orchestrator.
+
+RULES:
+- Complete ONLY the task described below
+- Use tools directly (Read, Write, Edit, Bash, etc.)
+- Do NOT spawn sub-agents
+- Do NOT call TaskCreate or TaskUpdate
+- Report your results with absolute file paths
+
+TASK:
+[Your specific task here]
+```
+
+This prevents agents from recursively trying to orchestrate.
+
+### The Five Elements
+
+After the preamble, include:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  1. CONTEXT    → What's the bigger picture?                 │
-│  2. SCOPE      → What exactly should this agent do?         │
-│  3. CONSTRAINTS → What rules or patterns to follow?         │
-│  4. OUTPUT     → What should the agent return?              │
+│  1. PREAMBLE   → WORKER context and rules (required!)       │
+│  2. CONTEXT    → What's the bigger picture?                 │
+│  3. SCOPE      → What exactly should this agent do?         │
+│  4. CONSTRAINTS → What rules or patterns to follow?         │
+│  5. OUTPUT     → What should the agent return?              │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ### Example: Implementation Prompt
 
 ```
-Context: Building a Todo app with Express backend and SQLite.
-The users table exists in server/src/db/database.js.
+CONTEXT: You are a WORKER agent, not an orchestrator.
 
-Task: Create server/src/routes/auth.js with:
+RULES:
+- Complete ONLY the task described below
+- Use tools directly (Read, Write, Edit, Bash, etc.)
+- Do NOT spawn sub-agents
+- Do NOT call TaskCreate or TaskUpdate
+- Report your results with absolute file paths
+
+TASK:
+Create server/src/routes/auth.js with:
 - POST /signup - Create user, hash password with bcrypt, return JWT
 - POST /login - Verify credentials, return JWT
 
-Constraints:
+CONTEXT: Building a Todo app with Express backend and SQLite.
+The users table exists in server/src/db/database.js.
+
+CONSTRAINTS:
 - Use the existing db from database.js
 - JWT secret from process.env.JWT_SECRET
 - Follow existing code patterns
 
-Return: Confirm files created and summarize implementation.
+RETURN: Confirm files created and summarize implementation.
 ```
 
 ### Example: Exploration Prompt
 
 ```
+CONTEXT: You are a WORKER agent, not an orchestrator.
+
+RULES:
+- Complete ONLY the task described below
+- Use tools directly (Read, Write, Edit, Bash, etc.)
+- Do NOT spawn sub-agents
+- Do NOT call TaskCreate or TaskUpdate
+- Report your results with absolute file paths
+
+TASK:
 Find all files related to user authentication.
 
 Look for:
@@ -318,7 +359,7 @@ Look for:
 - Session or token management
 - User model or schema
 
-Return: List of files with brief description of each.
+RETURN: List of files with brief description of each.
 ```
 
 ### Prompt Anti-Patterns
