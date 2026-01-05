@@ -64,7 +64,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onSelect }) => {
     { value: 'quick', label: 'Quick Setup', description: 'Provider + API key → Ready in 30s', icon: 'star' },
     { value: 'create', label: 'New Variant', description: 'Full configuration wizard' },
     { value: 'manage', label: 'Manage Variants', description: 'Update, remove, or inspect' },
-    { value: 'sync', label: 'Sync Variants', description: 'Copy skills, MCP servers, permissions between variants' },
+    {
+      value: 'sync',
+      label: 'Sync Variants',
+      description: 'Copy skills, MCP servers, CLAUDE.md, and permissions between variants',
+    },
     { value: 'updateAll', label: 'Update All', description: 'Reinstall Claude Code on all variants' },
     { value: 'doctor', label: 'Diagnostics', description: 'Health check all variants' },
     { value: 'about', label: 'About', description: 'Learn how CC-MIRROR works' },

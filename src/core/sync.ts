@@ -220,7 +220,6 @@ const syncPermissions = (sourceConfigDir: string, targetConfigDir: string): Sync
     };
 
     writeJson(targetSettingsPath, updatedSettings);
-    result.copied++;
   } catch (err) {
     result.errors.push(`Failed to sync permissions: ${err instanceof Error ? err.message : String(err)}`);
   }
@@ -270,11 +269,14 @@ export const syncVariants = (sourceDir: string, targetDirs: string[], options: S
         result.backupPath = createConfigBackup(targetDir);
       } catch (err) {
         result.success = false;
-        result.itemResults['skills'] = {
-          copied: 0,
-          skipped: 0,
-          errors: [`Backup failed: ${err instanceof Error ? err.message : String(err)}`],
-        };
+        const backupErrorMessage = `Backup failed: ${err instanceof Error ? err.message : String(err)}`;
+        for (const item of options.items) {
+          result.itemResults[item] = {
+            copied: 0,
+            skipped: 0,
+            errors: [backupErrorMessage],
+          };
+        }
         results.push(result);
         continue;
       }
@@ -335,11 +337,14 @@ export const syncVariantsAsync = async (
         result.backupPath = createConfigBackup(targetDir);
       } catch (err) {
         result.success = false;
-        result.itemResults['skills'] = {
-          copied: 0,
-          skipped: 0,
-          errors: [`Backup failed: ${err instanceof Error ? err.message : String(err)}`],
-        };
+        const backupErrorMessage = `Backup failed: ${err instanceof Error ? err.message : String(err)}`;
+        for (const item of options.items) {
+          result.itemResults[item] = {
+            copied: 0,
+            skipped: 0,
+            errors: [backupErrorMessage],
+          };
+        }
         results.push(result);
         continue;
       }
