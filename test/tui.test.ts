@@ -135,6 +135,7 @@ test('TUI update all flow', async () => {
   await tick();
   await send(app.stdin, down); // create
   await send(app.stdin, down); // manage
+  await send(app.stdin, down); // sync
   await send(app.stdin, down); // updateAll
   await send(app.stdin, enter);
   await tick();
@@ -160,6 +161,7 @@ test('TUI doctor flow', async () => {
   await tick();
   await send(app.stdin, down); // create
   await send(app.stdin, down); // manage
+  await send(app.stdin, down); // sync
   await send(app.stdin, down); // updateAll
   await send(app.stdin, down); // doctor
   await send(app.stdin, enter);

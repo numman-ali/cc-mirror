@@ -18,6 +18,8 @@ import type {
 
 export { DEFAULT_ROOT, DEFAULT_BIN_DIR, DEFAULT_NPM_PACKAGE, DEFAULT_NPM_VERSION };
 export { expandTilde } from './paths.js';
+export { syncVariants, syncVariantsAsync, createConfigBackup, restoreConfigBackup } from './sync.js';
+export type { SyncItem, SyncOptions, SyncResult, SyncItemResult } from './sync.js';
 
 export const createVariant = (params: CreateVariantParams): CreateVariantResult => {
   return new VariantBuilder(false).build(params);
