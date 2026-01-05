@@ -22,9 +22,12 @@ export class TeamModeUpdateStep implements UpdateStep {
   name = 'TeamMode';
 
   private shouldEnableTeamMode(ctx: UpdateContext): boolean {
-    // Enable if explicitly requested via opts OR if provider defaults to team mode
+    // Enable if:
+    // 1. Explicitly requested via opts, OR
+    // 2. Provider defaults to team mode, OR
+    // 3. Team mode is already enabled on this variant (to update skill)
     const provider = getProvider(ctx.meta.provider);
-    return Boolean(ctx.opts.enableTeamMode) || Boolean(provider?.enablesTeamMode);
+    return Boolean(ctx.opts.enableTeamMode) || Boolean(provider?.enablesTeamMode) || Boolean(ctx.meta.teamModeEnabled);
   }
 
   private shouldDisableTeamMode(ctx: UpdateContext): boolean {
