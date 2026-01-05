@@ -152,6 +152,12 @@ export const ensureZaiShellEnv = (opts: {
     return { status: 'skipped', message: 'Shell profile already up to date', path: profile };
   }
 
+  // Ensure parent directories exist (especially for Windows PowerShell profiles)
+  const profileDir = path.dirname(profile);
+  if (!fs.existsSync(profileDir)) {
+    fs.mkdirSync(profileDir, { recursive: true });
+  }
+
   fs.writeFileSync(profile, next);
   const reloadMessage = isWindows() ? `Run: . "${profile}"` : `Run: source ${profile}`;
   return { status: 'updated', path: profile, message: reloadMessage };

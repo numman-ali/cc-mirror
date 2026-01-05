@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 
 export type WrapperRuntime = 'native' | 'node';
@@ -215,10 +214,10 @@ export const writeWindowsWrapper = (
   runtime: WrapperRuntime = 'node'
 ) => {
   const tweakDir = path.join(path.dirname(configDir), 'tweakcc');
-  // Use forward slashes for node paths in the inline script, but backslashes for cmd variables
-  const configDirWin = configDir.replace(/\//g, '\\');
-  const tweakDirWin = tweakDir.replace(/\//g, '\\');
-  const binaryPathWin = binaryPath.replace(/\//g, '\\');
+  // Normalize paths for Windows (ensures consistent backslash separators)
+  const configDirWin = path.win32.normalize(configDir);
+  const tweakDirWin = path.win32.normalize(tweakDir);
+  const binaryPathWin = path.win32.normalize(binaryPath);
 
   // ANSI color codes for colored ASCII art (same as Unix version)
   const C = {
@@ -268,7 +267,9 @@ try {
     if (env && typeof env === 'object') {
       for (const [key, value] of Object.entries(env)) {
         if (!key) continue;
-        console.log('SET "' + key + '=' + String(value).replace(/"/g, '') + '"');
+        const raw = String(value);
+        const escaped = raw.replace(/"/g, '""').replace(/%/g, '%%');
+        console.log('SET "' + key + '=' + escaped + '"');
       }
     }
   }
@@ -437,13 +438,11 @@ export const writeWrapperForPlatform = (
   binaryPath: string,
   runtime: WrapperRuntime = 'node'
 ): string => {
-  const platform = os.platform();
-
-  if (platform === 'win32') {
-    // On Windows, ensure the wrapper has .cmd extension
-    const cmdPath = wrapperPath.endsWith('.cmd') ? wrapperPath : wrapperPath + '.cmd';
-    writeWindowsWrapper(cmdPath, configDir, binaryPath, runtime);
-    return cmdPath;
+  if (process.platform === 'win32') {
+    // On Windows, the caller is responsible for providing a path
+    // with the appropriate extension (typically ".cmd").
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath, runtime);
+    return wrapperPath;
   } else {
     // Unix (Linux, macOS, etc.)
     writeWrapper(wrapperPath, configDir, binaryPath, runtime);
