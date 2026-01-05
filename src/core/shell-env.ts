@@ -27,6 +27,13 @@ const normalizeApiKey = (value?: string | null): string | null => {
   return trimmed;
 };
 
+const stripQuotes = (value: string): string => {
+  if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+    return value.slice(1, -1);
+  }
+  return value;
+};
+
 const isWindows = (): boolean => process.platform === 'win32';
 
 const resolveShellProfile = (): string | null => {
@@ -101,10 +108,7 @@ const hasZaiKeyInProfile = (content: string): boolean => {
     if (trimmed.startsWith('$env:Z_AI_API_KEY')) {
       const equalsIndex = trimmed.indexOf('=');
       if (equalsIndex === -1) continue;
-      let value = trimmed.slice(equalsIndex + 1).trim();
-      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
-        value = value.slice(1, -1);
-      }
+      const value = stripQuotes(trimmed.slice(equalsIndex + 1).trim());
       if (normalizeApiKey(value)) return true;
       continue;
     }
@@ -114,10 +118,7 @@ const hasZaiKeyInProfile = (content: string): boolean => {
     if (!exportStripped.startsWith('Z_AI_API_KEY')) continue;
     const equalsIndex = exportStripped.indexOf('=');
     if (equalsIndex === -1) continue;
-    let value = exportStripped.slice(equalsIndex + 1).trim();
-    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
-      value = value.slice(1, -1);
-    }
+    const value = stripQuotes(exportStripped.slice(equalsIndex + 1).trim());
     if (normalizeApiKey(value)) return true;
   }
   return false;

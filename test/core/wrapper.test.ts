@@ -6,7 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { writeWrapper } from '../../src/core/wrapper.js';
+import { writeWrapper, writeWindowsWrapper, writeWrapperForPlatform } from '../../src/core/wrapper.js';
 import { makeTempDir, cleanup } from '../helpers/index.js';
 
 test('writeWrapper creates executable wrapper script', () => {
@@ -192,6 +192,232 @@ test('writeWrapper handles unset auth token option', () => {
     const content = fs.readFileSync(wrapperPath, 'utf8');
     assert.ok(content.includes('CC_MIRROR_UNSET_AUTH_TOKEN'), 'Should check unset auth token option');
     assert.ok(content.includes('unset ANTHROPIC_AUTH_TOKEN'), 'Should unset auth token when requested');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+// ============================================
+// Windows Wrapper Tests
+// ============================================
+
+test('writeWindowsWrapper creates .cmd batch file', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper.cmd');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath);
+
+    assert.ok(fs.existsSync(wrapperPath), 'Wrapper file should exist');
+
+    const content = fs.readFileSync(wrapperPath, 'utf8');
+    assert.ok(content.startsWith('@echo off'), 'Should start with @echo off');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWindowsWrapper creates helper script', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper.cmd');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath);
+
+    const helperPath = path.join(tempDir, 'wrapper-env.js');
+    assert.ok(fs.existsSync(helperPath), 'Helper script should exist');
+
+    const helperContent = fs.readFileSync(helperPath, 'utf8');
+    assert.ok(helperContent.includes('settings.json'), 'Helper should reference settings.json');
+    assert.ok(helperContent.includes('SET "'), 'Helper should output SET commands');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWindowsWrapper sets CLAUDE_CONFIG_DIR', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper.cmd');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath);
+
+    const content = fs.readFileSync(wrapperPath, 'utf8');
+    assert.ok(content.includes('set "CLAUDE_CONFIG_DIR='), 'Should set CLAUDE_CONFIG_DIR');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWindowsWrapper sets TWEAKCC_CONFIG_DIR', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper.cmd');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath);
+
+    const content = fs.readFileSync(wrapperPath, 'utf8');
+    assert.ok(content.includes('set "TWEAKCC_CONFIG_DIR='), 'Should set TWEAKCC_CONFIG_DIR');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWindowsWrapper uses node runtime by default', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper.cmd');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath);
+
+    const content = fs.readFileSync(wrapperPath, 'utf8');
+    assert.ok(content.includes('node "'), 'Should use node runtime');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWindowsWrapper uses native runtime when specified', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper.cmd');
+  const binaryPath = 'C:\\path\\to\\native-binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath, 'native');
+
+    const content = fs.readFileSync(wrapperPath, 'utf8');
+    // Native runtime should not have 'node "'
+    const lines = content.split('\r\n');
+    const execLine = lines.find((line) => line.includes(binaryPath));
+    assert.ok(execLine, 'Should have exec line with binary path');
+    assert.ok(!execLine.includes('node '), 'Native runtime should not use node');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWindowsWrapper includes colored ASCII art for all providers', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper.cmd');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath);
+
+    const content = fs.readFileSync(wrapperPath, 'utf8');
+
+    // Check for provider goto labels
+    assert.ok(content.includes(':splash_zai'), 'Should have zai splash');
+    assert.ok(content.includes(':splash_minimax'), 'Should have minimax splash');
+    assert.ok(content.includes(':splash_openrouter'), 'Should have openrouter splash');
+    assert.ok(content.includes(':splash_ccrouter'), 'Should have ccrouter splash');
+
+    // Check for ANSI color codes
+    assert.ok(content.includes('\x1b[38;5;'), 'Should include ANSI color codes');
+    assert.ok(content.includes('\x1b[0m'), 'Should include color reset code');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWindowsWrapper handles unset auth token option', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper.cmd');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath);
+
+    const content = fs.readFileSync(wrapperPath, 'utf8');
+    assert.ok(content.includes('CC_MIRROR_UNSET_AUTH_TOKEN'), 'Should check unset auth token option');
+    assert.ok(content.includes('set "ANTHROPIC_AUTH_TOKEN="'), 'Should unset auth token when requested');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWindowsWrapper uses CRLF line endings', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper.cmd');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath);
+
+    const content = fs.readFileSync(wrapperPath, 'utf8');
+    assert.ok(content.includes('\r\n'), 'Should use CRLF line endings');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+// ============================================
+// writeWrapperForPlatform Tests
+// ============================================
+
+test('writeWrapperForPlatform creates wrapper file', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper');
+  const binaryPath = '/path/to/binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    const resultPath = writeWrapperForPlatform(wrapperPath, configDir, binaryPath);
+
+    assert.ok(fs.existsSync(resultPath), 'Wrapper file should exist');
+    assert.ok(typeof resultPath === 'string', 'Should return path string');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWrapperForPlatform returns the wrapper path', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'test-wrapper');
+  const binaryPath = '/path/to/binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    const resultPath = writeWrapperForPlatform(wrapperPath, configDir, binaryPath);
+
+    // The result should contain the base wrapper path
+    assert.ok(resultPath.includes('test-wrapper'), 'Should return path containing wrapper name');
   } finally {
     cleanup(tempDir);
   }

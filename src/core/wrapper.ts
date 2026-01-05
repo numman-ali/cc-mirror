@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { SPLASH_COLORS } from './constants.js';
 
 export type WrapperRuntime = 'native' | 'node';
 
@@ -43,38 +44,7 @@ export const writeWrapper = (
     '  rm -f "$__cc_mirror_env_file" || true',
     'fi',
   ];
-  // ANSI color codes for colored ASCII art
-  const C = {
-    reset: '\x1b[0m',
-    // Zai: Gold/Amber gradient
-    zaiPrimary: '\x1b[38;5;220m', // Gold
-    zaiSecondary: '\x1b[38;5;214m', // Orange-gold
-    zaiAccent: '\x1b[38;5;208m', // Dark orange
-    zaiDim: '\x1b[38;5;172m', // Muted gold
-    // MiniMax: Coral/Red/Orange gradient (from brand image)
-    mmPrimary: '\x1b[38;5;203m', // Coral/salmon red
-    mmSecondary: '\x1b[38;5;209m', // Light coral/orange
-    mmAccent: '\x1b[38;5;208m', // Orange
-    mmDim: '\x1b[38;5;167m', // Muted coral/dark red
-    // OpenRouter: Cyan/Teal gradient
-    orPrimary: '\x1b[38;5;43m', // Teal
-    orSecondary: '\x1b[38;5;49m', // Bright teal
-    orAccent: '\x1b[38;5;37m', // Deep cyan
-    orDim: '\x1b[38;5;30m', // Muted teal
-    // CCRouter: Sky blue gradient
-    ccrPrimary: '\x1b[38;5;39m', // Sky blue
-    ccrSecondary: '\x1b[38;5;45m', // Bright cyan
-    ccrAccent: '\x1b[38;5;33m', // Deep blue
-    ccrDim: '\x1b[38;5;31m', // Muted blue
-    // Mirror: Silver/Chrome with electric blue
-    mirPrimary: '\x1b[38;5;252m', // Silver/light gray
-    mirSecondary: '\x1b[38;5;250m', // Platinum
-    mirAccent: '\x1b[38;5;45m', // Electric cyan
-    mirDim: '\x1b[38;5;243m', // Muted silver
-    // Default: White/Gray
-    defPrimary: '\x1b[38;5;255m', // White
-    defDim: '\x1b[38;5;245m', // Gray
-  };
+  const C = SPLASH_COLORS;
 
   const splash = [
     'if [[ "${CC_MIRROR_SPLASH:-0}" != "0" ]] && [[ -t 1 ]]; then',
@@ -218,39 +188,7 @@ export const writeWindowsWrapper = (
   const configDirWin = path.win32.normalize(configDir);
   const tweakDirWin = path.win32.normalize(tweakDir);
   const binaryPathWin = path.win32.normalize(binaryPath);
-
-  // ANSI color codes for colored ASCII art (same as Unix version)
-  const C = {
-    reset: '\x1b[0m',
-    // Zai: Gold/Amber gradient
-    zaiPrimary: '\x1b[38;5;220m',
-    zaiSecondary: '\x1b[38;5;214m',
-    zaiAccent: '\x1b[38;5;208m',
-    zaiDim: '\x1b[38;5;172m',
-    // MiniMax: Coral/Red/Orange gradient
-    mmPrimary: '\x1b[38;5;203m',
-    mmSecondary: '\x1b[38;5;209m',
-    mmAccent: '\x1b[38;5;208m',
-    mmDim: '\x1b[38;5;167m',
-    // OpenRouter: Cyan/Teal gradient
-    orPrimary: '\x1b[38;5;43m',
-    orSecondary: '\x1b[38;5;49m',
-    orAccent: '\x1b[38;5;37m',
-    orDim: '\x1b[38;5;30m',
-    // CCRouter: Sky blue gradient
-    ccrPrimary: '\x1b[38;5;39m',
-    ccrSecondary: '\x1b[38;5;45m',
-    ccrAccent: '\x1b[38;5;33m',
-    ccrDim: '\x1b[38;5;31m',
-    // Mirror: Silver/Chrome with electric blue
-    mirPrimary: '\x1b[38;5;252m',
-    mirSecondary: '\x1b[38;5;250m',
-    mirAccent: '\x1b[38;5;45m',
-    mirDim: '\x1b[38;5;243m',
-    // Default: White/Gray
-    defPrimary: '\x1b[38;5;255m',
-    defDim: '\x1b[38;5;245m',
-  };
+  const C = SPLASH_COLORS;
 
   // Write a helper script to load env vars (avoids cmd.exe escaping issues)
   const wrapperParsed = path.parse(wrapperPath);
