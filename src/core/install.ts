@@ -23,6 +23,7 @@ export const installNpmClaude = (params: {
   const result = spawnSync('npm', ['install', '--prefix', params.npmDir, '--no-save', pkgSpec], {
     stdio: 'pipe',
     encoding: 'utf8',
+    shell: process.platform === 'win32',
   });
 
   if (stdio === 'inherit') {
@@ -63,6 +64,7 @@ export const installNpmClaudeAsync = (params: {
     const pkgSpec = params.npmVersion ? `${params.npmPackage}@${params.npmVersion}` : params.npmPackage;
     const child = spawn('npm', ['install', '--prefix', params.npmDir, '--no-save', pkgSpec], {
       stdio: 'pipe',
+      shell: process.platform === 'win32',
     });
 
     let stdout = '';

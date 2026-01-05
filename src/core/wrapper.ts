@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 export type WrapperRuntime = 'native' | 'node';
@@ -205,4 +206,247 @@ export const writeWrapper = (
     '',
   ].join('\n');
   fs.writeFileSync(wrapperPath, content, { mode: 0o755 });
+};
+
+export const writeWindowsWrapper = (
+  wrapperPath: string,
+  configDir: string,
+  binaryPath: string,
+  runtime: WrapperRuntime = 'node'
+) => {
+  const tweakDir = path.join(path.dirname(configDir), 'tweakcc');
+  // Use forward slashes for node paths in the inline script, but backslashes for cmd variables
+  const configDirWin = configDir.replace(/\//g, '\\');
+  const tweakDirWin = tweakDir.replace(/\//g, '\\');
+  const binaryPathWin = binaryPath.replace(/\//g, '\\');
+
+  // ANSI color codes for colored ASCII art (same as Unix version)
+  const C = {
+    reset: '\x1b[0m',
+    // Zai: Gold/Amber gradient
+    zaiPrimary: '\x1b[38;5;220m',
+    zaiSecondary: '\x1b[38;5;214m',
+    zaiAccent: '\x1b[38;5;208m',
+    zaiDim: '\x1b[38;5;172m',
+    // MiniMax: Coral/Red/Orange gradient
+    mmPrimary: '\x1b[38;5;203m',
+    mmSecondary: '\x1b[38;5;209m',
+    mmAccent: '\x1b[38;5;208m',
+    mmDim: '\x1b[38;5;167m',
+    // OpenRouter: Cyan/Teal gradient
+    orPrimary: '\x1b[38;5;43m',
+    orSecondary: '\x1b[38;5;49m',
+    orAccent: '\x1b[38;5;37m',
+    orDim: '\x1b[38;5;30m',
+    // CCRouter: Sky blue gradient
+    ccrPrimary: '\x1b[38;5;39m',
+    ccrSecondary: '\x1b[38;5;45m',
+    ccrAccent: '\x1b[38;5;33m',
+    ccrDim: '\x1b[38;5;31m',
+    // Mirror: Silver/Chrome with electric blue
+    mirPrimary: '\x1b[38;5;252m',
+    mirSecondary: '\x1b[38;5;250m',
+    mirAccent: '\x1b[38;5;45m',
+    mirDim: '\x1b[38;5;243m',
+    // Default: White/Gray
+    defPrimary: '\x1b[38;5;255m',
+    defDim: '\x1b[38;5;245m',
+  };
+
+  // Write a helper script to load env vars (avoids cmd.exe escaping issues)
+  const wrapperParsed = path.parse(wrapperPath);
+  const helperScriptPath = path.join(wrapperParsed.dir, `${wrapperParsed.name}-env.js`);
+  const helperScript = `const fs = require('fs');
+const path = require('path');
+const dir = process.env.CLAUDE_CONFIG_DIR;
+if (!dir) process.exit(0);
+const file = path.join(dir, 'settings.json');
+try {
+  if (fs.existsSync(file)) {
+    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const env = data && typeof data === 'object' ? data.env : null;
+    if (env && typeof env === 'object') {
+      for (const [key, value] of Object.entries(env)) {
+        if (!key) continue;
+        console.log('SET "' + key + '=' + String(value).replace(/"/g, '') + '"');
+      }
+    }
+  }
+} catch {}
+`;
+  fs.writeFileSync(helperScriptPath, helperScript, { mode: 0o644 });
+  const helperScriptName = path.basename(helperScriptPath);
+
+  const execLine = runtime === 'node' ? `node "${binaryPathWin}" %*` : `"${binaryPathWin}" %*`;
+
+  // Build the splash screen for Windows (using echo)
+  const splashLines: string[] = [
+    '',
+    'rem === Splash Screen ===',
+    'if not defined CC_MIRROR_SPLASH set "CC_MIRROR_SPLASH=0"',
+    'if "%CC_MIRROR_SPLASH%"=="0" goto :skip_splash',
+    '',
+    'if not defined CC_MIRROR_SPLASH_STYLE set "CC_MIRROR_SPLASH_STYLE=default"',
+    'if not defined CC_MIRROR_PROVIDER_LABEL set "CC_MIRROR_PROVIDER_LABEL=cc-mirror"',
+    '',
+    'rem Check if output is a terminal (approximate check for Windows)',
+    'echo.',
+    '',
+    'if "%CC_MIRROR_SPLASH_STYLE%"=="zai" goto :splash_zai',
+    'if "%CC_MIRROR_SPLASH_STYLE%"=="minimax" goto :splash_minimax',
+    'if "%CC_MIRROR_SPLASH_STYLE%"=="openrouter" goto :splash_openrouter',
+    'if "%CC_MIRROR_SPLASH_STYLE%"=="ccrouter" goto :splash_ccrouter',
+    'if "%CC_MIRROR_SPLASH_STYLE%"=="mirror" goto :splash_mirror',
+    'goto :splash_default',
+    '',
+    ':splash_zai',
+    `echo ${C.zaiPrimary}    ███████╗       █████╗ ██╗${C.reset}`,
+    `echo ${C.zaiPrimary}    ╚══███╔╝      ██╔══██╗██║${C.reset}`,
+    `echo ${C.zaiSecondary}      ███╔╝       ███████║██║${C.reset}`,
+    `echo ${C.zaiSecondary}     ███╔╝    ${C.zaiAccent}██╗${C.zaiSecondary} ██╔══██║██║${C.reset}`,
+    `echo ${C.zaiAccent}    ███████╗  ╚═╝ ██║  ██║██║${C.reset}`,
+    `echo ${C.zaiAccent}    ╚══════╝      ╚═╝  ╚═╝╚═╝${C.reset}`,
+    'echo.',
+    `echo ${C.zaiDim}    ━━━━━━━━━━${C.zaiPrimary}◆${C.zaiDim}━━━━━━━━━━${C.reset}`,
+    `echo ${C.zaiSecondary}      GLM Coding Plan${C.reset}`,
+    'echo.',
+    'goto :end_splash',
+    '',
+    ':splash_minimax',
+    `echo ${C.mmPrimary}    ███╗   ███╗██╗███╗   ██╗██╗███╗   ███╗ █████╗ ██╗  ██╗${C.reset}`,
+    `echo ${C.mmPrimary}    ████╗ ████║██║████╗  ██║██║████╗ ████║██╔══██╗╚██╗██╔╝${C.reset}`,
+    `echo ${C.mmSecondary}    ██╔████╔██║██║██╔██╗ ██║██║██╔████╔██║███████║ ╚███╔╝${C.reset}`,
+    `echo ${C.mmSecondary}    ██║╚██╔╝██║██║██║╚██╗██║██║██║╚██╔╝██║██╔══██║ ██╔██╗${C.reset}`,
+    `echo ${C.mmAccent}    ██║ ╚═╝ ██║██║██║ ╚████║██║██║ ╚═╝ ██║██║  ██║██╔╝ ██╗${C.reset}`,
+    `echo ${C.mmAccent}    ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝${C.reset}`,
+    'echo.',
+    `echo ${C.mmDim}    ━━━━━━━━━━━━━━━━━━${C.mmPrimary}◆${C.mmDim}━━━━━━━━━━━━━━━━━━${C.reset}`,
+    `echo ${C.mmSecondary}           MiniMax-M2.1 ${C.mmDim}━${C.mmSecondary} AGI for All${C.reset}`,
+    'echo.',
+    'goto :end_splash',
+    '',
+    ':splash_openrouter',
+    `echo ${C.orPrimary}     ██████╗ ██████╗ ███████╗███╗   ██╗${C.reset}`,
+    `echo ${C.orPrimary}    ██╔═══██╗██╔══██╗██╔════╝████╗  ██║${C.reset}`,
+    `echo ${C.orSecondary}    ██║   ██║██████╔╝█████╗  ██╔██╗ ██║${C.reset}`,
+    `echo ${C.orSecondary}    ██║   ██║██╔═══╝ ██╔══╝  ██║╚██╗██║${C.reset}`,
+    `echo ${C.orAccent}    ╚██████╔╝██║     ███████╗██║ ╚████║${C.reset}`,
+    `echo ${C.orAccent}     ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═══╝${C.reset}`,
+    `echo ${C.orPrimary}    ██████╗  ██████╗ ██╗   ██╗████████╗███████╗██████╗${C.reset}`,
+    `echo ${C.orPrimary}    ██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔════╝██╔══██╗${C.reset}`,
+    `echo ${C.orSecondary}    ██████╔╝██║   ██║██║   ██║   ██║   █████╗  ██████╔╝${C.reset}`,
+    `echo ${C.orSecondary}    ██╔══██╗██║   ██║██║   ██║   ██║   ██╔══╝  ██╔══██╗${C.reset}`,
+    `echo ${C.orAccent}    ██║  ██║╚██████╔╝╚██████╔╝   ██║   ███████╗██║  ██║${C.reset}`,
+    `echo ${C.orAccent}    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝╚═╝  ╚═╝${C.reset}`,
+    'echo.',
+    `echo ${C.orDim}    ━━━━━━━━━━━━━${C.orPrimary}◆${C.orDim}━━━━━━━━━━━━━${C.reset}`,
+    `echo ${C.orSecondary}      One API ${C.orDim}━${C.orSecondary} Any Model${C.reset}`,
+    'echo.',
+    'goto :end_splash',
+    '',
+    ':splash_ccrouter',
+    `echo ${C.ccrPrimary}     ██████╗ ██████╗██████╗  ██████╗ ██╗   ██╗████████╗███████╗██████╗${C.reset}`,
+    `echo ${C.ccrPrimary}    ██╔════╝██╔════╝██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔════╝██╔══██╗${C.reset}`,
+    `echo ${C.ccrSecondary}    ██║     ██║     ██████╔╝██║   ██║██║   ██║   ██║   █████╗  ██████╔╝${C.reset}`,
+    `echo ${C.ccrSecondary}    ██║     ██║     ██╔══██╗██║   ██║██║   ██║   ██║   ██╔══╝  ██╔══██╗${C.reset}`,
+    `echo ${C.ccrAccent}    ╚██████╗╚██████╗██║  ██║╚██████╔╝╚██████╔╝   ██║   ███████╗██║  ██║${C.reset}`,
+    `echo ${C.ccrAccent}     ╚═════╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝╚═╝  ╚═╝${C.reset}`,
+    'echo.',
+    `echo ${C.ccrDim}    ━━━━━━━━━━━━━━━━${C.ccrPrimary}◆${C.ccrDim}━━━━━━━━━━━━━━━━${C.reset}`,
+    `echo ${C.ccrSecondary}      Claude Code Router ${C.ccrDim}━${C.ccrSecondary} Any Model${C.reset}`,
+    'echo.',
+    'goto :end_splash',
+    '',
+    ':splash_mirror',
+    `echo ${C.mirPrimary}    ███╗   ███╗██╗██████╗ ██████╗  ██████╗ ██████╗${C.reset}`,
+    `echo ${C.mirPrimary}    ████╗ ████║██║██╔══██╗██╔══██╗██╔═══██╗██╔══██╗${C.reset}`,
+    `echo ${C.mirSecondary}    ██╔████╔██║██║██████╔╝██████╔╝██║   ██║██████╔╝${C.reset}`,
+    `echo ${C.mirSecondary}    ██║╚██╔╝██║██║██╔══██╗██╔══██╗██║   ██║██╔══██╗${C.reset}`,
+    `echo ${C.mirAccent}    ██║ ╚═╝ ██║██║██║  ██║██║  ██║╚██████╔╝██║  ██║${C.reset}`,
+    `echo ${C.mirAccent}    ╚═╝     ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝${C.reset}`,
+    'echo.',
+    `echo ${C.mirDim}    ━━━━━━━━━━━━${C.mirAccent}◇${C.mirDim}━━━━━━━━━━━━${C.reset}`,
+    `echo ${C.mirSecondary}      Claude ${C.mirDim}━${C.mirSecondary} Pure Reflection${C.reset}`,
+    'echo.',
+    'goto :end_splash',
+    '',
+    ':splash_default',
+    `echo ${C.defPrimary}    ██████╗ ██████╗   ${C.defDim}━━  M I R R O R${C.reset}`,
+    `echo ${C.defPrimary}   ██╔════╝██╔════╝${C.reset}`,
+    `echo ${C.defPrimary}   ██║     ██║     ${C.defDim}Claude Code Variants${C.reset}`,
+    `echo ${C.defPrimary}   ██║     ██║     ${C.defDim}Custom Providers${C.reset}`,
+    `echo ${C.defPrimary}   ╚██████╗╚██████╗${C.reset}`,
+    `echo ${C.defPrimary}    ╚═════╝ ╚═════╝${C.reset}`,
+    'echo.',
+    'echo         %CC_MIRROR_PROVIDER_LABEL%',
+    'echo.',
+    'goto :end_splash',
+    '',
+    ':end_splash',
+    'echo.',
+    '',
+    ':skip_splash',
+  ];
+
+  const content = [
+    '@echo off',
+    'setlocal enabledelayedexpansion',
+    '',
+    `set "CLAUDE_CONFIG_DIR=${configDirWin}"`,
+    `set "TWEAKCC_CONFIG_DIR=${tweakDirWin}"`,
+    '',
+    'rem === Load environment from settings.json ===',
+    'where node >nul 2>nul',
+    'if %errorlevel% neq 0 goto :skip_env_load',
+    '',
+    'rem Create temp file for env vars',
+    'set "__cc_mirror_env_file=%TEMP%\\cc_mirror_env_%RANDOM%.cmd"',
+    '',
+    `for /f "delims=" %%i in ('node "%~dp0${helperScriptName}" 2^>nul') do (`,
+    '  echo %%i>>"%__cc_mirror_env_file%"',
+    ')',
+    '',
+    'if exist "%__cc_mirror_env_file%" (',
+    '  call "%__cc_mirror_env_file%"',
+    '  del "%__cc_mirror_env_file%" >nul 2>nul',
+    ')',
+    '',
+    ':skip_env_load',
+    '',
+    'rem === Unset auth token if requested ===',
+    'if defined CC_MIRROR_UNSET_AUTH_TOKEN (',
+    '  if not "%CC_MIRROR_UNSET_AUTH_TOKEN%"=="0" (',
+    '    set "ANTHROPIC_AUTH_TOKEN="',
+    '  )',
+    ')',
+    ...splashLines,
+    '',
+    'rem === Execute Claude ===',
+    execLine,
+    '',
+    'endlocal',
+    '',
+  ].join('\r\n');
+
+  fs.writeFileSync(wrapperPath, content);
+};
+
+export const writeWrapperForPlatform = (
+  wrapperPath: string,
+  configDir: string,
+  binaryPath: string,
+  runtime: WrapperRuntime = 'node'
+): string => {
+  const platform = os.platform();
+
+  if (platform === 'win32') {
+    // On Windows, ensure the wrapper has .cmd extension
+    const cmdPath = wrapperPath.endsWith('.cmd') ? wrapperPath : wrapperPath + '.cmd';
+    writeWindowsWrapper(cmdPath, configDir, binaryPath, runtime);
+    return cmdPath;
+  } else {
+    // Unix (Linux, macOS, etc.)
+    writeWrapper(wrapperPath, configDir, binaryPath, runtime);
+    return wrapperPath;
+  }
 };
