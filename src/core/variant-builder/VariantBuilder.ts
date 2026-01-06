@@ -80,7 +80,8 @@ export class VariantBuilder {
     const variantDir = path.join(resolvedRoot, params.name);
     const configDir = path.join(variantDir, 'config');
     const tweakDir = path.join(variantDir, 'tweakcc');
-    const wrapperPath = path.join(resolvedBin, params.name);
+    const wrapperExt = process.platform === 'win32' ? '.cmd' : '';
+    const wrapperPath = path.join(resolvedBin, params.name + wrapperExt);
     const npmDir = path.join(variantDir, 'npm');
 
     const paths: BuildPaths = {
