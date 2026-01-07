@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2025-01-06
+
+### Changed
+
+- **Complete messaging overhaul: "Claude Code, Unshackled"**
+  - New tagline positions CC-MIRROR as an opinionated Claude Code distribution
+  - "We did the hacking — you get the superpowers"
+  - Team mode (multi-agent orchestration) is now the flagship feature
+
+- **Mirror Claude is now the recommended provider**
+  - Reordered providers: mirror is first in all lists
+  - "The fastest path to multi-agent Claude Code"
+  - Updated provider descriptions across CLI, TUI, and documentation
+
+- **README.md completely rewritten**
+  - New hero section: "The Unlock" — explains what CC-MIRROR enables
+  - Before/after ASCII diagram showing the transformation
+  - Mirror Claude Quick Start at the top
+  - "What is CC-MIRROR?" section explains the opinionated distribution model
+  - Orchestrator skill section with example workflow
+  - Clear documentation of team mode as default (with disable instructions)
+
+- **CLI help updated** (`src/cli/help.ts`)
+  - New header: "Claude Code, Unshackled"
+  - "THE UNLOCK" section explaining team mode
+  - PROVIDERS section with brief descriptions
+  - `--no-team-mode` flag documented
+
+- **TUI updates**
+  - Logo tagline: "Claude Code, Unshackled"
+  - Logo subtitle: "Multi-agent orchestration. One command."
+  - Provider select screen highlights Mirror as fastest path
+  - All providers now show "Multi-agent orchestration (team mode)" as feature
+
+- **Provider education updated** (`src/tui/content/providers.ts`)
+  - Mirror headline: "The Fastest Path to Multi-Agent"
+  - All providers list multi-agent orchestration as a feature
+  - Updated comparison to show all providers have team mode by default
+
+### Fixed
+
+- Tests updated to handle new provider order (mirror first)
+
 ## [1.4.2] - 2025-01-05
 
 ### Added

@@ -28,7 +28,8 @@ test('TUI create flow applies tweakcc by default', async () => {
   await tick();
   await send(app.stdin, down); // home -> create
   await send(app.stdin, enter);
-  await send(app.stdin, enter); // provider select -> default (zai)
+  await send(app.stdin, down); // provider select -> navigate from mirror to zai
+  await send(app.stdin, enter); // select zai
   await send(app.stdin, enter); // intro screen -> continue
   await send(app.stdin, enter); // brand preset (auto)
   await send(app.stdin, enter); // name

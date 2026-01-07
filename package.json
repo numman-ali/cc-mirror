@@ -1,8 +1,8 @@
 {
   "name": "cc-mirror",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "type": "module",
-  "description": "Create multiple isolated Claude Code variants with custom providers (Z.ai, MiniMax, OpenRouter, Claude Code Router)",
+  "description": "Claude Code, Unshackled — Pre-configured variants with multi-agent orchestration, custom providers, and battle-tested enhancements",
   "author": "Numman Ali",
   "license": "MIT",
   "repository": {
