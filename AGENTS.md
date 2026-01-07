@@ -102,12 +102,12 @@ Location: `~/.local/bin/<variant>`
 
 ### Provider Auth Modes
 
-| Provider             | Auth Mode  | Key Variable                |
-| -------------------- | ---------- | --------------------------- |
-| zai, minimax, custom | API Key    | `ANTHROPIC_API_KEY`         |
-| openrouter           | Auth Token | `ANTHROPIC_AUTH_TOKEN`      |
-| ccrouter             | Optional   | placeholder token           |
-| mirror               | None       | user authenticates normally |
+| Provider                      | Auth Mode  | Key Variable                |
+| ----------------------------- | ---------- | --------------------------- |
+| zai, minimax, custom          | API Key    | `ANTHROPIC_API_KEY`         |
+| openrouter, vercel-ai-gateway | Auth Token | `ANTHROPIC_AUTH_TOKEN`      |
+| ccrouter                      | Optional   | placeholder token           |
+| mirror                        | None       | user authenticates normally |
 
 ### Model Mapping (env vars)
 
