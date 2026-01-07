@@ -10,6 +10,9 @@ import type { TweakResult } from './types.js';
 
 export type TweakccResult = TweakResult;
 
+const isWindows = process.platform === 'win32';
+const normalizePath = (p: string) => (isWindows ? p.replace(/\\/g, '/') : p);
+
 const require = createRequire(import.meta.url);
 
 export const ensureTweakccConfig = (tweakDir: string, brandKey?: string | null): boolean => {
@@ -128,13 +131,14 @@ export const runTweakcc = (
 ): TweakccResult => {
   const env = {
     ...process.env,
-    TWEAKCC_CONFIG_DIR: tweakDir,
-    TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
+    TWEAKCC_CONFIG_DIR: normalizePath(tweakDir),
+    TWEAKCC_CC_INSTALLATION_PATH: normalizePath(binaryPath),
   } as NodeJS.ProcessEnv;
+  const spawnOpts = { stdio: 'pipe' as const, env, encoding: 'utf8' as const, shell: isWindows };
 
   const local = resolveLocalTweakcc(['--apply']);
   if (local) {
-    const result = spawnSync(local.cmd, local.args, { stdio: 'pipe', env, encoding: 'utf8' });
+    const result = spawnSync(local.cmd, local.args, spawnOpts);
     if (stdio === 'inherit') {
       if (result.stdout) process.stdout.write(result.stdout);
       if (result.stderr) process.stderr.write(result.stderr);
@@ -143,7 +147,7 @@ export const runTweakcc = (
   }
 
   if (commandExists('tweakcc')) {
-    const result = spawnSync('tweakcc', ['--apply'], { stdio: 'pipe', env, encoding: 'utf8' });
+    const result = spawnSync('tweakcc', ['--apply'], spawnOpts);
     if (stdio === 'inherit') {
       if (result.stdout) process.stdout.write(result.stdout);
       if (result.stderr) process.stderr.write(result.stderr);
@@ -155,7 +159,7 @@ export const runTweakcc = (
     return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
   }
 
-  const result = spawnSync('npx', [`tweakcc@${TWEAKCC_VERSION}`, '--apply'], { stdio: 'pipe', env, encoding: 'utf8' });
+  const result = spawnSync('npx', [`tweakcc@${TWEAKCC_VERSION}`, '--apply'], spawnOpts);
   if (stdio === 'inherit') {
     if (result.stdout) process.stdout.write(result.stdout);
     if (result.stderr) process.stderr.write(result.stderr);
@@ -166,27 +170,27 @@ export const runTweakcc = (
 export const launchTweakccUi = (tweakDir: string, binaryPath: string): TweakccResult => {
   const env = {
     ...process.env,
-    TWEAKCC_CONFIG_DIR: tweakDir,
-    TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
+    TWEAKCC_CONFIG_DIR: normalizePath(tweakDir),
+    TWEAKCC_CC_INSTALLATION_PATH: normalizePath(binaryPath),
   } as NodeJS.ProcessEnv;
+  const spawnOpts = { stdio: 'inherit' as const, env, encoding: 'utf8' as const, shell: isWindows };
 
   const local = resolveLocalTweakcc([]);
   if (local) {
-    return spawnSync(local.cmd, local.args, { stdio: 'inherit', env, encoding: 'utf8' });
+    return spawnSync(local.cmd, local.args, spawnOpts);
   }
 
   if (commandExists('tweakcc')) {
-    return spawnSync('tweakcc', [], { stdio: 'inherit', env, encoding: 'utf8' });
+    return spawnSync('tweakcc', [], spawnOpts);
   }
 
   if (!commandExists('npx')) {
     return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
   }
 
-  return spawnSync('npx', [`tweakcc@${TWEAKCC_VERSION}`], { stdio: 'inherit', env, encoding: 'utf8' });
+  return spawnSync('npx', [`tweakcc@${TWEAKCC_VERSION}`], spawnOpts);
 };
 
-// Async version for TUI progress updates
 const spawnTweakccAsync = (
   cmd: string,
   args: string[],
@@ -194,7 +198,7 @@ const spawnTweakccAsync = (
   stdio: 'inherit' | 'pipe'
 ): Promise<TweakccResult> => {
   return new Promise((resolve) => {
-    const child = spawn(cmd, args, { stdio: 'pipe', env });
+    const child = spawn(cmd, args, { stdio: 'pipe', env, shell: isWindows });
     let stdout = '';
     let stderr = '';
     child.stdout?.on('data', (d) => {
@@ -221,8 +225,8 @@ export const runTweakccAsync = async (
 ): Promise<TweakccResult> => {
   const env = {
     ...process.env,
-    TWEAKCC_CONFIG_DIR: tweakDir,
-    TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
+    TWEAKCC_CONFIG_DIR: normalizePath(tweakDir),
+    TWEAKCC_CC_INSTALLATION_PATH: normalizePath(binaryPath),
   } as NodeJS.ProcessEnv;
 
   const local = resolveLocalTweakcc(['--apply']);
