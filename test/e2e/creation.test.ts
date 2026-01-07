@@ -8,7 +8,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import * as core from '../../src/core/index.js';
 import { makeTempDir, readFile, cleanup, withFakeNpm } from '../helpers/index.js';
+import { getWrapperFilename, getPlatform } from '../../src/core/platform.js';
 import { PROVIDERS } from './providers.js';
+
+const isWindows = getPlatform() === 'win32';
 
 test('E2E: Create variants for all providers', async (t) => {
   const createdDirs: string[] = [];
@@ -44,7 +47,7 @@ test('E2E: Create variants for all providers', async (t) => {
         assert.ok(fs.existsSync(variantDir), `${provider.name} variant dir should exist`);
 
         // Verify wrapper was created
-        const wrapperPath = path.join(binDir, provider.key);
+        const wrapperPath = path.join(binDir, getWrapperFilename(provider.key));
         assert.ok(fs.existsSync(wrapperPath), `${provider.name} wrapper should exist`);
         assert.equal(result.wrapperPath, wrapperPath);
 
@@ -89,17 +92,14 @@ test('E2E: Create variants for all providers', async (t) => {
           tweakccStdio: 'pipe',
         });
 
-        const wrapperPath = path.join(binDir, `${provider.key}-art`);
+        const wrapperPath = path.join(binDir, getWrapperFilename(`${provider.key}-art`));
         const wrapperContent = readFile(wrapperPath);
 
         // Verify ANSI color codes are present (escape character \x1b)
         assert.ok(wrapperContent.includes('\x1b[38;5;'), `${provider.name} wrapper should contain ANSI color codes`);
 
-        // Verify the case statement includes the provider's splash style
-        assert.ok(
-          wrapperContent.includes(`${provider.expectedSplashStyle})`),
-          `${provider.name} wrapper should have case for splash style`
-        );
+        const splashPattern = isWindows ? `"${provider.expectedSplashStyle}"` : `${provider.expectedSplashStyle})`;
+        assert.ok(wrapperContent.includes(splashPattern), `${provider.name} wrapper should have case for splash style`);
 
         // Verify reset code is present
         assert.ok(wrapperContent.includes('\x1b[0m'), `${provider.name} wrapper should contain color reset code`);

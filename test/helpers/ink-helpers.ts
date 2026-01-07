@@ -7,7 +7,8 @@
 /**
  * Wait for a short time to allow ink to process updates
  */
-export const tick = () => new Promise((resolve) => setTimeout(resolve, 30));
+const tickDelay = process.platform === 'win32' ? 100 : 30;
+export const tick = () => new Promise((resolve) => setTimeout(resolve, tickDelay));
 
 /**
  * Send input to stdin and wait for processing

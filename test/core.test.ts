@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import * as core from '../src/core/index.js';
+import { getWrapperFilename } from '../src/core/platform.js';
 import { makeTempDir, readFile, cleanup, withFakeNpm, resolveNpmCliPath } from './helpers/index.js';
 
 test('core create/update/remove/doctor flows', () => {
@@ -27,7 +28,7 @@ test('core create/update/remove/doctor flows', () => {
     const npmDir = path.join(variantDir, 'npm');
     const binaryPath = resolveNpmCliPath(npmDir, core.DEFAULT_NPM_PACKAGE);
     const configPath = path.join(variantDir, 'config', 'settings.json');
-    const wrapperPath = path.join(binDir, 'alpha');
+    const wrapperPath = path.join(binDir, getWrapperFilename('alpha'));
     const variantMetaPath = path.join(variantDir, 'variant.json');
 
     assert.ok(fs.existsSync(binaryPath));

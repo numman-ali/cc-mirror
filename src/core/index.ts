@@ -3,6 +3,7 @@ import path from 'node:path';
 import { DEFAULT_BIN_DIR, DEFAULT_NPM_PACKAGE, DEFAULT_NPM_VERSION, DEFAULT_ROOT } from './constants.js';
 import { ensureDir } from './fs.js';
 import { expandTilde } from './paths.js';
+import { getWrapperFilename } from './platform.js';
 import { ensureTweakccConfig, launchTweakccUi } from './tweakcc.js';
 import { formatTweakccFailure } from './errors.js';
 import { listVariants as listVariantsImpl, loadVariantMeta } from './variants.js';
@@ -57,7 +58,7 @@ export const doctor = (rootDir: string, binDir: string): DoctorReportItem[] => {
   const resolvedBin = expandTilde(binDir || DEFAULT_BIN_DIR) ?? binDir;
   const variants = listVariantsImpl(resolvedRoot);
   return variants.map(({ name, meta }) => {
-    const wrapperPath = path.join(resolvedBin, name);
+    const wrapperPath = path.join(resolvedBin, getWrapperFilename(name));
     const ok = Boolean(meta && fs.existsSync(meta.binaryPath) && fs.existsSync(wrapperPath));
     return {
       name,

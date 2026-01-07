@@ -6,6 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import * as core from '../../src/core/index.js';
+import { getWrapperFilename } from '../../src/core/platform.js';
 import { makeTempDir, readFile, cleanup, withFakeNpm } from '../helpers/index.js';
 import { PROVIDERS } from './providers.js';
 
@@ -41,7 +42,7 @@ test('E2E: Colored ASCII art content verification', async (t) => {
           tweakccStdio: 'pipe',
         });
 
-        const wrapperPath = path.join(binDir, `color-${provider.key}`);
+        const wrapperPath = path.join(binDir, getWrapperFilename(`color-${provider.key}`));
         wrapperContents.set(provider.key, readFile(wrapperPath));
       }
 
