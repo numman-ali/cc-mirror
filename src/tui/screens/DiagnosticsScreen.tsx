@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Box, Text } from 'ink';
+import { Box, Text, useInput } from 'ink';
 import { ScreenLayout } from '../components/ui/ScreenLayout.js';
 import { HealthCheck } from '../components/ui/Progress.js';
 import { EmptyVariantsArt } from '../components/ui/AsciiArt.js';
@@ -31,6 +31,13 @@ export const DiagnosticsScreen: React.FC<DiagnosticsScreenProps> = ({
   onDone,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Handle ESC key for back navigation
+  useInput((input, key) => {
+    if (key.escape) {
+      onDone();
+    }
+  });
 
   // Build menu items
   const menuItems: MenuItem[] = [
