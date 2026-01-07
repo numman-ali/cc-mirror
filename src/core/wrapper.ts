@@ -117,6 +117,7 @@ export const writeWindowsWrapper = (
 
   const lines = [
     '@echo off',
+    'chcp 65001 >nul 2>&1',
     'setlocal EnableDelayedExpansion',
     '',
     `set "CLAUDE_CONFIG_DIR=${configDir}"`,
