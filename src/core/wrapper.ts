@@ -83,32 +83,37 @@ export const writeWindowsWrapper = (
   const execLine = runtime === 'node' ? `node "${binaryPath}" %*` : `"${binaryPath}" %*`;
   const splash = generateWindowsSplash();
 
-  const envLoaderScript = [
-    'const fs = require("fs");',
-    'const path = require("path");',
-    'const dir = process.env.CLAUDE_CONFIG_DIR;',
-    'if (!dir) process.exit(0);',
-    'const file = path.join(dir, "settings.json");',
-    'try {',
-    '  if (fs.existsSync(file)) {',
-    '    const data = JSON.parse(fs.readFileSync(file, "utf8"));',
-    '    const env = data && typeof data === "object" ? data.env : null;',
-    '    if (env && typeof env === "object") {',
-    '      for (const [key, value] of Object.entries(env)) {',
-    '        if (!key) continue;',
-    '        const escaped = String(value).replace(/%/g, "%%").replace(/"/g, "");',
-    '        console.log("set \\"" + key + "=" + escaped + "\\"");',
-    '      }',
-    '    }',
-    '  }',
-    '} catch {}',
-  ].join('');
+  const envLoaderScriptPath = path.join(path.dirname(configDir), 'env-loader.js').replace(/\\/g, '/');
+  let envLoader: string[] = [];
+  if (runtime === 'node') {
+    const envLoaderScriptContent = [
+      'const fs = require("fs");',
+      'const path = require("path");',
+      'const dir = process.env.CLAUDE_CONFIG_DIR;',
+      'if (!dir) process.exit(0);',
+      'const file = path.join(dir, "settings.json");',
+      'try {',
+      '  if (fs.existsSync(file)) {',
+      '    const data = JSON.parse(fs.readFileSync(file, "utf8"));',
+      '    const env = data && typeof data === "object" ? data.env : null;',
+      '    if (env && typeof env === "object") {',
+      '      for (const [key, value] of Object.entries(env)) {',
+      '        if (!key) continue;',
+      '        const escaped = String(value).replace(/%/g, "%%").replace(/"/g, "");',
+      '        console.log("set \\"" + key + "=" + escaped + "\\"");',
+      '      }',
+      '    }',
+      '  }',
+      '} catch {}',
+    ].join('\n');
+    fs.writeFileSync(envLoaderScriptPath.replace(/\//g, path.sep), envLoaderScriptContent);
 
-  const envLoader = [
-    'where node >nul 2>&1 && (',
-    `  for /f "delims=" %%i in ('node -e "${envLoaderScript}" 2^>nul') do %%i`,
-    ')',
-  ];
+    envLoader = [
+      'where node >nul 2>&1 && (',
+      `  for /f "delims=" %%i in ('node "${envLoaderScriptPath}" 2^>nul') do %%i`,
+      ')',
+    ];
+  }
 
   const lines = [
     '@echo off',

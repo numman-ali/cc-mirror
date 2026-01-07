@@ -210,11 +210,14 @@ test('writeWindowsWrapper includes batch env loader', { skip: !isWindows }, () =
     writeWindowsWrapper(wrapperPath, configDir, binaryPath);
 
     const content = fs.readFileSync(wrapperPath, 'utf8');
+    const envLoaderPath = path.join(tempDir, 'env-loader.js');
 
-    assert.ok(content.includes('settings.json'), 'Should reference settings.json');
+    assert.ok(fs.existsSync(envLoaderPath), 'Should create env-loader.js file');
+    const envLoaderContent = fs.readFileSync(envLoaderPath, 'utf8');
+    assert.ok(envLoaderContent.includes('settings.json'), 'Env loader should reference settings.json');
     assert.ok(content.includes('where node'), 'Should check for node availability');
     assert.ok(content.includes('for /f'), 'Should use for /f to capture env vars');
-    assert.ok(content.includes('set "'), 'Should output set commands');
+    assert.ok(content.includes('env-loader.js'), 'Should reference env-loader.js');
   } finally {
     cleanup(tempDir);
   }
