@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { getPlatform, type Platform } from './platform.js';
+import { generateBashSplash, generateWindowsSplash } from './splash.js';
 
 export type WrapperRuntime = 'native' | 'node';
 
@@ -28,169 +30,20 @@ export const writeWrapper = (
     "    if (env && typeof env === 'object') {",
     '      for (const [key, value] of Object.entries(env)) {',
     '        if (!key) continue;',
-    '        process.stdout.write(`export ${key}=${escape(value)}\\n`);',
+    '        process.stdout.write(`export ${key}=${escape(value)}\n`);',
     '      }',
     '    }',
     '  }',
     '} catch {',
-    '  // ignore malformed settings',
     '}',
     'NODE',
     '  if [[ -s "$__cc_mirror_env_file" ]]; then',
-    '    # shellcheck disable=SC1090',
     '    source "$__cc_mirror_env_file"',
     '  fi',
     '  rm -f "$__cc_mirror_env_file" || true',
     'fi',
   ];
-  // ANSI color codes for colored ASCII art
-  const C = {
-    reset: '\x1b[0m',
-    // Zai: Gold/Amber gradient
-    zaiPrimary: '\x1b[38;5;220m', // Gold
-    zaiSecondary: '\x1b[38;5;214m', // Orange-gold
-    zaiAccent: '\x1b[38;5;208m', // Dark orange
-    zaiDim: '\x1b[38;5;172m', // Muted gold
-    // MiniMax: Coral/Red/Orange gradient (from brand image)
-    mmPrimary: '\x1b[38;5;203m', // Coral/salmon red
-    mmSecondary: '\x1b[38;5;209m', // Light coral/orange
-    mmAccent: '\x1b[38;5;208m', // Orange
-    mmDim: '\x1b[38;5;167m', // Muted coral/dark red
-    // OpenRouter: Cyan/Teal gradient
-    orPrimary: '\x1b[38;5;43m', // Teal
-    orSecondary: '\x1b[38;5;49m', // Bright teal
-    orAccent: '\x1b[38;5;37m', // Deep cyan
-    orDim: '\x1b[38;5;30m', // Muted teal
-    // CCRouter: Sky blue gradient
-    ccrPrimary: '\x1b[38;5;39m', // Sky blue
-    ccrSecondary: '\x1b[38;5;45m', // Bright cyan
-    ccrAccent: '\x1b[38;5;33m', // Deep blue
-    ccrDim: '\x1b[38;5;31m', // Muted blue
-    // Mirror: Silver/Chrome with electric blue
-    mirPrimary: '\x1b[38;5;252m', // Silver/light gray
-    mirSecondary: '\x1b[38;5;250m', // Platinum
-    mirAccent: '\x1b[38;5;45m', // Electric cyan
-    mirDim: '\x1b[38;5;243m', // Muted silver
-    // Default: White/Gray
-    defPrimary: '\x1b[38;5;255m', // White
-    defDim: '\x1b[38;5;245m', // Gray
-  };
-
-  const splash = [
-    'if [[ "${CC_MIRROR_SPLASH:-0}" != "0" ]] && [[ -t 1 ]]; then',
-    '  if [[ "$*" != *"--output-format"* ]]; then',
-    '    __cc_label="${CC_MIRROR_PROVIDER_LABEL:-cc-mirror}"',
-    '    __cc_style="${CC_MIRROR_SPLASH_STYLE:-default}"',
-    '    __cc_show_label="1"',
-    '    printf "\\n"',
-    '    case "$__cc_style" in',
-    '      zai)',
-    "        cat <<'CCMZAI'",
-    '',
-    `${C.zaiPrimary}    ███████╗       █████╗ ██╗${C.reset}`,
-    `${C.zaiPrimary}    ╚══███╔╝      ██╔══██╗██║${C.reset}`,
-    `${C.zaiSecondary}      ███╔╝       ███████║██║${C.reset}`,
-    `${C.zaiSecondary}     ███╔╝    ${C.zaiAccent}██╗${C.zaiSecondary} ██╔══██║██║${C.reset}`,
-    `${C.zaiAccent}    ███████╗  ╚═╝ ██║  ██║██║${C.reset}`,
-    `${C.zaiAccent}    ╚══════╝      ╚═╝  ╚═╝╚═╝${C.reset}`,
-    '',
-    `${C.zaiDim}    ━━━━━━━━━━${C.zaiPrimary}◆${C.zaiDim}━━━━━━━━━━${C.reset}`,
-    `${C.zaiSecondary}      GLM Coding Plan${C.reset}`,
-    '',
-    'CCMZAI',
-    '        __cc_show_label="0"',
-    '        ;;',
-    '      minimax)',
-    "        cat <<'CCMMIN'",
-    '',
-    `${C.mmPrimary}    ███╗   ███╗██╗███╗   ██╗██╗███╗   ███╗ █████╗ ██╗  ██╗${C.reset}`,
-    `${C.mmPrimary}    ████╗ ████║██║████╗  ██║██║████╗ ████║██╔══██╗╚██╗██╔╝${C.reset}`,
-    `${C.mmSecondary}    ██╔████╔██║██║██╔██╗ ██║██║██╔████╔██║███████║ ╚███╔╝${C.reset}`,
-    `${C.mmSecondary}    ██║╚██╔╝██║██║██║╚██╗██║██║██║╚██╔╝██║██╔══██║ ██╔██╗${C.reset}`,
-    `${C.mmAccent}    ██║ ╚═╝ ██║██║██║ ╚████║██║██║ ╚═╝ ██║██║  ██║██╔╝ ██╗${C.reset}`,
-    `${C.mmAccent}    ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝${C.reset}`,
-    '',
-    `${C.mmDim}    ━━━━━━━━━━━━━━━━━━${C.mmPrimary}◆${C.mmDim}━━━━━━━━━━━━━━━━━━${C.reset}`,
-    `${C.mmSecondary}           MiniMax-M2.1 ${C.mmDim}━${C.mmSecondary} AGI for All${C.reset}`,
-    '',
-    'CCMMIN',
-    '        __cc_show_label="0"',
-    '        ;;',
-    '      openrouter)',
-    "        cat <<'CCMORT'",
-    '',
-    `${C.orPrimary}     ██████╗ ██████╗ ███████╗███╗   ██╗${C.reset}`,
-    `${C.orPrimary}    ██╔═══██╗██╔══██╗██╔════╝████╗  ██║${C.reset}`,
-    `${C.orSecondary}    ██║   ██║██████╔╝█████╗  ██╔██╗ ██║${C.reset}`,
-    `${C.orSecondary}    ██║   ██║██╔═══╝ ██╔══╝  ██║╚██╗██║${C.reset}`,
-    `${C.orAccent}    ╚██████╔╝██║     ███████╗██║ ╚████║${C.reset}`,
-    `${C.orAccent}     ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═══╝${C.reset}`,
-    `${C.orPrimary}    ██████╗  ██████╗ ██╗   ██╗████████╗███████╗██████╗${C.reset}`,
-    `${C.orPrimary}    ██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔════╝██╔══██╗${C.reset}`,
-    `${C.orSecondary}    ██████╔╝██║   ██║██║   ██║   ██║   █████╗  ██████╔╝${C.reset}`,
-    `${C.orSecondary}    ██╔══██╗██║   ██║██║   ██║   ██║   ██╔══╝  ██╔══██╗${C.reset}`,
-    `${C.orAccent}    ██║  ██║╚██████╔╝╚██████╔╝   ██║   ███████╗██║  ██║${C.reset}`,
-    `${C.orAccent}    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝╚═╝  ╚═╝${C.reset}`,
-    '',
-    `${C.orDim}    ━━━━━━━━━━━━━${C.orPrimary}◆${C.orDim}━━━━━━━━━━━━━${C.reset}`,
-    `${C.orSecondary}      One API ${C.orDim}━${C.orSecondary} Any Model${C.reset}`,
-    '',
-    'CCMORT',
-    '        __cc_show_label="0"',
-    '        ;;',
-    '      ccrouter)',
-    "        cat <<'CCMCCR'",
-    '',
-    `${C.ccrPrimary}     ██████╗ ██████╗██████╗  ██████╗ ██╗   ██╗████████╗███████╗██████╗${C.reset}`,
-    `${C.ccrPrimary}    ██╔════╝██╔════╝██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔════╝██╔══██╗${C.reset}`,
-    `${C.ccrSecondary}    ██║     ██║     ██████╔╝██║   ██║██║   ██║   ██║   █████╗  ██████╔╝${C.reset}`,
-    `${C.ccrSecondary}    ██║     ██║     ██╔══██╗██║   ██║██║   ██║   ██║   ██╔══╝  ██╔══██╗${C.reset}`,
-    `${C.ccrAccent}    ╚██████╗╚██████╗██║  ██║╚██████╔╝╚██████╔╝   ██║   ███████╗██║  ██║${C.reset}`,
-    `${C.ccrAccent}     ╚═════╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝╚═╝  ╚═╝${C.reset}`,
-    '',
-    `${C.ccrDim}    ━━━━━━━━━━━━━━━━${C.ccrPrimary}◆${C.ccrDim}━━━━━━━━━━━━━━━━${C.reset}`,
-    `${C.ccrSecondary}      Claude Code Router ${C.ccrDim}━${C.ccrSecondary} Any Model${C.reset}`,
-    '',
-    'CCMCCR',
-    '        __cc_show_label="0"',
-    '        ;;',
-    '      mirror)',
-    "        cat <<'CCMMIR'",
-    '',
-    `${C.mirPrimary}    ███╗   ███╗██╗██████╗ ██████╗  ██████╗ ██████╗${C.reset}`,
-    `${C.mirPrimary}    ████╗ ████║██║██╔══██╗██╔══██╗██╔═══██╗██╔══██╗${C.reset}`,
-    `${C.mirSecondary}    ██╔████╔██║██║██████╔╝██████╔╝██║   ██║██████╔╝${C.reset}`,
-    `${C.mirSecondary}    ██║╚██╔╝██║██║██╔══██╗██╔══██╗██║   ██║██╔══██╗${C.reset}`,
-    `${C.mirAccent}    ██║ ╚═╝ ██║██║██║  ██║██║  ██║╚██████╔╝██║  ██║${C.reset}`,
-    `${C.mirAccent}    ╚═╝     ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝${C.reset}`,
-    '',
-    `${C.mirDim}    ━━━━━━━━━━━━${C.mirAccent}◇${C.mirDim}━━━━━━━━━━━━${C.reset}`,
-    `${C.mirSecondary}      Claude ${C.mirDim}━${C.mirSecondary} Pure Reflection${C.reset}`,
-    '',
-    'CCMMIR',
-    '        __cc_show_label="0"',
-    '        ;;',
-    '      *)',
-    "        cat <<'CCMGEN'",
-    '',
-    `${C.defPrimary}    ██████╗ ██████╗   ${C.defDim}━━  M I R R O R${C.reset}`,
-    `${C.defPrimary}   ██╔════╝██╔════╝${C.reset}`,
-    `${C.defPrimary}   ██║     ██║     ${C.defDim}Claude Code Variants${C.reset}`,
-    `${C.defPrimary}   ██║     ██║     ${C.defDim}Custom Providers${C.reset}`,
-    `${C.defPrimary}   ╚██████╗╚██████╗${C.reset}`,
-    `${C.defPrimary}    ╚═════╝ ╚═════╝${C.reset}`,
-    '',
-    'CCMGEN',
-    '        ;;',
-    '    esac',
-    '    if [[ "$__cc_show_label" == "1" ]]; then',
-    '      printf "        %s\\n\\n" "$__cc_label"',
-    '    else',
-    '      printf "\\n"',
-    '    fi',
-    '  fi',
-    'fi',
-  ];
+  const splash = generateBashSplash();
   const content = [
     '#!/usr/bin/env bash',
     'set -euo pipefail',
@@ -200,20 +53,15 @@ export const writeWrapper = (
     'if [[ "${CC_MIRROR_UNSET_AUTH_TOKEN:-0}" != "0" ]]; then',
     '  unset ANTHROPIC_AUTH_TOKEN',
     'fi',
-    '# Dynamic team name: purely directory-based, with optional TEAM modifier',
-    '# Check for CLAUDE_CODE_TEAM_MODE (not TEAM_NAME) to avoid Claude Code overwriting',
     'if [[ -n "${CLAUDE_CODE_TEAM_MODE:-}" ]]; then',
     '  __cc_git_root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)',
     '  __cc_folder_name=$(basename "$__cc_git_root")',
     '  if [[ -n "${TEAM:-}" ]]; then',
-    '    # Folder name + TEAM modifier',
     '    export CLAUDE_CODE_TEAM_NAME="${__cc_folder_name}-${TEAM}"',
     '  else',
-    '    # Just folder name (pure directory-based)',
     '    export CLAUDE_CODE_TEAM_NAME="${__cc_folder_name}"',
     '  fi',
     'elif [[ -n "${TEAM:-}" ]]; then',
-    '  # TEAM env var set without team mode in settings - use folder + TEAM',
     '  __cc_git_root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)',
     '  __cc_folder_name=$(basename "$__cc_git_root")',
     '  export CLAUDE_CODE_TEAM_NAME="${__cc_folder_name}-${TEAM}"',
@@ -223,4 +71,64 @@ export const writeWrapper = (
     '',
   ].join('\n');
   fs.writeFileSync(wrapperPath, content, { mode: 0o755 });
+};
+
+export const writeWindowsWrapper = (
+  wrapperPath: string,
+  configDir: string,
+  binaryPath: string,
+  runtime: WrapperRuntime = 'node'
+) => {
+  const tweakDir = path.join(path.dirname(configDir), 'tweakcc');
+  const execLine = runtime === 'node' ? `node "${binaryPath}" %*` : `"${binaryPath}" %*`;
+  const splash = generateWindowsSplash();
+
+  const lines = [
+    '@echo off',
+    'setlocal EnableDelayedExpansion',
+    '',
+    `set "CLAUDE_CONFIG_DIR=${configDir}"`,
+    `set "TWEAKCC_CONFIG_DIR=${tweakDir}"`,
+    '',
+    'if defined CC_MIRROR_UNSET_AUTH_TOKEN (',
+    '  if not "%CC_MIRROR_UNSET_AUTH_TOKEN%"=="0" (',
+    '    set "ANTHROPIC_AUTH_TOKEN="',
+    '  )',
+    ')',
+    '',
+    'if defined CLAUDE_CODE_TEAM_MODE (',
+    '  for /f "delims=" %%i in (\'git rev-parse --show-toplevel 2^>nul ^|^| cd\') do set "__cc_git_root=%%i"',
+    '  for %%i in ("!__cc_git_root!") do set "__cc_folder_name=%%~ni"',
+    '  if defined TEAM (',
+    '    set "CLAUDE_CODE_TEAM_NAME=!__cc_folder_name!-!TEAM!"',
+    '  ) else (',
+    '    set "CLAUDE_CODE_TEAM_NAME=!__cc_folder_name!"',
+    '  )',
+    ') else if defined TEAM (',
+    '  for /f "delims=" %%i in (\'git rev-parse --show-toplevel 2^>nul ^|^| cd\') do set "__cc_git_root=%%i"',
+    '  for %%i in ("!__cc_git_root!") do set "__cc_folder_name=%%~ni"',
+    '  set "CLAUDE_CODE_TEAM_NAME=!__cc_folder_name!-!TEAM!"',
+    ')',
+    '',
+    ...splash,
+    '',
+    execLine,
+  ];
+
+  const content = lines.join('\r\n');
+  fs.writeFileSync(wrapperPath, content);
+};
+
+export const writeWrapperForPlatform = (
+  wrapperPath: string,
+  configDir: string,
+  binaryPath: string,
+  runtime: WrapperRuntime = 'node',
+  platform: Platform = getPlatform()
+) => {
+  if (platform === 'win32') {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath, runtime);
+  } else {
+    writeWrapper(wrapperPath, configDir, binaryPath, runtime);
+  }
 };

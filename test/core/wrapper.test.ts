@@ -24,7 +24,9 @@ test('writeWrapper creates executable wrapper script', () => {
 
     const stats = fs.statSync(wrapperPath);
     // Check executable bit
-    assert.ok((stats.mode & 0o111) !== 0, 'Wrapper should be executable');
+    if (process.platform !== 'win32') {
+      assert.ok((stats.mode & 0o111) !== 0, 'Wrapper should be executable');
+    }
   } finally {
     cleanup(tempDir);
   }

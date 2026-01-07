@@ -9,6 +9,7 @@ import path from 'node:path';
 import { getProvider, type ProviderTemplate } from '../../providers/index.js';
 import { DEFAULT_BIN_DIR, DEFAULT_NPM_PACKAGE, DEFAULT_NPM_VERSION, DEFAULT_ROOT } from '../constants.js';
 import { expandTilde } from '../paths.js';
+import { getWrapperFilename } from '../platform.js';
 import type { CreateVariantParams, CreateVariantResult } from '../types.js';
 import type { BuildContext, BuildPaths, BuildPreferences, BuildState, BuildStep, ReportFn } from './types.js';
 
@@ -80,7 +81,7 @@ export class VariantBuilder {
     const variantDir = path.join(resolvedRoot, params.name);
     const configDir = path.join(variantDir, 'config');
     const tweakDir = path.join(variantDir, 'tweakcc');
-    const wrapperPath = path.join(resolvedBin, params.name);
+    const wrapperPath = path.join(resolvedBin, getWrapperFilename(params.name));
     const npmDir = path.join(variantDir, 'npm');
 
     const paths: BuildPaths = {
