@@ -177,7 +177,7 @@ test('writeWrapper includes colored ASCII art for all providers', () => {
   }
 });
 
-test('writeWrapper includes env loader', { skip: isWindows }, () => {
+test('writeWrapper includes bash env loader', { skip: isWindows }, () => {
   const tempDir = makeTempDir();
   const configDir = path.join(tempDir, 'config');
   const wrapperPath = path.join(tempDir, 'wrapper');
@@ -193,6 +193,28 @@ test('writeWrapper includes env loader', { skip: isWindows }, () => {
     assert.ok(content.includes('settings.json'), 'Should reference settings.json');
     assert.ok(content.includes('__cc_mirror_env_file'), 'Should use temp env file');
     assert.ok(content.includes('source "$__cc_mirror_env_file"'), 'Should source env file');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWindowsWrapper includes batch env loader', { skip: !isWindows }, () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper.cmd');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath);
+
+    const content = fs.readFileSync(wrapperPath, 'utf8');
+
+    assert.ok(content.includes('settings.json'), 'Should reference settings.json');
+    assert.ok(content.includes('where node'), 'Should check for node availability');
+    assert.ok(content.includes('for /f'), 'Should use for /f to capture env vars');
+    assert.ok(content.includes('set "'), 'Should output set commands');
   } finally {
     cleanup(tempDir);
   }
