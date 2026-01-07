@@ -146,6 +146,12 @@ export const writeWindowsWrapper = (
 
   const content = lines.join('\r\n');
   fs.writeFileSync(wrapperPath, content);
+
+  const bashWrapperPath = wrapperPath.replace(/\.cmd$/, '');
+  if (bashWrapperPath !== wrapperPath) {
+    const bashWrapper = ['#!/bin/bash', `exec cmd //c "$(cygpath -w "$0").cmd" "$@"`].join('\n');
+    fs.writeFileSync(bashWrapperPath, bashWrapper, { mode: 0o755 });
+  }
 };
 
 export const writeWrapperForPlatform = (
