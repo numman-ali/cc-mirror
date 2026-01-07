@@ -20,6 +20,12 @@ export interface ProviderTemplate {
   enablesTeamMode?: boolean;
   /** Skip prompt pack overlays (pure Claude experience) */
   noPromptPack?: boolean;
+  /** Default model mappings for opus/sonnet/haiku */
+  defaultModels?: {
+    opus?: string;
+    sonnet?: string;
+    haiku?: string;
+  };
 }
 
 export interface ModelOverrides {
@@ -116,6 +122,21 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     authMode: 'authToken',
     requiresModelMapping: false, // Models configured in ~/.claude-code-router/config.json
     credentialOptional: true, // No API key needed - CCRouter handles auth
+  },
+  'vercel-ai-gateway': {
+    key: 'vercel-ai-gateway',
+    label: 'Vercel AI Gateway',
+    description: 'Unified gateway for multiple AI providers via Vercel',
+    baseUrl: 'https://ai-gateway.vercel.sh',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'Vercel AI Gateway',
+      CC_MIRROR_SPLASH_STYLE: 'vercel-ai-gateway',
+    },
+    apiKeyLabel: 'Vercel AI Gateway API key',
+    authMode: 'authToken',
+    requiresModelMapping: true,
   },
   custom: {
     key: 'custom',

@@ -287,14 +287,14 @@ minimax                           # Run MiniMax variant
 ## CLI Options
 
 ```
---provider <name>        mirror | zai | minimax | openrouter | ccrouter | custom
+--provider <name>        mirror | zai | minimax | openrouter | ccrouter | vercel-ai-gateway | custom
 --name <name>            Variant name (becomes the CLI command)
 --api-key <key>          Provider API key
 --base-url <url>         Custom API endpoint
 --model-sonnet <name>    Map to sonnet model
 --model-opus <name>      Map to opus model
 --model-haiku <name>     Map to haiku model
---brand <preset>         Theme: auto | zai | minimax | openrouter | ccrouter | mirror
+--brand <preset>         Theme: auto | zai | minimax | openrouter | ccrouter | mirror | vercel-ai-gateway
 --no-team-mode           Disable team mode (not recommended)
 --no-tweak               Skip tweakcc theme
 --no-prompt-pack         Skip provider prompt pack

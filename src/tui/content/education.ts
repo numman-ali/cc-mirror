@@ -15,7 +15,7 @@ export const EDUCATION = {
       'and settings—completely independent from your main Claude Code.',
       '',
       'Think of it as having multiple Claude Code "accounts", each pointing',
-      'to a different AI backend: Z.ai, MiniMax, OpenRouter, or your own.',
+      'to a different AI backend: Z.ai, MiniMax, OpenRouter, Vercel AI Gateway, or your own.',
     ],
   },
 
@@ -68,8 +68,8 @@ export const EDUCATION = {
       '  Sonnet → Default for most coding tasks',
       '  Haiku  → Quick tasks, subagents, fast iteration',
       '',
-      'When using providers like OpenRouter or LiteLLM, you map',
-      'these aliases to actual model names (e.g., claude-3-opus).',
+      'When using providers like OpenRouter, Vercel AI Gateway, or LiteLLM, you map',
+      'these aliases to actual model names (e.g., anthropic/claude-opus-4.5).',
     ],
   },
 

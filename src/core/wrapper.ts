@@ -71,6 +71,11 @@ export const writeWrapper = (
     mirSecondary: '\x1b[38;5;250m', // Platinum
     mirAccent: '\x1b[38;5;45m', // Electric cyan
     mirDim: '\x1b[38;5;243m', // Muted silver
+    // Vercel: Black/White with cyan accents
+    verPrimary: '\x1b[38;5;255m', // White
+    verSecondary: '\x1b[38;5;252m', // Light gray
+    verAccent: '\x1b[38;5;51m', // Cyan (#79ffe1)
+    verDim: '\x1b[38;5;245m', // Muted gray
     // Default: White/Gray
     defPrimary: '\x1b[38;5;255m', // White
     defDim: '\x1b[38;5;245m', // Gray
@@ -168,6 +173,22 @@ export const writeWrapper = (
     `${C.mirSecondary}      Claude ${C.mirDim}━${C.mirSecondary} Pure Reflection${C.reset}`,
     '',
     'CCMMIR',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      vercel-ai-gateway)',
+    "        cat <<'CCMVER'",
+    '',
+    `${C.verPrimary}    ██╗   ██╗███████╗██████╗  ██████╗███████╗██╗${C.reset}`,
+    `${C.verPrimary}    ██║   ██║██╔════╝██╔══██╗██╔════╝██╔════╝██║${C.reset}`,
+    `${C.verSecondary}    ██║   ██║█████╗  ██████╔╝██║     █████╗  ██║${C.reset}`,
+    `${C.verSecondary}    ╚██╗ ██╔╝██╔══╝  ██╔══██╗██║     ██╔══╝  ██║${C.reset}`,
+    `${C.verAccent}     ╚████╔╝ ███████╗██║  ██║╚██████╗███████╗███████╗${C.reset}`,
+    `${C.verAccent}      ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝${C.reset}`,
+    '',
+    `${C.verDim}    ━━━━━━━━━━━━${C.verAccent}▲${C.verDim}━━━━━━━━━━━━${C.reset}`,
+    `${C.verSecondary}      AI Gateway ${C.verDim}━${C.verSecondary} Any Model${C.reset}`,
+    '',
+    'CCMVER',
     '        __cc_show_label="0"',
     '        ;;',
     '      *)',

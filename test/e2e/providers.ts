@@ -35,4 +35,12 @@ export const PROVIDERS = [
     expectedSplashStyle: 'ccrouter',
     colorCode: '\\x1b[38;5;39m', // Sky blue
   },
+  {
+    key: 'vercel-ai-gateway',
+    name: 'Vercel AI Gateway',
+    apiKey: 'test-vercel-key',
+    expectedThemeId: 'vercel-ai-gateway',
+    expectedSplashStyle: 'vercel-ai-gateway',
+    colorCode: '\\x1b[38;5;255m', // White
+  },
 ];

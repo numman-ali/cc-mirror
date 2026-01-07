@@ -22,7 +22,7 @@ export function getModelOverridesFromArgs(opts: ParsedArgs): ModelOverrides {
 }
 
 /**
- * Ensure model mapping for providers that require it (e.g., OpenRouter, LiteLLM)
+ * Ensure model mapping for providers that require it (e.g., OpenRouter, Vercel AI Gateway)
  * Prompts for missing models if not in --yes mode
  */
 export async function ensureModelMapping(
@@ -38,7 +38,13 @@ export async function ensureModelMapping(
     haiku: (overrides.haiku ?? '').trim().length === 0,
   };
   if (opts.yes && (missing.sonnet || missing.opus || missing.haiku)) {
-    throw new Error('OpenRouter/Local LLMs require --model-sonnet/--model-opus/--model-haiku');
+    let errorMsg = 'This provider requires model mapping. Use --model-sonnet, --model-opus, --model-haiku.';
+    if (providerKey === 'vercel-ai-gateway') {
+      errorMsg +=
+        '\nFormat: provider/model (e.g., openai/gpt-5.1-codex-max, anthropic/claude-sonnet-4.5)' +
+        '\nBrowse models: vercel.com/ai-gateway/models';
+    }
+    throw new Error(errorMsg);
   }
   if (!opts.yes) {
     if (missing.sonnet) overrides.sonnet = await requirePrompt('Default Sonnet model', overrides.sonnet);

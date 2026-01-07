@@ -21,6 +21,7 @@ export interface ProviderEducation {
     apiKey: string;
     docs?: string;
     github?: string;
+    models?: string;
   };
   setupNote?: string; // Brief explanation of what this provider needs
 }
@@ -134,6 +135,33 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     },
     setupNote: 'Uses normal Claude authentication. Sign in via OAuth or set ANTHROPIC_API_KEY.',
   },
+
+  'vercel-ai-gateway': {
+    headline: 'Vercel AI Gateway — Unified AI Access',
+    tagline: 'One gateway, many models',
+    features: [
+      'Access multiple AI providers through Vercel',
+      'Unified billing and usage tracking',
+      'Built-in caching and rate limiting',
+      'Minimal dark theme',
+    ],
+    bestFor: 'Teams already using Vercel who want unified AI access',
+    models: {
+      opus: 'openai/gpt-5.1-codex-max',
+      sonnet: 'google/gemini-3-pro-preview',
+      haiku: 'minimax/minimax-m2.1',
+    },
+    requiresMapping: true,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://vercel.com/ai-gateway',
+      apiKey: 'https://vercel.com/account/ai-gateway',
+      docs: 'https://vercel.com/docs/ai-gateway',
+      models: 'https://vercel.com/ai-gateway/models',
+    },
+    setupNote:
+      'Model format: provider/model (e.g., openai/gpt-5.1-codex-max). Browse models at vercel.com/ai-gateway/models',
+  },
 };
 
 /**
@@ -148,10 +176,10 @@ export const getProviderEducation = (providerKey: string): ProviderEducation | n
  */
 export const PROVIDER_COMPARISON = {
   fullySupported: ['mirror', 'zai', 'minimax'],
-  requiresMapping: ['openrouter'],
+  requiresMapping: ['openrouter', 'vercel-ai-gateway'],
   hasPromptPack: ['zai', 'minimax'],
   localFirst: ['ccrouter'],
   pureClaudeCode: ['mirror'],
-  teamModeDefault: ['mirror', 'zai', 'minimax', 'openrouter', 'ccrouter'], // All providers now have team mode by default
+  teamModeDefault: ['mirror', 'zai', 'minimax', 'openrouter', 'ccrouter', 'vercel-ai-gateway'], // All providers now have team mode by default
   recommended: ['mirror'],
 };

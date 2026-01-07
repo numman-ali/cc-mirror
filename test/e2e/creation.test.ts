@@ -19,7 +19,7 @@ test('E2E: Create variants for all providers', async (t) => {
     }
   });
 
-  await t.test('creates all 4 provider variants with correct configuration', () => {
+  await t.test('creates all 5 provider variants with correct configuration', () => {
     withFakeNpm(() => {
       for (const provider of PROVIDERS) {
         const rootDir = makeTempDir();

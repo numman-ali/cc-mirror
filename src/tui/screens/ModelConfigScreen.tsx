@@ -67,6 +67,11 @@ function getPlaceholder(providerKey: string | undefined, model: 'opus' | 'sonnet
       sonnet: 'deepseek,deepseek-chat',
       haiku: 'ollama,qwen2.5-coder:latest',
     },
+    'vercel-ai-gateway': {
+      opus: 'openai/gpt-5.1-codex-max',
+      sonnet: 'google/gemini-3-pro-preview',
+      haiku: 'minimax/minimax-m2.1',
+    },
   };
 
   const providerPlaceholders = placeholders[providerKey || ''] || placeholders.ccrouter;

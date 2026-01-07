@@ -4,6 +4,7 @@ import { buildMinimaxTweakccConfig } from './minimax.js';
 import { buildOpenRouterTweakccConfig } from './openrouter.js';
 import { buildCCRouterTweakccConfig } from './ccrouter.js';
 import { buildMirrorTweakccConfig } from './mirror.js';
+import { buildVercelTweakccConfig } from './vercel.js';
 
 export interface BrandPreset {
   key: string;
@@ -42,6 +43,12 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
     label: 'Mirror Claude',
     description: 'Reflective silver/chrome theme for pure Claude Code experience.',
     buildTweakccConfig: buildMirrorTweakccConfig,
+  },
+  'vercel-ai-gateway': {
+    key: 'vercel-ai-gateway',
+    label: 'Vercel AI Gateway',
+    description: 'Minimal dark theme with Vercel AI Gateway brand colors (black, white, cyan).',
+    buildTweakccConfig: buildVercelTweakccConfig,
   },
 };
 
