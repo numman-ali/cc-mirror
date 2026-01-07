@@ -4,33 +4,40 @@ export const printHelp = () => {
   console.log(`
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║                           CC-MIRROR                                      ║
-║              Create Claude Code Variants with Custom Providers           ║
+║                     Claude Code, Unshackled                              ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 
-WHAT IS CC-MIRROR?
-  CC-MIRROR creates isolated Claude Code installations that connect to
-  different AI providers. Each variant is independent with its own
-  config, theme, and settings.
+  Pre-configured Claude Code variants with multi-agent orchestration,
+  custom providers, and battle-tested enhancements.
+
+  One command. Instant power-up.
+
+THE UNLOCK
+  Claude Code has a hidden multi-agent capability. CC-MIRROR enables it.
+  Team mode unlocks: TaskCreate, TaskGet, TaskUpdate, TaskList tools
+  plus a battle-tested orchestrator skill for coordinating agents.
 
 QUICK START
-  cc-mirror quick              # Fast setup: provider + key → done
-  cc-mirror create             # Full wizard with all options
+  npx cc-mirror quick --provider mirror    # Fastest path to multi-agent
+  npx cc-mirror quick --provider zai       # Z.ai with GLM models
+  npx cc-mirror                            # Interactive TUI
 
 COMMANDS
-  create [options]             Create a new variant
-  quick [options]              Fast: provider + API key only
+  quick [options]              Fast setup: provider → ready in 30s
+  create [options]             Full configuration wizard
   list                         List all variants
   update [name]                Update to latest Claude Code
   remove <name>                Remove a variant
   doctor                       Health check all variants
   tweak <name>                 Launch tweakcc customization
+  tasks [operation]            Manage team tasks (list, show, create, update, delete, clean, graph)
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
-  --provider <name>            Provider: zai | minimax | openrouter | nanogpt | ccrouter
+  --provider <name>            Provider: mirror | zai | minimax | openrouter | nanogpt | ccrouter
   --api-key <key>              Provider API key
-  --brand <preset>             Theme: auto | none | zai | minimax
-  --quick                      Fast path mode
+  --brand <preset>             Theme: auto | none | mirror | zai | minimax
+  --no-team-mode               Disable team mode (not recommended)
   --tui / --no-tui             Force TUI on/off
 
 OPTIONS (advanced)
@@ -42,14 +49,20 @@ OPTIONS (advanced)
   --bin-dir <path>             Wrapper install dir (default: ~/.local/bin)
   --no-tweak                   Skip tweakcc theming
   --no-prompt-pack             Skip provider prompt pack
-  --prompt-pack-mode <mode>    minimal | maximal
-  --shell-env                  Write env vars to shell profile (Z.ai)
+  --shell-env                  Write env vars to shell profile
+
+PROVIDERS
+  mirror        Pure Claude with team mode (recommended)
+  zai           GLM-4.7 via Z.ai Coding Plan
+  minimax       MiniMax-M2.1 via MiniMax Cloud
+  openrouter    100+ models via OpenRouter
+  ccrouter      Local LLMs via Claude Code Router
 
 EXAMPLES
-  cc-mirror quick --provider zai
-  cc-mirror create --provider minimax --brand minimax
-  cc-mirror update zai
-  cc-mirror doctor
+  npx cc-mirror quick --provider mirror --name mclaude
+  npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
+  npx cc-mirror tasks graph
+  npx cc-mirror doctor
 
 LEARN MORE
   https://github.com/numman-ali/cc-mirror

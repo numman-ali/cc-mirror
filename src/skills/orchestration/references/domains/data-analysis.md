@@ -326,10 +326,13 @@ TaskUpdate(taskId="4", addBlockedBy=["1"])
 TaskUpdate(taskId="5", addBlockedBy=["2", "3", "4"])
 TaskUpdate(taskId="6", addBlockedBy=["5"])
 
-# Spawn parallel analysis agents
-Task(subagent_type="general-purpose", prompt="TaskId 2: Explore distributions...")
-Task(subagent_type="general-purpose", prompt="TaskId 3: Analyze missing data...")
-Task(subagent_type="general-purpose", prompt="TaskId 4: Check data quality...")
+# Spawn parallel analysis agents (haiku for data exploration)
+Task(subagent_type="Explore", prompt="TaskId 2: Explore distributions...",
+     model="haiku", run_in_background=True)
+Task(subagent_type="Explore", prompt="TaskId 3: Analyze missing data...",
+     model="haiku", run_in_background=True)
+Task(subagent_type="Explore", prompt="TaskId 4: Check data quality...",
+     model="haiku", run_in_background=True)
 ```
 
 ## Best Practices

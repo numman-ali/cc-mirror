@@ -217,6 +217,98 @@ export const removeOrchestratorSkill = (configDir: string): OrchestratorSkillRes
   }
 };
 
+// ============================================================================
+// Task Manager Skill (bundled with cc-mirror, for team mode)
+// ============================================================================
+
+const TASK_MANAGER_SKILL_NAME = 'task-manager';
+
+/**
+ * Find the bundled task-manager skill directory
+ */
+const findBundledTaskManagerSkillDir = (): string | null => {
+  const thisFile = fileURLToPath(import.meta.url);
+  const thisDir = path.dirname(thisFile);
+
+  // Try development path: src/skills/task-manager
+  const devPath = path.join(thisDir, '..', 'skills', TASK_MANAGER_SKILL_NAME);
+  if (fs.existsSync(devPath)) return devPath;
+
+  // Try production path: dist/skills/task-manager
+  const distPath = path.join(thisDir, 'skills', TASK_MANAGER_SKILL_NAME);
+  if (fs.existsSync(distPath)) return distPath;
+
+  // Try relative to dist/cc-mirror.mjs
+  const distPath2 = path.join(thisDir, '..', 'skills', TASK_MANAGER_SKILL_NAME);
+  if (fs.existsSync(distPath2)) return distPath2;
+
+  return null;
+};
+
+/**
+ * Install the task-manager skill to a variant's config directory
+ */
+export const installTaskManagerSkill = (configDir: string): OrchestratorSkillResult => {
+  const sourceDir = findBundledTaskManagerSkillDir();
+  if (!sourceDir) {
+    return { status: 'failed', message: 'bundled task-manager skill not found' };
+  }
+
+  const skillsDir = path.join(configDir, 'skills');
+  const targetDir = path.join(skillsDir, TASK_MANAGER_SKILL_NAME);
+  const markerPath = path.join(targetDir, MANAGED_MARKER);
+
+  try {
+    ensureDir(skillsDir);
+
+    // If exists and not managed by us, skip
+    if (fs.existsSync(targetDir) && !fs.existsSync(markerPath)) {
+      return { status: 'skipped', message: 'existing skill is user-managed', path: targetDir };
+    }
+
+    // Remove existing and copy fresh
+    if (fs.existsSync(targetDir)) {
+      fs.rmSync(targetDir, { recursive: true, force: true });
+    }
+
+    copyDir(sourceDir, targetDir);
+    fs.writeFileSync(
+      markerPath,
+      JSON.stringify({ managedBy: 'cc-mirror', updatedAt: new Date().toISOString() }, null, 2)
+    );
+
+    return { status: 'installed', path: targetDir };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { status: 'failed', message };
+  }
+};
+
+/**
+ * Remove the task-manager skill from a variant's config directory
+ */
+export const removeTaskManagerSkill = (configDir: string): OrchestratorSkillResult => {
+  const skillsDir = path.join(configDir, 'skills');
+  const targetDir = path.join(skillsDir, TASK_MANAGER_SKILL_NAME);
+  const markerPath = path.join(targetDir, MANAGED_MARKER);
+
+  if (!fs.existsSync(targetDir)) {
+    return { status: 'skipped', message: 'skill not installed' };
+  }
+
+  if (!fs.existsSync(markerPath)) {
+    return { status: 'skipped', message: 'skill is user-managed, not removing' };
+  }
+
+  try {
+    fs.rmSync(targetDir, { recursive: true, force: true });
+    return { status: 'removed', path: targetDir };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { status: 'failed', message };
+  }
+};
+
 // Async versions for TUI progress updates
 
 const spawnAsync = (cmd: string, args: string[]): Promise<{ ok: boolean; message?: string }> => {

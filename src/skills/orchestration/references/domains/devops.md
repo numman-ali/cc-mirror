@@ -320,9 +320,11 @@ TaskUpdate(taskId="4", addBlockedBy=["2"])  # Can parallel with network
 TaskUpdate(taskId="5", addBlockedBy=["3", "4"])
 TaskUpdate(taskId="6", addBlockedBy=["5"])
 
-# Parallel infrastructure implementation
-Task(subagent_type="general-purpose", prompt="TaskId 3: Implement network changes...")
-Task(subagent_type="general-purpose", prompt="TaskId 4: Implement compute changes...")
+# Parallel infrastructure implementation (sonnet for well-structured work)
+Task(subagent_type="general-purpose", prompt="TaskId 3: Implement network changes...",
+     model="sonnet", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="TaskId 4: Implement compute changes...",
+     model="sonnet", run_in_background=True)
 ```
 
 ## Safety Principles

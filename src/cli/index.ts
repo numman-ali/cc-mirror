@@ -12,6 +12,7 @@ import {
   runTweakCommand,
   runUpdateCommand,
   runCreateCommand,
+  runTasksCommand,
 } from './commands/index.js';
 
 const main = async () => {
@@ -28,8 +29,10 @@ const main = async () => {
   const quickMode = cmd === 'quick' || Boolean(opts.quick || opts.simple);
   if (cmd === 'quick') cmd = 'create';
 
-  // Help command
-  if (cmd === 'help' || cmd === '--help' || opts.help) {
+  // Help command (only for main help, not subcommand help)
+  // Subcommands like 'tasks' handle their own --help
+  const commandsWithOwnHelp = ['tasks'];
+  if (cmd === 'help' || cmd === '--help' || (opts.help && !commandsWithOwnHelp.includes(cmd))) {
     printHelp();
     return;
   }
@@ -70,6 +73,10 @@ const main = async () => {
 
     case 'create':
       await runCreateCommand({ opts, quickMode });
+      break;
+
+    case 'tasks':
+      await runTasksCommand({ opts });
       break;
 
     default:

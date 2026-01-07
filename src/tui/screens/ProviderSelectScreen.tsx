@@ -63,16 +63,17 @@ export const ProviderSelectScreen: React.FC<ProviderSelectScreenProps> = ({ prov
   return (
     <ScreenLayout
       title="Select Provider"
-      subtitle="Choose an API gateway to power your Claude Code variant"
+      subtitle="All providers include team mode + orchestrator skill"
       hints={[keyHints.continue, showDetails ? '? Hide details' : '? Show details']}
     >
       {/* Help text */}
       <Box marginBottom={1} flexDirection="column">
         <Text color={colors.textMuted}>
-          {icons.star} <Text color={colors.gold}>Zai Cloud</Text> and <Text color={colors.gold}>MiniMax Cloud</Text> are
-          fully supported
+          {icons.star} <Text color={colors.gold}>Mirror Claude</Text> is the fastest path to multi-agent
         </Text>
-        <Text color={colors.textMuted}>{icons.bullet} OpenRouter/Local LLMs require model mapping</Text>
+        <Text color={colors.textMuted}>
+          {icons.bullet} Alternative providers for different models (GLM, MiniMax, etc.)
+        </Text>
       </Box>
 
       <Box flexDirection="column" marginY={1}>

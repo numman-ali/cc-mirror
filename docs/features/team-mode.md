@@ -106,6 +106,32 @@ Tasks are stored per-variant in isolated directories:
 
 Each cc-mirror variant has completely isolated task storage via `CLAUDE_CONFIG_DIR`.
 
+### Dynamic Team Names (v1.2.0+)
+
+Team names are **automatically scoped by project folder** at runtime. This ensures tasks from different projects don't pollute each other:
+
+| Command           | Team Name                     |
+| ----------------- | ----------------------------- |
+| `mc`              | `mc-<project-folder>`         |
+| `TEAM=A mc`       | `mc-<project-folder>-A`       |
+| `TEAM=backend mc` | `mc-<project-folder>-backend` |
+
+**Example:** Running `mc` in `/Users/you/projects/my-api` creates team name `mc-my-api`.
+
+### Multiple Teams in Same Project
+
+Use the `TEAM` env var to run separate teams in the same folder:
+
+```bash
+# Terminal 1 - API team
+TEAM=api mc
+
+# Terminal 2 - Frontend team
+TEAM=frontend mc
+```
+
+Each team has its own isolated task storage.
+
 ---
 
 ## 🎯 Orchestration Skill
@@ -345,12 +371,15 @@ Task #3: "Add authentication" (blockedBy: ["2"])
 
 Configure agent identity for multi-agent setups:
 
-| Variable                 | Purpose                          | Example                   |
-| ------------------------ | -------------------------------- | ------------------------- |
-| `CLAUDE_CODE_TEAM_NAME`  | Team namespace for task storage  | `"my-project-team"`       |
-| `CLAUDE_CODE_AGENT_ID`   | Unique identifier for this agent | `"worker-001"`            |
-| `CLAUDE_CODE_AGENT_TYPE` | Agent role/type                  | `"team-lead"`, `"worker"` |
-| `CLAUDE_CODE_AGENT_NAME` | Human-readable agent name        | `"Code Reviewer"`         |
+| Variable                 | Purpose                                               | Example                   |
+| ------------------------ | ----------------------------------------------------- | ------------------------- |
+| `TEAM`                   | **Short alias** - appends to auto-generated team name | `"api"`, `"frontend"`     |
+| `CLAUDE_CODE_TEAM_NAME`  | Base team name (auto-appends project folder)          | `"my-variant"`            |
+| `CLAUDE_CODE_AGENT_ID`   | Unique identifier for this agent                      | `"worker-001"`            |
+| `CLAUDE_CODE_AGENT_TYPE` | Agent role/type                                       | `"team-lead"`, `"worker"` |
+| `CLAUDE_CODE_AGENT_NAME` | Human-readable agent name                             | `"Code Reviewer"`         |
+
+> **Note:** As of v1.2.0, team names are automatically scoped by project folder. The `TEAM` env var is the easiest way to run multiple teams in the same project.
 
 ### Example: Team Lead Configuration
 
@@ -407,6 +436,110 @@ echo "All agents complete"
 ```bash
 ./launch-team.sh "Build a REST API for todo management"
 ```
+
+---
+
+## 🛠️ CLI Task Management
+
+cc-mirror provides a CLI for managing team tasks directly from the command line.
+
+### Command Structure
+
+```bash
+npx cc-mirror tasks [operation] [id] [options]
+```
+
+### Operations
+
+| Operation | Command                            | Description                              |
+| --------- | ---------------------------------- | ---------------------------------------- |
+| List      | `npx cc-mirror tasks`              | List open tasks (default)                |
+| Show      | `npx cc-mirror tasks show <id>`    | Show detailed task info                  |
+| Create    | `npx cc-mirror tasks create`       | Create a new task                        |
+| Update    | `npx cc-mirror tasks update <id>`  | Update an existing task                  |
+| Delete    | `npx cc-mirror tasks delete <id>`  | Permanently delete a task                |
+| Archive   | `npx cc-mirror tasks archive <id>` | Move task to archive (preserves history) |
+| Clean     | `npx cc-mirror tasks clean`        | Bulk cleanup of tasks                    |
+| Graph     | `npx cc-mirror tasks graph`        | Visualize task dependencies              |
+
+### Common Options
+
+| Flag               | Description                              |
+| ------------------ | ---------------------------------------- |
+| `--variant <name>` | Target variant (auto-detects if omitted) |
+| `--all-variants`   | Show tasks across all variants           |
+| `--team <name>`    | Target team name                         |
+| `--all`            | Show all teams in variant(s)             |
+| `--json`           | Output as JSON for scripting             |
+
+### Examples
+
+```bash
+# List open tasks for current project
+npx cc-mirror tasks
+
+# List all tasks (including resolved)
+npx cc-mirror tasks --status all
+
+# Show task details
+npx cc-mirror tasks show 18
+
+# Create a new task
+npx cc-mirror tasks create --subject "Implement auth" --description "Add JWT tokens"
+
+# Mark a task as resolved with comment
+npx cc-mirror tasks update 5 --status resolved --add-comment "Done"
+
+# Delete a task permanently
+npx cc-mirror tasks delete 42 --force
+
+# Archive a task (preserves history in archive/ folder)
+npx cc-mirror tasks archive 5
+
+# Clean up resolved tasks (dry run)
+npx cc-mirror tasks clean --resolved --dry-run
+
+# Clean tasks older than 30 days
+npx cc-mirror tasks clean --older-than 30 --force
+
+# View tasks across all teams in a variant
+npx cc-mirror tasks --variant mc --all
+
+# JSON output for scripting
+npx cc-mirror tasks --json | jq '.tasks[] | select(.status == "open")'
+
+# View task dependency graph
+npx cc-mirror tasks graph --variant mc --team my-project
+```
+
+### Dependency Graph Output
+
+The `graph` command shows task dependencies visually:
+
+```
+TASK DEPENDENCY GRAPH (mc / my-project)
+════════════════════════════════════════════════════════════
+
+Legend: [✓] resolved  [○] open  [●] blocked
+
+[✓] #1: Set up database schema
+  └─ [○] #3: Implement user model
+    └─ [●] #5: Add authentication
+      └─ [●] #8: Implement protected routes
+
+[○] #2: Configure test framework
+
+Total: 8 | Open: 4 | Ready: 2 | Blocked: 2
+```
+
+### Smart Auto-Detection
+
+The CLI automatically detects:
+
+- **Team name**: Based on current git repository folder name (matches wrapper logic)
+- **Variant**: First variant with tasks, or specify with `--variant`
+
+This means running `npx cc-mirror tasks` in `/Users/you/projects/my-api` will automatically target the `my-api` team.
 
 ---
 

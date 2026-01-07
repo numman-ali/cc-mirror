@@ -30,7 +30,8 @@ test('Quick setup flow completes successfully', async () => {
   await send(app.stdin, KEYS.enter);
   await tick();
 
-  // Select provider
+  // Select provider - navigate down from mirror to zai
+  await send(app.stdin, KEYS.down);
   await send(app.stdin, KEYS.enter);
   await tick();
 

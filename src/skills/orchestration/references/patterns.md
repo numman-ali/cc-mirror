@@ -66,7 +66,7 @@ TaskUpdate(taskId="3", addBlockedBy=["2"])
 
 # 3. Find unblocked tasks and spawn agents
 TaskList()  # Find tasks with empty blockedBy
-Task(subagent_type="general-purpose", prompt="TaskId 1: Setup database...", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="TaskId 1: Setup database...", model="sonnet", run_in_background=True)
 
 # 4. Agents mark complete, repeat
 TaskUpdate(taskId="1", status="resolved")
@@ -91,10 +91,10 @@ Orchestrator
 **Implementation:**
 
 ```python
-# Single message with multiple background agents
-Task(subagent_type="Explore", prompt="Analyze auth module...", run_in_background=True)
-Task(subagent_type="Explore", prompt="Analyze database layer...", run_in_background=True)
-Task(subagent_type="Explore", prompt="Analyze API routes...", run_in_background=True)
+# Single message with multiple background agents (haiku for fast exploration)
+Task(subagent_type="Explore", prompt="Analyze auth module...", model="haiku", run_in_background=True)
+Task(subagent_type="Explore", prompt="Analyze database layer...", model="haiku", run_in_background=True)
+Task(subagent_type="Explore", prompt="Analyze API routes...", model="haiku", run_in_background=True)
 ```
 
 **Critical:** All Task calls MUST be in ONE message AND use `run_in_background=True`.
@@ -114,16 +114,16 @@ Agent A → output → Agent B → output → Agent C → final result
 **Implementation:**
 
 ```python
-# Step 1: Research (background, wait for notification)
-Task(subagent_type="Explore", prompt="Find all API endpoints...", run_in_background=True)
+# Step 1: Research (haiku - fast exploration)
+Task(subagent_type="Explore", prompt="Find all API endpoints...", model="haiku", run_in_background=True)
 # → Notification arrives with result1
 
-# Step 2: Plan (background, uses result1)
-Task(subagent_type="Plan", prompt=f"Given endpoints: {result1}, design...", run_in_background=True)
+# Step 2: Plan (opus - needs critical thinking for design)
+Task(subagent_type="Plan", prompt=f"Given endpoints: {result1}, design...", model="opus", run_in_background=True)
 # → Notification arrives with result2
 
-# Step 3: Implement (background, uses result2)
-Task(subagent_type="general-purpose", prompt=f"Implement this plan: {result2}", run_in_background=True)
+# Step 3: Implement (sonnet - well-structured from plan)
+Task(subagent_type="general-purpose", prompt=f"Implement this plan: {result2}", model="sonnet", run_in_background=True)
 ```
 
 ---
@@ -143,10 +143,10 @@ Input ──►├──► Agent B ──┼──► Aggregator → Final Resu
 **Implementation:**
 
 ```python
-# MAP: Launch parallel agents (single message)
-Task(subagent_type="general-purpose", prompt="Analyze file1.ts for security issues", run_in_background=True)
-Task(subagent_type="general-purpose", prompt="Analyze file2.ts for security issues", run_in_background=True)
-Task(subagent_type="general-purpose", prompt="Analyze file3.ts for security issues", run_in_background=True)
+# MAP: Launch parallel agents (opus for security - needs critical thinking)
+Task(subagent_type="general-purpose", prompt="Analyze file1.ts for security issues", model="opus", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="Analyze file2.ts for security issues", model="opus", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="Analyze file3.ts for security issues", model="opus", run_in_background=True)
 
 # REDUCE: Collect and synthesize
 results = [TaskOutput(task_id=id) for id in task_ids]
@@ -170,10 +170,10 @@ Problem ─├──► Approach B ──┼──► Evaluate → Best Solution
 **Implementation:**
 
 ```python
-# Launch competing approaches (single message, all background)
-Task(subagent_type="general-purpose", prompt="Implement using recursive approach...", run_in_background=True)
-Task(subagent_type="general-purpose", prompt="Implement using iterative approach...", run_in_background=True)
-Task(subagent_type="general-purpose", prompt="Implement using memoization...", run_in_background=True)
+# Launch competing approaches (sonnet for implementation)
+Task(subagent_type="general-purpose", prompt="Implement using recursive approach...", model="sonnet", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="Implement using iterative approach...", model="sonnet", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="Implement using memoization...", model="sonnet", run_in_background=True)
 
 # Notifications arrive → Evaluate and select best
 ```
@@ -189,8 +189,8 @@ Long-running agents while continuing foreground work.
 **Implementation:**
 
 ```python
-# Launch background work
-Task(subagent_type="general-purpose", prompt="Run full test suite...", run_in_background=True)
+# Launch background work (sonnet for test execution)
+Task(subagent_type="general-purpose", prompt="Run full test suite...", model="sonnet", run_in_background=True)
 
 # Continue foreground work
 # ... do other tasks ...
@@ -271,13 +271,13 @@ results = [TaskOutput(id) for id in task_ids]
 ### Speculative + Pipeline
 
 ```python
-# Try multiple approaches (background)
-Task(subagent_type="general-purpose", prompt="Approach A...", run_in_background=True)
-Task(subagent_type="general-purpose", prompt="Approach B...", run_in_background=True)
+# Try multiple approaches (sonnet for implementation)
+Task(subagent_type="general-purpose", prompt="Approach A...", model="sonnet", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="Approach B...", model="sonnet", run_in_background=True)
 
 # Notifications arrive → Evaluate and continue with winner
 winner = evaluate(approach_a, approach_b)
-Task(subagent_type="general-purpose", prompt=f"Refine and complete: {winner}", run_in_background=True)
+Task(subagent_type="general-purpose", prompt=f"Refine and complete: {winner}", model="sonnet", run_in_background=True)
 ```
 
 ---
@@ -307,7 +307,7 @@ if result.failed or result.incomplete:
         "content": f"Attempt 1 failed: {result.error}. Retrying with adjusted approach."
     })
 
-    # Retry with more context (still background)
+    # Retry with more context (still background, same model as original)
     Task(subagent_type="general-purpose",
          prompt=f"""Previous attempt failed: {result.error}
 
@@ -315,6 +315,7 @@ if result.failed or result.incomplete:
          - [specific guidance based on failure]
 
          Original task: [task description]""",
+         model="sonnet",
          run_in_background=True)
 ```
 
@@ -375,9 +376,9 @@ for result in [result1, result2, result3]:
 "Found these relevant files: {all_files}"
 ```
 
-**Complex synthesis (spawn synthesis agent):**
+**Complex synthesis (spawn synthesis agent - opus for judgment):**
 
-```python
+```
 Task(subagent_type="general-purpose",
      prompt=f"""Synthesize these parallel review findings into a unified report:
 
@@ -398,6 +399,7 @@ Create a single PR review with:
 - Positive notes
 
 Prioritize by severity. Remove duplicates. Do not mention that multiple reviews were conducted.""",
+     model="opus",
      run_in_background=True)
 ```
 
@@ -413,7 +415,7 @@ if has_conflict(result1, result2):
      Approach A: {result1.summary}
      Approach B: {result2.summary}"
 
-    # Option 2: Spawn resolution agent
+    # Option 2: Spawn resolution agent (opus for judgment)
     Task(subagent_type="general-purpose",
          prompt=f"""Two agents produced conflicting changes:
 
@@ -422,6 +424,7 @@ if has_conflict(result1, result2):
 
          Merge these changes, resolving conflicts by [priority rule].
          Ensure the final result is consistent.""",
+         model="opus",
          run_in_background=True)
 ```
 

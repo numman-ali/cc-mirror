@@ -84,7 +84,7 @@ src/
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                                                                             │
-│   cc-mirror create                                                          │
+│   npx cc-mirror create                                                      │
 │         │                                                                   │
 │         ▼                                                                   │
 │   ┌───────────────┐                                                         │
@@ -125,7 +125,7 @@ src/
 ### Update Flow
 
 ```
-cc-mirror update <name>
+npx cc-mirror update <name>
         │
         ▼
 ┌───────────────┐

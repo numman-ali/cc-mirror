@@ -300,10 +300,13 @@ TaskUpdate(taskId="3", addBlockedBy=["1"])
 TaskUpdate(taskId="4", addBlockedBy=["1"])
 TaskUpdate(taskId="5", addBlockedBy=["2", "3", "4"])
 
-# Spawn Explore agents in parallel
-Task(subagent_type="Explore", prompt="TaskId 2: Find auth patterns...")
-Task(subagent_type="Explore", prompt="TaskId 3: Find API patterns...")
-Task(subagent_type="Explore", prompt="TaskId 4: Find database patterns...")
+# Spawn Explore agents in parallel (haiku swarm for fast exploration)
+Task(subagent_type="Explore", prompt="TaskId 2: Find auth patterns...",
+     model="haiku", run_in_background=True)
+Task(subagent_type="Explore", prompt="TaskId 3: Find API patterns...",
+     model="haiku", run_in_background=True)
+Task(subagent_type="Explore", prompt="TaskId 4: Find database patterns...",
+     model="haiku", run_in_background=True)
 ```
 
 ## Agent Selection for Research

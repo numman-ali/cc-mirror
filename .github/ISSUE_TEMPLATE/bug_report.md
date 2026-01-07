@@ -14,7 +14,7 @@ A clear and concise description of what the bug is.
 
 Steps to reproduce the behavior:
 
-1. Run `cc-mirror ...`
+1. Run `npx cc-mirror ...`
 2. Select '...'
 3. See error
 

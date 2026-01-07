@@ -2,6 +2,83 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2025-01-06
+
+### Changed
+
+- **Complete messaging overhaul: "Claude Code, Unshackled"**
+  - New tagline positions CC-MIRROR as an opinionated Claude Code distribution
+  - "We did the hacking — you get the superpowers"
+  - Team mode (multi-agent orchestration) is now the flagship feature
+
+- **Mirror Claude is now the recommended provider**
+  - Reordered providers: mirror is first in all lists
+  - "The fastest path to multi-agent Claude Code"
+  - Updated provider descriptions across CLI, TUI, and documentation
+
+- **README.md completely rewritten**
+  - New hero section: "The Unlock" — explains what CC-MIRROR enables
+  - Before/after ASCII diagram showing the transformation
+  - Mirror Claude Quick Start at the top
+  - "What is CC-MIRROR?" section explains the opinionated distribution model
+  - Orchestrator skill section with example workflow
+  - Clear documentation of team mode as default (with disable instructions)
+
+- **CLI help updated** (`src/cli/help.ts`)
+  - New header: "Claude Code, Unshackled"
+  - "THE UNLOCK" section explaining team mode
+  - PROVIDERS section with brief descriptions
+  - `--no-team-mode` flag documented
+
+- **TUI updates**
+  - Logo tagline: "Claude Code, Unshackled"
+  - Logo subtitle: "Multi-agent orchestration. One command."
+  - Provider select screen highlights Mirror as fastest path
+  - All providers now show "Multi-agent orchestration (team mode)" as feature
+
+- **Provider education updated** (`src/tui/content/providers.ts`)
+  - Mirror headline: "The Fastest Path to Multi-Agent"
+  - All providers list multi-agent orchestration as a feature
+  - Updated comparison to show all providers have team mode by default
+
+### Fixed
+
+- Tests updated to handle new provider order (mirror first)
+
+## [1.4.2] - 2025-01-05
+
+### Added
+
+- **Explicit model selection** for all Task() calls in orchestration skill
+  - Every Task() example now includes `model=` parameter
+  - Model tier framework: haiku (errand runner), sonnet (capable worker), opus (critical thinker)
+  - Guidance on when to use each model based on task type
+
+### Changed
+
+- **All commands now use `npx cc-mirror`** for portability - no global install required
+  - Updated task-manager skill with `npx` prefix
+  - Updated README.md command examples
+  - Updated team-mode.md CLI examples
+  - Updated CLI help text (help.ts)
+  - Updated AGENTS.md and architecture docs
+  - Updated issue templates
+
+- **Model Selection section** added to SKILL.md with tier descriptions
+- **Updated 12 skill reference files** with explicit model parameters:
+  - `references/tools.md` - Model selection table and examples
+  - `references/patterns.md` - All pattern examples with models
+  - `references/examples.md` - All workflow examples with models
+  - 8 domain guides with appropriate models per task type
+
+### Model Selection Guidelines
+
+| Model | Best For |
+|-------|----------|
+| `haiku` | Exploration, searching, fetching context, data discovery - spawn many |
+| `sonnet` | Implementation, test generation, documentation, structured work |
+| `opus` | Code review, security analysis, architecture, conflict resolution |
+
 ## [1.1.5] - 2025-01-05
 
 ### Added
@@ -114,8 +191,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - **Team Pack prompt files** for enhanced team mode guidance
-  - `task-management-note.md` - Clarifies TodoWrite deprecation vs Task* tools in team mode
-  - `tasklist.md`, `taskupdate.md`, `task-extra-notes.md` - Enhanced Task* tool descriptions
+  - `task-management-note.md` - Clarifies TodoWrite deprecation vs Task\* tools in team mode
+  - `tasklist.md`, `taskupdate.md`, `task-extra-notes.md` - Enhanced Task\* tool descriptions
 
 - **TeamModeScreen** TUI component for team mode selection during variant creation
 

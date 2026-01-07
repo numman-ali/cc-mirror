@@ -10,7 +10,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { getProvider } from '../../../providers/index.js';
-import { installOrchestratorSkill, removeOrchestratorSkill } from '../../skills.js';
+import {
+  installOrchestratorSkill,
+  removeOrchestratorSkill,
+  installTaskManagerSkill,
+  removeTaskManagerSkill,
+} from '../../skills.js';
 import { copyTeamPackPrompts, configureTeamToolset } from '../../../team-pack/index.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
 
@@ -22,9 +27,12 @@ export class TeamModeUpdateStep implements UpdateStep {
   name = 'TeamMode';
 
   private shouldEnableTeamMode(ctx: UpdateContext): boolean {
-    // Enable if explicitly requested via opts OR if provider defaults to team mode
+    // Enable if:
+    // 1. Explicitly requested via opts, OR
+    // 2. Provider defaults to team mode, OR
+    // 3. Team mode is already enabled on this variant (to update skill)
     const provider = getProvider(ctx.meta.provider);
-    return Boolean(ctx.opts.enableTeamMode) || Boolean(provider?.enablesTeamMode);
+    return Boolean(ctx.opts.enableTeamMode) || Boolean(provider?.enablesTeamMode) || Boolean(ctx.meta.teamModeEnabled);
   }
 
   private shouldDisableTeamMode(ctx: UpdateContext): boolean {
@@ -114,10 +122,17 @@ export class TeamModeUpdateStep implements UpdateStep {
     } else if (skillResult.status === 'failed') {
       state.notes.push(`Warning: orchestrator skill removal failed: ${skillResult.message}`);
     }
+
+    const taskSkillResult = removeTaskManagerSkill(meta.configDir);
+    if (taskSkillResult.status === 'removed') {
+      state.notes.push('Task manager skill removed');
+    } else if (taskSkillResult.status === 'failed') {
+      state.notes.push(`Warning: task-manager skill removal failed: ${taskSkillResult.message}`);
+    }
   }
 
   private patchCli(ctx: UpdateContext): void {
-    const { state, meta, name, paths } = ctx;
+    const { state, meta, paths } = ctx;
 
     // Find cli.js path
     const cliPath = path.join(paths.npmDir, 'node_modules', '@anthropic-ai', 'claude-code', 'cli.js');
@@ -166,9 +181,9 @@ export class TeamModeUpdateStep implements UpdateStep {
       try {
         const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
         settings.env = settings.env || {};
-        // Only set if not already set
-        if (!settings.env.CLAUDE_CODE_TEAM_NAME) {
-          settings.env.CLAUDE_CODE_TEAM_NAME = name;
+        // Use TEAM_MODE flag (not TEAM_NAME) - wrapper sets actual team name dynamically
+        if (!settings.env.CLAUDE_CODE_TEAM_MODE) {
+          settings.env.CLAUDE_CODE_TEAM_MODE = '1';
         }
         if (!settings.env.CLAUDE_CODE_AGENT_TYPE) {
           settings.env.CLAUDE_CODE_AGENT_TYPE = 'team-lead';
@@ -196,6 +211,14 @@ export class TeamModeUpdateStep implements UpdateStep {
       state.notes.push('Multi-agent orchestrator skill installed');
     } else if (skillResult.status === 'failed') {
       state.notes.push(`Warning: orchestrator skill install failed: ${skillResult.message}`);
+    }
+
+    // Install the task-manager skill
+    const taskSkillResult = installTaskManagerSkill(meta.configDir);
+    if (taskSkillResult.status === 'installed') {
+      state.notes.push('Task manager skill installed');
+    } else if (taskSkillResult.status === 'failed') {
+      state.notes.push(`Warning: task-manager skill install failed: ${taskSkillResult.message}`);
     }
 
     // Copy team pack prompt files

@@ -350,9 +350,11 @@ TaskUpdate(taskId="4", addBlockedBy=["2"])
 TaskUpdate(taskId="5", addBlockedBy=["3", "4"])
 TaskUpdate(taskId="6", addBlockedBy=["5"])
 
-# Parallel breakdown
-Task(subagent_type="general-purpose", prompt="TaskId 3: Break down Story A...")
-Task(subagent_type="general-purpose", prompt="TaskId 4: Break down Story B...")
+# Parallel breakdown (sonnet for structured planning work)
+Task(subagent_type="general-purpose", prompt="TaskId 3: Break down Story A...",
+     model="sonnet", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="TaskId 4: Break down Story B...",
+     model="sonnet", run_in_background=True)
 ```
 
 ## Best Practices

@@ -32,9 +32,9 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     features: [
       'GLM-4.7 for Sonnet/Opus tasks',
       'GLM-4.5-Air for Haiku (fast) tasks',
+      'Multi-agent orchestration (team mode)',
       'Prompt pack with zai-cli routing',
       'Gold-themed interface',
-      'Optional team mode for multi-agent work',
     ],
     bestFor: "Heavy coding with GLM's reasoning capabilities",
     models: {
@@ -57,10 +57,10 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     tagline: 'Coral pulses, unified model',
     features: [
       'Single model for all tiers',
+      'Multi-agent orchestration (team mode)',
       'Prompt pack with MCP tool routing',
       'MCP tools for web search & vision',
       'Coral-themed interface',
-      'Optional team mode for multi-agent work',
     ],
     bestFor: 'Streamlined experience with one powerful model',
     models: {
@@ -140,16 +140,16 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
       'Install: npm i -g @musistudio/claude-code-router, run "ccr start". Configure models in ~/.claude-code-router/config.json',
   },
   mirror: {
-    headline: 'Mirror Claude — Pure Claude Code, Enhanced',
-    tagline: 'Reflections of perfection',
+    headline: 'The Fastest Path to Multi-Agent',
+    tagline: 'Claude Code, Unshackled',
     features: [
-      'Pure Claude Code experience (no proxy)',
-      'Team mode enabled by default',
+      'Multi-agent orchestration (team mode)',
+      'Battle-tested orchestrator skill',
+      'Pure Claude — no proxy, no model changes',
       'Isolated config for experimentation',
       'Premium silver/chrome theme',
-      'No API key required at setup',
     ],
-    bestFor: 'Power users who want enhanced Claude Code without changing the AI',
+    bestFor: 'Power users who want multi-agent Claude Code immediately',
     requiresMapping: false,
     hasPromptPack: false,
     setupLinks: {
@@ -172,10 +172,11 @@ export const getProviderEducation = (providerKey: string): ProviderEducation | n
  * Quick comparison points for provider selection
  */
 export const PROVIDER_COMPARISON = {
-  fullySupported: ['zai', 'minimax'],
-  requiresMapping: ['openrouter', 'nanogpt', 'ccrouter'],
+  fullySupported: ['mirror', 'zai', 'minimax'],
+  requiresMapping: ['openrouter', 'nanogpt'],
   hasPromptPack: ['zai', 'minimax'],
   localFirst: ['ccrouter'],
   pureClaudeCode: ['mirror'],
-  teamModeDefault: ['mirror'],
+  teamModeDefault: ['mirror', 'zai', 'minimax', 'openrouter', 'ccrouter'], // All providers now have team mode by default
+  recommended: ['mirror'],
 };

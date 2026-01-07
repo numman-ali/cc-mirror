@@ -36,16 +36,20 @@
 
 ### Execution
 
-```python
+```
 # Phase 1: Gather context + parallel analysis (single message)
 Task(subagent_type="Explore", description="Get PR context",
-     prompt="Fetch PR #123 details, understand what changed and why")
+     prompt="Fetch PR #123 details, understand what changed and why",
+     model="haiku", run_in_background=True)
 Task(subagent_type="general-purpose", description="Review quality",
-     prompt="Review code quality: readability, patterns, maintainability")
+     prompt="Review code quality: readability, patterns, maintainability",
+     model="opus", run_in_background=True)  # Critical thinking for review
 Task(subagent_type="general-purpose", description="Review security",
-     prompt="Review security: injection, auth, data exposure risks")
+     prompt="Review security: injection, auth, data exposure risks",
+     model="opus", run_in_background=True)  # Security needs judgment
 Task(subagent_type="general-purpose", description="Review performance",
-     prompt="Review performance: complexity, queries, memory usage")
+     prompt="Review performance: complexity, queries, memory usage",
+     model="opus", run_in_background=True)  # Performance analysis
 ```
 
 ### User Sees
@@ -91,26 +95,32 @@ Adds user profile editing with image upload capability.
 
 ### Execution
 
-```python
-# Phase 1: Research (Pipeline)
+```
+# Phase 1: Research (haiku for exploration)
 context = Task(subagent_type="Explore", description="Find styling patterns",
-               prompt="Find existing theme/styling patterns, CSS architecture")
+               prompt="Find existing theme/styling patterns, CSS architecture",
+               model="haiku", run_in_background=True)
 
-# Phase 2: Plan
+# Phase 2: Plan (opus for design decisions)
 plan = Task(subagent_type="Plan", description="Design dark mode",
-            prompt=f"Given: {context}. Design dark mode implementation.")
+            prompt=f"Given: {context}. Design dark mode implementation.",
+            model="opus", run_in_background=True)
 
-# Phase 3: Implement (Fan-Out - single message)
+# Phase 3: Implement (sonnet for well-structured work - single message)
 Task(subagent_type="general-purpose", description="Add CSS variables",
-     prompt="Add dark theme CSS variables...")
+     prompt="Add dark theme CSS variables...",
+     model="sonnet", run_in_background=True)
 Task(subagent_type="general-purpose", description="Create toggle",
-     prompt="Create theme toggle component...")
+     prompt="Create theme toggle component...",
+     model="sonnet", run_in_background=True)
 Task(subagent_type="general-purpose", description="Add persistence",
-     prompt="Add localStorage persistence for theme preference...")
+     prompt="Add localStorage persistence for theme preference...",
+     model="sonnet", run_in_background=True)
 
-# Phase 4: Integration (Pipeline)
+# Phase 4: Integration (sonnet for implementation)
 Task(subagent_type="general-purpose", description="Wire and test",
-     prompt="Wire components together, test theme switching works")
+     prompt="Wire components together, test theme switching works",
+     model="sonnet", run_in_background=True)
 ```
 
 ### User Sees
@@ -162,25 +172,30 @@ Try it: Click the moon/sun icon in the header.
 
 ### Execution
 
-```python
-# Phase 1: Parallel diagnosis (Fan-Out - single message)
+```
+# Phase 1: Parallel diagnosis (haiku swarm - single message)
 Task(subagent_type="Explore", description="Check logs",
-     prompt="Search for login errors, password reset issues in logs")
+     prompt="Search for login errors, password reset issues in logs",
+     model="haiku", run_in_background=True)
 Task(subagent_type="Explore", description="Find reset flow",
-     prompt="Find password reset implementation, trace the flow")
+     prompt="Find password reset implementation, trace the flow",
+     model="haiku", run_in_background=True)
 Task(subagent_type="Explore", description="Check session handling",
-     prompt="How are sessions/tokens handled after password change?")
+     prompt="How are sessions/tokens handled after password change?",
+     model="haiku", run_in_background=True)
 
 # Phase 2: Synthesize (after results return)
 # Identify: Password reset invalidates session but doesn't clear cookie
 
-# Phase 3: Fix
+# Phase 3: Fix (sonnet for implementation)
 Task(subagent_type="general-purpose", description="Fix session bug",
-     prompt="Clear session cookie after password reset...")
+     prompt="Clear session cookie after password reset...",
+     model="sonnet", run_in_background=True)
 
-# Phase 4: Verify
+# Phase 4: Verify (sonnet for test writing)
 Task(subagent_type="general-purpose", description="Add regression test",
-     prompt="Add test for login after password reset...")
+     prompt="Add test for login after password reset...",
+     model="sonnet", run_in_background=True)
 ```
 
 ### User Sees
@@ -229,14 +244,17 @@ The flow now:
 
 ### Execution
 
-```python
-# Phase 1: Parallel exploration (Fan-Out - single message)
+```
+# Phase 1: Parallel exploration (haiku swarm - single message)
 Task(subagent_type="Explore", description="Project structure",
-     prompt="Analyze project structure, entry points, build system")
+     prompt="Analyze project structure, entry points, build system",
+     model="haiku", run_in_background=True)
 Task(subagent_type="Explore", description="Core patterns",
-     prompt="Identify core architectural patterns, frameworks used")
+     prompt="Identify core architectural patterns, frameworks used",
+     model="haiku", run_in_background=True)
 Task(subagent_type="Explore", description="Data flow",
-     prompt="Trace main data flows, API structure, state management")
+     prompt="Trace main data flows, API structure, state management",
+     model="haiku", run_in_background=True)
 ```
 
 ### User Sees
@@ -294,27 +312,31 @@ Want me to dive deeper into any area?
 
 ### Execution
 
-```python
-# Phase 1: Run tests in background
+```
+# Phase 1: Run tests in background (sonnet for test execution)
 Task(subagent_type="general-purpose", description="Run tests",
      prompt="Run full test suite, report failures",
-     run_in_background=True)
+     model="sonnet", run_in_background=True)
 
 # Continue with other work or wait
 result = TaskOutput(task_id="...", block=True)
 
-# Phase 2: Fix failures (Fan-Out if multiple)
+# Phase 2: Fix failures (sonnet for fixes - single message)
 # If 3 failures found:
 Task(subagent_type="general-purpose", description="Fix test 1",
-     prompt="Fix failing test in auth.test.ts...")
+     prompt="Fix failing test in auth.test.ts...",
+     model="sonnet", run_in_background=True)
 Task(subagent_type="general-purpose", description="Fix test 2",
-     prompt="Fix failing test in api.test.ts...")
+     prompt="Fix failing test in api.test.ts...",
+     model="sonnet", run_in_background=True)
 Task(subagent_type="general-purpose", description="Fix test 3",
-     prompt="Fix failing test in utils.test.ts...")
+     prompt="Fix failing test in utils.test.ts...",
+     model="sonnet", run_in_background=True)
 
-# Phase 3: Verify
+# Phase 3: Verify (sonnet for test execution)
 Task(subagent_type="general-purpose", description="Re-run tests",
-     prompt="Run test suite again to verify fixes")
+     prompt="Run test suite again to verify fixes",
+     model="sonnet", run_in_background=True)
 ````
 
 ### User Sees

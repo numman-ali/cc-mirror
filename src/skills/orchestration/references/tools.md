@@ -201,10 +201,10 @@ Spawn an agent to handle work. This is how you delegate.
 
 **ALWAYS use `run_in_background=True`.** This is the foundation of powerful orchestration.
 
-```python
-# Correct: Background agents (ALWAYS)
-Task(subagent_type="Explore", prompt="...", run_in_background=True)
-Task(subagent_type="general-purpose", prompt="...", run_in_background=True)
+```
+# Correct: Background agents (ALWAYS) with explicit model
+Task(subagent_type="Explore", prompt="...", model="haiku", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="...", model="sonnet", run_in_background=True)
 ```
 
 ### The Notification System
@@ -252,23 +252,23 @@ TaskOutput(task_id="abc123")
 
 ### Model Selection
 
-| Task Complexity        | Model           | Why                          |
-| ---------------------- | --------------- | ---------------------------- |
-| Simple search/patterns | `haiku`         | Fast and cheap               |
-| Standard exploration   | `haiku`         | Sufficient for most searches |
-| Complex exploration    | `sonnet`        | Needs reasoning              |
-| Simple implementation  | `haiku`         | Pattern-based work           |
-| Complex implementation | `sonnet`        | Design decisions needed      |
-| Architecture/planning  | `sonnet`/`opus` | Complex trade-offs           |
-| Security review        | `sonnet`        | Careful analysis             |
+| Task Type                        | Model    | Why                                      |
+| -------------------------------- | -------- | ---------------------------------------- |
+| Fetch files, grep, find things   | `haiku`  | Errand runner - spawn many in parallel   |
+| Gather info for synthesis        | `haiku`  | No judgment needed, just retrieval       |
+| Well-structured implementation   | `sonnet` | Capable worker - needs clear direction   |
+| Research, reading docs           | `sonnet` | Can follow patterns and instructions     |
+| Security review                  | `opus`   | Critical thinking, trust its judgment    |
+| Architecture/design decisions    | `opus`   | Ambiguous, needs creative problem-solving|
+| Complex debugging                | `opus`   | Reasoning across systems                 |
 
 ### Parallelism Strategy
 
-| Priority     | Approach                                         |
-| ------------ | ------------------------------------------------ |
-| **Speed**    | Parallelize with sonnet, accept higher cost      |
-| **Cost**     | Sequential haiku where possible                  |
-| **Balanced** | Haiku for exploration, sonnet for implementation |
+| Priority     | Approach                                           |
+| ------------ | -------------------------------------------------- |
+| **Speed**    | Swarm of haiku for gathering, parallel sonnet work |
+| **Cost**     | Haiku wherever possible, sonnet only when needed   |
+| **Balanced** | Haiku to gather, sonnet to implement, opus to decide |
 
 ---
 
@@ -482,10 +482,11 @@ TaskUpdate(taskId="3", addBlockedBy=["2"])
 # 3. Find ready (task 1 is unblocked)
 TaskList()
 
-# 4. Spawn background agent (ALWAYS background)
+# 4. Spawn background agent (ALWAYS background, explicit model)
 Task(subagent_type="general-purpose",
      description="Setup database",
      prompt="Create SQLite database with users table...",
+     model="sonnet",
      run_in_background=True)
 
 # 5. Update user and yield (or continue other work)

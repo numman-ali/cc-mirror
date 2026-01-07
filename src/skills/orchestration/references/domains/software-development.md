@@ -256,8 +256,9 @@ TaskUpdate(taskId="3", addBlockedBy=["2"])  # Implement after design
 TaskUpdate(taskId="4", addBlockedBy=["3"])  # Error handling after core
 TaskUpdate(taskId="5", addBlockedBy=["3"])  # Tests can parallel with error handling
 
-# Spawn agents for unblocked tasks
-Task(subagent_type="general-purpose", prompt="TaskId 1: Analyze requirements...")
+# Spawn agents for unblocked tasks (haiku for analysis/exploration)
+Task(subagent_type="Explore", prompt="TaskId 1: Analyze requirements...",
+     model="haiku", run_in_background=True)
 ```
 
 Agents mark tasks resolved immediately upon completion.

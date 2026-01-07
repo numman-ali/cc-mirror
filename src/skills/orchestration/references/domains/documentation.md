@@ -320,10 +320,13 @@ TaskUpdate(taskId="4", addBlockedBy=["1"])
 TaskUpdate(taskId="5", addBlockedBy=["2", "3", "4"])
 TaskUpdate(taskId="6", addBlockedBy=["5"])
 
-# Spawn parallel documentation agents
-Task(subagent_type="general-purpose", prompt="TaskId 2: Document API endpoints...")
-Task(subagent_type="general-purpose", prompt="TaskId 3: Document components...")
-Task(subagent_type="general-purpose", prompt="TaskId 4: Document utilities...")
+# Spawn parallel documentation agents (sonnet for well-structured work)
+Task(subagent_type="general-purpose", prompt="TaskId 2: Document API endpoints...",
+     model="sonnet", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="TaskId 3: Document components...",
+     model="sonnet", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="TaskId 4: Document utilities...",
+     model="sonnet", run_in_background=True)
 ```
 
 ## Output Formats

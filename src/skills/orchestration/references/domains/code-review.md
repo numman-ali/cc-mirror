@@ -43,12 +43,17 @@ Phase 2: REDUCE (Synthesize)
 **Implementation:**
 
 ```
-# All in single message for parallelism
-Task(subagent_type="Explore", prompt="Fetch PR #123 details, understand context and related issues")
-Task(subagent_type="general-purpose", prompt="Review code quality: patterns, readability, maintainability")
-Task(subagent_type="general-purpose", prompt="Review logic: correctness, edge cases, error handling")
-Task(subagent_type="general-purpose", prompt="Review security: injection, auth, data exposure")
-Task(subagent_type="general-purpose", prompt="Review performance: complexity, queries, memory")
+# All in single message for parallelism (opus for reviews - critical thinking)
+Task(subagent_type="Explore", prompt="Fetch PR #123 details, understand context and related issues",
+     model="haiku", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="Review code quality: patterns, readability, maintainability",
+     model="opus", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="Review logic: correctness, edge cases, error handling",
+     model="opus", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="Review security: injection, auth, data exposure",
+     model="opus", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="Review performance: complexity, queries, memory",
+     model="opus", run_in_background=True)
 ```
 
 ### Pattern: Contextual Deep-Dive
@@ -287,11 +292,15 @@ TaskCreate(subject="Synthesize review", description="Aggregate findings into rev
 # Synthesis blocked by analysis tasks
 TaskUpdate(taskId="5", addBlockedBy=["1", "2", "3", "4"])
 
-# Spawn parallel agents for analysis
-Task(subagent_type="general-purpose", prompt="TaskId 1: Analyze PR context...")
-Task(subagent_type="general-purpose", prompt="TaskId 2: Review code quality...")
-Task(subagent_type="general-purpose", prompt="TaskId 3: Check security...")
-Task(subagent_type="general-purpose", prompt="TaskId 4: Assess performance...")
+# Spawn parallel agents for analysis (opus for reviews - critical thinking)
+Task(subagent_type="Explore", prompt="TaskId 1: Analyze PR context...",
+     model="haiku", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="TaskId 2: Review code quality...",
+     model="opus", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="TaskId 3: Check security...",
+     model="opus", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="TaskId 4: Assess performance...",
+     model="opus", run_in_background=True)
 ```
 
 ---

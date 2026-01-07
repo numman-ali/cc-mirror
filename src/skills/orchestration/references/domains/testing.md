@@ -293,9 +293,11 @@ TaskUpdate(taskId="4", addBlockedBy=["2", "3"])
 TaskUpdate(taskId="5", addBlockedBy=["4"])
 TaskUpdate(taskId="6", addBlockedBy=["5"])
 
-# Parallel test generation
-Task(subagent_type="general-purpose", prompt="TaskId 2: Generate unit tests...")
-Task(subagent_type="general-purpose", prompt="TaskId 3: Generate integration tests...")
+# Parallel test generation (sonnet for well-structured work)
+Task(subagent_type="general-purpose", prompt="TaskId 2: Generate unit tests...",
+     model="sonnet", run_in_background=True)
+Task(subagent_type="general-purpose", prompt="TaskId 3: Generate integration tests...",
+     model="sonnet", run_in_background=True)
 ```
 
 ## Test Execution Best Practices

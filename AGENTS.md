@@ -102,12 +102,12 @@ Location: `~/.local/bin/<variant>`
 
 ### Provider Auth Modes
 
-| Provider | Auth Mode | Key Variable |
-|----------|-----------|--------------|
-| zai, minimax, custom | API Key | `ANTHROPIC_API_KEY` |
-| openrouter | Auth Token | `ANTHROPIC_AUTH_TOKEN` |
-| ccrouter | Optional | placeholder token |
-| mirror | None | user authenticates normally |
+| Provider             | Auth Mode  | Key Variable                |
+| -------------------- | ---------- | --------------------------- |
+| zai, minimax, custom | API Key    | `ANTHROPIC_API_KEY`         |
+| openrouter           | Auth Token | `ANTHROPIC_AUTH_TOKEN`      |
+| ccrouter             | Optional   | placeholder token           |
+| mirror               | None       | user authenticates normally |
 
 ### Model Mapping (env vars)
 
@@ -118,19 +118,34 @@ Location: `~/.local/bin/<variant>`
 
 ## Team Mode
 
-Team mode patches `cli.js` to enable Task* tools for multi-agent collaboration.
+Team mode patches `cli.js` to enable Task\* tools for multi-agent collaboration.
 
 ### How It Works
 
 ```javascript
 // Target function in cli.js
-function sU() { return !1; }  // disabled (default)
-function sU() { return !0; }  // enabled (patched)
+function sU() {
+  return !1;
+} // disabled (default)
+function sU() {
+  return !0;
+} // enabled (patched)
 ```
 
 - Backup stored at `cli.js.backup` before patching
 - Task storage: `~/.cc-mirror/<variant>/config/tasks/<team_name>/`
-- Team name configurable via `CLAUDE_CODE_TEAM_NAME` env var
+
+### Dynamic Team Names (v1.3.0+)
+
+Team names are **purely directory-based** at runtime:
+
+| Command           | Team Name                  |
+| ----------------- | -------------------------- |
+| `mc`              | `<project-folder>`         |
+| `TEAM=A mc`       | `<project-folder>-A`       |
+| `TEAM=backend mc` | `<project-folder>-backend` |
+
+This ensures tasks are isolated per-project. The variant name is NOT included in the team name. Use the `TEAM` env var to run multiple teams in the same project folder.
 
 ### Team Mode Components
 
@@ -140,31 +155,37 @@ function sU() { return !0; }  // enabled (patched)
 
 ### Agent Identity Env Vars
 
-| Variable | Purpose |
-|----------|---------|
-| `CLAUDE_CODE_TEAM_NAME` | Team namespace for task storage |
-| `CLAUDE_CODE_AGENT_ID` | Unique identifier for this agent |
-| `CLAUDE_CODE_AGENT_TYPE` | Agent role: `team-lead` or `worker` |
+| Variable                 | Purpose                                                            |
+| ------------------------ | ------------------------------------------------------------------ |
+| `CLAUDE_CODE_TEAM_MODE`  | Enables team mode (set in settings.json)                           |
+| `CLAUDE_CODE_TEAM_NAME`  | Actual team name (set by wrapper at runtime, NOT in settings.json) |
+| `TEAM`                   | Optional modifier for multiple teams in same project               |
+| `CLAUDE_CODE_AGENT_ID`   | Unique identifier for this agent                                   |
+| `CLAUDE_CODE_AGENT_TYPE` | Agent role: `team-lead` or `worker`                                |
+
+**Important**: `CLAUDE_CODE_TEAM_NAME` must NOT be in settings.json, or Claude Code will overwrite the wrapper's dynamic value. The wrapper checks `CLAUDE_CODE_TEAM_MODE` and sets `CLAUDE_CODE_TEAM_NAME` based on the project folder.
 
 ## Provider Blocked Tools
 
 Providers can block tools via TweakCC toolsets. Defined in `src/brands/*.ts`.
 
 **zai blocked tools:**
+
 ```typescript
 export const ZAI_BLOCKED_TOOLS = [
-  'mcp__4_5v_mcp__analyze_image',      // Server-injected
+  'mcp__4_5v_mcp__analyze_image', // Server-injected
   'mcp__milk_tea_server__claim_milk_tea_coupon',
   'mcp__web_reader__webReader',
-  'WebSearch',                          // Use zai-cli search
-  'WebFetch',                           // Use zai-cli read
+  'WebSearch', // Use zai-cli search
+  'WebFetch', // Use zai-cli read
 ];
 ```
 
 **minimax blocked tools:**
+
 ```typescript
 export const MINIMAX_BLOCKED_TOOLS = [
-  'WebSearch',  // Use mcp__MiniMax__web_search
+  'WebSearch', // Use mcp__MiniMax__web_search
 ];
 ```
 
@@ -179,15 +200,15 @@ export const MINIMAX_BLOCKED_TOOLS = [
 
 ## Common Development Tasks
 
-| Task | Location |
-|------|----------|
-| Add/update provider | `src/providers/index.ts` |
-| Add/update brand theme | `src/brands/*.ts` |
-| Add blocked tools | `src/brands/zai.ts` or `minimax.ts` → `*_BLOCKED_TOOLS` |
-| Modify prompt pack overlays | `src/core/prompt-pack/providers/*.ts` |
-| Add build step | `src/core/variant-builder/steps/` |
-| Add TUI screen | `src/tui/screens/` + `app.tsx` + `router/routes.ts` |
-| Add team pack prompt | `src/team-pack/*.md` + `TEAM_PACK_FILES` in `index.ts` |
+| Task                        | Location                                                |
+| --------------------------- | ------------------------------------------------------- |
+| Add/update provider         | `src/providers/index.ts`                                |
+| Add/update brand theme      | `src/brands/*.ts`                                       |
+| Add blocked tools           | `src/brands/zai.ts` or `minimax.ts` → `*_BLOCKED_TOOLS` |
+| Modify prompt pack overlays | `src/core/prompt-pack/providers/*.ts`                   |
+| Add build step              | `src/core/variant-builder/steps/`                       |
+| Add TUI screen              | `src/tui/screens/` + `app.tsx` + `router/routes.ts`     |
+| Add team pack prompt        | `src/team-pack/*.md` + `TEAM_PACK_FILES` in `index.ts`  |
 
 ## Debugging & Verification
 
@@ -221,7 +242,7 @@ ls ~/.cc-mirror/<variant>/config/tasks/<team_name>/
 ### Health Check
 
 ```bash
-cc-mirror doctor
+npx cc-mirror doctor
 ```
 
 ### Reference Files
@@ -266,7 +287,7 @@ Requires `Z_AI_API_KEY` in environment.
 2. Verify `variant.json` exists
 3. Verify `.claude.json` has `hasCompletedOnboarding` + `theme`
 4. Run wrapper in TTY and confirm splash + no onboarding prompt
-5. Use `cc-mirror update test-zai` to validate update flow
+5. Use `npx cc-mirror update test-zai` to validate update flow
 
 ## Testing
 
@@ -277,6 +298,7 @@ npm test -- --test-name-pattern="TUI"      # TUI tests only
 ```
 
 Key test files:
+
 - `test/e2e/creation.test.ts` - Variant creation for all providers
 - `test/e2e/team-mode.test.ts` - Team mode + team pack
 - `test/e2e/blocked-tools.test.ts` - Provider blocked tools
