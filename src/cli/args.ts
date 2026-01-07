@@ -10,6 +10,7 @@ export interface ParsedArgs {
   ['no-prompt-pack']?: boolean;
   ['prompt-pack-mode']?: string;
   ['no-skill-install']?: boolean;
+  ['no-skills']?: boolean;
   ['skill-update']?: boolean;
   ['shell-env']?: boolean;
   ['no-shell-env']?: boolean;
