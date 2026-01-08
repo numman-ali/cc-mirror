@@ -28,6 +28,14 @@ export const PROVIDERS = [
     colorCode: '\\x1b[38;5;43m', // Teal
   },
   {
+    key: 'nanogpt',
+    name: 'NanoGPT',
+    apiKey: 'test-nanogpt-key',
+    expectedThemeId: 'nanogpt-violet',
+    expectedSplashStyle: 'nanogpt',
+    colorCode: '\\x1b[38;5;135m', // Purple/violet
+  },
+  {
     key: 'ccrouter',
     name: 'Claude Code Router',
     apiKey: '', // Optional for ccrouter
