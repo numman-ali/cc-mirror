@@ -45,6 +45,18 @@ test('Provider Feature Matrix', async (t) => {
     assert.equal(openrouter.authMode, 'authToken', 'openrouter should use authToken mode');
   });
 
+  await t.test('vercel-ai-gateway provider requires model mapping', () => {
+    const vercelAiGateway = getProvider('vercel-ai-gateway');
+    assert.ok(vercelAiGateway, 'vercel-ai-gateway provider should exist');
+    assert.ok(vercelAiGateway.requiresModelMapping, 'vercel-ai-gateway should require model mapping');
+    assert.equal(vercelAiGateway.authMode, 'authToken', 'vercel-ai-gateway should use authToken mode');
+    assert.equal(
+      vercelAiGateway.baseUrl,
+      'https://ai-gateway.vercel.sh',
+      'vercel-ai-gateway should have correct base URL'
+    );
+  });
+
   await t.test('zai and minimax providers have splash styles', () => {
     const zai = getProvider('zai');
     const minimax = getProvider('minimax');

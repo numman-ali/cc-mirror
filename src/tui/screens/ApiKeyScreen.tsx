@@ -37,6 +37,11 @@ const PROVIDER_LINKS: Record<string, ProviderLinkInfo> = {
     subscribe: 'https://github.com/musistudio/claude-code-router#installation',
     note: 'No API key needed. Models are configured in ~/.claude-code-router/config.json',
   },
+  'vercel-ai-gateway': {
+    apiKey: 'https://vercel.com/account/ai-gateway',
+    subscribe: 'https://vercel.com/ai-gateway',
+    note: 'Your Vercel AI Gateway key will be stored as ANTHROPIC_AUTH_TOKEN.',
+  },
 };
 
 interface ApiKeyScreenProps {

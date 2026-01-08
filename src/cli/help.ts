@@ -34,9 +34,9 @@ COMMANDS
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
-  --provider <name>            Provider: mirror | zai | minimax | openrouter | ccrouter
+  --provider <name>            Provider: mirror | zai | minimax | openrouter | ccrouter | vercel-ai-gateway
   --api-key <key>              Provider API key
-  --brand <preset>             Theme: auto | none | mirror | zai | minimax
+  --brand <preset>             Theme: auto | none | mirror | zai | minimax | vercel-ai-gateway
   --no-team-mode               Disable team mode (not recommended)
   --tui / --no-tui             Force TUI on/off
 

@@ -31,7 +31,7 @@ If applicable, add screenshots to help explain your problem.
 - **OS**: [e.g., macOS 14.0, Ubuntu 22.04, Windows 11]
 - **Node.js version**: [e.g., 20.10.0]
 - **cc-mirror version**: [e.g., 1.0.0]
-- **Provider**: [e.g., zai, minimax, openrouter, ccrouter]
+- **Provider**: [e.g., zai, minimax, openrouter, ccrouter, mirror, vercel-ai-gateway]
 
 ## Additional Context
 
