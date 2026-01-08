@@ -102,6 +102,7 @@ async function handleQuickMode(opts: ParsedArgs, params: CreateParams): Promise<
   const { provider } = params;
   const promptPack = opts['no-prompt-pack'] ? false : undefined;
   const skillInstall = opts['no-skill-install'] ? false : undefined;
+  const noSkills = Boolean(opts['no-skills']);
   const skillUpdate = Boolean(opts['skill-update']);
   let shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
   const modelOverrides = getModelOverridesFromArgs(opts);
@@ -149,6 +150,7 @@ async function handleQuickMode(opts: ParsedArgs, params: CreateParams): Promise<
     noTweak: Boolean(opts.noTweak),
     promptPack,
     skillInstall,
+    noSkills,
     shellEnv,
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
@@ -173,6 +175,7 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
   const { provider } = params;
   const promptPack = opts['no-prompt-pack'] ? false : undefined;
   const skillInstall = opts['no-skill-install'] ? false : undefined;
+  const noSkills = Boolean(opts['no-skills']);
   const skillUpdate = Boolean(opts['skill-update']);
   let shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
   const modelOverrides = getModelOverridesFromArgs(opts);
@@ -237,6 +240,7 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
     noTweak: Boolean(opts.noTweak),
     promptPack,
     skillInstall,
+    noSkills,
     shellEnv,
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
@@ -260,6 +264,7 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
 async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams): Promise<void> {
   const promptPack = opts['no-prompt-pack'] ? false : undefined;
   const skillInstall = opts['no-skill-install'] ? false : undefined;
+  const noSkills = Boolean(opts['no-skills']);
   const skillUpdate = Boolean(opts['skill-update']);
   const shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
   const modelOverrides = getModelOverridesFromArgs(opts);
@@ -286,6 +291,7 @@ async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams):
     noTweak: Boolean(opts.noTweak),
     promptPack,
     skillInstall,
+    noSkills,
     shellEnv,
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
