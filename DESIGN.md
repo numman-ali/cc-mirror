@@ -22,10 +22,11 @@
    |   '-- system-prompts/ # prompt fragment overlays (prompt packs)
    '-- variant.json      # metadata
 
-  wrapper -> ~/.local/bin/<variant>
+  wrapper -> <bin-dir>/<variant>
 ```
 
-Wrappers are installed into `~/.local/bin/<variant>` (configurable).
+Wrappers are installed into `<bin-dir>/<variant>` (configurable).
+Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
 
 ## Core Components
 

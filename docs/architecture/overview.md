@@ -20,7 +20,7 @@ This document explains how cc-mirror works under the hood.
 │          │               ┌───────┴───────┐         ┌───────────────────┐     │
 │          │               │               │         │                   │     │
 │          │         ┌─────▼─────┐   ┌─────▼─────┐   │   Shell Wrapper   │     │
-│          │         │ Providers │   │  Brands   │   │  ~/.local/bin/    │     │
+│          │         │ Providers │   │  Brands   │   │  <bin-dir>/       │     │
 │          │         └───────────┘   └───────────┘   │                   │     │
 │          │                                         └─────────┬─────────┘     │
 │          │                                                   │               │
@@ -34,6 +34,8 @@ This document explains how cc-mirror works under the hood.
 │                                                                               │
 └───────────────────────────────────────────────────────────────────────────────┘
 ```
+
+Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
 
 ---
 
@@ -113,7 +115,7 @@ src/
 │   │                             │                                         │ │
 │   │   6. PromptPackStep         Copy system-prompt overlays               │ │
 │   │                             │                                         │ │
-│   │   7. WrapperStep            Create ~/.local/bin/<name>                │ │
+│   │   7. WrapperStep            Create <bin-dir>/<name>                   │ │
 │   │                             │                                         │ │
 │   │   8. FinalizeStep           Write variant.json metadata               │ │
 │   │                                                                       │ │
@@ -180,7 +182,7 @@ npx cc-mirror update <name>
 │  │                                                                          │
 │  └── variant.json                    Variant metadata                       │
 │                                                                             │
-│  Wrapper: ~/.local/bin/<variant>     Shell wrapper script                   │
+│  Wrapper: <bin-dir>/<variant>        Shell wrapper script                   │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -237,7 +239,7 @@ The wrapper script makes variants accessible as commands:
 
 ```bash
 #!/bin/bash
-# ~/.local/bin/zai
+# <bin-dir>/zai
 
 # Show splash art (if TTY and enabled)
 if [ -t 1 ] && [ "${CC_MIRROR_SPLASH:-1}" != "0" ]; then
@@ -253,6 +255,8 @@ export CLAUDE_CONFIG_DIR="$HOME/.cc-mirror/zai/config"
 # Run Claude Code
 exec "$HOME/.cc-mirror/zai/npm/node_modules/.bin/claude" "$@"
 ```
+
+On Windows, the wrapper is `<bin-dir>\\zai.cmd` with a sibling `<bin-dir>\\zai.mjs` launcher script. Add `%USERPROFILE%\\.cc-mirror\\bin` to `PATH` to run wrappers without a full path.
 
 ---
 

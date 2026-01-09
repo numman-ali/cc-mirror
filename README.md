@@ -109,9 +109,13 @@ Each variant is completely isolated — its own config, sessions, MCP servers, a
 │  ├── zai/                            ← Z.ai variant (GLM models)        │
 │  └── minimax/                        ← MiniMax variant (M2.1)           │
 │                                                                         │
-│  Wrappers: ~/.local/bin/mclaude, ~/.local/bin/zai, ...                  │
+│  Wrappers: <bin-dir>/mclaude, <bin-dir>/zai, ...                        │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
+
+Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
+
+**Windows tip:** add `%USERPROFILE%\\.cc-mirror\\bin` to your `PATH`, or run the `<variant>.cmd` wrapper directly. Each wrapper has a sibling `<variant>.mjs` launcher.
 
 ---
 

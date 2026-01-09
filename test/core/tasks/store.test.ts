@@ -32,8 +32,9 @@ test('Task Store', async (t) => {
   });
 
   await t.test('getTasksDir returns correct path', () => {
-    const result = getTasksDir('/home/user/.cc-mirror', 'myvariant', 'myteam');
-    assert.equal(result, '/home/user/.cc-mirror/myvariant/config/tasks/myteam');
+    const rootDir = path.join(path.sep, 'home', 'user', '.cc-mirror');
+    const result = getTasksDir(rootDir, 'myvariant', 'myteam');
+    assert.equal(result, path.join(rootDir, 'myvariant', 'config', 'tasks', 'myteam'));
   });
 
   await t.test('listTaskIds returns empty array for non-existent directory', () => {

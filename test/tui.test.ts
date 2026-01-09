@@ -138,9 +138,8 @@ test('TUI update all flow', async () => {
   await send(app.stdin, down); // manage
   await send(app.stdin, down); // updateAll
   await send(app.stdin, enter);
-  await tick();
-
-  assert.equal(calls.update.length, 2);
+  const updated = await waitFor(() => calls.update.length === 2);
+  assert.ok(updated, 'Update all should trigger updates for all variants');
   assert.equal(calls.update[0].name, 'alpha');
   assert.equal(calls.update[1].name, 'beta');
 

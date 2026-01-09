@@ -5,6 +5,13 @@
  * what CC-MIRROR does and how it works under the hood.
  */
 
+import path from 'node:path';
+import { DEFAULT_BIN_DIR, DEFAULT_ROOT } from '../../core/constants.js';
+import { getWrapperPath } from '../../core/paths.js';
+
+const ROOT_HINT = path.join(DEFAULT_ROOT, '<name>');
+const WRAPPER_HINT = getWrapperPath(DEFAULT_BIN_DIR, '<name>');
+
 export const EDUCATION = {
   whatIsCcMirror: {
     title: 'What is CC-MIRROR?',
@@ -38,7 +45,7 @@ export const EDUCATION = {
       {
         step: 1,
         title: 'Creates isolated directory',
-        detail: '~/.cc-mirror/<name>/ with its own config and data',
+        detail: `${ROOT_HINT} with its own config and data`,
       },
       {
         step: 2,
@@ -48,7 +55,7 @@ export const EDUCATION = {
       {
         step: 3,
         title: 'Generates wrapper script',
-        detail: '~/.local/bin/<name> pointing to your provider',
+        detail: `${WRAPPER_HINT} pointing to your provider`,
       },
       {
         step: 4,

@@ -3,6 +3,7 @@
  */
 
 import React, { useState } from 'react';
+import { getWrapperPath } from '../../core/paths.js';
 import { Box } from 'ink';
 import { ScreenLayout } from '../components/ui/ScreenLayout.js';
 import { Section } from '../components/ui/Layout.js';
@@ -102,7 +103,7 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({ data, onConfirm, o
 
       <Section title="Paths">
         <SummaryRow label="Root" value={data.rootDir} />
-        <SummaryRow label="Wrapper" value={`${data.binDir}/${data.name}`} />
+        <SummaryRow label="Wrapper" value={getWrapperPath(data.binDir, data.name)} />
       </Section>
 
       <Box marginY={1}>

@@ -100,7 +100,9 @@ npm run render:tui-svg  # Regenerate docs/cc-mirror-tree.svg
 
 ### Wrapper Script
 
-Location: `~/.local/bin/<variant>`
+Location: `<bin-dir>/<variant>` (macOS/Linux) or `<bin-dir>/<variant>.cmd` (Windows)
+
+Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
 
 - Sets `CLAUDE_CONFIG_DIR` to variant config
 - Loads `settings.json` into env at runtime
@@ -231,7 +233,7 @@ cat ~/.cc-mirror/<variant>/variant.json
 cat ~/.cc-mirror/<variant>/tweakcc/config.json
 
 # Wrapper script
-cat ~/.local/bin/<variant>
+cat <bin-dir>/<variant>
 ```
 
 ### Team Mode Verification

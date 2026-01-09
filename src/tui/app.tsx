@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Text, useApp, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
-import path from 'node:path';
+import { getWrapperPath } from '../core/paths.js';
 import type { BrandPreset } from '../brands/index.js';
 import * as defaultBrands from '../brands/index.js';
 import type { ProviderEnv, ProviderTemplate } from '../providers/index.js';
@@ -1017,7 +1017,7 @@ export const App: React.FC<AppProps> = ({
         title="Create variant"
         lines={doneLines}
         variantName={name}
-        wrapperPath={`${binDir}/${name}`}
+        wrapperPath={getWrapperPath(binDir, name)}
         configPath={`${rootDir}/${name}/config`}
         variantPath={`${rootDir}/${name}`}
         summary={completionSummary}
@@ -1037,12 +1037,12 @@ export const App: React.FC<AppProps> = ({
         variants={variants.map((v) => ({
           name: v.name,
           provider: v.meta?.provider,
-          wrapperPath: path.join(binDir, v.name),
+          wrapperPath: getWrapperPath(binDir, v.name),
         }))}
         onSelect={(variantName) => {
           const entry = variants.find((item) => item.name === variantName);
           if (!entry || !entry.meta) return;
-          setSelectedVariant({ ...entry.meta, wrapperPath: path.join(binDir, entry.name) });
+          setSelectedVariant({ ...entry.meta, wrapperPath: getWrapperPath(binDir, entry.name) });
           setScreen('manage-actions');
         }}
         onBack={() => setScreen('home')}

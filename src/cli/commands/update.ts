@@ -2,8 +2,8 @@
  * Update command - updates one or all variants
  */
 
-import path from 'node:path';
 import * as core from '../../core/index.js';
+import { getWrapperPath } from '../../core/paths.js';
 import type { ParsedArgs } from '../args.js';
 import { printSummary } from '../utils/index.js';
 
@@ -45,7 +45,7 @@ export function runUpdateCommand({ opts }: UpdateCommandOptions): void {
       enableTeamMode,
       disableTeamMode,
     });
-    const wrapperPath = path.join(binDir, name);
+    const wrapperPath = getWrapperPath(binDir, name);
     printSummary({
       action: 'Updated',
       meta: result.meta,

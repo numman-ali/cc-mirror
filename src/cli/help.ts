@@ -1,4 +1,5 @@
 import { getRandomHaiku } from '../tui/content/haikus.js';
+import { DEFAULT_BIN_DIR, DEFAULT_ROOT } from '../core/constants.js';
 
 export const printHelp = () => {
   console.log(`
@@ -45,8 +46,8 @@ OPTIONS (advanced)
   --model-sonnet <name>        Default Sonnet model
   --model-opus <name>          Default Opus model
   --model-haiku <name>         Default Haiku model
-  --root <path>                Variants root (default: ~/.cc-mirror)
-  --bin-dir <path>             Wrapper install dir (default: ~/.local/bin)
+  --root <path>                Variants root (default: ${DEFAULT_ROOT})
+  --bin-dir <path>             Wrapper install dir (default: ${DEFAULT_BIN_DIR})
   --no-tweak                   Skip tweakcc theming
   --no-prompt-pack             Skip provider prompt pack
   --shell-env                  Write env vars to shell profile
