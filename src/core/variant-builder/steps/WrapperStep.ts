@@ -2,7 +2,7 @@
  * WrapperStep - Writes the CLI wrapper script
  */
 
-import { writeWrapper } from '../../wrapper.js';
+import { writeWrapper, writeWindowsWrapper } from '../../wrapper.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
 export class WrapperStep implements BuildStep {
@@ -10,11 +10,19 @@ export class WrapperStep implements BuildStep {
 
   execute(ctx: BuildContext): void {
     ctx.report('Writing CLI wrapper...');
-    writeWrapper(ctx.paths.wrapperPath, ctx.paths.configDir, ctx.state.binaryPath, 'node');
+    if (process.platform === 'win32') {
+      writeWindowsWrapper(ctx.paths.wrapperPath, ctx.paths.configDir, ctx.state.binaryPath, ctx.params.name);
+    } else {
+      writeWrapper(ctx.paths.wrapperPath, ctx.paths.configDir, ctx.state.binaryPath, 'node');
+    }
   }
 
   async executeAsync(ctx: BuildContext): Promise<void> {
     await ctx.report('Writing CLI wrapper...');
-    writeWrapper(ctx.paths.wrapperPath, ctx.paths.configDir, ctx.state.binaryPath, 'node');
+    if (process.platform === 'win32') {
+      writeWindowsWrapper(ctx.paths.wrapperPath, ctx.paths.configDir, ctx.state.binaryPath, ctx.params.name);
+    } else {
+      writeWrapper(ctx.paths.wrapperPath, ctx.paths.configDir, ctx.state.binaryPath, 'node');
+    }
   }
 }
