@@ -66,6 +66,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onSelect }) => {
     { value: 'manage', label: 'Manage Variants', description: 'Update, remove, or inspect' },
     { value: 'updateAll', label: 'Update All', description: 'Sync all variants to latest' },
     { value: 'doctor', label: 'Diagnostics', description: 'Health check all variants' },
+    { value: 'statusline', label: 'Status Line', description: 'Configure ccstatusline for variants' },
     { value: 'about', label: 'About', description: 'Learn how CC-MIRROR works' },
     { value: 'feedback', label: 'Feedback', description: 'Links, issues, and contributions' },
     { value: 'exit', label: 'Until next time', icon: 'exit' },

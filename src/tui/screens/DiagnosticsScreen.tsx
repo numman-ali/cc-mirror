@@ -2,12 +2,14 @@
  * Diagnostics/Doctor Screen
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import { ScreenLayout } from '../components/ui/ScreenLayout.js';
 import { HealthCheck } from '../components/ui/Progress.js';
 import { EmptyVariantsArt } from '../components/ui/AsciiArt.js';
 import { colors, keyHints } from '../components/ui/theme.js';
+import { SelectMenu } from '../components/ui/Menu.js';
+import type { MenuItem } from '../components/ui/types.js';
 
 interface HealthCheckItem {
   name: string;
@@ -24,12 +26,30 @@ interface DiagnosticsScreenProps {
   onDone: () => void;
 }
 
-export const DiagnosticsScreen: React.FC<DiagnosticsScreenProps> = ({ report, onDone }) => {
+export const DiagnosticsScreen: React.FC<DiagnosticsScreenProps> = ({
+  report,
+  onDone,
+}) => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Handle ESC key for back navigation
   useInput((input, key) => {
-    if (key.return || key.escape) {
+    if (key.escape) {
       onDone();
     }
   });
+
+  // Build menu items
+  const menuItems: MenuItem[] = [
+    { value: 'done', label: 'Back to Home', icon: 'back' },
+  ];
+
+  // Handle menu selection
+  const handleMenuSelect = (value: string) => {
+    if (value === 'done') {
+      onDone();
+    }
+  };
 
   const healthyCount = report.filter((r) => r.ok).length;
   const issueCount = report.length - healthyCount;
@@ -42,7 +62,7 @@ export const DiagnosticsScreen: React.FC<DiagnosticsScreenProps> = ({ report, on
       title="Diagnostics"
       subtitle="Health check results"
       borderColor={borderColor}
-      hints={[keyHints.select + ' Back to Home']}
+      hints={[keyHints.select + ' Navigate', 'Enter Select', keyHints.back]}
     >
       <Box flexDirection="column" marginY={1}>
         {report.length === 0 ? (
@@ -58,6 +78,18 @@ export const DiagnosticsScreen: React.FC<DiagnosticsScreenProps> = ({ report, on
         <Text color={colors.success}>Healthy: {healthyCount}</Text>
         <Text color={colors.textMuted}> | </Text>
         <Text color={issueCount > 0 ? colors.warning : colors.textMuted}>Issues: {issueCount}</Text>
+      </Box>
+
+      <Box marginTop={2} flexDirection="column">
+        <Text color={colors.textMuted} bold={true}>Actions</Text>
+        <Box marginTop={1}>
+          <SelectMenu
+            items={menuItems}
+            selectedIndex={selectedIndex}
+            onIndexChange={setSelectedIndex}
+            onSelect={handleMenuSelect}
+          />
+        </Box>
       </Box>
     </ScreenLayout>
   );

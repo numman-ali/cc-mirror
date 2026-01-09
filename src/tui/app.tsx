@@ -46,6 +46,10 @@ import {
   AboutScreen,
   FeedbackScreen,
   TeamModeScreen,
+  StatusLineMainMenu,
+  MultiVariantSelector,
+  StatusLineConfigScreen,
+  StatusLineQuickInstall,
 } from './screens/index.js';
 
 // Import UI components
@@ -234,6 +238,7 @@ export const App: React.FC<AppProps> = ({
   const [selectedVariant, setSelectedVariant] = useState<(VariantMeta & { wrapperPath: string }) | null>(null);
   const [doctorReport, setDoctorReport] = useState<DoctorReportItem[]>([]);
   const [apiKeyDetectedFrom, setApiKeyDetectedFrom] = useState<string | null>(null);
+  const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
 
   // Include experimental providers to show "Coming Soon" in UI
   const providerList = useMemo(() => providers.listProviders(true), [providers]);
@@ -342,6 +347,19 @@ export const App: React.FC<AppProps> = ({
         case 'doctor':
           setScreen('home');
           break;
+        // Status Line screens navigation
+        case 'statusline-main':
+          setScreen('home');
+          break;
+        case 'statusline-variant-select':
+          setScreen('statusline-main');
+          break;
+        case 'statusline-config':
+          setScreen('statusline-main');
+          break;
+        case 'statusline-quick-install':
+          setScreen('statusline-main');
+          break;
         // Feedback screen - home
         case 'feedback':
           setScreen('home');
@@ -357,7 +375,7 @@ export const App: React.FC<AppProps> = ({
   });
 
   useEffect(() => {
-    if (screen === 'manage') {
+    if (screen === 'manage' || screen === 'statusline-main' || screen.startsWith('statusline-')) {
       setVariants(core.listVariants(rootDir));
     }
   }, [screen, rootDir, core]);
@@ -549,6 +567,10 @@ export const App: React.FC<AppProps> = ({
           if (value === 'manage') setScreen('manage');
           if (value === 'updateAll') setScreen('updateAll');
           if (value === 'doctor') setScreen('doctor');
+          if (value === 'statusline') {
+            setSelectedVariants([]);
+            setScreen('statusline-main');
+          }
           if (value === 'about') setScreen('about');
           if (value === 'feedback') setScreen('feedback');
           if (value === 'exit') setScreen('exit');
@@ -1249,7 +1271,12 @@ export const App: React.FC<AppProps> = ({
   }
 
   if (screen === 'doctor') {
-    return <DiagnosticsScreen report={doctorReport} onDone={() => setScreen('home')} />;
+    return (
+      <DiagnosticsScreen
+        report={doctorReport}
+        onDone={() => setScreen('home')}
+      />
+    );
   }
 
   if (screen === 'about') {
@@ -1258,6 +1285,60 @@ export const App: React.FC<AppProps> = ({
 
   if (screen === 'feedback') {
     return <FeedbackScreen onBack={() => setScreen('home')} />;
+  }
+
+  // Status Line Main Menu
+  if (screen === 'statusline-main') {
+    return (
+      <StatusLineMainMenu
+        variants={variants}
+        onConfigureVariants={(variantNames) => {
+          setSelectedVariants(variantNames);
+          setScreen('statusline-variant-select');
+        }}
+        onQuickInstall={() => setScreen('statusline-quick-install')}
+        onBack={() => setScreen('home')}
+      />
+    );
+  }
+
+  // Status Line Variant Selector (for configure path)
+  if (screen === 'statusline-variant-select') {
+    return (
+      <MultiVariantSelector
+        variants={variants}
+        selectedVariants={selectedVariants}
+        onSelectionChange={setSelectedVariants}
+        onSubmit={() => {
+          if (selectedVariants.length > 0) {
+            setScreen('statusline-config');
+          }
+        }}
+        onBack={() => setScreen('statusline-main')}
+        allowMultiple={true}
+      />
+    );
+  }
+
+  // Status Line Configuration Screen (ccstatusline TUI)
+  if (screen === 'statusline-config') {
+    return (
+      <StatusLineConfigScreen
+        variants={variants}
+        selectedVariants={selectedVariants}
+        onBack={() => setScreen('statusline-main')}
+      />
+    );
+  }
+
+  // Status Line Quick Install Screen
+  if (screen === 'statusline-quick-install') {
+    return (
+      <StatusLineQuickInstall
+        variants={variants}
+        onBack={() => setScreen('statusline-main')}
+      />
+    );
   }
 
   return (
