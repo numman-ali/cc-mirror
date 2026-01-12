@@ -23,20 +23,120 @@ import type { UpdateContext, UpdateStep } from '../types.js';
 const TEAM_MODE_DISABLED = 'function Uq(){return!1}';
 const TEAM_MODE_ENABLED = 'function Uq(){return!0}';
 
+// Regex patterns for patching incompatible template expressions in Claude Code 2.1.1
+const REGEX_TASK_MANAGEMENT =
+  /\$\{AVAILABLE_TOOLS_SET\.has\(TODO_TOOL_OBJECT\.name\)\?`# Task Management[\s\S]*?`:""\}/g;
+const REGEX_ASK_QUESTION = /\$\{AVAILABLE_TOOLS_SET\.has\(ASKUSERQUESTION_TOOL_NAME\)\?`[\s\S]*?`:""\}/g;
+const REGEX_TODO_TOOL =
+  /\$\{AVAILABLE_TOOLS_SET\.has\(TODO_TOOL_OBJECT\.name\)\?`Use the \$\{TODO_TOOL_OBJECT\.name\} tool to plan the task if required`:""\}/g;
+const REGEX_ASKQUESTION_TOOL =
+  /\$\{AVAILABLE_TOOLS_SET\.has\(ASKUSERQUESTION_TOOL_NAME\)\?`Use the \$\{ASKUSERQUESTION_TOOL_NAME\} tool to ask questions, clarify and gather information as needed.`:""\}/g;
+const REGEX_TOOL_USAGE =
+  /# Tool usage policy\$\{AVAILABLE_TOOLS_SET\.has\(TASK_TOOL_NAME\)\?`[\s\S]*?\$\{AGENT_TOOL_USAGE_NOTES\}`:""\}/g;
+const REGEX_WEBFETCH_TOOL =
+  /\$\{AGENT_TOOL_USAGE_NOTES\}`:""\}\$\{AVAILABLE_TOOLS_SET\.has\(WEBFETCH_TOOL_NAME\)\?`[\s\S]*?`:""\}/g;
+const REGEX_CATCH_ALL = /\$\{AVAILABLE_TOOLS_SET\.has\([^)]+\)\?`[\s\S]*?`:""\}/g;
+
+// Static replacements for incompatible template expressions
+const REPLACEMENT_TASK_MANAGEMENT = `# Task Management
+
+You have access to Task* tools to help you manage and plan tasks. Use these tools VERY frequently to ensure that you are tracking your tasks and giving the user visibility into your progress.
+
+It is critical that you mark todos as completed as soon as you are done with a task.`;
+
+const REPLACEMENT_ASK_QUESTION = `# Asking questions as you work
+
+You have access to the AskUserQuestion tool to ask the user questions when you need clarification, want to validate assumptions, or need to make a decision you're unsure about.`;
+
+const REPLACEMENT_TOOL_USAGE = `# Tool usage policy
+- When doing file search, prefer to use the Task tool in order to reduce context usage.
+- You should proactively use the Task tool with specialized agents when the task at hand matches the agent's description.`;
+
+const isVersionIncompatible211 = (version: string): boolean => {
+  return version === '2.1.1';
+};
+
+const patchProblematicPromptExpressions = (systemPromptsDir: string): void => {
+  if (!fs.existsSync(systemPromptsDir)) return;
+
+  const files = fs.readdirSync(systemPromptsDir).filter((f) => f.endsWith('.md'));
+
+  for (const file of files) {
+    const filePath = path.join(systemPromptsDir, file);
+    let content: string;
+    try {
+      content = fs.readFileSync(filePath, 'utf8');
+    } catch {
+      console.warn(`Warning: Could not read prompt file: ${filePath}`);
+      continue;
+    }
+
+    let modified = false;
+
+    let before = content;
+    content = content.replace(REGEX_TASK_MANAGEMENT, REPLACEMENT_TASK_MANAGEMENT);
+    modified = modified || content !== before;
+
+    before = content;
+    content = content.replace(REGEX_ASK_QUESTION, REPLACEMENT_ASK_QUESTION);
+    modified = modified || content !== before;
+
+    before = content;
+    content = content.replace(REGEX_TODO_TOOL, 'Use the TodoWrite tool to plan the task if required');
+    modified = modified || content !== before;
+
+    before = content;
+    content = content.replace(
+      REGEX_ASKQUESTION_TOOL,
+      'Use the AskUserQuestion tool to ask questions, clarify and gather information as needed.'
+    );
+    modified = modified || content !== before;
+
+    before = content;
+    content = content.replace(REGEX_TOOL_USAGE, REPLACEMENT_TOOL_USAGE);
+    modified = modified || content !== before;
+
+    before = content;
+    content = content.replace(REGEX_WEBFETCH_TOOL, '');
+    modified = modified || content !== before;
+
+    before = content;
+    content = content.replace(REGEX_CATCH_ALL, '');
+    modified = modified || content !== before;
+
+    if (modified) {
+      try {
+        fs.writeFileSync(filePath, content);
+      } catch {
+        console.warn(`Warning: Could not write prompt file: ${filePath}`);
+      }
+    }
+  }
+};
+
 export class TeamModeUpdateStep implements UpdateStep {
   name = 'TeamMode';
 
   private shouldEnableTeamMode(ctx: UpdateContext): boolean {
-    // Enable if:
-    // 1. Explicitly requested via opts, OR
-    // 2. Provider defaults to team mode, OR
-    // 3. Team mode is already enabled on this variant (to update skill)
     const provider = getProvider(ctx.meta.provider);
     return Boolean(ctx.opts.enableTeamMode) || Boolean(provider?.enablesTeamMode) || Boolean(ctx.meta.teamModeEnabled);
   }
 
   private shouldDisableTeamMode(ctx: UpdateContext): boolean {
     return Boolean(ctx.opts.disableTeamMode);
+  }
+
+  private getClaudeVersion(paths: { npmDir: string }): string {
+    try {
+      const packageJsonPath = path.join(paths.npmDir, 'node_modules', '@anthropic-ai', 'claude-code', 'package.json');
+      if (fs.existsSync(packageJsonPath)) {
+        const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+        return pkg.version || '';
+      }
+    } catch {
+      // ignore
+    }
+    return '';
   }
 
   execute(ctx: UpdateContext): void {
@@ -46,8 +146,16 @@ export class TeamModeUpdateStep implements UpdateStep {
       return;
     }
     if (!this.shouldEnableTeamMode(ctx)) return;
+
+    const version = this.getClaudeVersion(ctx.paths);
+    const needsPromptPatch = isVersionIncompatible211(version);
+
+    if (needsPromptPatch) {
+      ctx.state.notes.push(`Applying prompt compatibility fixes for Claude Code ${version}`);
+    }
+
     ctx.report('Enabling team mode...');
-    this.patchCli(ctx);
+    this.patchCli(ctx, needsPromptPatch);
   }
 
   async executeAsync(ctx: UpdateContext): Promise<void> {
@@ -57,8 +165,16 @@ export class TeamModeUpdateStep implements UpdateStep {
       return;
     }
     if (!this.shouldEnableTeamMode(ctx)) return;
+
+    const version = this.getClaudeVersion(ctx.paths);
+    const needsPromptPatch = isVersionIncompatible211(version);
+
+    if (needsPromptPatch) {
+      await ctx.report(`Applying prompt compatibility fixes for Claude Code ${version}`);
+    }
+
     await ctx.report('Enabling team mode...');
-    this.patchCli(ctx);
+    this.patchCli(ctx, needsPromptPatch);
   }
 
   private unpatchCli(ctx: UpdateContext): void {
@@ -131,7 +247,7 @@ export class TeamModeUpdateStep implements UpdateStep {
     }
   }
 
-  private patchCli(ctx: UpdateContext): void {
+  private patchCli(ctx: UpdateContext, needsPromptPatch: boolean): void {
     const { state, meta, paths } = ctx;
 
     // Find cli.js path
@@ -226,6 +342,12 @@ export class TeamModeUpdateStep implements UpdateStep {
     const copiedFiles = copyTeamPackPrompts(systemPromptsDir);
     if (copiedFiles.length > 0) {
       state.notes.push(`Team pack prompts installed (${copiedFiles.join(', ')})`);
+    }
+
+    // Patch problematic template expressions for Claude Code 2.1.1
+    if (needsPromptPatch) {
+      patchProblematicPromptExpressions(systemPromptsDir);
+      state.notes.push('Prompt compatibility patches applied for 2.1.1');
     }
 
     // Configure TweakCC toolset to block TodoWrite
