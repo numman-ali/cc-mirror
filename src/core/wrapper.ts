@@ -3,6 +3,52 @@ import path from 'node:path';
 
 export type WrapperRuntime = 'native' | 'node';
 
+/**
+ * Write Windows .cmd wrapper script
+ */
+export const writeWindowsWrapper = (
+  wrapperPath: string,
+  configDir: string,
+  binaryPath: string,
+  _runtime: WrapperRuntime = 'node'
+) => {
+  const cmdPath = `${wrapperPath}.cmd`;
+  const tweakDir = path.join(path.dirname(configDir), 'tweakcc');
+  const settingsFile = path.join(configDir, 'settings.json');
+
+  // Windows batch script
+  // Note: Team name and splash art are simplified for Windows
+  const content = `@echo off
+setlocal EnableDelayedExpansion
+
+set "CLAUDE_CONFIG_DIR=${configDir}"
+set "TWEAKCC_CONFIG_DIR=${tweakDir}"
+
+REM Load environment variables from settings.json using Node.js
+for /f "usebackq delims=" %%i in (\`node -e "const fs=require('fs'),p='${settingsFile.replace(/\\/g, '\\\\')}';try{const d=JSON.parse(fs.readFileSync(p,'utf8'));if(d.env)for(const[k,v]of Object.entries(d.env))console.log(k+'='+v)}catch{}" 2^>nul\`) do (
+  set "%%i"
+)
+
+REM Dynamic team name based on current directory
+if defined CLAUDE_CODE_TEAM_MODE (
+  for %%I in ("%CD%") do set "__cc_folder=%%~nxI"
+  if defined TEAM (
+    set "CLAUDE_CODE_TEAM_NAME=!__cc_folder!-!TEAM!"
+  ) else (
+    set "CLAUDE_CODE_TEAM_NAME=!__cc_folder!"
+  )
+) else if defined TEAM (
+  for %%I in ("%CD%") do set "__cc_folder=%%~nxI"
+  set "CLAUDE_CODE_TEAM_NAME=!__cc_folder!-!TEAM!"
+)
+
+node "${binaryPath}" %*
+`;
+
+  fs.writeFileSync(cmdPath, content);
+  return cmdPath;
+};
+
 export const writeWrapper = (
   wrapperPath: string,
   configDir: string,
@@ -223,4 +269,9 @@ export const writeWrapper = (
     '',
   ].join('\n');
   fs.writeFileSync(wrapperPath, content, { mode: 0o755 });
+
+  // On Windows, also create .cmd wrapper for PowerShell/CMD compatibility
+  if (process.platform === 'win32') {
+    writeWindowsWrapper(wrapperPath, configDir, binaryPath, runtime);
+  }
 };

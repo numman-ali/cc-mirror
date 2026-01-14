@@ -6,7 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { writeWrapper } from '../../src/core/wrapper.js';
+import { writeWrapper, writeWindowsWrapper } from '../../src/core/wrapper.js';
 import { makeTempDir, cleanup } from '../helpers/index.js';
 
 test('writeWrapper creates executable wrapper script', () => {
@@ -192,6 +192,57 @@ test('writeWrapper handles unset auth token option', () => {
     const content = fs.readFileSync(wrapperPath, 'utf8');
     assert.ok(content.includes('CC_MIRROR_UNSET_AUTH_TOKEN'), 'Should check unset auth token option');
     assert.ok(content.includes('unset ANTHROPIC_AUTH_TOKEN'), 'Should unset auth token when requested');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWindowsWrapper creates .cmd file', () => {
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    const cmdPath = writeWindowsWrapper(wrapperPath, configDir, binaryPath);
+
+    assert.ok(fs.existsSync(cmdPath), '.cmd file should exist');
+    assert.equal(cmdPath, `${wrapperPath}.cmd`, 'Should have .cmd extension');
+
+    const content = fs.readFileSync(cmdPath, 'utf8');
+    assert.ok(content.startsWith('@echo off'), 'Should start with @echo off');
+    assert.ok(content.includes('CLAUDE_CONFIG_DIR'), 'Should set CLAUDE_CONFIG_DIR');
+    assert.ok(content.includes('TWEAKCC_CONFIG_DIR'), 'Should set TWEAKCC_CONFIG_DIR');
+    assert.ok(content.includes('settings.json'), 'Should reference settings.json');
+    assert.ok(content.includes('CLAUDE_CODE_TEAM_MODE'), 'Should handle team mode');
+    assert.ok(content.includes('CLAUDE_CODE_TEAM_NAME'), 'Should set team name');
+    assert.ok(content.includes(binaryPath), 'Should include binary path');
+  } finally {
+    cleanup(tempDir);
+  }
+});
+
+test('writeWrapper creates .cmd on Windows', () => {
+  // Skip this test on non-Windows platforms
+  if (process.platform !== 'win32') {
+    return;
+  }
+
+  const tempDir = makeTempDir();
+  const configDir = path.join(tempDir, 'config');
+  const wrapperPath = path.join(tempDir, 'wrapper');
+  const binaryPath = 'C:\\path\\to\\binary';
+
+  fs.mkdirSync(configDir, { recursive: true });
+
+  try {
+    writeWrapper(wrapperPath, configDir, binaryPath);
+
+    // Should create both bash and .cmd wrappers
+    assert.ok(fs.existsSync(wrapperPath), 'Bash wrapper should exist');
+    assert.ok(fs.existsSync(`${wrapperPath}.cmd`), '.cmd wrapper should exist on Windows');
   } finally {
     cleanup(tempDir);
   }
