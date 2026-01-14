@@ -37,6 +37,14 @@ fs.writeFileSync(cliPath, '#!/usr/bin/env node\\n' + teamModeFunc + '\\n' + 'con
 fs.chmodSync(cliPath, 0o755);
 `;
   writeExecutable(npmPath, script);
+
+  // On Windows, also create npm.cmd for shell: true compatibility
+  if (process.platform === 'win32') {
+    const npmCmdPath = path.join(dir, 'npm.cmd');
+    const cmdScript = `@echo off\nnode "${npmPath}" %*`;
+    writeExecutable(npmCmdPath, cmdScript);
+  }
+
   return npmPath;
 };
 
@@ -47,7 +55,8 @@ export const withFakeNpm = (fn: () => void) => {
   const binDir = makeTempDir();
   createFakeNpm(binDir);
   const previousPath = process.env.PATH || '';
-  process.env.PATH = `${binDir}:${previousPath}`;
+  const pathSeparator = process.platform === 'win32' ? ';' : ':';
+  process.env.PATH = `${binDir}${pathSeparator}${previousPath}`;
   try {
     fn();
   } finally {

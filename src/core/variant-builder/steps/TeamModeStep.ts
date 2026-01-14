@@ -14,8 +14,11 @@ import { copyTeamPackPrompts, configureTeamToolset } from '../../../team-pack/in
 import type { BuildContext, BuildStep } from '../types.js';
 
 // The minified function that controls team mode
-const TEAM_MODE_DISABLED = 'function Uq(){return!1}';
-const TEAM_MODE_ENABLED = 'function Uq(){return!0}';
+// Function names change with each CLI version, so we try multiple patterns
+const TEAM_MODE_PATTERNS = [
+  { disabled: 'function Gm(){return!1}', enabled: 'function Gm(){return!0}' }, // 2.1.7
+  { disabled: 'function Uq(){return!1}', enabled: 'function Uq(){return!0}' }, // 2.1.1
+];
 
 export class TeamModeStep implements BuildStep {
   name = 'TeamMode';
@@ -57,25 +60,34 @@ export class TeamModeStep implements BuildStep {
     // Read cli.js
     let content = fs.readFileSync(cliPath, 'utf8');
 
-    // Check if already patched
-    if (content.includes(TEAM_MODE_ENABLED)) {
-      state.notes.push('Team mode already enabled');
-      return;
+    // Try each pattern until one works
+    let matchedPattern: (typeof TEAM_MODE_PATTERNS)[0] | null = null;
+
+    for (const pattern of TEAM_MODE_PATTERNS) {
+      // Check if already patched with this pattern
+      if (content.includes(pattern.enabled)) {
+        state.notes.push('Team mode already enabled');
+        return;
+      }
+      // Check if patchable with this pattern
+      if (content.includes(pattern.disabled)) {
+        matchedPattern = pattern;
+        break;
+      }
     }
 
-    // Check if patchable
-    if (!content.includes(TEAM_MODE_DISABLED)) {
+    if (!matchedPattern) {
       state.notes.push('Warning: Team mode function not found in cli.js, patch may not work');
       return;
     }
 
     // Apply patch
-    content = content.replace(TEAM_MODE_DISABLED, TEAM_MODE_ENABLED);
+    content = content.replace(matchedPattern.disabled, matchedPattern.enabled);
     fs.writeFileSync(cliPath, content);
 
     // Verify patch
     const verifyContent = fs.readFileSync(cliPath, 'utf8');
-    if (!verifyContent.includes(TEAM_MODE_ENABLED)) {
+    if (!verifyContent.includes(matchedPattern.enabled)) {
       state.notes.push('Warning: Team mode patch verification failed');
       return;
     }

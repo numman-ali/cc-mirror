@@ -143,7 +143,7 @@ export const runTweakcc = (
   }
 
   if (commandExists('tweakcc')) {
-    const result = spawnSync('tweakcc', ['--apply'], { stdio: 'pipe', env, encoding: 'utf8' });
+    const result = spawnSync('tweakcc', ['--apply'], { stdio: 'pipe', env, encoding: 'utf8', shell: true });
     if (stdio === 'inherit') {
       if (result.stdout) process.stdout.write(result.stdout);
       if (result.stderr) process.stderr.write(result.stderr);
@@ -155,7 +155,12 @@ export const runTweakcc = (
     return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
   }
 
-  const result = spawnSync('npx', [`tweakcc@${TWEAKCC_VERSION}`, '--apply'], { stdio: 'pipe', env, encoding: 'utf8' });
+  const result = spawnSync('npx', [`tweakcc@${TWEAKCC_VERSION}`, '--apply'], {
+    stdio: 'pipe',
+    env,
+    encoding: 'utf8',
+    shell: true,
+  });
   if (stdio === 'inherit') {
     if (result.stdout) process.stdout.write(result.stdout);
     if (result.stderr) process.stderr.write(result.stderr);
@@ -176,14 +181,14 @@ export const launchTweakccUi = (tweakDir: string, binaryPath: string): TweakccRe
   }
 
   if (commandExists('tweakcc')) {
-    return spawnSync('tweakcc', [], { stdio: 'inherit', env, encoding: 'utf8' });
+    return spawnSync('tweakcc', [], { stdio: 'inherit', env, encoding: 'utf8', shell: true });
   }
 
   if (!commandExists('npx')) {
     return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
   }
 
-  return spawnSync('npx', [`tweakcc@${TWEAKCC_VERSION}`], { stdio: 'inherit', env, encoding: 'utf8' });
+  return spawnSync('npx', [`tweakcc@${TWEAKCC_VERSION}`], { stdio: 'inherit', env, encoding: 'utf8', shell: true });
 };
 
 // Async version for TUI progress updates
@@ -194,7 +199,7 @@ const spawnTweakccAsync = (
   stdio: 'inherit' | 'pipe'
 ): Promise<TweakccResult> => {
   return new Promise((resolve) => {
-    const child = spawn(cmd, args, { stdio: 'pipe', env });
+    const child = spawn(cmd, args, { stdio: 'pipe', env, shell: true });
     let stdout = '';
     let stderr = '';
     child.stdout?.on('data', (d) => {
