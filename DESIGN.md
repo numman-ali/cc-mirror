@@ -115,5 +115,5 @@ Presets are provider-aware (e.g., `zai` auto-selects the Z.ai Carbon skin, `mini
 
 ## Install (npm-only)
 
-cc-mirror always installs `@anthropic-ai/claude-code@2.0.76` into `~/.cc-mirror/<variant>/npm` and runs its `cli.js`.
+cc-mirror always installs `@anthropic-ai/claude-code@<DEFAULT_NPM_VERSION>` into `~/.cc-mirror/<variant>/npm` and runs its `cli.js`.
 Use `--npm-package` to override the package name; the version stays pinned.
