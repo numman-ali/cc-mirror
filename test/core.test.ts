@@ -225,6 +225,41 @@ test('mirror brand preset writes tweakcc config and enables team mode', () => {
   });
 });
 
+test('gatewayz brand preset writes tweakcc config', () => {
+  withFakeNpm(() => {
+    const rootDir = makeTempDir();
+    const binDir = makeTempDir();
+
+    core.createVariant({
+      name: 'gatewayz',
+      providerKey: 'gatewayz',
+      apiKey: 'gz-test-key',
+      rootDir,
+      binDir,
+      brand: 'gatewayz',
+      promptPack: false,
+      skillInstall: false,
+      noTweak: true,
+      tweakccStdio: 'pipe',
+    });
+
+    const tweakConfigPath = path.join(rootDir, 'gatewayz', 'tweakcc', 'config.json');
+    assert.ok(fs.existsSync(tweakConfigPath));
+    const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
+    assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'gatewayz-portal');
+
+    // Verify settings.json has correct auth token and base URL (GatewayZ uses authToken mode)
+    const configPath = path.join(rootDir, 'gatewayz', 'config', 'settings.json');
+    const configJson = JSON.parse(readFile(configPath)) as { env: Record<string, string> };
+    assert.equal(configJson.env.ANTHROPIC_AUTH_TOKEN, 'gz-test-key');
+    assert.equal(configJson.env.ANTHROPIC_BASE_URL, 'https://api.gatewayz.ai/v1');
+    assert.equal(configJson.env.CC_MIRROR_PROVIDER_LABEL, 'GatewayZ');
+
+    cleanup(rootDir);
+    cleanup(binDir);
+  });
+});
+
 test('api key approvals are written to .claude.json', () => {
   withFakeNpm(() => {
     const rootDir = makeTempDir();
