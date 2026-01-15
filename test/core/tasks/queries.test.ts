@@ -11,6 +11,7 @@ import {
   isBlocking,
   filterTasks,
   getTaskSummary,
+  getOpenBlockers,
   sortTasksById,
   sortByDependency,
 } from '../../../src/core/tasks/queries.js';
@@ -132,10 +133,70 @@ test('Task Queries', async (t) => {
       assert.equal(result.length, 1);
       assert.equal(result[0].id, '1');
     });
+
+    await st.test('filters by ready true', () => {
+      const result = filterTasks(tasks, { ready: true }, tasks);
+      // Ready = open + not blocked
+      // Task 1: open, not blocked -> ready
+      // Task 2: resolved -> not ready
+      // Task 3: open, blocked by 4 -> not ready
+      // Task 4: open, not blocked -> ready
+      // Task 5: resolved -> not ready
+      assert.equal(result.length, 2);
+      assert.ok(result.some((t) => t.id === '1'));
+      assert.ok(result.some((t) => t.id === '4'));
+    });
+
+    await st.test('filters by ready false', () => {
+      const result = filterTasks(tasks, { ready: false }, tasks);
+      // Not ready = resolved OR blocked
+      assert.equal(result.length, 3);
+      assert.ok(result.some((t) => t.id === '2')); // resolved
+      assert.ok(result.some((t) => t.id === '3')); // blocked
+      assert.ok(result.some((t) => t.id === '5')); // resolved
+    });
+  });
+
+  await t.test('getOpenBlockers', async (st) => {
+    await st.test('returns empty array when no blockedBy', () => {
+      const task = makeTask({ id: '1', blockedBy: [] });
+      assert.deepEqual(getOpenBlockers(task, [task]), []);
+    });
+
+    await st.test('returns only open blockers', () => {
+      const task1 = makeTask({ id: '1', blockedBy: ['2', '3', '4'] });
+      const task2 = makeTask({ id: '2', status: 'resolved' });
+      const task3 = makeTask({ id: '3', status: 'open' });
+      const task4 = makeTask({ id: '4', status: 'open' });
+
+      const openBlockers = getOpenBlockers(task1, [task1, task2, task3, task4]);
+
+      assert.deepEqual(openBlockers, ['3', '4']);
+    });
+
+    await st.test('ignores non-existent blockers', () => {
+      const task1 = makeTask({ id: '1', blockedBy: ['2', '999'] });
+      const task2 = makeTask({ id: '2', status: 'open' });
+
+      const openBlockers = getOpenBlockers(task1, [task1, task2]);
+
+      // 999 doesn't exist, so only 2 is returned
+      assert.deepEqual(openBlockers, ['2']);
+    });
+
+    await st.test('returns empty when all blockers are resolved', () => {
+      const task1 = makeTask({ id: '1', blockedBy: ['2', '3'] });
+      const task2 = makeTask({ id: '2', status: 'resolved' });
+      const task3 = makeTask({ id: '3', status: 'resolved' });
+
+      const openBlockers = getOpenBlockers(task1, [task1, task2, task3]);
+
+      assert.deepEqual(openBlockers, []);
+    });
   });
 
   await t.test('getTaskSummary', async (st) => {
-    await st.test('returns correct counts', () => {
+    await st.test('returns correct counts including ready', () => {
       const tasks: Task[] = [
         makeTask({ id: '1', status: 'open' }),
         makeTask({ id: '2', status: 'open', blockedBy: ['4'] }),
@@ -149,7 +210,8 @@ test('Task Queries', async (t) => {
       assert.equal(summary.total, 5);
       assert.equal(summary.open, 3);
       assert.equal(summary.resolved, 2);
-      assert.equal(summary.blocked, 1);
+      assert.equal(summary.ready, 2); // tasks 1 and 4 are open and not blocked
+      assert.equal(summary.blocked, 1); // task 2 is blocked by task 4
     });
 
     await st.test('handles empty task list', () => {
@@ -158,6 +220,7 @@ test('Task Queries', async (t) => {
       assert.equal(summary.total, 0);
       assert.equal(summary.open, 0);
       assert.equal(summary.resolved, 0);
+      assert.equal(summary.ready, 0);
       assert.equal(summary.blocked, 0);
     });
   });

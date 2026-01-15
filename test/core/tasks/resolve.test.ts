@@ -14,6 +14,8 @@ import {
   detectCurrentTeam,
   listVariantsWithTasks,
   resolveContext,
+  DEFAULT_VARIANT,
+  resolveTasksDir,
 } from '../../../src/core/tasks/resolve.js';
 
 test('Task Resolve', async (t) => {
@@ -204,16 +206,17 @@ test('Task Resolve', async (t) => {
       const tmpDir = makeTempDir();
       createdDirs.push(tmpDir);
 
-      // Create variant with tasks
-      const tasksDir = path.join(tmpDir, 'detected', 'config', 'tasks', 'myteam');
+      // Create variant with tasks - use .cc-mirror pattern for env detection
+      const ccMirrorDir = path.join(tmpDir, '.cc-mirror');
+      const tasksDir = path.join(ccMirrorDir, 'detected', 'config', 'tasks', 'myteam');
       fs.mkdirSync(tasksDir, { recursive: true });
-      fs.writeFileSync(path.join(tmpDir, 'detected', 'variant.json'), '{"name":"detected"}');
+      fs.writeFileSync(path.join(ccMirrorDir, 'detected', 'variant.json'), '{"name":"detected"}');
 
-      // Set env var to point to this variant
-      setEnv('CLAUDE_CONFIG_DIR', path.join(tmpDir, 'detected', 'config'));
+      // Set env var with correct .cc-mirror pattern
+      setEnv('CLAUDE_CONFIG_DIR', path.join(ccMirrorDir, 'detected', 'config'));
 
       const result = resolveContext({
-        rootDir: tmpDir,
+        rootDir: ccMirrorDir, // Use .cc-mirror dir as rootDir
         team: 'myteam',
       });
 
@@ -245,7 +248,7 @@ test('Task Resolve', async (t) => {
       setEnv('CLAUDE_CODE_TEAM_NAME', undefined);
     });
 
-    await st.test('falls back to all teams when detected team not found', () => {
+    await st.test('strict scoping returns empty when detected team not found', () => {
       const tmpDir = makeTempDir();
       createdDirs.push(tmpDir);
 
@@ -261,9 +264,9 @@ test('Task Resolve', async (t) => {
         variant: 'myvariant',
       });
 
-      // Should fall back to actual-team since nonexistent-team doesn't exist
-      assert.equal(result.locations.length, 1);
-      assert.equal(result.locations[0].team, 'actual-team');
+      // With strict scoping, should return empty locations when detected team doesn't exist
+      // (no fallback to all teams)
+      assert.equal(result.locations.length, 0);
 
       setEnv('CLAUDE_CODE_TEAM_NAME', undefined);
     });
@@ -279,6 +282,44 @@ test('Task Resolve', async (t) => {
       });
 
       assert.equal(result.locations.length, 0);
+    });
+
+    await st.test('uses _default variant when no CLAUDE_CONFIG_DIR set', () => {
+      const tmpDir = makeTempDir();
+      createdDirs.push(tmpDir);
+
+      // Ensure no env is set
+      setEnv('CLAUDE_CONFIG_DIR', undefined);
+      setEnv('CLAUDE_CODE_TEAM_NAME', 'test-team');
+
+      const result = resolveContext({
+        rootDir: tmpDir,
+      });
+
+      // Should use _default variant (no locations since no tasks exist)
+      assert.equal(result.locations.length, 0);
+
+      setEnv('CLAUDE_CODE_TEAM_NAME', undefined);
+    });
+  });
+
+  await t.test('DEFAULT_VARIANT constant', async (st) => {
+    await st.test('has expected value', () => {
+      assert.equal(DEFAULT_VARIANT, '_default');
+    });
+  });
+
+  await t.test('resolveTasksDir', async (st) => {
+    await st.test('returns cc-mirror path for regular variant', () => {
+      const result = resolveTasksDir('/root/.cc-mirror', 'myvariant', 'myteam');
+      assert.equal(result, '/root/.cc-mirror/myvariant/config/tasks/myteam');
+    });
+
+    await st.test('returns ~/.claude path for _default variant', () => {
+      const result = resolveTasksDir('/root/.cc-mirror', '_default', 'myteam');
+      // Should use ~/.claude/tasks/myteam, not /root/.cc-mirror/_default/config/tasks/myteam
+      assert.ok(result.includes('.claude/tasks/myteam'));
+      assert.ok(!result.includes('.cc-mirror'));
     });
   });
 });

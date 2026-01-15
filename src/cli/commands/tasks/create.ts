@@ -2,7 +2,15 @@
  * Task create operation - Create a new task
  */
 
-import { createTask, resolveContext, detectCurrentTeam, getTasksDir } from '../../../core/tasks/index.js';
+import {
+  createTask,
+  resolveContext,
+  detectCurrentTeam,
+  detectVariantFromEnv,
+  resolveTasksDir,
+  loadAllTasks,
+  DEFAULT_VARIANT,
+} from '../../../core/tasks/index.js';
 import type { TasksCreateOptions } from './types.js';
 import { formatTaskJson } from './output.js';
 
@@ -17,17 +25,11 @@ export function runTasksCreate(opts: TasksCreateOptions): void {
   let location = context.locations[0];
 
   if (!location) {
-    // Try to create with detected team
+    // Tasks directory doesn't exist yet - create with detected variant/team
     const team = opts.team || detectCurrentTeam();
-    const variant = opts.variant;
+    const variant = opts.variant || detectVariantFromEnv() || DEFAULT_VARIANT;
 
-    if (!variant) {
-      console.error('No variant specified. Use --variant to specify a variant.');
-      process.exitCode = 1;
-      return;
-    }
-
-    const tasksDir = getTasksDir(opts.rootDir, variant, team);
+    const tasksDir = resolveTasksDir(opts.rootDir, variant, team);
     location = { variant, team, tasksDir };
   }
 
@@ -38,7 +40,8 @@ export function runTasksCreate(opts: TasksCreateOptions): void {
   });
 
   if (opts.json) {
-    console.log(formatTaskJson(task, location));
+    const allTasks = loadAllTasks(location.tasksDir);
+    console.log(formatTaskJson(task, location, allTasks));
   } else {
     console.log(`Created task #${task.id}: ${task.subject}`);
     console.log(`Location: ${location.variant} / ${location.team}`);

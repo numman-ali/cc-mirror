@@ -45,9 +45,16 @@ test/                       # Node test runner tests
 ├── unit/                  # Unit tests
 └── helpers/               # Test utilities
 
-repos/                      # Upstream reference copies (vendor data)
-├── anthropic-claude-code-2.0.76/   # Pinned CLI reference
-└── claude-code-system-prompts/     # System prompt sources
+repos/                      # Upstream reference copies (vendor data, history)
+├── anthropic-claude-code-*/       # Claude Code versions for comparison/reference
+├── claude-code-system-prompts/    # System prompt changelog and sources
+└── tweakcc/                       # TweakCC repo (prompt patching tool)
+
+notes/                      # Research notes and deep dive documentation
+├── CLI-VERSIONS.md               # Version comparison notes
+├── TEAM-PACK-DESIGN.md           # Team pack architecture decisions
+├── *-DEEP-DIVE.md                # Feature research and analysis
+└── RECONSTRUCTION-LEDGER.md      # Project state and decisions
 
 docs/                       # User documentation
 dist/                       # Build output (generated)
@@ -247,8 +254,9 @@ npx cc-mirror doctor
 
 ### Reference Files
 
-- **Upstream CLI (pinned)**: `repos/anthropic-claude-code-2.0.76/package/cli.js`
-- **System prompt sources**: `repos/claude-code-system-prompts/system-prompts/`
+- **Upstream CLI references**: `repos/anthropic-claude-code-*/cli.js` (multiple versions for comparison)
+- **System prompt sources**: `repos/claude-code-system-prompts/` (includes CHANGELOG.md)
+- **Research notes**: `notes/` (deep dives, version analysis, design decisions)
 - **Applied prompts**: `~/.cc-mirror/<variant>/tweakcc/system-prompts/`
 - **Debug logs**: `~/.cc-mirror/<variant>/config/debug/*.txt`
 

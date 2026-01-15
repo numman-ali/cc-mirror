@@ -15,8 +15,8 @@ import * as core from '../../src/core/index.js';
 import { TEAM_PACK_FILES } from '../../src/team-pack/index.js';
 import { makeTempDir, readFile, cleanup, withFakeNpm } from '../helpers/index.js';
 
-const TEAM_MODE_ENABLED = 'function sU(){return!0}';
-const TEAM_MODE_DISABLED = 'function sU(){return!1}';
+const TEAM_MODE_ENABLED = 'function Uq(){return!0}';
+const TEAM_MODE_DISABLED = 'function Uq(){return!1}';
 
 test('E2E: Team Mode', async (t) => {
   const createdDirs: string[] = [];

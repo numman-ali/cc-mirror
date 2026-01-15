@@ -4,10 +4,22 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { execSync } from 'node:child_process';
 import { listVariants } from '../variants.js';
-import { listTeams } from './store.js';
+import { listTeams, getTasksDir } from './store.js';
 import type { ResolvedContext, TaskLocation } from './types.js';
+
+/**
+ * Special variant name for vanilla Claude Code (no cc-mirror variant)
+ * Maps to ~/.claude/tasks/<team>/ instead of ~/.cc-mirror/_default/config/tasks/<team>/
+ */
+export const DEFAULT_VARIANT = '_default';
+
+/**
+ * Default Claude Code config directory (vanilla installation)
+ */
+export const DEFAULT_CLAUDE_CONFIG_DIR = path.join(os.homedir(), '.claude');
 
 export interface ResolveOptions {
   rootDir: string;
@@ -80,7 +92,40 @@ export function listVariantsWithTasks(rootDir: string): string[] {
 }
 
 /**
+ * Get the tasks directory for a variant/team, handling _default specially
+ */
+export function resolveTasksDir(rootDir: string, variant: string, team: string): string {
+  if (variant === DEFAULT_VARIANT) {
+    // Vanilla Claude Code: ~/.claude/tasks/<team>/
+    return path.join(DEFAULT_CLAUDE_CONFIG_DIR, 'tasks', team);
+  }
+  // cc-mirror variant: ~/.cc-mirror/<variant>/config/tasks/<team>/
+  return getTasksDir(rootDir, variant, team);
+}
+
+/**
+ * List teams for a variant, handling _default specially
+ */
+export function resolveTeams(rootDir: string, variant: string): string[] {
+  if (variant === DEFAULT_VARIANT) {
+    // Check vanilla Claude Code's tasks directory
+    const tasksRoot = path.join(DEFAULT_CLAUDE_CONFIG_DIR, 'tasks');
+    if (!fs.existsSync(tasksRoot)) return [];
+    return fs
+      .readdirSync(tasksRoot, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name);
+  }
+  return listTeams(rootDir, variant);
+}
+
+/**
  * Resolve context for task operations
+ *
+ * Scoping behavior:
+ * - Strict team scoping: always scopes to detected team from cwd (never falls back to all teams)
+ * - Strict variant scoping: uses detected variant from env, or _default for vanilla Claude Code
+ * - Use allTeams/allVariants flags explicitly to see multiple teams/variants
  */
 export function resolveContext(opts: ResolveOptions): ResolvedContext {
   const { rootDir, variant, team, allVariants, allTeams, cwd } = opts;
@@ -89,44 +134,40 @@ export function resolveContext(opts: ResolveOptions): ResolvedContext {
   // Determine which variants to scan
   let variants: string[];
   if (allVariants) {
+    // Include all cc-mirror variants that have tasks
     variants = listVariantsWithTasks(rootDir);
+    // Also include _default if it has tasks
+    const defaultTeams = resolveTeams(rootDir, DEFAULT_VARIANT);
+    if (defaultTeams.length > 0 && !variants.includes(DEFAULT_VARIANT)) {
+      variants.push(DEFAULT_VARIANT);
+    }
   } else if (variant) {
+    // Explicit variant specified
     variants = [variant];
   } else {
-    // Auto-detect from env first, then fall back to first variant with tasks
+    // Auto-detect: env variant takes priority, otherwise use _default
     const envVariant = detectVariantFromEnv();
-    if (envVariant) {
-      variants = [envVariant];
-    } else {
-      const variantsWithTasks = listVariantsWithTasks(rootDir);
-      variants = variantsWithTasks.length > 0 ? [variantsWithTasks[0]] : [];
-    }
+    variants = [envVariant || DEFAULT_VARIANT];
   }
 
   // For each variant, determine teams
   for (const v of variants) {
     let teams: string[];
     if (allTeams) {
-      teams = listTeams(rootDir, v);
+      // Show all teams for this variant
+      teams = resolveTeams(rootDir, v);
     } else if (team) {
+      // Explicit team specified
       teams = [team];
     } else {
-      // Auto-detect team from cwd
+      // Strict scoping: always use detected team from cwd
+      // This ensures we only show tasks for the current working directory
       const detectedTeam = detectCurrentTeam(cwd);
-      const availableTeams = listTeams(rootDir, v);
-      // Only use detected team if it exists, otherwise show all teams
-      if (availableTeams.includes(detectedTeam)) {
-        teams = [detectedTeam];
-      } else if (availableTeams.length > 0) {
-        // Fall back to all teams for this variant
-        teams = availableTeams;
-      } else {
-        teams = [];
-      }
+      teams = [detectedTeam];
     }
 
     for (const t of teams) {
-      const tasksDir = path.join(rootDir, v, 'config', 'tasks', t);
+      const tasksDir = resolveTasksDir(rootDir, v, t);
       if (fs.existsSync(tasksDir)) {
         locations.push({ variant: v, team: t, tasksDir });
       }

@@ -57,6 +57,16 @@ export function filterTasks(tasks: Task[], filter: TaskFilter, allTasks?: Task[]
     }
   }
 
+  // Filter by ready (open + not blocked)
+  if (filter.ready !== undefined) {
+    if (filter.ready) {
+      filtered = filtered.filter((t) => t.status === 'open' && !isBlocked(t, taskContext));
+    } else {
+      // Not ready means either resolved OR blocked
+      filtered = filtered.filter((t) => t.status === 'resolved' || isBlocked(t, taskContext));
+    }
+  }
+
   // Filter by owner
   if (filter.owner) {
     filtered = filtered.filter((t) => t.owner === filter.owner);
@@ -77,13 +87,29 @@ export function getTaskSummary(tasks: Task[]): TaskSummary {
   const open = tasks.filter((t) => t.status === 'open');
   const resolved = tasks.filter((t) => t.status === 'resolved');
   const blocked = open.filter((t) => isBlocked(t, tasks));
+  const ready = open.filter((t) => !isBlocked(t, tasks));
 
   return {
     total: tasks.length,
     open: open.length,
     resolved: resolved.length,
+    ready: ready.length,
     blocked: blocked.length,
   };
+}
+
+/**
+ * Get IDs of open blockers for a task
+ */
+export function getOpenBlockers(task: Task, allTasks: Task[]): string[] {
+  if (task.blockedBy.length === 0) return [];
+
+  const taskMap = new Map(allTasks.map((t) => [t.id, t]));
+
+  return task.blockedBy.filter((id) => {
+    const blockingTask = taskMap.get(id);
+    return blockingTask && blockingTask.status === 'open';
+  });
 }
 
 /**

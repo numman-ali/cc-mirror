@@ -464,13 +464,14 @@ npx cc-mirror tasks [operation] [id] [options]
 
 ### Common Options
 
-| Flag               | Description                              |
-| ------------------ | ---------------------------------------- |
-| `--variant <name>` | Target variant (auto-detects if omitted) |
-| `--all-variants`   | Show tasks across all variants           |
-| `--team <name>`    | Target team name                         |
-| `--all`            | Show all teams in variant(s)             |
-| `--json`           | Output as JSON for scripting             |
+| Flag               | Description                                     |
+| ------------------ | ----------------------------------------------- |
+| `--variant <name>` | Target variant (auto-detects if omitted)        |
+| `--all-variants`   | Show tasks across all variants                  |
+| `--team <name>`    | Target team name                                |
+| `--all`            | Show all teams in variant(s)                    |
+| `--json`           | Output as JSON with enriched computed fields    |
+| `--ready`          | Filter to ready tasks only (open + not blocked) |
 
 ### Examples
 
@@ -508,8 +509,67 @@ npx cc-mirror tasks --variant mc --all
 # JSON output for scripting
 npx cc-mirror tasks --json | jq '.tasks[] | select(.status == "open")'
 
+# Filter to ready tasks only (open + not blocked)
+npx cc-mirror tasks --ready --json
+
 # View task dependency graph
 npx cc-mirror tasks graph --variant mc --team my-project
+
+# Graph as JSON for programmatic analysis
+npx cc-mirror tasks graph --json
+```
+
+### Enriched JSON Output (v1.6.1+)
+
+The `--json` flag returns enriched task data with computed fields for automation:
+
+```json
+{
+  "variant": "mc",
+  "team": "my-project",
+  "tasks": [
+    {
+      "id": "1",
+      "subject": "Implement auth",
+      "status": "open",
+      "blocked": true,
+      "blockedBy": [
+        { "id": "2", "status": "resolved" },
+        { "id": "3", "status": "open" }
+      ],
+      "openBlockers": ["3"],
+      "blocks": ["4"],
+      "references": [],
+      "comments": []
+    }
+  ],
+  "summary": {
+    "total": 6,
+    "open": 4,
+    "resolved": 2,
+    "ready": 3,
+    "blocked": 1
+  }
+}
+```
+
+| Field           | Description                                       |
+| --------------- | ------------------------------------------------- |
+| `blocked`       | Computed boolean - true if any blocker is open    |
+| `blockedBy`     | Enhanced with status of each blocking task        |
+| `openBlockers`  | Just the IDs of open blockers (for quick display) |
+| `summary.ready` | Count of open tasks that are not blocked          |
+
+The `graph --json` command additionally includes:
+
+```json
+{
+  "nodes": [...],
+  "roots": ["1"],
+  "leaves": ["5"],
+  "orphans": [],
+  "summary": {...}
+}
 ```
 
 ### Dependency Graph Output

@@ -2,7 +2,7 @@
  * Task update operation - Update an existing task
  */
 
-import { loadTask, saveTask, resolveContext } from '../../../core/tasks/index.js';
+import { loadTask, loadAllTasks, saveTask, resolveContext } from '../../../core/tasks/index.js';
 import type { TasksUpdateOptions } from './types.js';
 import { formatTaskJson } from './output.js';
 
@@ -62,7 +62,8 @@ export function runTasksUpdate(opts: TasksUpdateOptions): void {
     saveTask(location.tasksDir, task);
 
     if (opts.json) {
-      console.log(formatTaskJson(task, location));
+      const allTasks = loadAllTasks(location.tasksDir);
+      console.log(formatTaskJson(task, location, allTasks));
     } else {
       console.log(`Updated task #${task.id}: ${task.subject}`);
     }

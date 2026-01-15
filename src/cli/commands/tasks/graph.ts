@@ -2,13 +2,14 @@
  * Task graph operation - Visualize task dependencies
  */
 
-import { loadAllTasks, resolveContext, isBlocked } from '../../../core/tasks/index.js';
+import { loadAllTasks, resolveContext, isBlocked, getOpenBlockers, getTaskSummary } from '../../../core/tasks/index.js';
 import type { Task } from '../../../core/tasks/index.js';
 
 export interface TasksGraphOptions {
   rootDir: string;
   variant?: string;
   team?: string;
+  json?: boolean;
 }
 
 /**
@@ -91,6 +92,89 @@ function formatTaskGraph(tasks: Task[], variant: string, team: string): string {
   return lines.join('\n');
 }
 
+/**
+ * Graph node for JSON output
+ */
+interface GraphNode {
+  id: string;
+  subject: string;
+  status: 'open' | 'resolved';
+  blocked: boolean;
+  blockedBy: Array<{ id: string; status: 'open' | 'resolved' | 'unknown' }>;
+  openBlockers: string[];
+  blocks: string[];
+  depth: number;
+}
+
+/**
+ * Format task graph as JSON
+ */
+function formatTaskGraphJson(tasks: Task[], variant: string, team: string): string {
+  const taskMap = new Map(tasks.map((t) => [t.id, t]));
+
+  // Build graph nodes
+  const nodes: GraphNode[] = tasks.map((task) => ({
+    id: task.id,
+    subject: task.subject,
+    status: task.status,
+    blocked: isBlocked(task, tasks),
+    blockedBy: task.blockedBy.map((id) => ({
+      id,
+      status: taskMap.get(id)?.status ?? 'unknown',
+    })),
+    openBlockers: getOpenBlockers(task, tasks),
+    blocks: task.blocks,
+    depth: calculateDepth(task, tasks, new Set()),
+  }));
+
+  // Find roots (no blockedBy) and leaves (no blocks)
+  const roots = tasks.filter((t) => t.blockedBy.length === 0).map((t) => t.id);
+  const leaves = tasks.filter((t) => t.blocks.length === 0).map((t) => t.id);
+
+  // Find orphans (blockedBy non-existent tasks)
+  const orphans = tasks
+    .filter((t) => t.blockedBy.length > 0 && t.blockedBy.some((id) => !taskMap.has(id)))
+    .map((t) => t.id);
+
+  const summary = getTaskSummary(tasks);
+
+  return JSON.stringify(
+    {
+      variant,
+      team,
+      nodes,
+      roots,
+      leaves,
+      orphans,
+      summary,
+    },
+    null,
+    2
+  );
+}
+
+/**
+ * Calculate the depth of a task in the dependency tree
+ */
+function calculateDepth(task: Task, allTasks: Task[], visited: Set<string>): number {
+  if (task.blockedBy.length === 0) return 0;
+  if (visited.has(task.id)) return 0; // Circular reference
+
+  visited.add(task.id);
+  const taskMap = new Map(allTasks.map((t) => [t.id, t]));
+
+  let maxDepth = 0;
+  for (const blockerId of task.blockedBy) {
+    const blocker = taskMap.get(blockerId);
+    if (blocker) {
+      const depth = calculateDepth(blocker, allTasks, new Set(visited));
+      maxDepth = Math.max(maxDepth, depth + 1);
+    }
+  }
+
+  return maxDepth;
+}
+
 export function runTasksGraph(opts: TasksGraphOptions): void {
   const context = resolveContext({
     rootDir: opts.rootDir,
@@ -108,9 +192,28 @@ export function runTasksGraph(opts: TasksGraphOptions): void {
   const tasks = loadAllTasks(location.tasksDir);
 
   if (tasks.length === 0) {
-    console.log(`No tasks found in ${location.variant} / ${location.team}`);
+    if (opts.json) {
+      console.log(
+        JSON.stringify(
+          {
+            variant: location.variant,
+            team: location.team,
+            nodes: [],
+            summary: { total: 0, open: 0, resolved: 0, ready: 0, blocked: 0 },
+          },
+          null,
+          2
+        )
+      );
+    } else {
+      console.log(`No tasks found in ${location.variant} / ${location.team}`);
+    }
     return;
   }
 
-  console.log(formatTaskGraph(tasks, location.variant, location.team));
+  if (opts.json) {
+    console.log(formatTaskGraphJson(tasks, location.variant, location.team));
+  } else {
+    console.log(formatTaskGraph(tasks, location.variant, location.team));
+  }
 }

@@ -3,7 +3,62 @@
  */
 
 import type { Task, TaskLocation, TaskSummary } from '../../../core/tasks/index.js';
-import { isBlocked } from '../../../core/tasks/index.js';
+import { isBlocked, getOpenBlockers } from '../../../core/tasks/index.js';
+
+/**
+ * Enriched blockedBy entry with status info
+ */
+interface BlockedByEntry {
+  id: string;
+  status: 'open' | 'resolved' | 'unknown';
+}
+
+/**
+ * Enriched task for JSON output with computed fields
+ */
+interface EnrichedTask {
+  id: string;
+  subject: string;
+  description: string;
+  status: 'open' | 'resolved';
+  owner?: string;
+  blocked: boolean;
+  blockedBy: BlockedByEntry[];
+  openBlockers: string[];
+  blocks: string[];
+  references: string[];
+  comments: Array<{ author: string; content: string }>;
+}
+
+/**
+ * Create enriched task with computed fields for JSON output
+ */
+function enrichTask(task: Task, allTasks: Task[]): EnrichedTask {
+  const taskMap = new Map(allTasks.map((t) => [t.id, t]));
+
+  // Enrich blockedBy with status
+  const blockedByWithStatus: BlockedByEntry[] = task.blockedBy.map((id) => {
+    const blockingTask = taskMap.get(id);
+    return {
+      id,
+      status: blockingTask ? blockingTask.status : 'unknown',
+    };
+  });
+
+  return {
+    id: task.id,
+    subject: task.subject,
+    description: task.description,
+    status: task.status,
+    owner: task.owner,
+    blocked: isBlocked(task, allTasks),
+    blockedBy: blockedByWithStatus,
+    openBlockers: getOpenBlockers(task, allTasks),
+    blocks: task.blocks,
+    references: task.references,
+    comments: task.comments,
+  };
+}
 
 /**
  * Truncate text to fit width
@@ -135,14 +190,16 @@ export function formatTaskDetail(task: Task, location: TaskLocation, allTasks: T
 }
 
 /**
- * Format tasks as JSON
+ * Format tasks as JSON with enriched computed fields
  */
-export function formatTasksJson(tasks: Task[], location: TaskLocation, summary: TaskSummary): string {
+export function formatTasksJson(tasks: Task[], location: TaskLocation, summary: TaskSummary, allTasks: Task[]): string {
+  const enrichedTasks = tasks.map((t) => enrichTask(t, allTasks));
+
   return JSON.stringify(
     {
       variant: location.variant,
       team: location.team,
-      tasks,
+      tasks: enrichedTasks,
       summary,
     },
     null,
@@ -151,14 +208,16 @@ export function formatTasksJson(tasks: Task[], location: TaskLocation, summary: 
 }
 
 /**
- * Format task with location as JSON
+ * Format task with location as JSON with enriched computed fields
  */
-export function formatTaskJson(task: Task, location: TaskLocation): string {
+export function formatTaskJson(task: Task, location: TaskLocation, allTasks: Task[]): string {
+  const enrichedTask = enrichTask(task, allTasks);
+
   return JSON.stringify(
     {
       variant: location.variant,
       team: location.team,
-      task,
+      task: enrichedTask,
     },
     null,
     2
@@ -166,17 +225,17 @@ export function formatTaskJson(task: Task, location: TaskLocation): string {
 }
 
 /**
- * Format multi-location tasks as JSON
+ * Format multi-location tasks as JSON with enriched computed fields
  */
 export function formatMultiLocationJson(
-  tasksByLocation: Array<{ location: TaskLocation; tasks: Task[]; summary: TaskSummary }>
+  tasksByLocation: Array<{ location: TaskLocation; tasks: Task[]; allTasks: Task[]; summary: TaskSummary }>
 ): string {
   return JSON.stringify(
     {
-      locations: tasksByLocation.map(({ location, tasks, summary }) => ({
+      locations: tasksByLocation.map(({ location, tasks, allTasks, summary }) => ({
         variant: location.variant,
         team: location.team,
-        tasks,
+        tasks: tasks.map((t) => enrichTask(t, allTasks)),
         summary,
       })),
     },

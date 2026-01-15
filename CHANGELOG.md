@@ -73,11 +73,11 @@ All notable changes to this project will be documented in this file.
 
 ### Model Selection Guidelines
 
-| Model | Best For |
-|-------|----------|
-| `haiku` | Exploration, searching, fetching context, data discovery - spawn many |
-| `sonnet` | Implementation, test generation, documentation, structured work |
-| `opus` | Code review, security analysis, architecture, conflict resolution |
+| Model    | Best For                                                              |
+| -------- | --------------------------------------------------------------------- |
+| `haiku`  | Exploration, searching, fetching context, data discovery - spawn many |
+| `sonnet` | Implementation, test generation, documentation, structured work       |
+| `opus`   | Code review, security analysis, architecture, conflict resolution     |
 
 ## [1.1.5] - 2025-01-05
 

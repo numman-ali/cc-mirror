@@ -1,6 +1,6 @@
 {
   "name": "cc-mirror",
-  "version": "1.5.0",
+  "version": "1.6.2",
   "type": "module",
   "description": "Claude Code, Unshackled — Pre-configured variants with multi-agent orchestration, custom providers, and battle-tested enhancements",
   "author": "Numman Ali",

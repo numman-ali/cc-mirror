@@ -25,7 +25,7 @@ export function runTasksShow(opts: TasksShowOptions): void {
     if (task) {
       const allTasks = loadAllTasks(location.tasksDir);
       if (opts.json) {
-        console.log(formatTaskJson(task, location));
+        console.log(formatTaskJson(task, location, allTasks));
       } else {
         console.log(formatTaskDetail(task, location, allTasks));
       }

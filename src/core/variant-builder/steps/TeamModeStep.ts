@@ -14,8 +14,8 @@ import { copyTeamPackPrompts, configureTeamToolset } from '../../../team-pack/in
 import type { BuildContext, BuildStep } from '../types.js';
 
 // The minified function that controls team mode
-const TEAM_MODE_DISABLED = 'function sU(){return!1}';
-const TEAM_MODE_ENABLED = 'function sU(){return!0}';
+const TEAM_MODE_DISABLED = 'function Uq(){return!1}';
+const TEAM_MODE_ENABLED = 'function Uq(){return!0}';
 
 export class TeamModeStep implements BuildStep {
   name = 'TeamMode';

@@ -70,6 +70,7 @@ LIST OPTIONS:
   --status <s>      Filter: open, resolved, all (default: open)
   --blocked         Show only blocked tasks
   --blocking        Show only tasks blocking others
+  --ready           Show only ready tasks (open + not blocked)
   --owner <id>      Filter by owner
   --limit <n>       Limit results (default: 50)
 
@@ -226,7 +227,7 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
     }
 
     case 'graph': {
-      runTasksGraph({ rootDir, variant, team });
+      runTasksGraph({ rootDir, variant, team, json });
       break;
     }
 
@@ -256,6 +257,7 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
         status: (opts.status as 'open' | 'resolved' | 'all') || 'open',
         blocked: opts.blocked !== undefined ? Boolean(opts.blocked) : undefined,
         blocking: opts.blocking !== undefined ? Boolean(opts.blocking) : undefined,
+        ready: opts.ready !== undefined ? Boolean(opts.ready) : undefined,
         owner: opts.owner as string | undefined,
         limit: opts.limit !== undefined ? Number(opts.limit) : 50,
         json,

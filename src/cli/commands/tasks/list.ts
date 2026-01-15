@@ -28,6 +28,7 @@ export function runTasksList(opts: TasksListOptions): void {
         status: opts.status || 'open',
         blocked: opts.blocked,
         blocking: opts.blocking,
+        ready: opts.ready,
         owner: opts.owner,
         limit: opts.limit,
       },
@@ -35,14 +36,14 @@ export function runTasksList(opts: TasksListOptions): void {
     );
     const sortedTasks = sortTasksById(filteredTasks);
     const summary = getTaskSummary(allTasks);
-    return { location, tasks: sortedTasks, summary };
+    return { location, tasks: sortedTasks, allTasks, summary };
   });
 
   // Output
   if (opts.json) {
     if (tasksByLocation.length === 1) {
-      const { location, tasks, summary } = tasksByLocation[0];
-      console.log(formatTasksJson(tasks, location, summary));
+      const { location, tasks, allTasks, summary } = tasksByLocation[0];
+      console.log(formatTasksJson(tasks, location, summary, allTasks));
     } else {
       console.log(formatMultiLocationJson(tasksByLocation));
     }

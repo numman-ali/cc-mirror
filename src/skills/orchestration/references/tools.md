@@ -252,22 +252,22 @@ TaskOutput(task_id="abc123")
 
 ### Model Selection
 
-| Task Type                        | Model    | Why                                      |
-| -------------------------------- | -------- | ---------------------------------------- |
-| Fetch files, grep, find things   | `haiku`  | Errand runner - spawn many in parallel   |
-| Gather info for synthesis        | `haiku`  | No judgment needed, just retrieval       |
-| Well-structured implementation   | `sonnet` | Capable worker - needs clear direction   |
-| Research, reading docs           | `sonnet` | Can follow patterns and instructions     |
-| Security review                  | `opus`   | Critical thinking, trust its judgment    |
-| Architecture/design decisions    | `opus`   | Ambiguous, needs creative problem-solving|
-| Complex debugging                | `opus`   | Reasoning across systems                 |
+| Task Type                      | Model    | Why                                       |
+| ------------------------------ | -------- | ----------------------------------------- |
+| Fetch files, grep, find things | `haiku`  | Errand runner - spawn many in parallel    |
+| Gather info for synthesis      | `haiku`  | No judgment needed, just retrieval        |
+| Well-structured implementation | `sonnet` | Capable worker - needs clear direction    |
+| Research, reading docs         | `sonnet` | Can follow patterns and instructions      |
+| Security review                | `opus`   | Critical thinking, trust its judgment     |
+| Architecture/design decisions  | `opus`   | Ambiguous, needs creative problem-solving |
+| Complex debugging              | `opus`   | Reasoning across systems                  |
 
 ### Parallelism Strategy
 
-| Priority     | Approach                                           |
-| ------------ | -------------------------------------------------- |
-| **Speed**    | Swarm of haiku for gathering, parallel sonnet work |
-| **Cost**     | Haiku wherever possible, sonnet only when needed   |
+| Priority     | Approach                                             |
+| ------------ | ---------------------------------------------------- |
+| **Speed**    | Swarm of haiku for gathering, parallel sonnet work   |
+| **Cost**     | Haiku wherever possible, sonnet only when needed     |
 | **Balanced** | Haiku to gather, sonnet to implement, opus to decide |
 
 ---

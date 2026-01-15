@@ -25,7 +25,7 @@ export const makeCore = () => {
     DEFAULT_ROOT: '/tmp/cc-mirror-test',
     DEFAULT_BIN_DIR: '/tmp/cc-mirror-bin',
     DEFAULT_NPM_PACKAGE: '@anthropic-ai/claude-code',
-    DEFAULT_NPM_VERSION: '2.0.76',
+    DEFAULT_NPM_VERSION: '2.1.0',
     listVariants: () => [
       {
         name: 'alpha',

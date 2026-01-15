@@ -45,12 +45,12 @@ Claude Code has a hidden multi-agent capability. CC-MIRROR enables it.
 
 **What gets unlocked:**
 
-| Tool | Purpose |
-|------|---------|
+| Tool         | Purpose                                                  |
+| ------------ | -------------------------------------------------------- |
 | `TaskCreate` | Create tasks with subject, description, and dependencies |
-| `TaskGet` | Retrieve full task details by ID |
-| `TaskUpdate` | Update status, add comments, set blockers |
-| `TaskList` | List all tasks with summary info |
+| `TaskGet`    | Retrieve full task details by ID                         |
+| `TaskUpdate` | Update status, add comments, set blockers                |
+| `TaskList`   | List all tasks with summary info                         |
 
 Plus a **battle-tested orchestrator skill** — refined through millions of tokens of iteration — that teaches Claude how to effectively coordinate multiple agents working in parallel.
 
@@ -134,12 +134,12 @@ npx cc-mirror quick --provider mirror --name mclaude
 
 Want to use different models? CC-MIRROR supports multiple providers, all with team mode:
 
-| Provider | Models | Auth | Best For |
-|----------|--------|------|----------|
-| **Z.ai** | GLM-4.7, GLM-4.5-Air | API Key | Heavy coding with GLM reasoning |
-| **MiniMax** | MiniMax-M2.1 | API Key | Unified model experience |
-| **OpenRouter** | 100+ models | Auth Token | Model flexibility, pay-per-use |
-| **CCRouter** | Ollama, DeepSeek, etc. | Optional | Local-first development |
+| Provider       | Models                 | Auth       | Best For                        |
+| -------------- | ---------------------- | ---------- | ------------------------------- |
+| **Z.ai**       | GLM-4.7, GLM-4.5-Air   | API Key    | Heavy coding with GLM reasoning |
+| **MiniMax**    | MiniMax-M2.1           | API Key    | Unified model experience        |
+| **OpenRouter** | 100+ models            | Auth Token | Model flexibility, pay-per-use  |
+| **CCRouter**   | Ollama, DeepSeek, etc. | Optional   | Local-first development         |
 
 ```bash
 # Z.ai (GLM Coding Plan)
@@ -180,13 +180,13 @@ Claude becomes "The Conductor" — a warm, capable orchestrator who transforms a
 
 ### What It Provides
 
-| Aspect | What Claude Learns |
-|--------|-------------------|
-| **Task Graph** | Decompose work into tasks with dependencies |
-| **Parallel Execution** | Fan-out, pipeline, map-reduce patterns |
-| **Background Agents** | Spawn agents that work while you continue |
-| **Smart Prompting** | Context, scope, constraints, output expectations |
-| **Progress Updates** | Milestone celebrations, warm professional tone |
+| Aspect                 | What Claude Learns                               |
+| ---------------------- | ------------------------------------------------ |
+| **Task Graph**         | Decompose work into tasks with dependencies      |
+| **Parallel Execution** | Fan-out, pipeline, map-reduce patterns           |
+| **Background Agents**  | Spawn agents that work while you continue        |
+| **Smart Prompting**    | Context, scope, constraints, output expectations |
+| **Progress Updates**   | Milestone celebrations, warm professional tone   |
 
 ### Example Flow
 
@@ -228,10 +228,13 @@ Manage team tasks from the command line:
 
 ```bash
 npx cc-mirror tasks                    # List open tasks
+npx cc-mirror tasks --ready            # List ready tasks (open + not blocked)
+npx cc-mirror tasks --json             # JSON output for automation
 npx cc-mirror tasks show 18            # Show task details
 npx cc-mirror tasks create             # Create new task
 npx cc-mirror tasks update 5 --status resolved
 npx cc-mirror tasks graph              # Visualize dependencies
+npx cc-mirror tasks graph --json       # Graph as JSON for programmatic use
 npx cc-mirror tasks clean --resolved   # Cleanup done tasks
 ```
 
@@ -306,24 +309,24 @@ minimax                           # Run MiniMax variant
 
 Each provider includes a custom color theme via [tweakcc](https://github.com/Piebald-AI/tweakcc):
 
-| Brand | Style |
-|-------|-------|
-| **mirror** | Silver/chrome with electric blue |
-| **zai** | Dark carbon with gold accents |
-| **minimax** | Coral/red/orange spectrum |
-| **openrouter** | Teal/cyan gradient |
-| **ccrouter** | Sky blue accents |
+| Brand          | Style                            |
+| -------------- | -------------------------------- |
+| **mirror**     | Silver/chrome with electric blue |
+| **zai**        | Dark carbon with gold accents    |
+| **minimax**    | Coral/red/orange spectrum        |
+| **openrouter** | Teal/cyan gradient               |
+| **ccrouter**   | Sky blue accents                 |
 
 ---
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [Team Mode](docs/features/team-mode.md) | Multi-agent collaboration deep dive |
-| [Mirror Claude](docs/features/mirror-claude.md) | Pure Claude Code with superpowers |
-| [Architecture](docs/architecture/overview.md) | How CC-MIRROR works under the hood |
-| [Full Documentation](docs/README.md) | Complete documentation index |
+| Document                                        | Description                         |
+| ----------------------------------------------- | ----------------------------------- |
+| [Team Mode](docs/features/team-mode.md)         | Multi-agent collaboration deep dive |
+| [Mirror Claude](docs/features/mirror-claude.md) | Pure Claude Code with superpowers   |
+| [Architecture](docs/architecture/overview.md)   | How CC-MIRROR works under the hood  |
+| [Full Documentation](docs/README.md)            | Complete documentation index        |
 
 ---
 

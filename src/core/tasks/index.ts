@@ -32,8 +32,20 @@ export {
   detectCurrentTeam,
   listVariantsWithTasks,
   resolveContext,
+  resolveTasksDir,
+  resolveTeams,
+  DEFAULT_VARIANT,
+  DEFAULT_CLAUDE_CONFIG_DIR,
   type ResolveOptions,
 } from './resolve.js';
 
 // Query operations
-export { isBlocked, isBlocking, filterTasks, getTaskSummary, sortTasksById, sortByDependency } from './queries.js';
+export {
+  isBlocked,
+  isBlocking,
+  filterTasks,
+  getTaskSummary,
+  getOpenBlockers,
+  sortTasksById,
+  sortByDependency,
+} from './queries.js';

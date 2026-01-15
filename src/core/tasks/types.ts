@@ -23,6 +23,7 @@ export interface TaskFilter {
   status?: 'open' | 'resolved' | 'all';
   blocked?: boolean;
   blocking?: boolean;
+  ready?: boolean;
   owner?: string;
   limit?: number;
 }
@@ -41,6 +42,7 @@ export interface TaskSummary {
   total: number;
   open: number;
   resolved: number;
+  ready: number;
   blocked: number;
 }
 

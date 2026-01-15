@@ -17,6 +17,7 @@ export interface TasksListOptions {
   status?: 'open' | 'resolved' | 'all';
   blocked?: boolean;
   blocking?: boolean;
+  ready?: boolean;
   owner?: string;
   limit?: number;
   json?: boolean;

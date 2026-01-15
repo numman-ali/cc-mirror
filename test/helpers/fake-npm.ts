@@ -32,7 +32,7 @@ const cliPath = path.join(prefix, 'node_modules', ...pkgName.split('/'), 'cli.js
 fs.mkdirSync(path.dirname(cliPath), { recursive: true });
 const payload = process.env.CC_MIRROR_FAKE_NPM_PAYLOAD || 'claude dummy';
 // Include team mode function for testing - disabled by default (can be patched)
-const teamModeFunc = 'function sU(){return!1}';
+const teamModeFunc = 'function Uq(){return!1}';
 fs.writeFileSync(cliPath, '#!/usr/bin/env node\\n' + teamModeFunc + '\\n' + 'console.log(' + JSON.stringify(payload) + ');\\n');
 fs.chmodSync(cliPath, 0o755);
 `;
