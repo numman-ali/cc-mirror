@@ -93,6 +93,31 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     setupNote: 'Create an account, add credits, then generate an API key. You must set model aliases.',
   },
 
+  nanogpt: {
+    headline: 'NanoGPT — One API, Many Models',
+    tagline: 'Nano power, vast potential',
+    features: [
+      'Access to 100+ AI models',
+      'Pay-per-use or subscription pricing',
+      'Model flexibility',
+      'Violet-themed interface',
+    ],
+    bestFor: 'Trying different models without multiple accounts',
+    models: {
+      opus: 'zai-org/glm-4.7:thinking',
+      sonnet: 'zai-org/glm-4.7:thinking',
+      haiku: 'zai-org/glm-4.7:thinking',
+    },
+    requiresMapping: true,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://nano-gpt.com',
+      apiKey: 'https://nano-gpt.com/api',
+      docs: 'https://docs.nano-gpt.com',
+    },
+    setupNote: 'Create an account, add credits, then copy your API key from the API page.',
+  },
+
   ccrouter: {
     headline: 'Claude Code Router — Local Model Gateway',
     tagline: 'Your models, your rules',
@@ -148,7 +173,7 @@ export const getProviderEducation = (providerKey: string): ProviderEducation | n
  */
 export const PROVIDER_COMPARISON = {
   fullySupported: ['mirror', 'zai', 'minimax'],
-  requiresMapping: ['openrouter'],
+  requiresMapping: ['openrouter', 'nanogpt'],
   hasPromptPack: ['zai', 'minimax'],
   localFirst: ['ccrouter'],
   pureClaudeCode: ['mirror'],

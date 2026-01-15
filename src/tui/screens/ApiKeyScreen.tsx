@@ -32,6 +32,11 @@ const PROVIDER_LINKS: Record<string, ProviderLinkInfo> = {
     subscribe: 'https://openrouter.ai/account',
     note: 'Your OpenRouter key will be stored as ANTHROPIC_AUTH_TOKEN.',
   },
+  nanogpt: {
+    apiKey: 'https://nano-gpt.com/api',
+    subscribe: 'https://nano-gpt.com',
+    note: 'Your NanoGPT key will be stored as ANTHROPIC_AUTH_TOKEN.',
+  },
   ccrouter: {
     apiKey: 'https://github.com/musistudio/claude-code-router',
     subscribe: 'https://github.com/musistudio/claude-code-router#installation',

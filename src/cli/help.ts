@@ -34,7 +34,7 @@ COMMANDS
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
-  --provider <name>            Provider: mirror | zai | minimax | openrouter | ccrouter
+  --provider <name>            Provider: mirror | zai | minimax | openrouter | nanogpt | ccrouter
   --api-key <key>              Provider API key
   --brand <preset>             Theme: auto | none | mirror | zai | minimax
   --no-team-mode               Disable team mode (not recommended)
