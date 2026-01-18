@@ -113,12 +113,12 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
       'Install: npm i -g @musistudio/claude-code-router, run "ccr start". Configure models in ~/.claude-code-router/config.json',
   },
   ollama: {
-    headline: 'Ollama — Local + Cloud Anthropic Compatibility',
+    headline: 'Ollama — Local + Cloud Models',
     tagline: 'Warm, local-first models',
     features: [
-      'Anthropic-compatible endpoint (local + cloud)',
-      'Run local models with Ollama runtime',
+      'Run local models with the Ollama runtime',
       'Cloud models available via ollama.com',
+      'Alias models for clean mappings',
       'Ember-themed interface',
     ],
     bestFor: 'Local-first workstations and hybrid local/cloud setups',

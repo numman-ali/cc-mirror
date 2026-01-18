@@ -123,7 +123,7 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
   ollama: {
     key: 'ollama',
     label: 'Ollama',
-    description: 'Local + cloud models via Ollama Anthropic compatibility',
+    description: 'Local + cloud models via Ollama',
     baseUrl: 'http://localhost:11434',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
