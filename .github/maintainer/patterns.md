@@ -24,3 +24,7 @@
 - Most bugs cluster in `src/cli/` (needs refactoring)
 - Test coverage gaps in error handling paths
 
+## UX Patterns
+
+- Users are confused about MCP server config location and variant vs project scope.
+- The dev-browser skill install default is frequently questioned; consider defaulting off in quick mode.

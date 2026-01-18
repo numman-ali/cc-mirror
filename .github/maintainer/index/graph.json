@@ -1,18 +1,11 @@
 {
-  "generatedAt": "2026-01-17T22:52:03.295Z",
+  "generatedAt": "2026-01-18T08:51:57.020Z",
   "nodes": [
-    {
-      "id": "issue:7",
-      "type": "issue",
-      "title": "[Bug] installation on Windows fails",
-      "priorityScore": 49,
-      "actionability": "ready"
-    },
     {
       "id": "issue:27",
       "type": "issue",
       "title": "[Bug] EJ.has is not a function",
-      "priorityScore": 19,
+      "priorityScore": 21,
       "actionability": "needs-info"
     },
     {
@@ -79,22 +72,6 @@
       "actionability": "ready"
     },
     {
-      "id": "pr:26",
-      "type": "pr",
-      "title": "Claude Code 2.1.7 alignment: retire team mode for now",
-      "priorityScore": 32,
-      "implementationScore": 4,
-      "actionability": "needs-analysis"
-    },
-    {
-      "id": "pr:11",
-      "type": "pr",
-      "title": "feat: add Windows compatibility",
-      "priorityScore": 21,
-      "implementationScore": 32,
-      "actionability": "needs-analysis"
-    },
-    {
       "id": "pr:9",
       "type": "pr",
       "title": "feat: add Sync Variants feature to copy config between variants",
@@ -116,14 +93,6 @@
       "title": "feat: add NanoGPT as a provider",
       "priorityScore": 6,
       "implementationScore": 0,
-      "actionability": "needs-analysis"
-    },
-    {
-      "id": "pr:30",
-      "type": "pr",
-      "title": "fix: update Claude Code to 2.1.7 with Windows support",
-      "priorityScore": 0,
-      "implementationScore": 48,
       "actionability": "needs-analysis"
     },
     {
@@ -149,32 +118,9 @@
       "priorityScore": 0,
       "implementationScore": 0,
       "actionability": "needs-analysis"
-    },
-    {
-      "id": "pr:17",
-      "type": "pr",
-      "title": "feat: add Windows splash screen support for all providers",
-      "priorityScore": 0,
-      "implementationScore": 9,
-      "actionability": "needs-analysis"
     }
   ],
   "edges": [
-    {
-      "from": "issue:7",
-      "to": "issue:26",
-      "type": "mentions"
-    },
-    {
-      "from": "issue:7",
-      "to": "issue:30",
-      "type": "mentions"
-    },
-    {
-      "from": "issue:30",
-      "to": "issue:7",
-      "type": "mentioned_by"
-    },
     {
       "from": "issue:27",
       "to": "issue:28",
@@ -184,21 +130,6 @@
       "from": "issue:9",
       "to": "issue:8",
       "type": "mentioned_by"
-    },
-    {
-      "from": "pr:26",
-      "to": "issue:1",
-      "type": "mentions"
-    },
-    {
-      "from": "issue:7",
-      "to": "pr:26",
-      "type": "mentioned_by"
-    },
-    {
-      "from": "pr:11",
-      "to": "pr:17",
-      "type": "possible_duplicate"
     },
     {
       "from": "pr:9",
@@ -214,16 +145,6 @@
       "from": "pr:5",
       "to": "pr:21",
       "type": "possible_duplicate"
-    },
-    {
-      "from": "pr:30",
-      "to": "issue:7",
-      "type": "mentions"
-    },
-    {
-      "from": "issue:7",
-      "to": "pr:30",
-      "type": "mentioned_by"
     }
   ]
 }

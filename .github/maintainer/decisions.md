@@ -17,3 +17,12 @@
 **Decision:** Closed without action
 **Reasoning:** No response to info request for 60 days.
 
+### Team mode removal in current releases
+**Date:** 2026-01-18
+**Decision:** Team mode is out of scope for current releases (only supported in 1.6.3).
+**Reasoning:** Maintenance cost outweighs value; focus on provider expansion and stability.
+
+### [ISSUE:8] Deferred - Sync Variants
+**Date:** 2026-01-18
+**Decision:** Defer Sync Variants to a later milestone.
+**Reasoning:** High complexity; prioritize provider expansion and core stability first.

@@ -35,4 +35,28 @@ export const PROVIDERS = [
     expectedSplashStyle: 'ccrouter',
     colorCode: '\\x1b[38;5;39m', // Sky blue
   },
+  {
+    key: 'gatewayz',
+    name: 'GatewayZ',
+    apiKey: 'test-gatewayz-key',
+    expectedThemeId: 'gatewayz-violet',
+    expectedSplashStyle: 'gatewayz',
+    colorCode: '\\x1b[38;5;141m', // Violet
+  },
+  {
+    key: 'vercel',
+    name: 'Vercel AI Gateway',
+    apiKey: 'test-vercel-key',
+    expectedThemeId: 'vercel-mono',
+    expectedSplashStyle: 'vercel',
+    colorCode: '\\x1b[38;5;250m', // Light gray
+  },
+  {
+    key: 'nanogpt',
+    name: 'NanoGPT',
+    apiKey: 'test-nanogpt-key',
+    expectedThemeId: 'nanogpt-neon',
+    expectedSplashStyle: 'nanogpt',
+    colorCode: '\\x1b[38;5;81m', // Neon cyan
+  },
 ];

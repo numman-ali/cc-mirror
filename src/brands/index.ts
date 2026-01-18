@@ -4,6 +4,9 @@ import { buildMinimaxTweakccConfig } from './minimax.js';
 import { buildOpenRouterTweakccConfig } from './openrouter.js';
 import { buildCCRouterTweakccConfig } from './ccrouter.js';
 import { buildMirrorTweakccConfig } from './mirror.js';
+import { buildGatewayzTweakccConfig } from './gatewayz.js';
+import { buildVercelTweakccConfig } from './vercel.js';
+import { buildNanoGPTTweakccConfig } from './nanogpt.js';
 
 export interface BrandPreset {
   key: string;
@@ -36,6 +39,24 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
     label: 'CCRouter Sky',
     description: 'Airy sky-blue accents for Claude Code Router.',
     buildTweakccConfig: buildCCRouterTweakccConfig,
+  },
+  gatewayz: {
+    key: 'gatewayz',
+    label: 'GatewayZ Violet',
+    description: 'Violet gradients for GatewayZ.',
+    buildTweakccConfig: buildGatewayzTweakccConfig,
+  },
+  vercel: {
+    key: 'vercel',
+    label: 'Vercel Mono',
+    description: 'Minimal monochrome palette with neon green accents.',
+    buildTweakccConfig: buildVercelTweakccConfig,
+  },
+  nanogpt: {
+    key: 'nanogpt',
+    label: 'NanoGPT Neon',
+    description: 'Neon blue + pink accents for NanoGPT.',
+    buildTweakccConfig: buildNanoGPTTweakccConfig,
   },
   mirror: {
     key: 'mirror',

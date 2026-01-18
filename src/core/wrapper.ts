@@ -34,6 +34,21 @@ const C = {
   mirSecondary: '\x1b[38;5;250m', // Platinum
   mirAccent: '\x1b[38;5;45m', // Electric cyan
   mirDim: '\x1b[38;5;243m', // Muted silver
+  // GatewayZ: Violet gradient
+  gwPrimary: '\x1b[38;5;141m', // Violet
+  gwSecondary: '\x1b[38;5;135m', // Soft purple
+  gwAccent: '\x1b[38;5;99m', // Deep purple
+  gwDim: '\x1b[38;5;60m', // Muted purple
+  // Vercel: Monochrome with green accent
+  vcPrimary: '\x1b[38;5;250m', // Light gray
+  vcSecondary: '\x1b[38;5;245m', // Gray
+  vcAccent: '\x1b[38;5;46m', // Bright green
+  vcDim: '\x1b[38;5;240m', // Dark gray
+  // NanoGPT: Neon blue gradient
+  ngPrimary: '\x1b[38;5;81m', // Neon cyan
+  ngSecondary: '\x1b[38;5;75m', // Soft cyan
+  ngAccent: '\x1b[38;5;69m', // Deep cyan
+  ngDim: '\x1b[38;5;67m', // Muted blue
   // Default: White/Gray
   defPrimary: '\x1b[38;5;255m', // White
   defDim: '\x1b[38;5;245m', // Gray
@@ -111,6 +126,45 @@ const SPLASH_ART: SplashArt = {
     `${C.mirSecondary}      Claude ${C.mirDim}━${C.mirSecondary} Pure Reflection${C.reset}`,
     '',
   ],
+  gatewayz: [
+    '',
+    `${C.gwPrimary}    ██████╗  █████╗ ████████╗███████╗██╗    ██╗${C.reset}`,
+    `${C.gwPrimary}    ██╔══██╗██╔══██╗╚══██╔══╝██╔════╝██║    ██║${C.reset}`,
+    `${C.gwSecondary}    ██║  ██║███████║   ██║   █████╗  ██║ █╗ ██║${C.reset}`,
+    `${C.gwSecondary}    ██║  ██║██╔══██║   ██║   ██╔══╝  ██║███╗██║${C.reset}`,
+    `${C.gwAccent}    ██████╔╝██║  ██║   ██║   ███████╗╚███╔███╔╝${C.reset}`,
+    `${C.gwAccent}    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝ ╚══╝╚══╝${C.reset}`,
+    '',
+    `${C.gwDim}    ━━━━━━━━━━━${C.gwPrimary}◆${C.gwDim}━━━━━━━━━━${C.reset}`,
+    `${C.gwSecondary}      GatewayZ AI Gateway${C.reset}`,
+    '',
+  ],
+  vercel: [
+    '',
+    `${C.vcPrimary}    ██╗   ██╗███████╗██████╗  ██████╗███████╗██╗${C.reset}`,
+    `${C.vcPrimary}    ██║   ██║██╔════╝██╔══██╗██╔════╝██╔════╝██║${C.reset}`,
+    `${C.vcSecondary}    ██║   ██║█████╗  ██████╔╝██║     █████╗  ██║${C.reset}`,
+    `${C.vcSecondary}    ╚██╗ ██╔╝██╔══╝  ██╔══██╗██║     ██╔══╝  ██║${C.reset}`,
+    `${C.vcAccent}     ╚████╔╝ ███████╗██║  ██║╚██████╗███████╗██║${C.reset}`,
+    `${C.vcAccent}      ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝${C.reset}`,
+    '',
+    `${C.vcDim}    ━━━━━━━━━━━${C.vcAccent}◆${C.vcDim}━━━━━━━━━━${C.reset}`,
+    `${C.vcSecondary}      Vercel AI Gateway${C.reset}`,
+    '',
+  ],
+  nanogpt: [
+    '',
+    `${C.ngPrimary}    ███╗   ██╗ █████╗ ███╗   ██╗ ██████╗  ██████╗██████╗${C.reset}`,
+    `${C.ngPrimary}    ████╗  ██║██╔══██╗████╗  ██║██╔═══██╗██╔════╝██╔══██╗${C.reset}`,
+    `${C.ngSecondary}    ██╔██╗ ██║███████║██╔██╗ ██║██║   ██║██║     ██████╔╝${C.reset}`,
+    `${C.ngSecondary}    ██║╚██╗██║██╔══██║██║╚██╗██║██║   ██║██║     ██╔═══╝${C.reset}`,
+    `${C.ngAccent}    ██║ ╚████║██║  ██║██║ ╚████║╚██████╔╝╚██████╗██║${C.reset}`,
+    `${C.ngAccent}    ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝  ╚═════╝╚═╝${C.reset}`,
+    '',
+    `${C.ngDim}    ━━━━━━━━━━━${C.ngPrimary}◆${C.ngDim}━━━━━━━━━━${C.reset}`,
+    `${C.ngSecondary}      NanoGPT Anthropic API${C.reset}`,
+    '',
+  ],
   default: [
     '',
     `${C.defPrimary}    ██████╗ ██████╗   ${C.defDim}━━  M I R R O R${C.reset}`,
@@ -123,7 +177,7 @@ const SPLASH_ART: SplashArt = {
   ],
 };
 
-const KNOWN_SPLASH_STYLES = ['zai', 'minimax', 'openrouter', 'ccrouter', 'mirror'];
+const KNOWN_SPLASH_STYLES = ['zai', 'minimax', 'openrouter', 'ccrouter', 'mirror', 'gatewayz', 'vercel', 'nanogpt'];
 
 const buildWindowsWrapperScript = (opts: {
   configDir: string;
@@ -341,6 +395,24 @@ export const writeWrapper = (
     "        cat <<'CCMMIR'",
     ...SPLASH_ART.mirror,
     'CCMMIR',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      gatewayz)',
+    "        cat <<'CCMGW'",
+    ...SPLASH_ART.gatewayz,
+    'CCMGW',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      vercel)',
+    "        cat <<'CCMVC'",
+    ...SPLASH_ART.vercel,
+    'CCMVC',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      nanogpt)',
+    "        cat <<'CCMNG'",
+    ...SPLASH_ART.nanogpt,
+    'CCMNG',
     '        __cc_show_label="0"',
     '        ;;',
     '      *)',

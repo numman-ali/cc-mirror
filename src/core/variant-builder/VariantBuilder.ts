@@ -41,7 +41,7 @@ const shouldEnablePromptPack = (providerKey: string, provider?: ProviderTemplate
   return providerKey === 'zai' || providerKey === 'minimax';
 };
 
-const shouldInstallSkills = (providerKey: string) => providerKey === 'zai' || providerKey === 'minimax';
+const shouldInstallSkills = (_providerKey: string) => false;
 
 const shouldEnableShellEnv = (providerKey: string) => providerKey === 'zai';
 

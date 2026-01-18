@@ -22,7 +22,7 @@ export const EDUCATION = {
       'and settings—completely independent from your main Claude Code.',
       '',
       'Think of it as having multiple Claude Code "accounts", each pointing',
-      'to a different AI backend: Z.ai, MiniMax, OpenRouter, or your own.',
+      'to a different AI backend: Z.ai, MiniMax, OpenRouter, GatewayZ, Vercel, NanoGPT, or your own.',
     ],
   },
 

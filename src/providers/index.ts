@@ -20,6 +20,8 @@ export interface ProviderTemplate {
   enablesTeamMode?: boolean;
   /** Skip prompt pack overlays (pure Claude experience) */
   noPromptPack?: boolean;
+  /** Require empty ANTHROPIC_API_KEY (for authToken providers like Vercel AI Gateway) */
+  requiresEmptyApiKey?: boolean;
 }
 
 export interface ModelOverrides {
@@ -115,6 +117,51 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     authMode: 'authToken',
     requiresModelMapping: false, // Models configured in ~/.claude-code-router/config.json
     credentialOptional: true, // No API key needed - CCRouter handles auth
+  },
+  gatewayz: {
+    key: 'gatewayz',
+    label: 'GatewayZ',
+    description: 'GatewayZ AI Gateway (Anthropic-compatible)',
+    baseUrl: 'https://api.gatewayz.ai',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'GatewayZ',
+      CC_MIRROR_SPLASH_STYLE: 'gatewayz',
+    },
+    apiKeyLabel: 'GatewayZ API key',
+    authMode: 'authToken',
+    requiresModelMapping: true,
+  },
+  vercel: {
+    key: 'vercel',
+    label: 'Vercel AI Gateway',
+    description: 'Vercel AI Gateway (Anthropic-compatible)',
+    baseUrl: 'https://ai-gateway.vercel.sh',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'Vercel AI Gateway',
+      CC_MIRROR_SPLASH_STYLE: 'vercel',
+    },
+    apiKeyLabel: 'Vercel AI Gateway API key',
+    authMode: 'authToken',
+    requiresModelMapping: true,
+    requiresEmptyApiKey: true,
+  },
+  nanogpt: {
+    key: 'nanogpt',
+    label: 'NanoGPT',
+    description: 'NanoGPT Anthropic-compatible endpoint',
+    baseUrl: 'https://nano-gpt.com/api',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'NanoGPT',
+      CC_MIRROR_SPLASH_STYLE: 'nanogpt',
+    },
+    apiKeyLabel: 'NanoGPT API key',
+    authMode: 'authToken',
   },
   custom: {
     key: 'custom',
@@ -239,8 +286,12 @@ export const buildEnv = ({ providerKey, baseUrl, apiKey, extraEnv, modelOverride
     }
   }
 
-  if (authMode === 'authToken' && Object.hasOwn(env, 'ANTHROPIC_API_KEY')) {
-    delete env.ANTHROPIC_API_KEY;
+  if (authMode === 'authToken') {
+    if (provider.requiresEmptyApiKey) {
+      env.ANTHROPIC_API_KEY = '';
+    } else if (Object.hasOwn(env, 'ANTHROPIC_API_KEY')) {
+      delete env.ANTHROPIC_API_KEY;
+    }
   }
   if (authMode !== 'authToken' && Object.hasOwn(env, 'ANTHROPIC_AUTH_TOKEN')) {
     delete env.ANTHROPIC_AUTH_TOKEN;

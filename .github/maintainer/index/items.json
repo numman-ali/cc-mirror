@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-01-17T22:52:03.295Z",
+  "generatedAt": "2026-01-18T08:51:57.020Z",
   "count": 21,
   "items": [
     {
       "id": 7,
       "type": "issue",
-      "title": "[Bug] installation on Windows fails",
+      "title": "",
       "actionability": "ready",
       "priorityScore": 49,
       "sentimentScore": 0,
@@ -28,7 +28,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-8.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 10,
@@ -42,7 +42,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-10.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 12,
@@ -56,7 +56,7 @@
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-12.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 14,
@@ -70,7 +70,7 @@
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-14.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 16,
@@ -84,7 +84,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-16.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 19,
@@ -98,7 +98,7 @@
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-19.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 23,
@@ -112,7 +112,7 @@
       "linkedIssues": [],
       "labels": ["enhancement"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-23.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 24,
@@ -126,21 +126,21 @@
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-24.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 27,
       "type": "issue",
       "title": "[Bug] EJ.has is not a function",
       "actionability": "needs-info",
-      "priorityScore": 19,
+      "priorityScore": 21,
       "sentimentScore": 0,
       "needsInfoScore": 3,
       "needsInfoSignals": ["missing-repro", "missing-expected-actual"],
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-27.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 29,
@@ -154,7 +154,7 @@
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-29.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 4,
@@ -178,7 +178,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-4.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 5,
@@ -202,7 +202,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-5.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 9,
@@ -226,12 +226,12 @@
       "linkedIssues": [8],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-9.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 11,
       "type": "pr",
-      "title": "feat: add Windows compatibility",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 21,
       "implementationScoreAuto": 32,
@@ -255,7 +255,7 @@
     {
       "id": 17,
       "type": "pr",
-      "title": "feat: add Windows splash screen support for all providers",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 9,
@@ -298,7 +298,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-20.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 21,
@@ -322,7 +322,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-21.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 22,
@@ -346,12 +346,12 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-22.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-18T08:51:57.020Z"
     },
     {
       "id": 26,
       "type": "pr",
-      "title": "Claude Code 2.1.7 alignment: retire team mode for now",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 32,
       "implementationScoreAuto": 4,
@@ -375,7 +375,7 @@
     {
       "id": 30,
       "type": "pr",
-      "title": "fix: update Claude Code to 2.1.7 with Windows support",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 48,

@@ -24,6 +24,18 @@ export const COMPLETION_HAIKUS: Record<string, HaikuLines[]> = {
     ['Local models shine,', "routed through the mirror's edge.", 'Your code, your design.'],
     ['Proxied through the night,', 'your models stand at the ready.', 'Code takes its first flight.'],
   ],
+  gatewayz: [
+    ['Many gates align,', 'your routes converge in violet.', 'Paths intertwine.'],
+    ['Bridges hum in sync,', 'one gateway, many bright roads.', 'Ideas link.'],
+  ],
+  vercel: [
+    ['Black lines, green light glows,', 'gateways stream with steady pulse.', 'Deploying flows.'],
+    ['Edges softly breathe,', 'requests arc through silent nodes.', 'Signals weave.'],
+  ],
+  nanogpt: [
+    ['Neon currents rise,', 'small sparks ignite the dark grid.', 'Swift replies.'],
+    ['Tiny waves collide,', 'blue and pink in quiet code.', 'Systems glide.'],
+  ],
   default: [
     ['Mirror reflects true,', 'your variant is ready now.', 'Go build something new.'],
     ['Configuration done,', 'the wrapper awaits your call.', 'Your coding has begun.'],

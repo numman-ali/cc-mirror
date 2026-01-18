@@ -55,12 +55,18 @@ test('E2E: Colored ASCII art content verification', async (t) => {
           minimax: /\\u001b\[38;5;203m/, // Coral/salmon red
           openrouter: /\\u001b\[38;5;43m/, // Teal
           ccrouter: /\\u001b\[38;5;39m/, // Sky blue
+          gatewayz: /\\u001b\[38;5;141m/, // Violet
+          vercel: /\\u001b\[38;5;250m/, // Light gray
+          nanogpt: /\\u001b\[38;5;81m/, // Neon cyan
         }
       : {
           zai: /\x1b\[38;5;220m/, // Gold
           minimax: /\x1b\[38;5;203m/, // Coral/salmon red
           openrouter: /\x1b\[38;5;43m/, // Teal
           ccrouter: /\x1b\[38;5;39m/, // Sky blue
+          gatewayz: /\x1b\[38;5;141m/, // Violet
+          vercel: /\x1b\[38;5;250m/, // Light gray
+          nanogpt: /\x1b\[38;5;81m/, // Neon cyan
         };
     /* eslint-enable no-control-regex */
 
@@ -76,6 +82,9 @@ test('E2E: Colored ASCII art content verification', async (t) => {
       minimax: ['███╗   ███╗', 'MiniMax-M2.1', 'AGI for All'],
       openrouter: ['██████╗ ██████╗', 'One API', 'Any Model'],
       ccrouter: ['██████╗ ██████╗██████╗', 'Claude Code Router', 'Any Model'],
+      gatewayz: ['██████╗  █████╗', 'GatewayZ AI Gateway'],
+      vercel: ['██╗   ██╗', 'Vercel AI Gateway'],
+      nanogpt: ['███╗   ██╗', 'NanoGPT Anthropic API'],
     };
 
     for (const [providerKey, patterns] of Object.entries(asciiPatterns)) {

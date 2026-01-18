@@ -18,7 +18,7 @@ FOCUS
   Team mode is only supported in cc-mirror 1.6.3 (published release).
 
 QUICK START
-  npx cc-mirror quick --provider mirror    # Fastest path to multi-agent
+  npx cc-mirror quick --provider mirror    # Fastest path to Claude
   npx cc-mirror quick --provider zai       # Z.ai with GLM models
   npx cc-mirror                            # Interactive TUI
 
@@ -34,9 +34,9 @@ COMMANDS
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
-  --provider <name>            Provider: mirror | zai | minimax | openrouter | ccrouter
+  --provider <name>            Provider: mirror | zai | minimax | openrouter | ccrouter | gatewayz | vercel | nanogpt
   --api-key <key>              Provider API key
-  --brand <preset>             Theme: auto | none | mirror | zai | minimax
+  --brand <preset>             Theme: auto | none | mirror | zai | minimax | openrouter | ccrouter | gatewayz | vercel | nanogpt
   --tui / --no-tui             Force TUI on/off
 
 OPTIONS (advanced)
@@ -57,6 +57,9 @@ PROVIDERS
   minimax       MiniMax-M2.1 via MiniMax Cloud
   openrouter    100+ models via OpenRouter
   ccrouter      Local LLMs via Claude Code Router
+  gatewayz      GatewayZ AI Gateway
+  vercel        Vercel AI Gateway
+  nanogpt       NanoGPT Anthropic-compatible
 
 EXAMPLES
   npx cc-mirror quick --provider mirror --name mclaude

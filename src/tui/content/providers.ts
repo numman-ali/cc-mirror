@@ -112,6 +112,58 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     setupNote:
       'Install: npm i -g @musistudio/claude-code-router, run "ccr start". Configure models in ~/.claude-code-router/config.json',
   },
+  gatewayz: {
+    headline: 'GatewayZ — AI Gateway',
+    tagline: 'One gateway, many providers',
+    features: [
+      'Anthropic-compatible endpoint',
+      'Single API key for multiple providers',
+      'Gateway-style routing',
+      'Violet-themed interface',
+    ],
+    bestFor: 'Routing multiple model providers through a single endpoint',
+    requiresMapping: true,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://gatewayz.ai',
+      apiKey: 'https://gatewayz.ai',
+      docs: 'https://docs.gatewayz.ai/docs/anthropic-compatibility',
+    },
+    setupNote: 'GatewayZ uses Anthropic-compatible endpoints. Configure model mapping for your preferred models.',
+  },
+  vercel: {
+    headline: 'Vercel AI Gateway',
+    tagline: 'Unified AI routing on Vercel',
+    features: [
+      'Anthropic-compatible endpoint',
+      'Use provider/model identifiers',
+      'Centralized usage + billing',
+      'Monochrome + green accents',
+    ],
+    bestFor: 'Teams already using Vercel AI Gateway',
+    requiresMapping: true,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://vercel.com/ai',
+      apiKey: 'https://vercel.com/account/tokens',
+      docs: 'https://vercel.com/docs/ai-gateway',
+    },
+    setupNote: 'Set ANTHROPIC_AUTH_TOKEN and keep ANTHROPIC_API_KEY empty.',
+  },
+  nanogpt: {
+    headline: 'NanoGPT — Anthropic Compatible',
+    tagline: 'Lean gateway, fast setup',
+    features: ['Anthropic-compatible endpoint', 'Simple API key auth', 'Neon-themed interface'],
+    bestFor: 'Simple Anthropic-compatible usage with minimal setup',
+    requiresMapping: false,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://nano-gpt.com',
+      apiKey: 'https://nano-gpt.com',
+      docs: 'https://docs.nano-gpt.com/docs/anthropic-compatibility',
+    },
+    setupNote: 'Use the NanoGPT base URL and API key to authenticate.',
+  },
   mirror: {
     headline: 'The Fastest Path to Claude Code',
     tagline: 'Claude Code, Unshackled',
@@ -143,8 +195,8 @@ export const getProviderEducation = (providerKey: string): ProviderEducation | n
  * Quick comparison points for provider selection
  */
 export const PROVIDER_COMPARISON = {
-  fullySupported: ['mirror', 'zai', 'minimax'],
-  requiresMapping: ['openrouter'],
+  fullySupported: ['mirror', 'zai', 'minimax', 'openrouter', 'ccrouter', 'gatewayz', 'vercel', 'nanogpt'],
+  requiresMapping: ['openrouter', 'gatewayz', 'vercel'],
   hasPromptPack: ['zai', 'minimax'],
   localFirst: ['ccrouter'],
   pureClaudeCode: ['mirror'],

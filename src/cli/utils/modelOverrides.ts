@@ -38,7 +38,9 @@ export async function ensureModelMapping(
     haiku: (overrides.haiku ?? '').trim().length === 0,
   };
   if (opts.yes && (missing.sonnet || missing.opus || missing.haiku)) {
-    throw new Error('OpenRouter/Local LLMs require --model-sonnet/--model-opus/--model-haiku');
+    throw new Error(
+      'This provider requires --model-sonnet/--model-opus/--model-haiku (OpenRouter, GatewayZ, Vercel AI Gateway).'
+    );
   }
   if (!opts.yes) {
     if (missing.sonnet) overrides.sonnet = await requirePrompt('Default Sonnet model', overrides.sonnet);

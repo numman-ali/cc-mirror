@@ -36,7 +36,7 @@ test('TUI create flow applies tweakcc by default', async () => {
   await send(app.stdin, enter); // base url
   await send(app.stdin, enter); // api key
   await send(app.stdin, enter); // prompt pack mode (maximal) - skipped yes/no for zai/minimax
-  await send(app.stdin, enter); // install dev-browser? default Yes
+  await send(app.stdin, enter); // install dev-browser? default No
   await send(app.stdin, enter); // write Z_AI_API_KEY? default Yes
   await send(app.stdin, down); // add env? select No
   await send(app.stdin, enter);

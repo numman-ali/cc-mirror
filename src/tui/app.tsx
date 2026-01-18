@@ -221,7 +221,7 @@ export const App: React.FC<AppProps> = ({
   const [usePromptPack, setUsePromptPack] = useState(true);
   // promptPackMode is deprecated - always use 'minimal'
   const promptPackMode = 'minimal' as const;
-  const [installSkill, setInstallSkill] = useState(true);
+  const [installSkill, setInstallSkill] = useState(false);
   const [shellEnv, setShellEnv] = useState(true);
   const [skillUpdate, setSkillUpdate] = useState(false);
   const [enableTeamMode, setEnableTeamMode] = useState(defaultCore.TEAM_MODE_SUPPORTED);
