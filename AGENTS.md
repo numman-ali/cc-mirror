@@ -100,7 +100,9 @@ npm run render:tui-svg  # Regenerate docs/cc-mirror-tree.svg
 
 ### Wrapper Script
 
-Location: `~/.local/bin/<variant>`
+Location: `<bin-dir>/<variant>` (macOS/Linux) or `<bin-dir>/<variant>.cmd` (Windows)
+
+Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
 
 - Sets `CLAUDE_CONFIG_DIR` to variant config
 - Loads `settings.json` into env at runtime
@@ -124,6 +126,8 @@ Location: `~/.local/bin/<variant>`
 - Optional: `ANTHROPIC_SMALL_FAST_MODEL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_SUBAGENT_MODEL`
 
 ## Team Mode
+
+**Legacy notice:** Team mode is only supported in the published cc-mirror **1.6.3** release. Current development builds do not patch Claude Code; focus is provider enablement and stable updates.
 
 Team mode patches `cli.js` to enable Task\* tools for multi-agent collaboration.
 
@@ -231,7 +235,7 @@ cat ~/.cc-mirror/<variant>/variant.json
 cat ~/.cc-mirror/<variant>/tweakcc/config.json
 
 # Wrapper script
-cat ~/.local/bin/<variant>
+cat <bin-dir>/<variant>
 ```
 
 ### Team Mode Verification

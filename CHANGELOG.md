@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+## [1.6.6] - 2026-01-18
+
+### Changed
+
+- Default Claude Code npm version updated to 2.1.12.
+- Team mode is disabled in current builds; legacy flags are ignored.
+
+### Added
+
+- Team mode cleanup during updates when legacy metadata is detected.
+
+### Documentation
+
+- README and docs now mark team mode as legacy (cc-mirror 1.6.3 only).
+
+## [1.6.5] - 2026-01-12
+
+### Changed
+
+- Default Claude Code npm version updated to 2.1.5.
+
+## [1.6.4] - 2026-01-12
+
+### Changed
+
+- `cc-mirror update` now resets `npm/` and `tweakcc/` before reinstalling, preserving config/tasks/skills for a clean rebuild.
+- Update command defaults to quiet tweakcc output; use `--verbose` to show full logs.
+
+### Added
+
+- Update rebuild step test coverage, plus a gated live E2E update smoke test for headless CLI runs.
+
+### Fixed
+
+- Update no longer reuses stale tweakcc prompt data that could corrupt the CLI after upgrades.
+
+## [1.6.3] - 2026-01-09
+
+### Added
+
+- Task command coverage for `tasks show`, `tasks update`, and `tasks clean` (JSON output + filters).
+
+### Changed
+
+- Test runner defaults to serial execution (unless `--test-concurrency` is provided) to reduce flaky Ink/TUI runs.
+- E2E flows now use real npm installs; update tests verify `variant.json` timestamps and settings-only updates preserve the CLI.
+- TUI tests wait for async updates to complete before assertions.
+- Core flow tests now assert the installed npm package version after create/update.
+
+### Documentation
+
+- Windows PATH guidance for wrapper scripts added to user-facing docs.
+
+### Fixed
+
+- Windows npm installs run via the shell to execute `npm.cmd`, with validated/quoted inputs to avoid unsafe command parsing.
+- Variant creation rejects invalid names that could break wrapper scripts.
+
 ## [1.5.0] - 2025-01-06
 
 ### Changed

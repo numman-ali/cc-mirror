@@ -49,14 +49,14 @@ export const ProviderIntroScreen: React.FC<ProviderIntroScreenProps> = ({
       return steps;
     }
 
-    // Mirror is special - no API key at setup, uses normal Claude auth, team mode on by default
+    // Mirror is special - no API key at setup, uses normal Claude auth
     if (providerKey === 'mirror') {
       if (!isQuickSetup) {
         steps.push('Choose a visual theme');
         steps.push('Optional: dev-browser skill');
       }
       steps.push('Name your variant');
-      steps.push('Create with team mode enabled');
+      steps.push('Create your variant');
       steps.push('Authenticate via Claude Code (OAuth or API key)');
       return steps;
     }
@@ -79,7 +79,6 @@ export const ProviderIntroScreen: React.FC<ProviderIntroScreenProps> = ({
       }
 
       steps.push('Optional: dev-browser skill');
-      steps.push('Optional: team mode (multi-agent collaboration)');
       steps.push('Optional: custom env vars');
     }
 

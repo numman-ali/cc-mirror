@@ -164,14 +164,18 @@ mclaude
 │  ├── config/                                            │
 │  │   ├── settings.json       Minimal env (splash only)  │
 │  │   ├── .claude.json        MCP servers, approvals     │
-│  │   └── tasks/<team>/       Team mode task storage     │
+│  │   └── tasks/<team>/       Team mode task storage (legacy) │
 │  ├── tweakcc/                                           │
 │  │   └── config.json         Mirror theme config        │
 │  └── variant.json            Variant metadata           │
 │                                                         │
-│  Wrapper: ~/.local/bin/mclaude                          │
+│  Wrapper: <bin-dir>/mclaude                             │
 └─────────────────────────────────────────────────────────┘
 ```
+
+Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
+
+**Windows tip:** add `%USERPROFILE%\\.cc-mirror\\bin` to `PATH` (wrapper is `<variant>.cmd` with a sibling `<variant>.mjs` launcher).
 
 ### What Mirror Sets
 
@@ -221,6 +225,6 @@ ANTHROPIC_API_KEY="$PERSONAL_KEY" personal-claude
 
 ## 🔙 Related
 
-- [Team Mode](team-mode.md) - Detailed task management documentation
+- [Team Mode](team-mode.md) - Legacy team mode documentation (cc-mirror 1.6.3)
 - [Brand Themes](brand-themes.md) - Theme customization
 - [Architecture Overview](../architecture/overview.md) - How cc-mirror works

@@ -43,7 +43,7 @@ function parseIds(value: string | undefined): string[] | undefined {
  */
 function showTasksHelp(): void {
   console.log(`
-npx cc-mirror tasks - Manage team tasks
+npx cc-mirror tasks - Manage legacy team tasks (cc-mirror 1.6.3 only)
 
 USAGE:
   npx cc-mirror tasks [operation] [id] [options]
@@ -116,6 +116,9 @@ EXAMPLES:
 export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<void> {
   const rootDir = (opts.root as string) || core.DEFAULT_ROOT;
   const positional = opts._ || [];
+  if (!core.TEAM_MODE_SUPPORTED) {
+    console.log('Note: Team mode is disabled in this release. Tasks are legacy and only supported in cc-mirror 1.6.3.');
+  }
 
   // Check for help
   if (opts.help || opts.h) {

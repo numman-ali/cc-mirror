@@ -28,7 +28,11 @@ export interface UseVariantUpdateOptions {
 /**
  * Build the summary lines for an updated variant
  */
-export function buildUpdateSummary(meta: VariantMeta, notes?: string[]): string[] {
+export function buildUpdateSummary(
+  meta: VariantMeta,
+  notes: string[] | undefined,
+  teamModeSupported: boolean
+): string[] {
   // Build prompt pack description with provider-specific routing info
   const getPromptPackDescription = (): string => {
     if (!meta.promptPack) return 'off';
@@ -47,7 +51,7 @@ export function buildUpdateSummary(meta: VariantMeta, notes?: string[]): string[
     `Provider: ${meta.provider}`,
     `Prompt pack: ${getPromptPackDescription()}`,
     `dev-browser skill: ${meta.skillInstall ? 'on' : 'off'}`,
-    `Team mode: ${getTeamModeDescription()}`,
+    ...(teamModeSupported ? [`Team mode: ${getTeamModeDescription()}`] : []),
     ...(meta.provider === 'zai' ? [`Shell env: ${meta.shellEnv ? 'write Z_AI_API_KEY' : 'manual'}`] : []),
     ...(notes || []),
   ];
@@ -98,7 +102,7 @@ export function useVariantUpdate(options: UseVariantUpdateOptions): void {
 
         const completion: CompletionResult = {
           doneLines: [`Updated ${selectedVariant.name}`],
-          summary: buildUpdateSummary(result.meta, result.notes),
+          summary: buildUpdateSummary(result.meta, result.notes, core.TEAM_MODE_SUPPORTED),
           nextSteps: buildUpdateNextSteps(selectedVariant.name, rootDir),
           help: buildHelpLines(),
         };

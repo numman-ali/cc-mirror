@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-01-17T22:41:51.865Z",
+  "sources": [
+    "/Users/numman/src/tries/2025-12-30-cd-cc-minimax/.github/ISSUE_TEMPLATE/bug_report.md",
+    "/Users/numman/src/tries/2025-12-30-cd-cc-minimax/.github/ISSUE_TEMPLATE/feature_request.md",
+    "/Users/numman/src/tries/2025-12-30-cd-cc-minimax/.github/PULL_REQUEST_TEMPLATE.md",
+    "/Users/numman/src/tries/2025-12-30-cd-cc-minimax/.github/pull_request_template.md",
+    "/Users/numman/src/tries/2025-12-30-cd-cc-minimax/CONTRIBUTING.md"
+  ],
+  "overrides": {
+    "semantics": {
+      "intent": {
+        "bug": ["describe the bug", "fix: bug fix"],
+        "feature": ["feature request", "feat: new feature"],
+        "question": ["questions?"],
+        "support": [],
+        "meta": []
+      },
+      "needsInfo": {
+        "repro": ["to reproduce"],
+        "expected": ["expected behavior"],
+        "actual": [],
+        "environment": ["environment", "os"],
+        "version": ["node.js version: [e.g., 20.10.0]", "cc-mirror version: [e.g., 1.0.0]"],
+        "logs": [],
+        "testPlan": ["testing"]
+      },
+      "environmentTokens": [
+        "windows",
+        "win11",
+        "win10",
+        "mac",
+        "macos",
+        "linux",
+        "ubuntu",
+        "debian",
+        "node",
+        "npm",
+        "pnpm",
+        "yarn"
+      ],
+      "relationship": {
+        "linkKeywords": [],
+        "duplicateHints": []
+      },
+      "errors": {
+        "signatures": [],
+        "keywords": []
+      }
+    }
+  }
+}

@@ -5,6 +5,8 @@
 import React from 'react';
 import { Box, Text, useInput } from 'ink';
 import { colors, icons } from './theme.js';
+import { DEFAULT_BIN_DIR } from '../../../core/constants.js';
+import { getWrapperPath } from '../../../core/paths.js';
 import type { MenuItem } from './types.js';
 
 interface MenuItemDisplayProps {
@@ -169,7 +171,7 @@ export const VariantCard: React.FC<VariantCardProps> = ({ name, provider, path, 
     </Box>
     <Box marginLeft={3}>
       <Text color={colors.primaryBright} dimColor>
-        {path || `~/.local/bin/${name}`}
+        {path || getWrapperPath(DEFAULT_BIN_DIR, name)}
       </Text>
     </Box>
   </Box>

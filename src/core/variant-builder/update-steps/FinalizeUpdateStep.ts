@@ -4,6 +4,7 @@
 
 import path from 'node:path';
 import { writeJson } from '../../fs.js';
+import { TEAM_MODE_SUPPORTED } from '../../constants.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
 
 export class FinalizeUpdateStep implements UpdateStep {
@@ -26,6 +27,9 @@ export class FinalizeUpdateStep implements UpdateStep {
     meta.promptPack = prefs.promptPackPreference;
     meta.skillInstall = prefs.skillInstallEnabled;
     meta.shellEnv = prefs.shellEnvEnabled;
+    if (!TEAM_MODE_SUPPORTED) {
+      meta.teamModeEnabled = false;
+    }
 
     // Remove deprecated promptPackMode if present
     delete meta.promptPackMode;

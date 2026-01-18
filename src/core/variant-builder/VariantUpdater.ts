@@ -14,6 +14,7 @@ import type { UpdateVariantOptions, UpdateVariantResult } from '../types.js';
 import type { ReportFn, UpdateContext, UpdatePaths, UpdatePreferences, UpdateState, UpdateStep } from './types.js';
 
 // Import steps
+import { RebuildUpdateStep } from './update-steps/RebuildUpdateStep.js';
 import { InstallNpmUpdateStep } from './update-steps/InstallNpmUpdateStep.js';
 import { TeamModeUpdateStep } from './update-steps/TeamModeUpdateStep.js';
 import { ModelOverridesStep } from './update-steps/ModelOverridesStep.js';
@@ -53,6 +54,7 @@ export class VariantUpdater {
   constructor(private isAsync: boolean = false) {
     // Register steps in execution order
     this.steps = [
+      new RebuildUpdateStep(),
       new InstallNpmUpdateStep(),
       new TeamModeUpdateStep(), // Patches cli.js for team mode (if enabled)
       new ModelOverridesStep(),

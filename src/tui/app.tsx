@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Text, useApp, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
-import path from 'node:path';
+import { getWrapperPath } from '../core/paths.js';
 import type { BrandPreset } from '../brands/index.js';
 import * as defaultBrands from '../brands/index.js';
 import type { ProviderEnv, ProviderTemplate } from '../providers/index.js';
@@ -60,6 +60,7 @@ export interface CoreModule {
   DEFAULT_BIN_DIR: string;
   DEFAULT_NPM_PACKAGE: string;
   DEFAULT_NPM_VERSION: string;
+  TEAM_MODE_SUPPORTED: boolean;
   listVariants: (rootDir: string) => VariantEntry[];
   createVariant: (params: {
     name: string;
@@ -216,14 +217,14 @@ export const App: React.FC<AppProps> = ({
   const [rootDir, _setRootDir] = useState(initialRootDir || core.DEFAULT_ROOT);
   const [binDir, _setBinDir] = useState(initialBinDir || core.DEFAULT_BIN_DIR);
   const [npmPackage, setNpmPackage] = useState(core.DEFAULT_NPM_PACKAGE || '@anthropic-ai/claude-code');
-  const npmVersion = core.DEFAULT_NPM_VERSION || '2.0.76';
+  const npmVersion = core.DEFAULT_NPM_VERSION || '2.1.12';
   const [usePromptPack, setUsePromptPack] = useState(true);
   // promptPackMode is deprecated - always use 'minimal'
   const promptPackMode = 'minimal' as const;
   const [installSkill, setInstallSkill] = useState(true);
   const [shellEnv, setShellEnv] = useState(true);
   const [skillUpdate, setSkillUpdate] = useState(false);
-  const [enableTeamMode, setEnableTeamMode] = useState(true);
+  const [enableTeamMode, setEnableTeamMode] = useState(defaultCore.TEAM_MODE_SUPPORTED);
   const [extraEnv, setExtraEnv] = useState<string[]>([]);
   const [progressLines, setProgressLines] = useState<string[]>([]);
   const [doneLines, setDoneLines] = useState<string[]>([]);
@@ -412,7 +413,7 @@ export const App: React.FC<AppProps> = ({
       installSkill,
       shellEnv,
       skillUpdate,
-      enableTeamMode,
+      enableTeamMode: defaultCore.TEAM_MODE_SUPPORTED ? enableTeamMode : false,
     }),
     [
       name,
@@ -524,7 +525,7 @@ export const App: React.FC<AppProps> = ({
     setInstallSkill(true);
     setShellEnv(true);
     setSkillUpdate(false);
-    setEnableTeamMode(true);
+    setEnableTeamMode(defaultCore.TEAM_MODE_SUPPORTED);
     setCompletionSummary([]);
     setCompletionNextSteps([]);
     setCompletionHelp([]);
@@ -903,7 +904,21 @@ export const App: React.FC<AppProps> = ({
           title="Install dev-browser skill?"
           onSelect={(value) => {
             setInstallSkill(value);
-            setScreen('create-team-mode');
+            if (defaultCore.TEAM_MODE_SUPPORTED) {
+              setScreen('create-team-mode');
+              return;
+            }
+            setEnableTeamMode(false);
+            if (providerKey === 'zai') {
+              if (apiKeyDetectedFrom === 'Z_AI_API_KEY') {
+                setShellEnv(false);
+                setScreen('create-env-confirm');
+              } else {
+                setScreen('create-shell-env');
+              }
+            } else {
+              setScreen('create-env-confirm');
+            }
           }}
         />
         <Divider />
@@ -1009,6 +1024,7 @@ export const App: React.FC<AppProps> = ({
           promptPackMode,
           installSkill,
           enableTeamMode,
+          teamModeSupported: defaultCore.TEAM_MODE_SUPPORTED,
           shellEnv,
         }}
         onConfirm={() => {
@@ -1031,7 +1047,7 @@ export const App: React.FC<AppProps> = ({
         title="Create variant"
         lines={doneLines}
         variantName={name}
-        wrapperPath={`${binDir}/${name}`}
+        wrapperPath={getWrapperPath(binDir, name)}
         configPath={`${rootDir}/${name}/config`}
         variantPath={`${rootDir}/${name}`}
         summary={completionSummary}
@@ -1051,12 +1067,12 @@ export const App: React.FC<AppProps> = ({
         variants={variants.map((v) => ({
           name: v.name,
           provider: v.meta?.provider,
-          wrapperPath: path.join(binDir, v.name),
+          wrapperPath: getWrapperPath(binDir, v.name),
         }))}
         onSelect={(variantName) => {
           const entry = variants.find((item) => item.name === variantName);
           if (!entry || !entry.meta) return;
-          setSelectedVariant({ ...entry.meta, wrapperPath: path.join(binDir, entry.name) });
+          setSelectedVariant({ ...entry.meta, wrapperPath: getWrapperPath(binDir, entry.name) });
           setScreen('manage-actions');
         }}
         onBack={() => setScreen('home')}
@@ -1076,7 +1092,8 @@ export const App: React.FC<AppProps> = ({
           setModelHaiku('');
           setScreen('manage-models');
         }}
-        onToggleTeamMode={() => setScreen('manage-team-mode')}
+        onToggleTeamMode={defaultCore.TEAM_MODE_SUPPORTED ? () => setScreen('manage-team-mode') : undefined}
+        teamModeSupported={defaultCore.TEAM_MODE_SUPPORTED}
         onTweak={() => setScreen('manage-tweak')}
         onRemove={() => setScreen('manage-remove')}
         onBack={() => setScreen('manage')}

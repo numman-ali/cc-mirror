@@ -21,7 +21,7 @@ export interface VariantMeta {
   npmDir?: string;
   npmPackage?: string;
   npmVersion?: string;
-  /** Whether team mode is enabled (cli.js patched) */
+  /** Whether team mode is enabled (legacy) */
   teamModeEnabled?: boolean;
 }
 
@@ -57,7 +57,7 @@ export interface CreateVariantParams {
   shellEnv?: boolean;
   skillUpdate?: boolean;
   tweakccStdio?: 'pipe' | 'inherit';
-  /** Enable team mode by patching cli.js */
+  /** Enable team mode by patching cli.js (legacy) */
   enableTeamMode?: boolean;
   /** Callback for progress updates during installation */
   onProgress?: ProgressCallback;
@@ -83,7 +83,7 @@ export interface UpdateVariantOptions {
     defaultModel?: string;
     subagentModel?: string;
   };
-  /** Enable team mode by patching cli.js */
+  /** Enable team mode by patching cli.js (legacy) */
   enableTeamMode?: boolean;
   /** Disable team mode by reversing cli.js patch */
   disableTeamMode?: boolean;

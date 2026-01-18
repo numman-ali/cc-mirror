@@ -27,6 +27,7 @@ export function buildCreateSummary(params: {
   usePromptPack: boolean;
   installSkill: boolean;
   enableTeamMode: boolean;
+  teamModeSupported: boolean;
   modelOverrides: ModelOverrides;
   providerKey: string;
   shellEnv: boolean;
@@ -39,6 +40,7 @@ export function buildCreateSummary(params: {
     usePromptPack,
     installSkill,
     enableTeamMode,
+    teamModeSupported,
     modelOverrides,
     providerKey,
     shellEnv,
@@ -64,7 +66,7 @@ export function buildCreateSummary(params: {
     `Install: npm ${npmPackage}@${npmVersion}`,
     `Prompt pack: ${getPromptPackDescription()}`,
     `dev-browser skill: ${installSkill ? 'on' : 'off'}`,
-    `Team mode: ${getTeamModeDescription()}`,
+    ...(teamModeSupported ? [`Team mode: ${getTeamModeDescription()}`] : []),
     ...(modelOverrides.sonnet || modelOverrides.opus || modelOverrides.haiku
       ? [
           `Models: sonnet=${modelOverrides.sonnet || '-'}, opus=${modelOverrides.opus || '-'}, haiku=${modelOverrides.haiku || '-'}`,
@@ -148,6 +150,7 @@ export function useVariantCreate(options: UseVariantCreateOptions): void {
           usePromptPack: params.usePromptPack,
           installSkill: params.installSkill,
           enableTeamMode: params.enableTeamMode,
+          teamModeSupported: core.TEAM_MODE_SUPPORTED,
           modelOverrides: params.modelOverrides,
           providerKey: params.providerKey,
           shellEnv: params.shellEnv,

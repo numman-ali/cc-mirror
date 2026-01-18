@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { listVariants } from '../variants.js';
 import { listTeams, getTasksDir } from './store.js';
 import type { ResolvedContext, TaskLocation } from './types.js';
@@ -39,7 +39,8 @@ export function detectVariantFromEnv(): string | null {
   if (!configDir) return null;
 
   // Extract variant name from path: ~/.cc-mirror/<variant>/config
-  const match = configDir.match(/\.cc-mirror\/([^/]+)\/config/);
+  const normalized = configDir.replace(/\\/g, '/');
+  const match = normalized.match(/\.cc-mirror\/([^/]+)\/config/);
   return match ? match[1] : null;
 }
 
@@ -59,10 +60,15 @@ export function detectCurrentTeam(cwd?: string): string {
   // Try to get git root, fallback to cwd
   let gitRoot: string;
   try {
-    gitRoot = execSync('git rev-parse --show-toplevel 2>/dev/null', {
+    const result = spawnSync('git', ['rev-parse', '--show-toplevel'], {
       cwd: workDir,
       encoding: 'utf8',
-    }).trim();
+    });
+    if (result.status === 0 && result.stdout.trim()) {
+      gitRoot = result.stdout.trim();
+    } else {
+      gitRoot = workDir;
+    }
   } catch {
     gitRoot = workDir;
   }

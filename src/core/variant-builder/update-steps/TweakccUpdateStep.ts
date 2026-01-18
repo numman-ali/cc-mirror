@@ -49,6 +49,8 @@ export class TweakccUpdateStep implements UpdateStep {
       throw new Error(formatTweakccFailure(output));
     }
 
+    let shouldReapply = false;
+
     // Apply prompt pack if enabled
     if (prefs.promptPackEnabled) {
       if (isAsync) {
@@ -60,23 +62,26 @@ export class TweakccUpdateStep implements UpdateStep {
       const packResult = applyPromptPack(meta.tweakDir, meta.provider);
       if (packResult.changed) {
         state.notes.push(`Prompt pack applied (${packResult.updated.join(', ')})`);
+        shouldReapply = true;
+      }
+    }
 
-        if (isAsync) {
-          await ctx.report('Re-applying tweakcc...');
-        } else {
-          ctx.report('Re-applying tweakcc...');
-        }
+    if (shouldReapply) {
+      if (isAsync) {
+        await ctx.report('Re-applying tweakcc...');
+      } else {
+        ctx.report('Re-applying tweakcc...');
+      }
 
-        const reapply = isAsync
-          ? await runTweakccAsync(meta.tweakDir, meta.binaryPath, prefs.commandStdio)
-          : runTweakcc(meta.tweakDir, meta.binaryPath, prefs.commandStdio);
+      const reapply = isAsync
+        ? await runTweakccAsync(meta.tweakDir, meta.binaryPath, prefs.commandStdio)
+        : runTweakcc(meta.tweakDir, meta.binaryPath, prefs.commandStdio);
 
-        state.tweakResult = reapply;
+      state.tweakResult = reapply;
 
-        if (reapply.status !== 0) {
-          const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();
-          throw new Error(formatTweakccFailure(output));
-        }
+      if (reapply.status !== 0) {
+        const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();
+        throw new Error(formatTweakccFailure(output));
       }
     }
   }

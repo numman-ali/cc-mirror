@@ -25,20 +25,26 @@ export class TweakccStep implements BuildStep {
       throw new Error(formatTweakccFailure(output));
     }
 
+    let shouldReapply = false;
+
     if (prefs.promptPackEnabled) {
       ctx.report('Applying prompt pack...');
       const packResult = applyPromptPack(paths.tweakDir, params.providerKey);
 
       if (packResult.changed) {
         state.notes.push(`Prompt pack applied (${packResult.updated.join(', ')})`);
-        ctx.report('Re-applying tweakcc...');
-        const reapply = runTweakcc(paths.tweakDir, state.binaryPath, prefs.commandStdio);
-        state.tweakResult = reapply;
+        shouldReapply = true;
+      }
+    }
 
-        if (reapply.status !== 0) {
-          const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();
-          throw new Error(formatTweakccFailure(output));
-        }
+    if (shouldReapply) {
+      ctx.report('Re-applying tweakcc...');
+      const reapply = runTweakcc(paths.tweakDir, state.binaryPath, prefs.commandStdio);
+      state.tweakResult = reapply;
+
+      if (reapply.status !== 0) {
+        const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();
+        throw new Error(formatTweakccFailure(output));
       }
     }
   }
@@ -58,20 +64,26 @@ export class TweakccStep implements BuildStep {
       throw new Error(formatTweakccFailure(output));
     }
 
+    let shouldReapply = false;
+
     if (prefs.promptPackEnabled) {
       await ctx.report('Applying prompt pack...');
       const packResult = applyPromptPack(paths.tweakDir, params.providerKey);
 
       if (packResult.changed) {
         state.notes.push(`Prompt pack applied (${packResult.updated.join(', ')})`);
-        await ctx.report('Re-applying tweakcc...');
-        const reapply = await runTweakccAsync(paths.tweakDir, state.binaryPath, prefs.commandStdio);
-        state.tweakResult = reapply;
+        shouldReapply = true;
+      }
+    }
 
-        if (reapply.status !== 0) {
-          const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();
-          throw new Error(formatTweakccFailure(output));
-        }
+    if (shouldReapply) {
+      await ctx.report('Re-applying tweakcc...');
+      const reapply = await runTweakccAsync(paths.tweakDir, state.binaryPath, prefs.commandStdio);
+      state.tweakResult = reapply;
+
+      if (reapply.status !== 0) {
+        const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();
+        throw new Error(formatTweakccFailure(output));
       }
     }
   }

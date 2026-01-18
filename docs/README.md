@@ -25,12 +25,12 @@
 
 ### 🤖 Features
 
-| Document                                   | Description                                 |
-| ------------------------------------------ | ------------------------------------------- |
-| [Team Mode](features/team-mode.md)         | Multi-agent collaboration with shared tasks |
-| [Mirror Claude](features/mirror-claude.md) | Pure Claude Code with advanced features     |
-| [Brand Themes](features/brand-themes.md)   | Custom color schemes per provider           |
-| [Prompt Packs](features/prompt-packs.md)   | Enhanced system prompts                     |
+| Document                                   | Description                          |
+| ------------------------------------------ | ------------------------------------ |
+| [Team Mode](features/team-mode.md)         | Legacy team mode (cc-mirror 1.6.3)   |
+| [Mirror Claude](features/mirror-claude.md) | Pure Claude Code with clean defaults |
+| [Brand Themes](features/brand-themes.md)   | Custom color schemes per provider    |
+| [Prompt Packs](features/prompt-packs.md)   | Enhanced system prompts              |
 
 ### 🏗️ Architecture
 
@@ -56,7 +56,7 @@
 docs/
 ├── README.md                 ← You are here
 ├── features/
-│   ├── team-mode.md         # 🤖 Multi-agent collaboration
+│   ├── team-mode.md         # 🤖 Multi-agent collaboration (legacy)
 │   ├── mirror-claude.md     # 🪞 Pure Claude Code variant
 │   ├── brand-themes.md      # 🎨 Custom themes
 │   └── prompt-packs.md      # 📝 System prompt enhancements
@@ -75,7 +75,7 @@ docs/
 ## 💡 Quick Links
 
 - **New to cc-mirror?** Start with the [Quick Start](../README.md#quick-start)
-- **Want team features?** Read about [Team Mode](features/team-mode.md)
+- **Want team features?** Legacy docs: [Team Mode](features/team-mode.md)
 - **Pure Claude experience?** Try [Mirror Claude](features/mirror-claude.md)
 - **Adding a provider?** See [Provider System](architecture/provider-system.md)
 
@@ -84,15 +84,15 @@ docs/
 ## 📊 Provider Comparison
 
 ```
-┌──────────────┬─────────────────┬──────────────┬────────────┬────────────┐
-│   Provider   │     Model       │  Auth Mode   │ Prompt Pack│ Team Mode  │
-├──────────────┼─────────────────┼──────────────┼────────────┼────────────┤
-│ zai          │ GLM-4.7         │ API Key      │ ✓ Full     │ Optional   │
-│ minimax      │ MiniMax-M2.1    │ API Key      │ ✓ Full     │ Optional   │
-│ openrouter   │ You choose      │ Auth Token   │ ✗          │ Optional   │
-│ ccrouter     │ Local LLMs      │ Optional     │ ✗          │ Optional   │
-│ mirror       │ Claude (native) │ OAuth/Key    │ ✗ Pure     │ ✓ Default  │
-└──────────────┴─────────────────┴──────────────┴────────────┴────────────┘
+┌──────────────┬─────────────────┬──────────────┬────────────┐
+│   Provider   │     Model       │  Auth Mode   │ Prompt Pack│
+├──────────────┼─────────────────┼──────────────┼────────────┤
+│ zai          │ GLM-4.7         │ API Key      │ ✓ Full     │
+│ minimax      │ MiniMax-M2.1    │ API Key      │ ✓ Full     │
+│ openrouter   │ You choose      │ Auth Token   │ ✗          │
+│ ccrouter     │ Local LLMs      │ Optional     │ ✗          │
+│ mirror       │ Claude (native) │ OAuth/Key    │ ✗ Pure     │
+└──────────────┴─────────────────┴──────────────┴────────────┘
 ```
 
 ---

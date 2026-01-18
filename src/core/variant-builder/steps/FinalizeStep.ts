@@ -4,6 +4,7 @@
 
 import path from 'node:path';
 import { writeJson } from '../../fs.js';
+import { TEAM_MODE_SUPPORTED } from '../../constants.js';
 import type { VariantMeta } from '../../types.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
@@ -24,7 +25,9 @@ export class FinalizeStep implements BuildStep {
     const { params, paths, prefs, state, provider } = ctx;
 
     // Check if team mode was enabled (via params OR provider defaults)
-    const teamModeEnabled = Boolean(params.enableTeamMode) || Boolean(provider.enablesTeamMode);
+    const teamModeEnabled = TEAM_MODE_SUPPORTED
+      ? Boolean(params.enableTeamMode) || Boolean(provider.enablesTeamMode)
+      : false;
 
     const meta: VariantMeta = {
       name: params.name,

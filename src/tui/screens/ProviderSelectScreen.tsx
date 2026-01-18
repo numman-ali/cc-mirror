@@ -63,13 +63,13 @@ export const ProviderSelectScreen: React.FC<ProviderSelectScreenProps> = ({ prov
   return (
     <ScreenLayout
       title="Select Provider"
-      subtitle="All providers include team mode + orchestrator skill"
+      subtitle="Pick a provider preset for Claude Code"
       hints={[keyHints.continue, showDetails ? '? Hide details' : '? Show details']}
     >
       {/* Help text */}
       <Box marginBottom={1} flexDirection="column">
         <Text color={colors.textMuted}>
-          {icons.star} <Text color={colors.gold}>Mirror Claude</Text> is the fastest path to multi-agent
+          {icons.star} <Text color={colors.gold}>Mirror Claude</Text> is the fastest path to vanilla Claude Code
         </Text>
         <Text color={colors.textMuted}>
           {icons.bullet} Alternative providers for different models (GLM, MiniMax, etc.)

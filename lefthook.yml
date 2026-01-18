@@ -9,8 +9,10 @@ pre-commit:
       run: npx eslint {staged_files}
     typecheck:
       run: npm run typecheck
+    coverage:
+      run: npm run test:coverage
 
 pre-push:
   commands:
     test:
-      run: npm test
+      run: npm run test:coverage

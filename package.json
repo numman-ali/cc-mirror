@@ -1,6 +1,6 @@
 {
   "name": "cc-mirror",
-  "version": "1.6.2",
+  "version": "1.6.6",
   "type": "module",
   "description": "Claude Code, Unshackled — Pre-configured variants with multi-agent orchestration, custom providers, and battle-tested enhancements",
   "author": "Numman Ali",
@@ -39,8 +39,8 @@
     "bundle": "tsx scripts/bundle.ts",
     "prepack": "tsx scripts/bundle.ts",
     "render:tui-svg": "node --import tsx scripts/render-tui-svg.ts",
-    "test": "node --test --import tsx 'test/**/*.test.ts'",
-    "test:watch": "node --test --watch --import tsx 'test/**/*.test.ts'",
+    "test": "node --import tsx scripts/run-tests.ts",
+    "test:watch": "node --import tsx scripts/run-tests.ts --watch",
     "test:coverage": "c8 npm test",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src test scripts",

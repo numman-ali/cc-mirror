@@ -26,6 +26,7 @@ interface VariantActionsScreenProps {
   onRemove: () => void;
   onConfigureModels?: () => void;
   onToggleTeamMode?: () => void;
+  teamModeSupported?: boolean;
   onBack: () => void;
 }
 
@@ -39,6 +40,7 @@ export const VariantActionsScreen: React.FC<VariantActionsScreenProps> = ({
   onRemove,
   onConfigureModels,
   onToggleTeamMode,
+  teamModeSupported = true,
   onBack,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -46,16 +48,17 @@ export const VariantActionsScreen: React.FC<VariantActionsScreenProps> = ({
   const requiresModelMapping = meta.provider && MODEL_MAPPING_PROVIDERS.includes(meta.provider);
 
   // Team mode toggle - shows enable or disable based on current state
-  const teamModeAction: MenuItem | null = onToggleTeamMode
-    ? meta.teamModeEnabled
-      ? { value: 'team-mode', label: 'Disable Team Mode', description: 'Remove multi-agent task tools' }
-      : {
-          value: 'team-mode',
-          label: 'Enable Team Mode',
-          description: 'Add multi-agent task tools',
-          icon: 'star' as const,
-        }
-    : null;
+  const teamModeAction: MenuItem | null =
+    teamModeSupported && onToggleTeamMode
+      ? meta.teamModeEnabled
+        ? { value: 'team-mode', label: 'Disable Team Mode', description: 'Remove multi-agent task tools' }
+        : {
+            value: 'team-mode',
+            label: 'Enable Team Mode',
+            description: 'Add multi-agent task tools',
+            icon: 'star' as const,
+          }
+      : null;
 
   const actions: MenuItem[] = [
     { value: 'update', label: 'Update', description: 'Re-sync binary + patches' },
@@ -86,7 +89,7 @@ export const VariantActionsScreen: React.FC<VariantActionsScreenProps> = ({
         <SummaryRow label="Binary" value={meta.binaryPath} />
         <SummaryRow label="Config" value={meta.configDir} />
         <SummaryRow label="Wrapper" value={meta.wrapperPath} />
-        <SummaryRow label="Team Mode" value={meta.teamModeEnabled ? 'Enabled' : 'Disabled'} />
+        {teamModeSupported && <SummaryRow label="Team Mode" value={meta.teamModeEnabled ? 'Enabled' : 'Disabled'} />}
       </Section>
 
       <Box marginY={1}>

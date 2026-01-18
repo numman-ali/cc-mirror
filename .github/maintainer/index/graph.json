@@ -1,0 +1,229 @@
+{
+  "generatedAt": "2026-01-17T22:52:03.295Z",
+  "nodes": [
+    {
+      "id": "issue:7",
+      "type": "issue",
+      "title": "[Bug] installation on Windows fails",
+      "priorityScore": 49,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:27",
+      "type": "issue",
+      "title": "[Bug] EJ.has is not a function",
+      "priorityScore": 19,
+      "actionability": "needs-info"
+    },
+    {
+      "id": "issue:10",
+      "type": "issue",
+      "title": "support Zhipu z.AI Chinese endpoint",
+      "priorityScore": 13,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:14",
+      "type": "issue",
+      "title": "[Bug] Doesn't work with IPV6",
+      "priorityScore": 12,
+      "actionability": "needs-info"
+    },
+    {
+      "id": "issue:12",
+      "type": "issue",
+      "title": "Feedback + small UX improvement opportunity",
+      "priorityScore": 12,
+      "actionability": "needs-info"
+    },
+    {
+      "id": "issue:8",
+      "type": "issue",
+      "title": "feat: Add Sync Variants feature to copy config between variants",
+      "priorityScore": 11,
+      "actionability": "ready"
+    },
+    {
+      "id": "issue:29",
+      "type": "issue",
+      "title": "[Bug] Unable to compact",
+      "priorityScore": 10,
+      "actionability": "needs-info"
+    },
+    {
+      "id": "issue:24",
+      "type": "issue",
+      "title": "[Bug] When using a system with multiple users, a permission conflict occurs due to the use of a fixed path of /tmp/claude.",
+      "priorityScore": 10,
+      "actionability": "needs-info"
+    },
+    {
+      "id": "issue:19",
+      "type": "issue",
+      "title": "[Bug] team-pack overrides not working",
+      "priorityScore": 10,
+      "actionability": "needs-info"
+    },
+    {
+      "id": "issue:16",
+      "type": "issue",
+      "title": "MCP Servers",
+      "priorityScore": 8,
+      "actionability": "needs-info"
+    },
+    {
+      "id": "issue:23",
+      "type": "issue",
+      "title": "[Feature] Add support for Claude via cloud providers",
+      "priorityScore": 5,
+      "actionability": "ready"
+    },
+    {
+      "id": "pr:26",
+      "type": "pr",
+      "title": "Claude Code 2.1.7 alignment: retire team mode for now",
+      "priorityScore": 32,
+      "implementationScore": 4,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:11",
+      "type": "pr",
+      "title": "feat: add Windows compatibility",
+      "priorityScore": 21,
+      "implementationScore": 32,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:9",
+      "type": "pr",
+      "title": "feat: add Sync Variants feature to copy config between variants",
+      "priorityScore": 21,
+      "implementationScore": 26,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:4",
+      "type": "pr",
+      "title": "feat: add GatewayZ provider with Anthropic API support",
+      "priorityScore": 8,
+      "implementationScore": 9,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:5",
+      "type": "pr",
+      "title": "feat: add NanoGPT as a provider",
+      "priorityScore": 6,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:30",
+      "type": "pr",
+      "title": "fix: update Claude Code to 2.1.7 with Windows support",
+      "priorityScore": 0,
+      "implementationScore": 48,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:22",
+      "type": "pr",
+      "title": "feat: add --no-skills flag to skip bundled skill installation",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:21",
+      "type": "pr",
+      "title": "feat: add Vercel AI Gateway provider",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:20",
+      "type": "pr",
+      "title": "feat: Integrate ccstatusline as a top-level menu option",
+      "priorityScore": 0,
+      "implementationScore": 0,
+      "actionability": "needs-analysis"
+    },
+    {
+      "id": "pr:17",
+      "type": "pr",
+      "title": "feat: add Windows splash screen support for all providers",
+      "priorityScore": 0,
+      "implementationScore": 9,
+      "actionability": "needs-analysis"
+    }
+  ],
+  "edges": [
+    {
+      "from": "issue:7",
+      "to": "issue:26",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:7",
+      "to": "issue:30",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:30",
+      "to": "issue:7",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "issue:27",
+      "to": "issue:28",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:9",
+      "to": "issue:8",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "pr:26",
+      "to": "issue:1",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:7",
+      "to": "pr:26",
+      "type": "mentioned_by"
+    },
+    {
+      "from": "pr:11",
+      "to": "pr:17",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "pr:9",
+      "to": "issue:8",
+      "type": "mentions"
+    },
+    {
+      "from": "pr:5",
+      "to": "pr:4",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "pr:5",
+      "to": "pr:21",
+      "type": "possible_duplicate"
+    },
+    {
+      "from": "pr:30",
+      "to": "issue:7",
+      "type": "mentions"
+    },
+    {
+      "from": "issue:7",
+      "to": "pr:30",
+      "type": "mentioned_by"
+    }
+  ]
+}

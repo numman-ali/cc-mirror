@@ -44,3 +44,7 @@ notes/
 
 # Agent skills (personal)
 .agent/
+
+# Local agent data
+.claude/
+reports/

@@ -1,4 +1,7 @@
-# 🤖 Team Mode
+# 🤖 Team Mode (Legacy)
+
+> **Legacy:** Team mode is only supported in the published **cc-mirror 1.6.3** release.  
+> Newer development builds do not patch Claude Code; this doc is historical reference.
 
 Team Mode enables multi-agent collaboration in Claude Code through shared task management. Multiple agents can work together on complex projects, each claiming and completing tasks from a shared queue.
 

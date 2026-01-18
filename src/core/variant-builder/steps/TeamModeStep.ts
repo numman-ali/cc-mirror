@@ -11,11 +11,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { installOrchestratorSkill, installTaskManagerSkill } from '../../skills.js';
 import { copyTeamPackPrompts, configureTeamToolset } from '../../../team-pack/index.js';
+import { detectTeamModeState, setTeamModeEnabled } from '../team-mode-patch.js';
 import type { BuildContext, BuildStep } from '../types.js';
-
-// The minified function that controls team mode
-const TEAM_MODE_DISABLED = 'function Uq(){return!1}';
-const TEAM_MODE_ENABLED = 'function Uq(){return!0}';
 
 export class TeamModeStep implements BuildStep {
   name = 'TeamMode';
@@ -55,27 +52,23 @@ export class TeamModeStep implements BuildStep {
     }
 
     // Read cli.js
-    let content = fs.readFileSync(cliPath, 'utf8');
+    const content = fs.readFileSync(cliPath, 'utf8');
 
-    // Check if already patched
-    if (content.includes(TEAM_MODE_ENABLED)) {
+    const patchResult = setTeamModeEnabled(content, true);
+    if (patchResult.state === 'unknown') {
+      state.notes.push('Warning: Team mode marker not found in cli.js, patch may not work');
+      return;
+    }
+    if (!patchResult.changed && patchResult.state === 'enabled') {
       state.notes.push('Team mode already enabled');
       return;
     }
 
-    // Check if patchable
-    if (!content.includes(TEAM_MODE_DISABLED)) {
-      state.notes.push('Warning: Team mode function not found in cli.js, patch may not work');
-      return;
-    }
-
-    // Apply patch
-    content = content.replace(TEAM_MODE_DISABLED, TEAM_MODE_ENABLED);
-    fs.writeFileSync(cliPath, content);
+    fs.writeFileSync(cliPath, patchResult.content);
 
     // Verify patch
     const verifyContent = fs.readFileSync(cliPath, 'utf8');
-    if (!verifyContent.includes(TEAM_MODE_ENABLED)) {
+    if (detectTeamModeState(verifyContent) !== 'enabled') {
       state.notes.push('Warning: Team mode patch verification failed');
       return;
     }

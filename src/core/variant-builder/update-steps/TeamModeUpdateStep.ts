@@ -10,18 +10,21 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { getProvider } from '../../../providers/index.js';
+import { TEAM_MODE_SUPPORTED } from '../../constants.js';
 import {
   installOrchestratorSkill,
   removeOrchestratorSkill,
   installTaskManagerSkill,
   removeTaskManagerSkill,
 } from '../../skills.js';
-import { copyTeamPackPrompts, configureTeamToolset } from '../../../team-pack/index.js';
+import {
+  copyTeamPackPrompts,
+  configureTeamToolset,
+  removeTeamPackPrompts,
+  removeTeamToolset,
+} from '../../../team-pack/index.js';
+import { detectTeamModeState, setTeamModeEnabled } from '../team-mode-patch.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
-
-// The minified function that controls team mode
-const TEAM_MODE_DISABLED = 'function Uq(){return!1}';
-const TEAM_MODE_ENABLED = 'function Uq(){return!0}';
 
 export class TeamModeUpdateStep implements UpdateStep {
   name = 'TeamMode';
@@ -40,6 +43,10 @@ export class TeamModeUpdateStep implements UpdateStep {
   }
 
   execute(ctx: UpdateContext): void {
+    if (!TEAM_MODE_SUPPORTED) {
+      this.handleUnsupported(ctx);
+      return;
+    }
     if (this.shouldDisableTeamMode(ctx)) {
       ctx.report('Disabling team mode...');
       this.unpatchCli(ctx);
@@ -51,6 +58,10 @@ export class TeamModeUpdateStep implements UpdateStep {
   }
 
   async executeAsync(ctx: UpdateContext): Promise<void> {
+    if (!TEAM_MODE_SUPPORTED) {
+      this.handleUnsupported(ctx);
+      return;
+    }
     if (this.shouldDisableTeamMode(ctx)) {
       await ctx.report('Disabling team mode...');
       this.unpatchCli(ctx);
@@ -75,10 +86,16 @@ export class TeamModeUpdateStep implements UpdateStep {
     }
 
     // Read cli.js
-    let content = fs.readFileSync(cliPath, 'utf8');
+    const content = fs.readFileSync(cliPath, 'utf8');
 
-    // Check if already disabled
-    if (content.includes(TEAM_MODE_DISABLED)) {
+    const patchResult = setTeamModeEnabled(content, false);
+    if (patchResult.state === 'unknown') {
+      state.notes.push('Warning: Team mode marker not found in cli.js');
+      // Still try to remove skill since user explicitly requested disable
+      this.removeSkill(ctx);
+      return;
+    }
+    if (!patchResult.changed && patchResult.state === 'disabled') {
       state.notes.push('Team mode already disabled');
       meta.teamModeEnabled = false;
       // Still remove skill since user explicitly requested disable
@@ -86,21 +103,11 @@ export class TeamModeUpdateStep implements UpdateStep {
       return;
     }
 
-    // Check if patchable (has enabled version)
-    if (!content.includes(TEAM_MODE_ENABLED)) {
-      state.notes.push('Warning: Team mode function not found in cli.js');
-      // Still try to remove skill since user explicitly requested disable
-      this.removeSkill(ctx);
-      return;
-    }
-
-    // Reverse patch
-    content = content.replace(TEAM_MODE_ENABLED, TEAM_MODE_DISABLED);
-    fs.writeFileSync(cliPath, content);
+    fs.writeFileSync(cliPath, patchResult.content);
 
     // Verify unpatch
     const verifyContent = fs.readFileSync(cliPath, 'utf8');
-    if (!verifyContent.includes(TEAM_MODE_DISABLED)) {
+    if (detectTeamModeState(verifyContent) !== 'disabled') {
       state.notes.push('Warning: Team mode unpatch verification failed');
       // Still try to remove skill since user explicitly requested disable
       this.removeSkill(ctx);
@@ -149,28 +156,24 @@ export class TeamModeUpdateStep implements UpdateStep {
     }
 
     // Read cli.js
-    let content = fs.readFileSync(cliPath, 'utf8');
+    const content = fs.readFileSync(cliPath, 'utf8');
 
-    // Check if already patched
-    if (content.includes(TEAM_MODE_ENABLED)) {
+    const patchResult = setTeamModeEnabled(content, true);
+    if (patchResult.state === 'unknown') {
+      state.notes.push('Warning: Team mode marker not found in cli.js, patch may not work');
+      return;
+    }
+    if (!patchResult.changed && patchResult.state === 'enabled') {
       state.notes.push('Team mode already enabled');
       meta.teamModeEnabled = true;
       return;
     }
 
-    // Check if patchable
-    if (!content.includes(TEAM_MODE_DISABLED)) {
-      state.notes.push('Warning: Team mode function not found in cli.js, patch may not work');
-      return;
-    }
-
-    // Apply patch
-    content = content.replace(TEAM_MODE_DISABLED, TEAM_MODE_ENABLED);
-    fs.writeFileSync(cliPath, content);
+    fs.writeFileSync(cliPath, patchResult.content);
 
     // Verify patch
     const verifyContent = fs.readFileSync(cliPath, 'utf8');
-    if (!verifyContent.includes(TEAM_MODE_ENABLED)) {
+    if (detectTeamModeState(verifyContent) !== 'enabled') {
       state.notes.push('Warning: Team mode patch verification failed');
       return;
     }
@@ -232,6 +235,70 @@ export class TeamModeUpdateStep implements UpdateStep {
     const tweakccConfigPath = path.join(meta.tweakDir, 'config.json');
     if (configureTeamToolset(tweakccConfigPath)) {
       state.notes.push('Team toolset configured (TodoWrite blocked)');
+    }
+  }
+
+  private handleUnsupported(ctx: UpdateContext): void {
+    const { meta, opts, state, paths } = ctx;
+    if (!meta.teamModeEnabled && !opts.enableTeamMode && !opts.disableTeamMode) {
+      return;
+    }
+
+    state.notes.push('Team mode is not supported in this cc-mirror release; disabling and removing team assets.');
+    meta.teamModeEnabled = false;
+
+    this.removeSkill(ctx);
+    this.removeTeamSettings(ctx);
+
+    const systemPromptsDir = path.join(meta.tweakDir, 'system-prompts');
+    const removedPrompts = removeTeamPackPrompts(systemPromptsDir);
+    if (removedPrompts.length > 0) {
+      state.notes.push(`Team pack prompts removed (${removedPrompts.join(', ')})`);
+    }
+
+    const tweakccConfigPath = path.join(paths.variantDir, 'tweakcc', 'config.json');
+    if (removeTeamToolset(tweakccConfigPath)) {
+      state.notes.push('Team toolset removed');
+    }
+  }
+
+  private removeTeamSettings(ctx: UpdateContext): void {
+    const { meta, state } = ctx;
+    const settingsPath = path.join(meta.configDir, 'settings.json');
+    if (!fs.existsSync(settingsPath)) {
+      return;
+    }
+
+    try {
+      const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+      let changed = false;
+
+      if (settings.env && typeof settings.env === 'object') {
+        if ('CLAUDE_CODE_TEAM_MODE' in settings.env) {
+          delete settings.env.CLAUDE_CODE_TEAM_MODE;
+          changed = true;
+        }
+        if ('CLAUDE_CODE_AGENT_TYPE' in settings.env) {
+          delete settings.env.CLAUDE_CODE_AGENT_TYPE;
+          changed = true;
+        }
+      }
+
+      if (settings.permissions?.allow && Array.isArray(settings.permissions.allow)) {
+        const nextAllow = settings.permissions.allow.filter(
+          (entry: string) => entry !== 'Skill(orchestration)' && entry !== 'Skill(task-manager)'
+        );
+        if (nextAllow.length !== settings.permissions.allow.length) {
+          settings.permissions.allow = nextAllow;
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+      }
+    } catch {
+      state.notes.push('Warning: Could not update settings.json to remove team mode flags');
     }
   }
 }

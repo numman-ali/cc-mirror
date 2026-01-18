@@ -59,11 +59,14 @@ export class ConfigUpdateStep implements UpdateStep {
     const envDefaultsUpdated = ensureSettingsEnvDefaults(meta.configDir, {
       TWEAKCC_CONFIG_DIR: meta.tweakDir,
       DISABLE_AUTOUPDATER: '1',
+      DISABLE_AUTO_MIGRATE_TO_NATIVE: '1',
       CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION: '1',
     });
 
     if (envDefaultsUpdated) {
-      state.notes.push('Disabled Claude Code auto-updater (DISABLE_AUTOUPDATER=1).');
+      state.notes.push(
+        'Disabled Claude Code auto-updater and auto-migration (DISABLE_AUTOUPDATER=1, DISABLE_AUTO_MIGRATE_TO_NATIVE=1).'
+      );
     }
     if (onboarding.themeChanged) {
       state.notes.push(`Default theme set to ${brandThemeId ?? 'dark'}.`);

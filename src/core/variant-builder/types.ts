@@ -137,6 +137,7 @@ export interface UpdateState {
   notes: string[];
   tweakResult: TweakResult | null;
   brandKey: string | null;
+  savedTweakccConfig?: string;
 }
 
 /**

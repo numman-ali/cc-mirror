@@ -2,8 +2,8 @@
  * Update command - updates one or all variants
  */
 
-import path from 'node:path';
 import * as core from '../../core/index.js';
+import { getWrapperPath } from '../../core/paths.js';
 import type { ParsedArgs } from '../args.js';
 import { printSummary } from '../utils/index.js';
 
@@ -31,6 +31,13 @@ export function runUpdateCommand({ opts }: UpdateCommandOptions): void {
   const shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
   const enableTeamMode = opts['enable-team-mode'] ? true : undefined;
   const disableTeamMode = opts['disable-team-mode'] ? true : undefined;
+  const rawTweakccStdio = opts['tweakcc-stdio'] as string | undefined;
+  const tweakccStdio =
+    rawTweakccStdio === 'inherit' || opts.verbose ? 'inherit' : rawTweakccStdio === 'pipe' ? 'pipe' : 'pipe';
+
+  if (!core.TEAM_MODE_SUPPORTED && (enableTeamMode || disableTeamMode)) {
+    console.log('Team mode flags are ignored in this release. Use cc-mirror 1.6.3 for team mode support.');
+  }
 
   for (const name of names) {
     const result = core.updateVariant(rootDir, name, {
@@ -44,8 +51,9 @@ export function runUpdateCommand({ opts }: UpdateCommandOptions): void {
       skillUpdate,
       enableTeamMode,
       disableTeamMode,
+      tweakccStdio,
     });
-    const wrapperPath = path.join(binDir, name);
+    const wrapperPath = getWrapperPath(binDir, name);
     printSummary({
       action: 'Updated',
       meta: result.meta,

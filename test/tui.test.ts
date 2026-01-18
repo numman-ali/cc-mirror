@@ -37,7 +37,6 @@ test('TUI create flow applies tweakcc by default', async () => {
   await send(app.stdin, enter); // api key
   await send(app.stdin, enter); // prompt pack mode (maximal) - skipped yes/no for zai/minimax
   await send(app.stdin, enter); // install dev-browser? default Yes
-  await send(app.stdin, enter); // team mode? default Yes
   await send(app.stdin, enter); // write Z_AI_API_KEY? default Yes
   await send(app.stdin, down); // add env? select No
   await send(app.stdin, enter);
@@ -109,7 +108,6 @@ test('TUI manage -> remove flow', async () => {
   await send(app.stdin, enter);
   await send(app.stdin, enter); // pick alpha
   await tick();
-  await send(app.stdin, down); // team mode
   await send(app.stdin, down); // tweak
   await send(app.stdin, down); // remove
   await send(app.stdin, enter);
@@ -138,9 +136,8 @@ test('TUI update all flow', async () => {
   await send(app.stdin, down); // manage
   await send(app.stdin, down); // updateAll
   await send(app.stdin, enter);
-  await tick();
-
-  assert.equal(calls.update.length, 2);
+  const updated = await waitFor(() => calls.update.length === 2);
+  assert.ok(updated, 'Update all should trigger updates for all variants');
   assert.equal(calls.update[0].name, 'alpha');
   assert.equal(calls.update[1].name, 'beta');
 

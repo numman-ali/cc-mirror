@@ -13,16 +13,19 @@
 <h2 align="center">Claude Code, Unshackled</h2>
 
 <p align="center">
-  Pre-configured Claude Code variants with multi-agent orchestration,<br>
-  custom providers, and battle-tested enhancements.<br><br>
+  Pre-configured Claude Code variants with custom providers,<br>
+  prompt packs, and battle-tested enhancements.<br><br>
   <strong>One command. Instant power-up.</strong>
 </p>
 
 ---
 
-## The Unlock
+> **Note:** Team mode is only supported in the published **cc-mirror 1.6.3** release.  
+> Current development builds do not patch Claude Code; the focus is provider enablement and stable updates.
 
-Claude Code has a hidden multi-agent capability. CC-MIRROR enables it.
+## Legacy Team Mode (cc-mirror 1.6.3)
+
+Claude Code has a hidden multi-agent capability. CC-MIRROR enabled it in the 1.6.3 release.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -59,14 +62,14 @@ Plus a **battle-tested orchestrator skill** — refined through millions of toke
 ## Quick Start
 
 ```bash
-# Fastest path to multi-agent Claude Code
+# Fastest path to a configured Claude Code variant
 npx cc-mirror quick --provider mirror --name mclaude
 
 # Run it
 mclaude
 ```
 
-That's it. You now have Claude Code with team mode enabled.
+That's it. You now have a Claude Code variant ready to run.
 
 <p align="center">
   <img src="./assets/cc-mirror-home.png" alt="CC-MIRROR Home Screen" width="600">
@@ -87,9 +90,9 @@ CC-MIRROR is an **opinionated Claude Code distribution**. We did the hacking —
 At its core, CC-MIRROR:
 
 1. **Clones** Claude Code into isolated instances
-2. **Patches** the CLI to enable hidden features (team mode)
-3. **Installs** battle-tested skills (orchestrator, browser automation)
-4. **Configures** provider-specific enhancements
+2. **Configures** provider endpoints, model mapping, and env defaults
+3. **Applies** prompt packs and tweakcc themes
+4. **Installs** optional skills (dev-browser)
 5. **Packages** everything into a single command
 
 Each variant is completely isolated — its own config, sessions, MCP servers, and credentials. Your main Claude Code installation stays untouched.
@@ -98,20 +101,24 @@ Each variant is completely isolated — its own config, sessions, MCP servers, a
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  ~/.cc-mirror/                                                          │
 │                                                                         │
-│  ├── mclaude/                        ← Mirror Claude (team mode)        │
+│  ├── mclaude/                        ← Mirror Claude                     │
 │  │   ├── npm/                        Claude Code installation           │
 │  │   ├── config/                     API keys, sessions, MCP servers    │
-│  │   │   ├── tasks/<team>/           Team task storage                  │
-│  │   │   └── skills/orchestration/   Orchestrator skill                 │
+│  │   │   ├── tasks/<team>/           Team task storage (legacy)          │
+│  │   │   └── skills/orchestration/   Orchestrator skill (legacy)         │
 │  │   ├── tweakcc/                    Theme customization                │
 │  │   └── variant.json                Metadata                           │
 │  │                                                                      │
 │  ├── zai/                            ← Z.ai variant (GLM models)        │
 │  └── minimax/                        ← MiniMax variant (M2.1)           │
 │                                                                         │
-│  Wrappers: ~/.local/bin/mclaude, ~/.local/bin/zai, ...                  │
+│  Wrappers: <bin-dir>/mclaude, <bin-dir>/zai, ...                        │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
+
+Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
+
+**Windows tip:** add `%USERPROFILE%\\.cc-mirror\\bin` to your `PATH`, or run the `<variant>.cmd` wrapper directly. Each wrapper has a sibling `<variant>.mjs` launcher.
 
 ---
 
@@ -119,20 +126,19 @@ Each variant is completely isolated — its own config, sessions, MCP servers, a
 
 ### Mirror Claude (Recommended)
 
-The purest path to multi-agent Claude Code. No proxy, no model changes — just Claude with superpowers.
+The purest path to vanilla Claude Code. No proxy, no model changes — just clean isolation.
 
 ```bash
 npx cc-mirror quick --provider mirror --name mclaude
 ```
 
 - **Direct Anthropic API** — No proxy, authenticate normally (OAuth or API key)
-- **Team mode enabled** — The hidden tools, unlocked
-- **Orchestrator skill** — Battle-tested multi-agent coordination
 - **Isolated config** — Experiment without affecting your main setup
+- **Provider presets** — Clean defaults without hidden patches
 
 ### Alternative Providers
 
-Want to use different models? CC-MIRROR supports multiple providers, all with team mode:
+Want to use different models? CC-MIRROR supports multiple providers:
 
 | Provider       | Models                 | Auth       | Best For                        |
 | -------------- | ---------------------- | ---------- | ------------------------------- |
@@ -164,9 +170,9 @@ npx cc-mirror quick --provider ccrouter
 
 ---
 
-## The Orchestrator Skill
+## Legacy Orchestrator Skill (cc-mirror 1.6.3)
 
-When team mode is enabled, CC-MIRROR installs an **orchestrator skill** that teaches Claude how to coordinate work effectively.
+When team mode is enabled (cc-mirror 1.6.3), CC-MIRROR installs an **orchestrator skill** that teaches Claude how to coordinate work effectively.
 
 ### The Conductor Identity
 
@@ -215,7 +221,9 @@ Claude (The Conductor):
 
 ---
 
-## Project-Scoped Tasks
+## Project-Scoped Tasks (Legacy: cc-mirror 1.6.3)
+
+> Legacy feature: available only in cc-mirror 1.6.3.
 
 Tasks are automatically isolated by project folder — no cross-project pollution:
 
@@ -228,7 +236,7 @@ TEAM=backend mclaude   # Team: mclaude-myproject-backend
 TEAM=frontend mclaude  # Team: mclaude-myproject-frontend
 ```
 
-### CLI Task Management
+### CLI Task Management (Legacy)
 
 Manage team tasks from the command line:
 
@@ -246,19 +254,19 @@ npx cc-mirror tasks clean --resolved   # Cleanup done tasks
 
 ---
 
-## Disabling Team Mode
+## Team Mode Flags (Legacy: cc-mirror 1.6.3)
 
-Team mode is enabled by default on all variants. If you want vanilla Claude Code behavior:
+Team mode is enabled by default only in cc-mirror 1.6.3. In current builds, team mode is always disabled and these flags are ignored.
 
 ```bash
-# Create without team mode
+# Create without team mode (legacy)
 npx cc-mirror create --provider mirror --name vanilla --no-team-mode
 
 # Disable on existing variant
 npx cc-mirror update myvariant --disable-team-mode
 ```
 
-Or toggle via the TUI: **Manage Variants → Toggle Team Mode**
+Legacy (1.6.3) TUI toggle: **Manage Variants → Toggle Team Mode**
 
 ---
 
@@ -275,7 +283,7 @@ npx cc-mirror remove <name>       # Delete a variant
 npx cc-mirror doctor              # Health check all variants
 npx cc-mirror tweak <name>        # Launch tweakcc customization
 
-# Task management
+# Task management (legacy; cc-mirror 1.6.3)
 npx cc-mirror tasks               # List open tasks
 npx cc-mirror tasks show <id>     # Show task details
 npx cc-mirror tasks create        # Create new task
@@ -304,9 +312,9 @@ minimax                           # Run MiniMax variant
 --model-opus <name>      Map to opus model (for providers requiring model mapping)
 --model-haiku <name>     Map to haiku model (for providers requiring model mapping)
 --brand <preset>         Theme: auto | zai | minimax | gatewayz | openrouter | ccrouter | mirror
---no-team-mode           Disable team mode (not recommended)
 --no-tweak               Skip tweakcc theme
 --no-prompt-pack         Skip provider prompt pack
+--verbose               Show full tweakcc output during update
 ```
 
 ---
@@ -328,12 +336,12 @@ Each provider includes a custom color theme via [tweakcc](https://github.com/Pie
 
 ## Documentation
 
-| Document                                        | Description                         |
-| ----------------------------------------------- | ----------------------------------- |
-| [Team Mode](docs/features/team-mode.md)         | Multi-agent collaboration deep dive |
-| [Mirror Claude](docs/features/mirror-claude.md) | Pure Claude Code with superpowers   |
-| [Architecture](docs/architecture/overview.md)   | How CC-MIRROR works under the hood  |
-| [Full Documentation](docs/README.md)            | Complete documentation index        |
+| Document                                        | Description                          |
+| ----------------------------------------------- | ------------------------------------ |
+| [Team Mode](docs/features/team-mode.md)         | Legacy team mode (cc-mirror 1.6.3)   |
+| [Mirror Claude](docs/features/mirror-claude.md) | Pure Claude Code with clean defaults |
+| [Architecture](docs/architecture/overview.md)   | How CC-MIRROR works under the hood   |
+| [Full Documentation](docs/README.md)            | Complete documentation index         |
 
 ---
 

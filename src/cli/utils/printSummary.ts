@@ -3,6 +3,7 @@
  */
 
 import type { VariantMeta } from '../../core/types.js';
+import { TEAM_MODE_SUPPORTED } from '../../core/constants.js';
 
 export interface PrintSummaryOptions {
   action: string;
@@ -41,7 +42,8 @@ export function printSummary(opts: PrintSummaryOptions): void {
     console.log(`  dev-browser skill: ${meta.skillInstall ? 'on' : 'off'}`);
   }
   if (meta.teamModeEnabled !== undefined) {
-    console.log(`  Team mode: ${getTeamModeDescription()}`);
+    const teamModeDescription = TEAM_MODE_SUPPORTED ? getTeamModeDescription() : 'unsupported (use cc-mirror 1.6.3)';
+    console.log(`  Team mode: ${teamModeDescription}`);
   }
   if (meta.shellEnv !== undefined && meta.provider === 'zai') {
     console.log(`  Shell env: ${meta.shellEnv ? 'write Z_AI_API_KEY' : 'manual'}`);

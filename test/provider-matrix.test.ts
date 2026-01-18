@@ -22,10 +22,10 @@ test('Provider Feature Matrix', async (t) => {
     }
   });
 
-  await t.test('mirror provider has enablesTeamMode', () => {
+  await t.test('mirror provider has clean defaults', () => {
     const mirror = getProvider('mirror');
     assert.ok(mirror, 'mirror provider should exist');
-    assert.ok(mirror.enablesTeamMode, 'mirror should have enablesTeamMode: true');
+    assert.ok(!mirror.enablesTeamMode, 'mirror should not auto-enable team mode');
     assert.ok(mirror.noPromptPack, 'mirror should have noPromptPack: true');
     assert.ok(mirror.credentialOptional, 'mirror should have credentialOptional: true');
     assert.equal(mirror.authMode, 'none', 'mirror should have authMode: none');

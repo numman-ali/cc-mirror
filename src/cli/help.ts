@@ -1,4 +1,5 @@
 import { getRandomHaiku } from '../tui/content/haikus.js';
+import { DEFAULT_BIN_DIR, DEFAULT_ROOT } from '../core/constants.js';
 
 export const printHelp = () => {
   console.log(`
@@ -7,15 +8,14 @@ export const printHelp = () => {
 ║                     Claude Code, Unshackled                              ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 
-  Pre-configured Claude Code variants with multi-agent orchestration,
-  custom providers, and battle-tested enhancements.
+  Pre-configured Claude Code variants with custom providers,
+  prompt packs, and battle-tested enhancements.
 
   One command. Instant power-up.
 
-THE UNLOCK
-  Claude Code has a hidden multi-agent capability. CC-MIRROR enables it.
-  Team mode unlocks: TaskCreate, TaskGet, TaskUpdate, TaskList tools
-  plus a battle-tested orchestrator skill for coordinating agents.
+FOCUS
+  CC-MIRROR focuses on provider enablement and stable workflows.
+  Team mode is only supported in cc-mirror 1.6.3 (published release).
 
 QUICK START
   npx cc-mirror quick --provider mirror    # Fastest path to multi-agent
@@ -30,14 +30,13 @@ COMMANDS
   remove <name>                Remove a variant
   doctor                       Health check all variants
   tweak <name>                 Launch tweakcc customization
-  tasks [operation]            Manage team tasks (list, show, create, update, delete, clean, graph)
+  tasks [operation]            Manage legacy team tasks (cc-mirror 1.6.3 only)
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
   --provider <name>            Provider: mirror | zai | minimax | openrouter | ccrouter
   --api-key <key>              Provider API key
   --brand <preset>             Theme: auto | none | mirror | zai | minimax
-  --no-team-mode               Disable team mode (not recommended)
   --tui / --no-tui             Force TUI on/off
 
 OPTIONS (advanced)
@@ -45,14 +44,15 @@ OPTIONS (advanced)
   --model-sonnet <name>        Default Sonnet model
   --model-opus <name>          Default Opus model
   --model-haiku <name>         Default Haiku model
-  --root <path>                Variants root (default: ~/.cc-mirror)
-  --bin-dir <path>             Wrapper install dir (default: ~/.local/bin)
+  --root <path>                Variants root (default: ${DEFAULT_ROOT})
+  --bin-dir <path>             Wrapper install dir (default: ${DEFAULT_BIN_DIR})
   --no-tweak                   Skip tweakcc theming
   --no-prompt-pack             Skip provider prompt pack
   --shell-env                  Write env vars to shell profile
+  --verbose                    Show full tweakcc output during update
 
 PROVIDERS
-  mirror        Pure Claude with team mode (recommended)
+  mirror        Pure Claude (recommended)
   zai           GLM-4.7 via Z.ai Coding Plan
   minimax       MiniMax-M2.1 via MiniMax Cloud
   openrouter    100+ models via OpenRouter

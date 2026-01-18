@@ -7,7 +7,8 @@ import assert from 'node:assert/strict';
 import React from 'react';
 import { render } from 'ink-testing-library';
 import { HomeScreen } from '../../src/tui/screens/HomeScreen.js';
-import { tick, send, KEYS } from '../helpers/index.js';
+import { icons } from '../../src/tui/components/ui/theme.js';
+import { tick, send, waitFor, KEYS } from '../helpers/index.js';
 
 test('HomeScreen renders with logo and menu items', async () => {
   let _selectedValue = '';
@@ -90,6 +91,8 @@ test('Menu wrap-around navigation works correctly', async () => {
 
   // Navigate up from first item (should wrap to last - Exit)
   await send(app.stdin, KEYS.up);
+  const moved = await waitFor(() => (app.lastFrame() || '').includes(`${icons.pointer} Until next time`));
+  assert.ok(moved, 'Selection should wrap to Exit');
   await send(app.stdin, KEYS.enter);
 
   assert.equal(selectedValue, 'exit', 'Should wrap to Exit');

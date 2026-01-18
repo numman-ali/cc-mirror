@@ -32,7 +32,6 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     features: [
       'GLM-4.7 for Sonnet/Opus tasks',
       'GLM-4.5-Air for Haiku (fast) tasks',
-      'Multi-agent orchestration (team mode)',
       'Prompt pack with zai-cli routing',
       'Gold-themed interface',
     ],
@@ -57,7 +56,6 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     tagline: 'Coral pulses, unified model',
     features: [
       'Single model for all tiers',
-      'Multi-agent orchestration (team mode)',
       'Prompt pack with MCP tool routing',
       'MCP tools for web search & vision',
       'Coral-themed interface',
@@ -134,16 +132,14 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
       'Install: npm i -g @musistudio/claude-code-router, run "ccr start". Configure models in ~/.claude-code-router/config.json',
   },
   mirror: {
-    headline: 'The Fastest Path to Multi-Agent',
+    headline: 'The Fastest Path to Claude Code',
     tagline: 'Claude Code, Unshackled',
     features: [
-      'Multi-agent orchestration (team mode)',
-      'Battle-tested orchestrator skill',
       'Pure Claude — no proxy, no model changes',
       'Isolated config for experimentation',
       'Premium silver/chrome theme',
     ],
-    bestFor: 'Power users who want multi-agent Claude Code immediately',
+    bestFor: 'Power users who want a clean, isolated Claude Code setup',
     requiresMapping: false,
     hasPromptPack: false,
     setupLinks: {
@@ -171,6 +167,5 @@ export const PROVIDER_COMPARISON = {
   hasPromptPack: ['zai', 'minimax'],
   localFirst: ['ccrouter'],
   pureClaudeCode: ['mirror'],
-  teamModeDefault: ['mirror', 'zai', 'minimax', 'gatewayz', 'openrouter', 'ccrouter'], // All providers now have team mode by default
   recommended: ['mirror'],
 };

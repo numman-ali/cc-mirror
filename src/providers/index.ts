@@ -16,7 +16,7 @@ export interface ProviderTemplate {
   credentialOptional?: boolean;
   /** Mark as experimental/coming soon - hidden from main provider list */
   experimental?: boolean;
-  /** Auto-enable team mode patch for this provider */
+  /** Auto-enable team mode patch for this provider (legacy) */
   enablesTeamMode?: boolean;
   /** Skip prompt pack overlays (pure Claude experience) */
   noPromptPack?: boolean;
@@ -37,7 +37,7 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
   mirror: {
     key: 'mirror',
     label: 'Mirror Claude',
-    description: 'Pure Claude with team mode — the fastest path to multi-agent',
+    description: 'Pure Claude with isolated config and clean defaults',
     baseUrl: '', // Empty = use Claude Code defaults (no ANTHROPIC_BASE_URL override)
     env: {
       // Only cosmetic settings - no auth or model overrides
@@ -48,7 +48,6 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     apiKeyLabel: '', // Empty = skip API key prompt
     authMode: 'none', // No auth handling - user authenticates via normal Claude flow
     credentialOptional: true, // No credentials required at create time
-    enablesTeamMode: true, // Auto-enable team mode patch
     noPromptPack: true, // Skip prompt pack (pure Claude experience)
   },
   zai: {
@@ -215,6 +214,9 @@ export const buildEnv = ({ providerKey, baseUrl, apiKey, extraEnv, modelOverride
 
   if (!Object.hasOwn(env, 'DISABLE_AUTOUPDATER')) {
     env.DISABLE_AUTOUPDATER = '1';
+  }
+  if (!Object.hasOwn(env, 'DISABLE_AUTO_MIGRATE_TO_NATIVE')) {
+    env.DISABLE_AUTO_MIGRATE_TO_NATIVE = '1';
   }
   if (!Object.hasOwn(env, 'CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION')) {
     env.CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION = '1';

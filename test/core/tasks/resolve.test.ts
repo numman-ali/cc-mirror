@@ -7,6 +7,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { makeTempDir, cleanup } from '../../helpers/index.js';
 import {
@@ -57,13 +58,13 @@ test('Task Resolve', async (t) => {
     });
 
     await st.test('extracts variant from CLAUDE_CONFIG_DIR path', () => {
-      setEnv('CLAUDE_CONFIG_DIR', '/Users/test/.cc-mirror/myvariant/config');
+      setEnv('CLAUDE_CONFIG_DIR', path.join(path.sep, 'Users', 'test', '.cc-mirror', 'myvariant', 'config'));
       const result = detectVariantFromEnv();
       assert.equal(result, 'myvariant');
     });
 
     await st.test('handles variant names with hyphens', () => {
-      setEnv('CLAUDE_CONFIG_DIR', '/home/user/.cc-mirror/my-long-variant/config');
+      setEnv('CLAUDE_CONFIG_DIR', path.join(path.sep, 'home', 'user', '.cc-mirror', 'my-long-variant', 'config'));
       const result = detectVariantFromEnv();
       assert.equal(result, 'my-long-variant');
     });
@@ -311,15 +312,15 @@ test('Task Resolve', async (t) => {
 
   await t.test('resolveTasksDir', async (st) => {
     await st.test('returns cc-mirror path for regular variant', () => {
-      const result = resolveTasksDir('/root/.cc-mirror', 'myvariant', 'myteam');
-      assert.equal(result, '/root/.cc-mirror/myvariant/config/tasks/myteam');
+      const rootDir = path.join(path.sep, 'root', '.cc-mirror');
+      const result = resolveTasksDir(rootDir, 'myvariant', 'myteam');
+      assert.equal(result, path.join(rootDir, 'myvariant', 'config', 'tasks', 'myteam'));
     });
 
     await st.test('returns ~/.claude path for _default variant', () => {
-      const result = resolveTasksDir('/root/.cc-mirror', '_default', 'myteam');
-      // Should use ~/.claude/tasks/myteam, not /root/.cc-mirror/_default/config/tasks/myteam
-      assert.ok(result.includes('.claude/tasks/myteam'));
-      assert.ok(!result.includes('.cc-mirror'));
+      const rootDir = path.join(path.sep, 'root', '.cc-mirror');
+      const result = resolveTasksDir(rootDir, '_default', 'myteam');
+      assert.equal(result, path.join(os.homedir(), '.claude', 'tasks', 'myteam'));
     });
   });
 });
