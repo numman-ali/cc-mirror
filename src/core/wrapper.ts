@@ -34,6 +34,12 @@ const C = {
   mirSecondary: '\x1b[38;5;250m', // Platinum
   mirAccent: '\x1b[38;5;45m', // Electric cyan
   mirDim: '\x1b[38;5;243m', // Muted silver
+  // GatewayZ: Purple/Violet gradient
+  gzPrimary: '\x1b[38;5;135m', // Violet
+  gzSecondary: '\x1b[38;5;141m', // Light violet
+  gzAccent: '\x1b[38;5;99m', // Deep purple
+  gzDim: '\x1b[38;5;97m', // Muted purple
+  gzCyan: '\x1b[38;5;51m', // Cyan accent
   // Default: White/Gray
   defPrimary: '\x1b[38;5;255m', // White
   defDim: '\x1b[38;5;245m', // Gray
@@ -341,6 +347,22 @@ export const writeWrapper = (
     "        cat <<'CCMMIR'",
     ...SPLASH_ART.mirror,
     'CCMMIR',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      gatewayz)',
+    "        cat <<'CCMGWZ'",
+    '',
+    `${C.gzPrimary}     ██████╗  █████╗ ████████╗███████╗██╗    ██╗ █████╗ ██╗   ██╗${C.gzCyan}███████╗${C.reset}`,
+    `${C.gzPrimary}    ██╔════╝ ██╔══██╗╚══██╔══╝██╔════╝██║    ██║██╔══██╗╚██╗ ██╔╝${C.gzCyan}╚══███╔╝${C.reset}`,
+    `${C.gzSecondary}    ██║  ███╗███████║   ██║   █████╗  ██║ █╗ ██║███████║ ╚████╔╝ ${C.gzCyan}  ███╔╝${C.reset}`,
+    `${C.gzSecondary}    ██║   ██║██╔══██║   ██║   ██╔══╝  ██║███╗██║██╔══██║  ╚██╔╝  ${C.gzCyan} ███╔╝${C.reset}`,
+    `${C.gzAccent}    ╚██████╔╝██║  ██║   ██║   ███████╗╚███╔███╔╝██║  ██║   ██║   ${C.gzCyan}███████╗${C.reset}`,
+    `${C.gzAccent}     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ${C.gzCyan}╚══════╝${C.reset}`,
+    '',
+    `${C.gzDim}    ━━━━━━━━━━━━━━━━${C.gzPrimary}◆${C.gzDim}━━━━━━━━━━━━━━━━${C.reset}`,
+    `${C.gzSecondary}       Your Gateway to AI${C.reset}`,
+    '',
+    'CCMGWZ',
     '        __cc_show_label="0"',
     '        ;;',
     '      *)',

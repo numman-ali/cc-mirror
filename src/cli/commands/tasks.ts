@@ -214,6 +214,15 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
     }
 
     case 'clean': {
+      let olderThan: number | undefined;
+      if (opts['older-than'] !== undefined) {
+        olderThan = Number(opts['older-than']);
+        if (Number.isNaN(olderThan) || olderThan < 0) {
+          console.error('Error: --older-than must be a non-negative number (days).');
+          process.exitCode = 1;
+          return;
+        }
+      }
       await runTasksClean({
         rootDir,
         variant,
@@ -221,7 +230,7 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
         allVariants,
         allTeams,
         resolved: Boolean(opts.resolved),
-        olderThan: opts['older-than'] !== undefined ? Number(opts['older-than']) : undefined,
+        olderThan,
         dryRun: Boolean(opts['dry-run']),
         force: Boolean(opts.force),
         json,
@@ -251,6 +260,15 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
     case 'list':
     case undefined: {
       // Default operation is list
+      let limit = 50;
+      if (opts.limit !== undefined) {
+        limit = Number(opts.limit);
+        if (Number.isNaN(limit) || limit < 1 || !Number.isInteger(limit)) {
+          console.error('Error: --limit must be a positive integer.');
+          process.exitCode = 1;
+          return;
+        }
+      }
       runTasksList({
         rootDir,
         variant,
@@ -262,7 +280,7 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
         blocking: opts.blocking !== undefined ? Boolean(opts.blocking) : undefined,
         ready: opts.ready !== undefined ? Boolean(opts.ready) : undefined,
         owner: opts.owner as string | undefined,
-        limit: opts.limit !== undefined ? Number(opts.limit) : 50,
+        limit,
         json,
       });
       break;

@@ -158,6 +158,12 @@ npx cc-mirror quick --provider minimax --api-key "$MINIMAX_API_KEY"
 npx cc-mirror quick --provider openrouter --api-key "$OPENROUTER_API_KEY" \
   --model-sonnet "anthropic/claude-sonnet-4-20250514"
 
+# GatewayZ (OneRouter gateway)
+npx cc-mirror quick --provider gatewayz --api-key "$GATEWAYZ_API_KEY" \
+  --model-sonnet "claude-sonnet-4-20250514" \
+  --model-opus "claude-opus-4-5-20251101" \
+  --model-haiku "claude-haiku-3-5-20241022"
+
 # Claude Code Router (local LLMs)
 npx cc-mirror quick --provider ccrouter
 ```
@@ -298,14 +304,14 @@ minimax                           # Run MiniMax variant
 ## CLI Options
 
 ```
---provider <name>        mirror | zai | minimax | openrouter | ccrouter | custom
+--provider <name>        mirror | zai | minimax | gatewayz | openrouter | ccrouter | custom
 --name <name>            Variant name (becomes the CLI command)
 --api-key <key>          Provider API key
 --base-url <url>         Custom API endpoint
---model-sonnet <name>    Map to sonnet model
---model-opus <name>      Map to opus model
---model-haiku <name>     Map to haiku model
---brand <preset>         Theme: auto | zai | minimax | openrouter | ccrouter | mirror
+--model-sonnet <name>    Map to sonnet model (for providers requiring model mapping)
+--model-opus <name>      Map to opus model (for providers requiring model mapping)
+--model-haiku <name>     Map to haiku model (for providers requiring model mapping)
+--brand <preset>         Theme: auto | zai | minimax | gatewayz | openrouter | ccrouter | mirror
 --no-tweak               Skip tweakcc theme
 --no-prompt-pack         Skip provider prompt pack
 --verbose               Show full tweakcc output during update
@@ -322,6 +328,7 @@ Each provider includes a custom color theme via [tweakcc](https://github.com/Pie
 | **mirror**     | Silver/chrome with electric blue |
 | **zai**        | Dark carbon with gold accents    |
 | **minimax**    | Coral/red/orange spectrum        |
+| **gatewayz**   | Dark portal with violet/purple   |
 | **openrouter** | Teal/cyan gradient               |
 | **ccrouter**   | Sky blue accents                 |
 

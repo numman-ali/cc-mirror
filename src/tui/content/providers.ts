@@ -76,6 +76,25 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     setupNote: 'Subscribe to MiniMax Coding Plan, then get your API key from the payment page.',
   },
 
+  gatewayz: {
+    headline: 'GatewayZ — Your Gateway to AI',
+    tagline: 'Your Gateway to AI',
+    features: [
+      'Access to 10,000 models via GatewayZ API',
+      'Maximum throughput and lowest model latency metrics',
+      'Lowest Pay-per-use pricing on the market',
+    ],
+    bestFor: 'Accessing multiple AI models through a unified gateway',
+    requiresMapping: true,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://gatewayz.ai',
+      apiKey: 'https://gatewayz.ai',
+      docs: 'https://api.gatewayz.ai/docs',
+    },
+    setupNote: 'Get your API key from GatewayZ. You must set model aliases (e.g., claude-opus-4-5-20251101).',
+  },
+
   openrouter: {
     headline: 'OpenRouter — One API, Any Model',
     tagline: 'Many paths, one door',
@@ -144,7 +163,7 @@ export const getProviderEducation = (providerKey: string): ProviderEducation | n
  */
 export const PROVIDER_COMPARISON = {
   fullySupported: ['mirror', 'zai', 'minimax'],
-  requiresMapping: ['openrouter'],
+  requiresMapping: ['gatewayz', 'openrouter'],
   hasPromptPack: ['zai', 'minimax'],
   localFirst: ['ccrouter'],
   pureClaudeCode: ['mirror'],
