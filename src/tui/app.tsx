@@ -237,7 +237,18 @@ export const App: React.FC<AppProps> = ({
   const [apiKeyDetectedFrom, setApiKeyDetectedFrom] = useState<string | null>(null);
 
   // Include experimental providers to show "Coming Soon" in UI
-  const providerList = useMemo(() => providers.listProviders(true), [providers]);
+  const providerList = useMemo(() => {
+    const list = providers.listProviders(true);
+    return [...list].sort((a, b) => {
+      if (a.experimental && !b.experimental) return 1;
+      if (!a.experimental && b.experimental) return -1;
+      const aLabel = a.label.toLowerCase();
+      const bLabel = b.label.toLowerCase();
+      if (aLabel < bLabel) return -1;
+      if (aLabel > bLabel) return 1;
+      return 0;
+    });
+  }, [providers]);
   const brandList = useMemo(() => brands.listBrandPresets(), [brands]);
   const provider = useMemo(() => (providerKey ? providers.getProvider(providerKey) : null), [providerKey, providers]);
   const effectiveBaseUrl = useMemo(() => baseUrl || provider?.baseUrl || '', [baseUrl, provider]);
