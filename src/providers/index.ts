@@ -22,7 +22,7 @@ export interface ProviderTemplate {
   noPromptPack?: boolean;
   /** Require empty ANTHROPIC_API_KEY (for authToken providers like Vercel AI Gateway) */
   requiresEmptyApiKey?: boolean;
-  /** Keep ANTHROPIC_API_KEY alongside auth token (e.g., Ollama Anthropic compatibility) */
+  /** Keep ANTHROPIC_API_KEY alongside auth token (e.g., Ollama compatibility) */
   authTokenAlsoSetsApiKey?: boolean;
 }
 
@@ -141,7 +141,7 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
   gatewayz: {
     key: 'gatewayz',
     label: 'GatewayZ',
-    description: 'GatewayZ AI Gateway (Anthropic-compatible)',
+    description: 'GatewayZ AI Gateway',
     baseUrl: 'https://api.gatewayz.ai',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
@@ -156,7 +156,7 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
   vercel: {
     key: 'vercel',
     label: 'Vercel AI Gateway',
-    description: 'Vercel AI Gateway (Anthropic-compatible)',
+    description: 'Vercel AI Gateway',
     baseUrl: 'https://ai-gateway.vercel.sh',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
@@ -172,7 +172,7 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
   nanogpt: {
     key: 'nanogpt',
     label: 'NanoGPT',
-    description: 'NanoGPT Anthropic-compatible endpoint',
+    description: 'NanoGPT endpoint',
     baseUrl: 'https://nano-gpt.com/api',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,

@@ -25,6 +25,7 @@ interface ProviderSelectScreenProps {
 export const ProviderSelectScreen: React.FC<ProviderSelectScreenProps> = ({ providers, onSelect }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
+  const maxVisible = 6;
 
   // Get current selected provider and its education
   const currentProvider = providers[selectedIndex];
@@ -60,6 +61,23 @@ export const ProviderSelectScreen: React.FC<ProviderSelectScreenProps> = ({ prov
     }
   });
 
+  const getVisibleRange = (total: number, selected: number) => {
+    const half = Math.floor(maxVisible / 2);
+    let start = Math.max(0, selected - half);
+    const end = Math.min(total, start + maxVisible);
+    if (end - start < maxVisible) {
+      start = Math.max(0, end - maxVisible);
+    }
+    return { start, end };
+  };
+
+  const { start, end } = getVisibleRange(providers.length, selectedIndex);
+  const visibleProviders = providers.slice(start, end);
+  const hasAbove = start > 0;
+  const hasBelow = end < providers.length;
+  const aboveCount = start;
+  const belowCount = providers.length - end;
+
   return (
     <ScreenLayout
       title="Select Provider"
@@ -77,19 +95,31 @@ export const ProviderSelectScreen: React.FC<ProviderSelectScreenProps> = ({ prov
       </Box>
 
       <Box flexDirection="column" marginY={1}>
-        {providers.map((provider, idx) => {
+        {hasAbove && (
+          <Text color={colors.textDim}>
+            {icons.arrowUp} {aboveCount} more above
+          </Text>
+        )}
+        {visibleProviders.map((provider, idx) => {
+          const absoluteIndex = start + idx;
           const providerEducation = getProviderEducation(provider.key);
           const docsUrl = providerEducation?.setupLinks?.docs;
           return (
             <ProviderCard
               key={provider.key}
               provider={provider}
-              selected={idx === selectedIndex && !provider.experimental}
+              selected={absoluteIndex === selectedIndex && !provider.experimental}
               disabled={provider.experimental}
               docsUrl={docsUrl}
+              showDetails={absoluteIndex === selectedIndex}
             />
           );
         })}
+        {hasBelow && (
+          <Text color={colors.textDim}>
+            {icons.arrowDown} {belowCount} more below
+          </Text>
+        )}
       </Box>
 
       {/* Details panel - shows when ? is pressed */}

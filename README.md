@@ -149,7 +149,7 @@ Want to use different models? CC-MIRROR supports multiple providers:
 | **Ollama**     | Local + cloud models   | Auth Token | Local-first + hybrid setups     |
 | **GatewayZ**   | Multi-provider gateway | Auth Token | Centralized routing             |
 | **Vercel**     | Multi-provider gateway | Auth Token | Vercel AI Gateway               |
-| **NanoGPT**    | Anthropic-compatible   | Auth Token | Simple Anthropic compat         |
+| **NanoGPT**    | Claude Code endpoint   | Auth Token | Simple endpoint setup           |
 
 ```bash
 # Z.ai (GLM Coding Plan)
@@ -165,11 +165,11 @@ npx cc-mirror quick --provider openrouter --api-key "$OPENROUTER_API_KEY" \
 # Claude Code Router (local LLMs)
 npx cc-mirror quick --provider ccrouter
 
-# Ollama (Anthropic-compatible)
+# Ollama
 npx cc-mirror quick --provider ollama --api-key "ollama" \
   --model-sonnet "qwen3-coder" --model-opus "qwen3-coder" --model-haiku "qwen3-coder"
 
-# GatewayZ (Anthropic-compatible gateway)
+# GatewayZ
 npx cc-mirror quick --provider gatewayz --api-key "$GATEWAYZ_API_KEY" \
   --model-sonnet "claude-3-5-sonnet-20241022"
 
@@ -177,7 +177,7 @@ npx cc-mirror quick --provider gatewayz --api-key "$GATEWAYZ_API_KEY" \
 npx cc-mirror quick --provider vercel --api-key "$VERCEL_AI_GATEWAY_KEY" \
   --model-sonnet "anthropic/claude-3-5-sonnet-20241022"
 
-# NanoGPT (Anthropic-compatible)
+# NanoGPT
 npx cc-mirror quick --provider nanogpt --api-key "$NANOGPT_API_KEY"
 ```
 

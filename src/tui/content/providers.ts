@@ -141,7 +141,7 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     headline: 'GatewayZ — AI Gateway',
     tagline: 'One gateway, many providers',
     features: [
-      'Anthropic-compatible endpoint',
+      'Claude Code endpoint support',
       'Single API key for multiple providers',
       'Gateway-style routing',
       'Violet-themed interface',
@@ -154,13 +154,13 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
       apiKey: 'https://gatewayz.ai',
       docs: 'https://docs.gatewayz.ai/docs/anthropic-compatibility',
     },
-    setupNote: 'GatewayZ uses Anthropic-compatible endpoints. Configure model mapping for your preferred models.',
+    setupNote: 'GatewayZ uses Claude Code endpoints. Configure model mapping for your preferred models.',
   },
   vercel: {
     headline: 'Vercel AI Gateway',
     tagline: 'Unified AI routing on Vercel',
     features: [
-      'Anthropic-compatible endpoint',
+      'Claude Code endpoint support',
       'Use provider/model identifiers',
       'Centralized usage + billing',
       'Monochrome + green accents',
@@ -176,10 +176,10 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     setupNote: 'Set ANTHROPIC_AUTH_TOKEN and keep ANTHROPIC_API_KEY empty.',
   },
   nanogpt: {
-    headline: 'NanoGPT — Anthropic Compatible',
+    headline: 'NanoGPT',
     tagline: 'Lean gateway, fast setup',
-    features: ['Anthropic-compatible endpoint', 'Simple API key auth', 'Neon-themed interface'],
-    bestFor: 'Simple Anthropic-compatible usage with minimal setup',
+    features: ['Claude Code endpoint support', 'Simple API key auth', 'Neon-themed interface'],
+    bestFor: 'Simple Claude Code usage with minimal setup',
     requiresMapping: false,
     hasPromptPack: false,
     setupLinks: {

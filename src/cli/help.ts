@@ -61,7 +61,7 @@ PROVIDERS
   ollama        Local + cloud models via Ollama
   gatewayz      GatewayZ AI Gateway
   vercel        Vercel AI Gateway
-  nanogpt       NanoGPT Anthropic-compatible
+  nanogpt       NanoGPT
 
 EXAMPLES
   npx cc-mirror quick --provider mirror --name mclaude
