@@ -28,7 +28,7 @@
     "llm"
   ],
   "bin": {
-    "claude-sneakpeek": "./dist/claude-sneakpeek.mjs"
+    "claude-sneakpeek": "dist/claude-sneakpeek.mjs"
   },
   "files": [
     "dist"
