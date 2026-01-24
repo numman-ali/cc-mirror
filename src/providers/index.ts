@@ -16,10 +16,12 @@ export interface ProviderTemplate {
   credentialOptional?: boolean;
   /** Mark as experimental/coming soon - hidden from main provider list */
   experimental?: boolean;
-  /** Auto-enable team mode patch for this provider (legacy) */
-  enablesTeamMode?: boolean;
   /** Skip prompt pack overlays (pure Claude experience) */
   noPromptPack?: boolean;
+  /** Require empty ANTHROPIC_API_KEY (for authToken providers like Vercel AI Gateway) */
+  requiresEmptyApiKey?: boolean;
+  /** Keep ANTHROPIC_API_KEY alongside auth token (e.g., Ollama compatibility) */
+  authTokenAlsoSetsApiKey?: boolean;
 }
 
 export interface ModelOverrides {
@@ -116,6 +118,69 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     requiresModelMapping: false, // Models configured in ~/.claude-code-router/config.json
     credentialOptional: true, // No API key needed - CCRouter handles auth
   },
+  ollama: {
+    key: 'ollama',
+    label: 'Ollama',
+    description: 'Local + cloud models via Ollama',
+    baseUrl: 'http://localhost:11434',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      ANTHROPIC_AUTH_TOKEN: 'ollama',
+      ANTHROPIC_API_KEY: 'ollama',
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'Ollama',
+      CC_MIRROR_SPLASH_STYLE: 'ollama',
+    },
+    apiKeyLabel: 'Ollama API key (use "ollama" for local)',
+    authMode: 'authToken',
+    authTokenAlsoSetsApiKey: true,
+    requiresModelMapping: true,
+  },
+  gatewayz: {
+    key: 'gatewayz',
+    label: 'GatewayZ',
+    description: 'GatewayZ AI Gateway',
+    baseUrl: 'https://api.gatewayz.ai',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'GatewayZ',
+      CC_MIRROR_SPLASH_STYLE: 'gatewayz',
+    },
+    apiKeyLabel: 'GatewayZ API key',
+    authMode: 'authToken',
+    requiresModelMapping: true,
+  },
+  vercel: {
+    key: 'vercel',
+    label: 'Vercel AI Gateway',
+    description: 'Vercel AI Gateway',
+    baseUrl: 'https://ai-gateway.vercel.sh',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'Vercel AI Gateway',
+      CC_MIRROR_SPLASH_STYLE: 'vercel',
+    },
+    apiKeyLabel: 'Vercel AI Gateway API key',
+    authMode: 'authToken',
+    requiresModelMapping: true,
+    requiresEmptyApiKey: true,
+  },
+  nanogpt: {
+    key: 'nanogpt',
+    label: 'NanoGPT',
+    description: 'NanoGPT endpoint',
+    baseUrl: 'https://nano-gpt.com/api',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'NanoGPT',
+      CC_MIRROR_SPLASH_STYLE: 'nanogpt',
+    },
+    apiKeyLabel: 'NanoGPT API key',
+    authMode: 'authToken',
+  },
   custom: {
     key: 'custom',
     label: 'Custom',
@@ -210,10 +275,16 @@ export const buildEnv = ({ providerKey, baseUrl, apiKey, extraEnv, modelOverride
     const trimmed = normalizeModelValue(apiKey);
     if (trimmed) {
       env.ANTHROPIC_AUTH_TOKEN = trimmed;
+      if (provider.authTokenAlsoSetsApiKey) {
+        env.ANTHROPIC_API_KEY = trimmed;
+      }
     } else if (providerKey === 'ccrouter') {
       env.ANTHROPIC_AUTH_TOKEN = CCROUTER_AUTH_FALLBACK;
+      if (provider.authTokenAlsoSetsApiKey) {
+        env.ANTHROPIC_API_KEY = CCROUTER_AUTH_FALLBACK;
+      }
     }
-    if (Object.hasOwn(env, 'ANTHROPIC_API_KEY')) {
+    if (!provider.authTokenAlsoSetsApiKey && Object.hasOwn(env, 'ANTHROPIC_API_KEY')) {
       delete env.ANTHROPIC_API_KEY;
     }
   } else if (apiKey) {
@@ -239,8 +310,12 @@ export const buildEnv = ({ providerKey, baseUrl, apiKey, extraEnv, modelOverride
     }
   }
 
-  if (authMode === 'authToken' && Object.hasOwn(env, 'ANTHROPIC_API_KEY')) {
-    delete env.ANTHROPIC_API_KEY;
+  if (authMode === 'authToken') {
+    if (provider.requiresEmptyApiKey) {
+      env.ANTHROPIC_API_KEY = '';
+    } else if (!provider.authTokenAlsoSetsApiKey && Object.hasOwn(env, 'ANTHROPIC_API_KEY')) {
+      delete env.ANTHROPIC_API_KEY;
+    }
   }
   if (authMode !== 'authToken' && Object.hasOwn(env, 'ANTHROPIC_AUTH_TOKEN')) {
     delete env.ANTHROPIC_AUTH_TOKEN;

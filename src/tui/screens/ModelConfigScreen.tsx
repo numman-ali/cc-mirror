@@ -62,6 +62,21 @@ function getPlaceholder(providerKey: string | undefined, model: 'opus' | 'sonnet
       sonnet: 'anthropic/claude-3.5-sonnet',
       haiku: 'anthropic/claude-3-haiku',
     },
+    gatewayz: {
+      opus: 'claude-3-opus-20240229',
+      sonnet: 'claude-3-5-sonnet-20241022',
+      haiku: 'claude-3-haiku-20240307',
+    },
+    vercel: {
+      opus: 'anthropic/claude-3-opus-20240229',
+      sonnet: 'anthropic/claude-3-5-sonnet-20241022',
+      haiku: 'anthropic/claude-3-haiku-20240307',
+    },
+    ollama: {
+      opus: 'glm-4.7:cloud',
+      sonnet: 'qwen3-coder',
+      haiku: 'gpt-oss:20b',
+    },
     ccrouter: {
       opus: 'deepseek,deepseek-reasoner',
       sonnet: 'deepseek,deepseek-chat',
@@ -173,19 +188,39 @@ export const ModelConfigScreen: React.FC<ModelConfigScreenProps> = ({
         </Text>
       </Box>
 
-      {/* OpenRouter-specific help */}
-      {providerKey === 'openrouter' && (
+      {/* Model-mapping help */}
+      {(providerKey === 'openrouter' ||
+        providerKey === 'gatewayz' ||
+        providerKey === 'vercel' ||
+        providerKey === 'ollama') && (
         <Box flexDirection="column" marginBottom={1}>
-          <Text color={colors.textMuted}>Browse OpenRouter models:</Text>
-          <Box marginLeft={2} flexDirection="column">
-            <Text color={colors.primaryBright}>Free: https://openrouter.ai/models?max_price=0&order=top-weekly</Text>
-            <Text color={colors.primaryBright}>Paid: https://openrouter.ai/models?order=top-weekly</Text>
-          </Box>
-          <Box marginTop={1}>
-            <Text color={colors.warning}>
-              {'⚠ Not all models work with Claude Code. If issues occur, use "cc-mirror update" to switch models.'}
+          {providerKey === 'openrouter' && (
+            <>
+              <Text color={colors.textMuted}>Browse OpenRouter models:</Text>
+              <Box marginLeft={2} flexDirection="column">
+                <Text color={colors.primaryBright}>
+                  Free: https://openrouter.ai/models?max_price=0&order=top-weekly
+                </Text>
+                <Text color={colors.primaryBright}>Paid: https://openrouter.ai/models?order=top-weekly</Text>
+              </Box>
+              <Box marginTop={1}>
+                <Text color={colors.warning}>
+                  {'⚠ Not all models work with Claude Code. If issues occur, use "cc-mirror update" to switch models.'}
+                </Text>
+              </Box>
+            </>
+          )}
+          {providerKey === 'ollama' && (
+            <>
+              <Text color={colors.textMuted}>Use model IDs from `ollama list` (local) or cloud model IDs.</Text>
+              <Text color={colors.textDim}>Tip: `ollama cp source target` creates friendly aliases.</Text>
+            </>
+          )}
+          {providerKey !== 'openrouter' && providerKey !== 'ollama' && (
+            <Text color={colors.textMuted}>
+              Use your gateway model identifiers (some providers use provider/model format).
             </Text>
-          </Box>
+          )}
         </Box>
       )}
 

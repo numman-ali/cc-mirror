@@ -22,7 +22,7 @@ const createContext = (rootDir: string, binDir: string, opts: UpdateContext['opt
     name,
     provider: 'zai',
     createdAt: new Date().toISOString(),
-    claudeOrig: 'npm:@anthropic-ai/claude-code@2.1.12',
+    claudeOrig: 'npm:@anthropic-ai/claude-code@2.1.19',
     binaryPath: path.join(npmDir, 'node_modules', '@anthropic-ai', 'claude-code', 'cli.js'),
     configDir,
     tweakDir,
@@ -43,7 +43,7 @@ const createContext = (rootDir: string, binDir: string, opts: UpdateContext['opt
     },
     prefs: {
       resolvedNpmPackage: '@anthropic-ai/claude-code',
-      resolvedNpmVersion: '2.1.12',
+      resolvedNpmVersion: '2.1.19',
       promptPackPreference: true,
       promptPackEnabled: true,
       skillInstallEnabled: true,
@@ -72,8 +72,6 @@ test('RebuildUpdateStep resets npm/tweakcc but preserves config', () => {
     const { meta, paths } = ctx;
 
     fs.mkdirSync(meta.configDir, { recursive: true });
-    fs.mkdirSync(path.join(meta.configDir, 'tasks', 'team-a'), { recursive: true });
-    fs.writeFileSync(path.join(meta.configDir, 'tasks', 'team-a', '1.json'), '{}');
 
     fs.mkdirSync(meta.tweakDir, { recursive: true });
     fs.writeFileSync(path.join(meta.tweakDir, 'config.json'), JSON.stringify({ settings: { themes: [] } }, null, 2));
@@ -103,7 +101,6 @@ test('RebuildUpdateStep resets npm/tweakcc but preserves config', () => {
     if (isWindows) {
       assert.equal(fs.existsSync(getWrapperScriptPath(binDir, ctx.name)), false, 'wrapper script should be removed');
     }
-    assert.ok(fs.existsSync(path.join(meta.configDir, 'tasks', 'team-a', '1.json')), 'tasks should be preserved');
   } finally {
     cleanup(rootDir);
     cleanup(binDir);

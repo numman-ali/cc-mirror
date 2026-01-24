@@ -19,11 +19,11 @@ const C = {
   mmSecondary: '\x1b[38;5;209m', // Light coral/orange
   mmAccent: '\x1b[38;5;208m', // Orange
   mmDim: '\x1b[38;5;167m', // Muted coral/dark red
-  // OpenRouter: Cyan/Teal gradient
-  orPrimary: '\x1b[38;5;43m', // Teal
-  orSecondary: '\x1b[38;5;49m', // Bright teal
-  orAccent: '\x1b[38;5;37m', // Deep cyan
-  orDim: '\x1b[38;5;30m', // Muted teal
+  // OpenRouter: Navy/Indigo gradient (brand: #284968, #6467f2)
+  orPrimary: '\x1b[38;5;60m', // Navy
+  orSecondary: '\x1b[38;5;68m', // Slate blue
+  orAccent: '\x1b[38;5;99m', // Indigo/cornflower
+  orDim: '\x1b[38;5;24m', // Deep navy
   // CCRouter: Sky blue gradient
   ccrPrimary: '\x1b[38;5;39m', // Sky blue
   ccrSecondary: '\x1b[38;5;45m', // Bright cyan
@@ -34,81 +34,156 @@ const C = {
   mirSecondary: '\x1b[38;5;250m', // Platinum
   mirAccent: '\x1b[38;5;45m', // Electric cyan
   mirDim: '\x1b[38;5;243m', // Muted silver
+  // GatewayZ: Violet gradient
+  gwPrimary: '\x1b[38;5;141m', // Violet
+  gwSecondary: '\x1b[38;5;135m', // Soft purple
+  gwAccent: '\x1b[38;5;99m', // Deep purple
+  gwDim: '\x1b[38;5;60m', // Muted purple
+  // Vercel: Monochrome with blue accent (brand: #0070F3)
+  vcPrimary: '\x1b[38;5;255m', // White
+  vcSecondary: '\x1b[38;5;250m', // Light gray
+  vcAccent: '\x1b[38;5;33m', // Vercel blue
+  vcDim: '\x1b[38;5;240m', // Dark gray
+  // NanoGPT: Neon blue gradient
+  ngPrimary: '\x1b[38;5;81m', // Neon cyan
+  ngSecondary: '\x1b[38;5;75m', // Soft cyan
+  ngAccent: '\x1b[38;5;69m', // Deep cyan
+  ngDim: '\x1b[38;5;67m', // Muted blue
+  // Ollama: Tan/Brown gradient (brand: #caad8d)
+  olPrimary: '\x1b[38;5;180m', // Tan/sorrel
+  olSecondary: '\x1b[38;5;223m', // Light tan
+  olAccent: '\x1b[38;5;137m', // Deep brown
+  olDim: '\x1b[38;5;101m', // Muted brown
   // Default: White/Gray
   defPrimary: '\x1b[38;5;255m', // White
   defDim: '\x1b[38;5;245m', // Gray
 };
 
 const SPLASH_ART: SplashArt = {
+  // Z.ai: Stylized Z with orbital ring motif
   zai: [
     '',
-    `${C.zaiPrimary}    ███████╗       █████╗ ██╗${C.reset}`,
-    `${C.zaiPrimary}    ╚══███╔╝      ██╔══██╗██║${C.reset}`,
-    `${C.zaiSecondary}      ███╔╝       ███████║██║${C.reset}`,
-    `${C.zaiSecondary}     ███╔╝    ${C.zaiAccent}██╗${C.zaiSecondary} ██╔══██║██║${C.reset}`,
-    `${C.zaiAccent}    ███████╗  ╚═╝ ██║  ██║██║${C.reset}`,
-    `${C.zaiAccent}    ╚══════╝      ╚═╝  ╚═╝╚═╝${C.reset}`,
+    `${C.zaiDim}           ╭──────────╮${C.reset}`,
+    `${C.zaiPrimary}    ████████${C.zaiDim}╯${C.zaiPrimary}╗${C.zaiDim}        │${C.reset}`,
+    `${C.zaiPrimary}    ╚═════${C.zaiSecondary}██${C.zaiPrimary}╔╝  ${C.zaiAccent}• ${C.zaiDim}A I •${C.reset}`,
+    `${C.zaiSecondary}        ██╔╝${C.zaiDim}        │${C.reset}`,
+    `${C.zaiSecondary}      ██╔╝${C.zaiDim}╮         │${C.reset}`,
+    `${C.zaiAccent}    ████████${C.zaiDim}╰─────────╯${C.reset}`,
     '',
-    `${C.zaiDim}    ━━━━━━━━━━${C.zaiPrimary}◆${C.zaiDim}━━━━━━━━━━${C.reset}`,
-    `${C.zaiSecondary}      GLM Coding Plan${C.reset}`,
+    `${C.zaiDim}    ━━━━━━━━━${C.zaiPrimary}◆${C.zaiDim}━━━━━━━━━${C.reset}`,
+    `${C.zaiSecondary}     GLM Coding Plan${C.reset}`,
     '',
   ],
+  // MiniMax: Pulse wave visualization
   minimax: [
     '',
-    `${C.mmPrimary}    ███╗   ███╗██╗███╗   ██╗██╗███╗   ███╗ █████╗ ██╗  ██╗${C.reset}`,
-    `${C.mmPrimary}    ████╗ ████║██║████╗  ██║██║████╗ ████║██╔══██╗╚██╗██╔╝${C.reset}`,
-    `${C.mmSecondary}    ██╔████╔██║██║██╔██╗ ██║██║██╔████╔██║███████║ ╚███╔╝${C.reset}`,
-    `${C.mmSecondary}    ██║╚██╔╝██║██║██║╚██╗██║██║██║╚██╔╝██║██╔══██║ ██╔██╗${C.reset}`,
-    `${C.mmAccent}    ██║ ╚═╝ ██║██║██║ ╚████║██║██║ ╚═╝ ██║██║  ██║██╔╝ ██╗${C.reset}`,
-    `${C.mmAccent}    ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝${C.reset}`,
+    `${C.mmDim}    ┌${C.mmPrimary}▁▂▃▄▅▆▇█▇▆▅▄▃▂▁${C.mmDim}┐${C.reset}`,
+    `${C.mmPrimary}    M ${C.mmSecondary}I N I ${C.mmAccent}M A X${C.reset}`,
+    `${C.mmDim}    └${C.mmAccent}▁▂▃▄▅▆▇█▇▆▅▄▃▂▁${C.mmDim}┘${C.reset}`,
     '',
-    `${C.mmDim}    ━━━━━━━━━━━━━━━━━━${C.mmPrimary}◆${C.mmDim}━━━━━━━━━━━━━━━━━━${C.reset}`,
-    `${C.mmSecondary}           MiniMax-M2.1 ${C.mmDim}━${C.mmSecondary} AGI for All${C.reset}`,
+    `${C.mmDim}    ━━━━━━━━${C.mmPrimary}◆${C.mmDim}━━━━━━━━${C.reset}`,
+    `${C.mmSecondary}     MiniMax-M2.1${C.reset}`,
+    `${C.mmDim}       AGI for All${C.reset}`,
     '',
   ],
+  // OpenRouter: Network routing diagram
   openrouter: [
     '',
-    `${C.orPrimary}     ██████╗ ██████╗ ███████╗███╗   ██╗${C.reset}`,
-    `${C.orPrimary}    ██╔═══██╗██╔══██╗██╔════╝████╗  ██║${C.reset}`,
-    `${C.orSecondary}    ██║   ██║██████╔╝█████╗  ██╔██╗ ██║${C.reset}`,
-    `${C.orSecondary}    ██║   ██║██╔═══╝ ██╔══╝  ██║╚██╗██║${C.reset}`,
-    `${C.orAccent}    ╚██████╔╝██║     ███████╗██║ ╚████║${C.reset}`,
-    `${C.orAccent}     ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═══╝${C.reset}`,
-    `${C.orPrimary}    ██████╗  ██████╗ ██╗   ██╗████████╗███████╗██████╗${C.reset}`,
-    `${C.orPrimary}    ██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔════╝██╔══██╗${C.reset}`,
-    `${C.orSecondary}    ██████╔╝██║   ██║██║   ██║   ██║   █████╗  ██████╔╝${C.reset}`,
-    `${C.orSecondary}    ██╔══██╗██║   ██║██║   ██║   ██║   ██╔══╝  ██╔══██╗${C.reset}`,
-    `${C.orAccent}    ██║  ██║╚██████╔╝╚██████╔╝   ██║   ███████╗██║  ██║${C.reset}`,
-    `${C.orAccent}    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝╚═╝  ╚═╝${C.reset}`,
+    `${C.orDim}         ┌─────┐${C.reset}`,
+    `${C.orDim}    ○────┤${C.orSecondary} API ${C.orDim}├────○${C.reset}`,
+    `${C.orDim}    │    └──┬──┘    │${C.reset}`,
+    `${C.orPrimary}    ◉${C.orDim}───────┼───────${C.orPrimary}◉${C.reset}`,
+    `${C.orDim}    │    ┌──┴──┐    │${C.reset}`,
+    `${C.orDim}    ○────┤${C.orAccent}ROUTE${C.orDim}├────○${C.reset}`,
+    `${C.orDim}         └─────┘${C.reset}`,
     '',
-    `${C.orDim}    ━━━━━━━━━━━━━${C.orPrimary}◆${C.orDim}━━━━━━━━━━━━━${C.reset}`,
-    `${C.orSecondary}      One API ${C.orDim}━${C.orSecondary} Any Model${C.reset}`,
+    `${C.orDim}    ━━━━━━━${C.orAccent}◆${C.orDim}━━━━━━━${C.reset}`,
+    `${C.orSecondary}     OpenRouter${C.reset}`,
+    `${C.orDim}    One API ━ Any Model${C.reset}`,
     '',
   ],
+  // CCRouter: Cloud with routing arrows
   ccrouter: [
     '',
-    `${C.ccrPrimary}     ██████╗ ██████╗██████╗  ██████╗ ██╗   ██╗████████╗███████╗██████╗${C.reset}`,
-    `${C.ccrPrimary}    ██╔════╝██╔════╝██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔════╝██╔══██╗${C.reset}`,
-    `${C.ccrSecondary}    ██║     ██║     ██████╔╝██║   ██║██║   ██║   ██║   █████╗  ██████╔╝${C.reset}`,
-    `${C.ccrSecondary}    ██║     ██║     ██╔══██╗██║   ██║██║   ██║   ██║   ██╔══╝  ██╔══██╗${C.reset}`,
-    `${C.ccrAccent}    ╚██████╗╚██████╗██║  ██║╚██████╔╝╚██████╔╝   ██║   ███████╗██║  ██║${C.reset}`,
-    `${C.ccrAccent}     ╚═════╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝╚═╝  ╚═╝${C.reset}`,
+    `${C.ccrDim}        ╭──${C.ccrPrimary}☁${C.ccrDim}──╮${C.reset}`,
+    `${C.ccrDim}       ╱       ╲${C.reset}`,
+    `${C.ccrSecondary}      ↙   ${C.ccrPrimary}CC${C.ccrSecondary}   ↘${C.reset}`,
+    `${C.ccrDim}     ╱   ${C.ccrAccent}ROUTER${C.ccrDim}   ╲${C.reset}`,
+    `${C.ccrSecondary}    ◉${C.ccrDim}─────────────${C.ccrSecondary}◉${C.reset}`,
+    `${C.ccrDim}    │      │      │${C.reset}`,
+    `${C.ccrAccent}   LLM   LLM   LLM${C.reset}`,
     '',
-    `${C.ccrDim}    ━━━━━━━━━━━━━━━━${C.ccrPrimary}◆${C.ccrDim}━━━━━━━━━━━━━━━━${C.reset}`,
-    `${C.ccrSecondary}      Claude Code Router ${C.ccrDim}━${C.ccrSecondary} Any Model${C.reset}`,
+    `${C.ccrDim}    ━━━━━━━${C.ccrPrimary}◆${C.ccrDim}━━━━━━━${C.reset}`,
+    `${C.ccrSecondary}   Claude Code Router${C.reset}`,
     '',
   ],
+  // Mirror: Symmetric reflection design
   mirror: [
     '',
-    `${C.mirPrimary}    ███╗   ███╗██╗██████╗ ██████╗  ██████╗ ██████╗${C.reset}`,
-    `${C.mirPrimary}    ████╗ ████║██║██╔══██╗██╔══██╗██╔═══██╗██╔══██╗${C.reset}`,
-    `${C.mirSecondary}    ██╔████╔██║██║██████╔╝██████╔╝██║   ██║██████╔╝${C.reset}`,
-    `${C.mirSecondary}    ██║╚██╔╝██║██║██╔══██╗██╔══██╗██║   ██║██╔══██╗${C.reset}`,
-    `${C.mirAccent}    ██║ ╚═╝ ██║██║██║  ██║██║  ██║╚██████╔╝██║  ██║${C.reset}`,
-    `${C.mirAccent}    ╚═╝     ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝${C.reset}`,
+    `${C.mirDim}    ╭─────────────────╮${C.reset}`,
+    `${C.mirPrimary}    │  ◢${C.mirSecondary}████████${C.mirPrimary}◣  │${C.reset}`,
+    `${C.mirSecondary}    │  ${C.mirAccent}◇ ${C.mirPrimary}MIRROR${C.mirAccent} ◇${C.mirSecondary}  │${C.reset}`,
+    `${C.mirPrimary}    │  ◥${C.mirSecondary}████████${C.mirPrimary}◤  │${C.reset}`,
+    `${C.mirDim}    ╰─────────────────╯${C.reset}`,
     '',
-    `${C.mirDim}    ━━━━━━━━━━━━${C.mirAccent}◇${C.mirDim}━━━━━━━━━━━━${C.reset}`,
-    `${C.mirSecondary}      Claude ${C.mirDim}━${C.mirSecondary} Pure Reflection${C.reset}`,
+    `${C.mirDim}    ━━━━━━${C.mirAccent}◇${C.mirDim}━━━━━━${C.reset}`,
+    `${C.mirSecondary}    Pure Reflection${C.reset}`,
+    '',
+  ],
+  // GatewayZ: Portal/gateway visual
+  gatewayz: [
+    '',
+    `${C.gwDim}      ╔═══════════╗${C.reset}`,
+    `${C.gwDim}     ╔╝${C.gwSecondary}  ░░░░░░░  ${C.gwDim}╚╗${C.reset}`,
+    `${C.gwDim}    ╔╝${C.gwPrimary}  ▓▓▓▓▓▓▓▓▓  ${C.gwDim}╚╗${C.reset}`,
+    `${C.gwDim}    ║${C.gwAccent}   G A T E W A Y   ${C.gwDim}║${C.reset}`,
+    `${C.gwDim}    ╚╗${C.gwPrimary}  ▓▓▓▓${C.gwAccent}Z${C.gwPrimary}▓▓▓▓  ${C.gwDim}╔╝${C.reset}`,
+    `${C.gwDim}     ╚╗${C.gwSecondary}  ░░░░░░░  ${C.gwDim}╔╝${C.reset}`,
+    `${C.gwDim}      ╚═══════════╝${C.reset}`,
+    '',
+    `${C.gwDim}    ━━━━━${C.gwPrimary}◆${C.gwDim}━━━━━${C.reset}`,
+    `${C.gwSecondary}     GatewayZ${C.reset}`,
+    '',
+  ],
+  // Vercel: Iconic triangle
+  vercel: [
+    '',
+    `${C.vcPrimary}            ${C.vcAccent}▲${C.reset}`,
+    `${C.vcPrimary}           ${C.vcSecondary}╱ ╲${C.reset}`,
+    `${C.vcPrimary}          ${C.vcSecondary}╱   ╲${C.reset}`,
+    `${C.vcPrimary}         ${C.vcPrimary}╱     ╲${C.reset}`,
+    `${C.vcPrimary}        ${C.vcPrimary}╱   ${C.vcAccent}▼${C.vcPrimary}   ╲${C.reset}`,
+    `${C.vcDim}       ▔▔▔▔▔▔▔▔▔▔▔${C.reset}`,
+    '',
+    `${C.vcDim}    ━━━━━━${C.vcAccent}◆${C.vcDim}━━━━━━${C.reset}`,
+    `${C.vcSecondary}    Vercel AI Gateway${C.reset}`,
+    '',
+  ],
+  // NanoGPT: Minimalist atom/nano design
+  nanogpt: [
+    '',
+    `${C.ngDim}        ╭───────╮${C.reset}`,
+    `${C.ngSecondary}       ╱${C.ngPrimary}  ◉ ◉ ◉${C.ngSecondary}  ╲${C.reset}`,
+    `${C.ngDim}      │${C.ngAccent}   NANO   ${C.ngDim}│${C.reset}`,
+    `${C.ngSecondary}       ╲${C.ngPrimary}  ◉ ◉ ◉${C.ngSecondary}  ╱${C.reset}`,
+    `${C.ngDim}        ╰───────╯${C.reset}`,
+    '',
+    `${C.ngDim}    ━━━━━━${C.ngPrimary}◆${C.ngDim}━━━━━━${C.reset}`,
+    `${C.ngSecondary}      NanoGPT${C.reset}`,
+    '',
+  ],
+  // Ollama: Llama silhouette
+  ollama: [
+    '',
+    `${C.olSecondary}        ╭━━╮${C.reset}`,
+    `${C.olSecondary}       ╭╯${C.olPrimary}◕◕${C.olSecondary}╰╮  ${C.olDim}╭╮${C.reset}`,
+    `${C.olPrimary}       │ ${C.olAccent}▽${C.olPrimary}  │ ${C.olDim}╭╯╰╮${C.reset}`,
+    `${C.olPrimary}       ╰━╮╭━╯${C.olDim}╭╯  ╰━╮${C.reset}`,
+    `${C.olAccent}         ╰╯  ${C.olDim}║${C.olSecondary}OLLAMA${C.olDim}║${C.reset}`,
+    `${C.olDim}              ╚══════╝${C.reset}`,
+    '',
+    `${C.olDim}    ━━━━━━${C.olPrimary}◆${C.olDim}━━━━━━${C.reset}`,
+    `${C.olSecondary}      Ollama${C.reset}`,
     '',
   ],
   default: [
@@ -123,7 +198,17 @@ const SPLASH_ART: SplashArt = {
   ],
 };
 
-const KNOWN_SPLASH_STYLES = ['zai', 'minimax', 'openrouter', 'ccrouter', 'mirror'];
+const KNOWN_SPLASH_STYLES = [
+  'zai',
+  'minimax',
+  'openrouter',
+  'ccrouter',
+  'mirror',
+  'gatewayz',
+  'vercel',
+  'nanogpt',
+  'ollama',
+];
 
 const buildWindowsWrapperScript = (opts: {
   configDir: string;
@@ -169,28 +254,6 @@ const buildWindowsWrapperScript = (opts: {
     '',
     "if ((process.env.CC_MIRROR_UNSET_AUTH_TOKEN || '0') !== '0') {",
     '  delete process.env.ANTHROPIC_AUTH_TOKEN;',
-    '}',
-    '',
-    '// Dynamic team name: purely directory-based, with optional TEAM modifier',
-    '// Check for CLAUDE_CODE_TEAM_MODE (not TEAM_NAME) to avoid Claude Code overwriting',
-    'const teamMode = process.env.CLAUDE_CODE_TEAM_MODE;',
-    'const teamModifier = process.env.TEAM;',
-    'if (teamMode || teamModifier) {',
-    '  let gitRoot = process.cwd();',
-    '  try {',
-    "    const result = spawnSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' });",
-    '    if (result.status === 0 && result.stdout.trim()) {',
-    '      gitRoot = result.stdout.trim();',
-    '    }',
-    '  } catch {',
-    '    // ignore',
-    '  }',
-    '  const folderName = path.basename(gitRoot || process.cwd());',
-    '  if (teamMode) {',
-    "    process.env.CLAUDE_CODE_TEAM_NAME = teamModifier ? folderName + '-' + teamModifier : folderName;",
-    '  } else if (teamModifier) {',
-    "    process.env.CLAUDE_CODE_TEAM_NAME = folderName + '-' + teamModifier;",
-    '  }',
     '}',
     '',
     "const splashEnabled = (process.env.CC_MIRROR_SPLASH || '0') !== '0';",
@@ -343,6 +406,30 @@ export const writeWrapper = (
     'CCMMIR',
     '        __cc_show_label="0"',
     '        ;;',
+    '      gatewayz)',
+    "        cat <<'CCMGW'",
+    ...SPLASH_ART.gatewayz,
+    'CCMGW',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      vercel)',
+    "        cat <<'CCMVC'",
+    ...SPLASH_ART.vercel,
+    'CCMVC',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      nanogpt)',
+    "        cat <<'CCMNG'",
+    ...SPLASH_ART.nanogpt,
+    'CCMNG',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      ollama)',
+    "        cat <<'CCMOL'",
+    ...SPLASH_ART.ollama,
+    'CCMOL',
+    '        __cc_show_label="0"',
+    '        ;;',
     '      *)',
     "        cat <<'CCMGEN'",
     ...SPLASH_ART.default,
@@ -366,24 +453,6 @@ export const writeWrapper = (
     ...envLoader,
     'if [[ "${CC_MIRROR_UNSET_AUTH_TOKEN:-0}" != "0" ]]; then',
     '  unset ANTHROPIC_AUTH_TOKEN',
-    'fi',
-    '# Dynamic team name: purely directory-based, with optional TEAM modifier',
-    '# Check for CLAUDE_CODE_TEAM_MODE (not TEAM_NAME) to avoid Claude Code overwriting',
-    'if [[ -n "${CLAUDE_CODE_TEAM_MODE:-}" ]]; then',
-    '  __cc_git_root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)',
-    '  __cc_folder_name=$(basename "$__cc_git_root")',
-    '  if [[ -n "${TEAM:-}" ]]; then',
-    '    # Folder name + TEAM modifier',
-    '    export CLAUDE_CODE_TEAM_NAME="${__cc_folder_name}-${TEAM}"',
-    '  else',
-    '    # Just folder name (pure directory-based)',
-    '    export CLAUDE_CODE_TEAM_NAME="${__cc_folder_name}"',
-    '  fi',
-    'elif [[ -n "${TEAM:-}" ]]; then',
-    '  # TEAM env var set without team mode in settings - use folder + TEAM',
-    '  __cc_git_root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)',
-    '  __cc_folder_name=$(basename "$__cc_git_root")',
-    '  export CLAUDE_CODE_TEAM_NAME="${__cc_folder_name}-${TEAM}"',
     'fi',
     ...splash,
     execLine,

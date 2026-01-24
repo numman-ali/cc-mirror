@@ -37,6 +37,12 @@ const PROVIDER_LINKS: Record<string, ProviderLinkInfo> = {
     subscribe: 'https://github.com/musistudio/claude-code-router#installation',
     note: 'No API key needed. Models are configured in ~/.claude-code-router/config.json',
   },
+  ollama: {
+    apiKey: 'https://ollama.com',
+    subscribe: 'https://ollama.com',
+    setup: 'https://docs.ollama.com/integrations/claude-code',
+    note: 'Local: set key to "ollama" (values ignored). Cloud: set base URL to https://ollama.com and use your API key.',
+  },
 };
 
 interface ApiKeyScreenProps {

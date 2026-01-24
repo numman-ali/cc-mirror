@@ -22,3 +22,7 @@
 - Extract intent and implement fixes directly
 - Close PRs with explanation and credit
 
+## Scope Notes
+
+- Team mode is removed in current releases (only supported in 1.6.3). Treat new team-mode issues as out of scope unless the reporter is on 1.6.3.
+- Provider additions require verified base URL/auth docs and should avoid unverified marketing claims in README.

@@ -130,9 +130,6 @@ async function handleQuickMode(opts: ParsedArgs, params: CreateParams): Promise<
     }
   }
 
-  // Team mode is disabled in current builds (guarded by TEAM_MODE_SUPPORTED)
-  const enableTeamMode = core.TEAM_MODE_SUPPORTED ? (opts['disable-team-mode'] ? false : true) : false;
-
   const result = core.createVariant({
     name: params.name,
     providerKey: params.providerKey,
@@ -149,7 +146,6 @@ async function handleQuickMode(opts: ParsedArgs, params: CreateParams): Promise<
     shellEnv,
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
-    enableTeamMode,
     tweakccStdio: 'pipe',
   });
 
@@ -212,18 +208,6 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
     }
   }
 
-  // Team mode: only available when TEAM_MODE_SUPPORTED is true
-  let enableTeamMode = false;
-  if (core.TEAM_MODE_SUPPORTED) {
-    enableTeamMode = true;
-    if (opts['disable-team-mode']) {
-      enableTeamMode = false;
-    } else if (!opts['enable-team-mode']) {
-      const answer = await prompt('Enable team mode (multi-agent collaboration)? (yes/no)', 'yes');
-      enableTeamMode = answer.trim().toLowerCase().startsWith('y');
-    }
-  }
-
   const result = core.createVariant({
     name: nextName,
     providerKey: params.providerKey,
@@ -240,7 +224,6 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
     shellEnv,
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
-    enableTeamMode,
     tweakccStdio: 'pipe',
   });
 
@@ -270,9 +253,6 @@ async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams):
 
   const resolvedModelOverrides = await ensureModelMapping(params.providerKey, opts, { ...modelOverrides });
 
-  // Team mode enabled by default (use --disable-team-mode to opt out) when supported
-  const enableTeamMode = core.TEAM_MODE_SUPPORTED ? (opts['disable-team-mode'] ? false : true) : false;
-
   const result = core.createVariant({
     name: params.name,
     providerKey: params.providerKey,
@@ -289,7 +269,6 @@ async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams):
     shellEnv,
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
-    enableTeamMode,
     tweakccStdio: 'pipe',
   });
 
@@ -308,9 +287,6 @@ async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams):
  */
 export async function runCreateCommand({ opts, quickMode }: CreateCommandOptions): Promise<void> {
   const params = await prepareCreateParams(opts);
-  if (!core.TEAM_MODE_SUPPORTED && (opts['enable-team-mode'] || opts['disable-team-mode'])) {
-    console.log('Team mode flags are ignored in this release. Use cc-mirror 1.6.3 for team mode support.');
-  }
 
   if (quickMode) {
     await handleQuickMode(opts, params);

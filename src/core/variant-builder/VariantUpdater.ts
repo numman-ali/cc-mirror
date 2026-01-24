@@ -16,7 +16,6 @@ import type { ReportFn, UpdateContext, UpdatePaths, UpdatePreferences, UpdateSta
 // Import steps
 import { RebuildUpdateStep } from './update-steps/RebuildUpdateStep.js';
 import { InstallNpmUpdateStep } from './update-steps/InstallNpmUpdateStep.js';
-import { TeamModeUpdateStep } from './update-steps/TeamModeUpdateStep.js';
 import { ModelOverridesStep } from './update-steps/ModelOverridesStep.js';
 import { TweakccUpdateStep } from './update-steps/TweakccUpdateStep.js';
 import { WrapperUpdateStep } from './update-steps/WrapperUpdateStep.js';
@@ -38,7 +37,7 @@ const shouldEnablePromptPack = (providerKey: string) => {
   return providerKey === 'zai' || providerKey === 'minimax';
 };
 
-const shouldInstallSkills = (providerKey: string) => providerKey === 'zai' || providerKey === 'minimax';
+const shouldInstallSkills = (_providerKey: string) => false;
 
 const shouldEnableShellEnv = (providerKey: string) => providerKey === 'zai';
 
@@ -56,7 +55,6 @@ export class VariantUpdater {
     this.steps = [
       new RebuildUpdateStep(),
       new InstallNpmUpdateStep(),
-      new TeamModeUpdateStep(), // Patches cli.js for team mode (if enabled)
       new ModelOverridesStep(),
       new TweakccUpdateStep(),
       new WrapperUpdateStep(),

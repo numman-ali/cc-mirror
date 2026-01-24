@@ -110,45 +110,53 @@ interface ProviderCardProps {
   selected: boolean;
   disabled?: boolean;
   docsUrl?: string;
+  showDetails?: boolean;
 }
 
 /**
  * Provider selection card
  */
-export const ProviderCard: React.FC<ProviderCardProps> = ({ provider, selected, disabled = false, docsUrl }) => (
-  <Box flexDirection="column" marginBottom={1}>
-    <Box>
-      <Text color={selected ? colors.gold : colors.textMuted}>{selected ? icons.pointer : icons.pointerEmpty} </Text>
-      <Text
-        color={disabled ? colors.textDim : selected ? colors.text : colors.textMuted}
-        bold={selected}
-        dimColor={disabled}
-      >
-        {provider.label}
-      </Text>
-      {disabled && <Text color={colors.warning}> [Coming Soon]</Text>}
-    </Box>
-    <Box marginLeft={3}>
-      <Text color={disabled ? colors.textDim : colors.textMuted} dimColor={disabled}>
-        {provider.description}
-      </Text>
-    </Box>
-    {provider.baseUrl && !disabled && (
-      <Box marginLeft={3}>
-        <Text color={colors.primaryBright} dimColor>
-          {provider.baseUrl}
+export const ProviderCard: React.FC<ProviderCardProps> = ({
+  provider,
+  selected,
+  disabled = false,
+  docsUrl,
+  showDetails = true,
+}) => {
+  const labelColor = disabled ? colors.textDim : colors.textBright;
+  const descriptionColor = disabled ? colors.textDim : colors.textMuted;
+  const detailColor = colors.textDim;
+
+  return (
+    <Box flexDirection="column" marginBottom={1}>
+      <Box>
+        <Text color={selected ? colors.gold : colors.textMuted}>{selected ? icons.pointer : icons.pointerEmpty} </Text>
+        <Text color={labelColor} bold={selected} dimColor={disabled}>
+          {provider.label}
         </Text>
       </Box>
-    )}
-    {!provider.baseUrl && docsUrl && !disabled && (
       <Box marginLeft={3}>
-        <Text color={colors.primaryBright} dimColor>
-          {docsUrl}
+        <Text color={descriptionColor} dimColor={disabled}>
+          {provider.description}
         </Text>
       </Box>
-    )}
-  </Box>
-);
+      {showDetails && provider.baseUrl && !disabled && (
+        <Box marginLeft={3}>
+          <Text color={detailColor} dimColor={!selected}>
+            {provider.baseUrl}
+          </Text>
+        </Box>
+      )}
+      {showDetails && !provider.baseUrl && docsUrl && !disabled && (
+        <Box marginLeft={3}>
+          <Text color={detailColor} dimColor={!selected}>
+            {docsUrl}
+          </Text>
+        </Box>
+      )}
+    </Box>
+  );
+};
 
 interface VariantCardProps {
   name: string;

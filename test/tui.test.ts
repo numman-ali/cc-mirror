@@ -14,6 +14,19 @@ import { tick, send, waitFor, KEYS, makeCore } from './helpers/index.js';
 const down = KEYS.down;
 const enter = KEYS.enter;
 
+const isSelectedProvider = (frame: string, label: string) =>
+  frame.split('\n').some((line) => line.includes('▸') && line.toLowerCase().includes(label.toLowerCase()));
+
+const moveToProvider = async (app: ReturnType<typeof render>, label: string) => {
+  for (let i = 0; i < 20; i += 1) {
+    const frame = app.lastFrame() || '';
+    if (isSelectedProvider(frame, label)) return;
+    await send(app.stdin, down);
+    await tick();
+  }
+  throw new Error(`Provider not found in list: ${label}`);
+};
+
 test('TUI create flow applies tweakcc by default', async () => {
   const { core, calls } = makeCore();
   const app = render(
@@ -28,7 +41,7 @@ test('TUI create flow applies tweakcc by default', async () => {
   await tick();
   await send(app.stdin, down); // home -> create
   await send(app.stdin, enter);
-  await send(app.stdin, down); // provider select -> navigate from mirror to zai
+  await moveToProvider(app, 'Zai');
   await send(app.stdin, enter); // select zai
   await send(app.stdin, enter); // intro screen -> continue
   await send(app.stdin, enter); // brand preset (auto)
@@ -36,7 +49,7 @@ test('TUI create flow applies tweakcc by default', async () => {
   await send(app.stdin, enter); // base url
   await send(app.stdin, enter); // api key
   await send(app.stdin, enter); // prompt pack mode (maximal) - skipped yes/no for zai/minimax
-  await send(app.stdin, enter); // install dev-browser? default Yes
+  await send(app.stdin, enter); // install dev-browser? default No
   await send(app.stdin, enter); // write Z_AI_API_KEY? default Yes
   await send(app.stdin, down); // add env? select No
   await send(app.stdin, enter);

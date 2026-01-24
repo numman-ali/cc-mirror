@@ -22,7 +22,7 @@ test('E2E: Create variants for all providers', async (t) => {
     }
   });
 
-  await t.test('creates all 4 provider variants with correct configuration', () => {
+  await t.test('creates all provider variants with correct configuration', () => {
     for (const provider of PROVIDERS) {
       const rootDir = makeTempDir();
       const binDir = makeTempDir();

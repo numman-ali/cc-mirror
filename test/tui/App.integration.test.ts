@@ -13,6 +13,19 @@ import { tick, send, waitFor, KEYS, makeCore } from '../helpers/index.js';
 delete process.env.Z_AI_API_KEY;
 delete process.env.ANTHROPIC_API_KEY;
 
+const isSelectedProvider = (frame: string, label: string) =>
+  frame.split('\n').some((line) => line.includes('▸') && line.toLowerCase().includes(label.toLowerCase()));
+
+const moveToProvider = async (app: ReturnType<typeof render>, label: string) => {
+  for (let i = 0; i < 20; i += 1) {
+    const frame = app.lastFrame() || '';
+    if (isSelectedProvider(frame, label)) return;
+    await send(app.stdin, KEYS.down);
+    await tick();
+  }
+  throw new Error(`Provider not found in list: ${label}`);
+};
+
 test('Quick setup flow completes successfully', async () => {
   const { core, calls } = makeCore();
   const app = render(
@@ -31,7 +44,7 @@ test('Quick setup flow completes successfully', async () => {
   await tick();
 
   // Select provider - navigate down from mirror to zai
-  await send(app.stdin, KEYS.down);
+  await moveToProvider(app, 'Zai');
   await send(app.stdin, KEYS.enter);
   await tick();
 

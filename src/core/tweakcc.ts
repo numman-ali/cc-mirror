@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import { spawn, spawnSync } from 'node:child_process';
 import path from 'node:path';
-import { createRequire } from 'node:module';
 import { buildBrandConfig } from '../brands/index.js';
 import type { MiscConfig, TweakccSettings } from '../brands/types.js';
 import { TWEAKCC_VERSION } from './constants.js';
@@ -9,8 +8,6 @@ import { commandExists } from './paths.js';
 import type { TweakResult } from './types.js';
 
 export type TweakccResult = TweakResult;
-
-const require = createRequire(import.meta.url);
 
 export const ensureTweakccConfig = (tweakDir: string, brandKey?: string | null): boolean => {
   if (!brandKey) return false;
@@ -112,15 +109,6 @@ export const ensureTweakccConfig = (tweakDir: string, brandKey?: string | null):
   return true;
 };
 
-const resolveLocalTweakcc = (args: string[]) => {
-  try {
-    const entry = require.resolve('tweakcc/dist/index.js');
-    return { cmd: process.execPath, args: [entry, ...args] };
-  } catch {
-    return null;
-  }
-};
-
 export const runTweakcc = (
   tweakDir: string,
   binaryPath: string,
@@ -131,25 +119,6 @@ export const runTweakcc = (
     TWEAKCC_CONFIG_DIR: tweakDir,
     TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
   } as NodeJS.ProcessEnv;
-
-  const local = resolveLocalTweakcc(['--apply']);
-  if (local) {
-    const result = spawnSync(local.cmd, local.args, { stdio: 'pipe', env, encoding: 'utf8' });
-    if (stdio === 'inherit') {
-      if (result.stdout) process.stdout.write(result.stdout);
-      if (result.stderr) process.stderr.write(result.stderr);
-    }
-    return result;
-  }
-
-  if (commandExists('tweakcc')) {
-    const result = spawnSync('tweakcc', ['--apply'], { stdio: 'pipe', env, encoding: 'utf8' });
-    if (stdio === 'inherit') {
-      if (result.stdout) process.stdout.write(result.stdout);
-      if (result.stderr) process.stderr.write(result.stderr);
-    }
-    return result;
-  }
 
   if (!commandExists('npx')) {
     return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
@@ -169,15 +138,6 @@ export const launchTweakccUi = (tweakDir: string, binaryPath: string): TweakccRe
     TWEAKCC_CONFIG_DIR: tweakDir,
     TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
   } as NodeJS.ProcessEnv;
-
-  const local = resolveLocalTweakcc([]);
-  if (local) {
-    return spawnSync(local.cmd, local.args, { stdio: 'inherit', env, encoding: 'utf8' });
-  }
-
-  if (commandExists('tweakcc')) {
-    return spawnSync('tweakcc', [], { stdio: 'inherit', env, encoding: 'utf8' });
-  }
 
   if (!commandExists('npx')) {
     return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
@@ -224,15 +184,6 @@ export const runTweakccAsync = async (
     TWEAKCC_CONFIG_DIR: tweakDir,
     TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
   } as NodeJS.ProcessEnv;
-
-  const local = resolveLocalTweakcc(['--apply']);
-  if (local) {
-    return spawnTweakccAsync(local.cmd, local.args, env, stdio);
-  }
-
-  if (commandExists('tweakcc')) {
-    return spawnTweakccAsync('tweakcc', ['--apply'], env, stdio);
-  }
 
   if (!commandExists('npx')) {
     return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;

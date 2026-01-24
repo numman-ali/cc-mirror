@@ -99,10 +99,30 @@ export const providerColors = {
     border: 'cyan',
     accent: 'cyanBright',
   },
+  gatewayz: {
+    primary: 'magenta',
+    border: 'magenta',
+    accent: 'magentaBright',
+  },
+  vercel: {
+    primary: 'white',
+    border: 'gray',
+    accent: 'green',
+  },
+  nanogpt: {
+    primary: 'cyan',
+    border: 'cyan',
+    accent: 'cyanBright',
+  },
   ccrouter: {
     primary: 'blue',
     border: 'blue',
     accent: 'blueBright',
+  },
+  ollama: {
+    primary: 'yellow',
+    border: 'yellow',
+    accent: 'yellowBright',
   },
   default: {
     primary: 'blue',

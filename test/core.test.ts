@@ -158,7 +158,7 @@ test('openrouter brand preset writes tweakcc config', () => {
   const tweakConfigPath = path.join(rootDir, 'openrouter', 'tweakcc', 'config.json');
   assert.ok(fs.existsSync(tweakConfigPath));
   const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
-  assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'openrouter-teal');
+  assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'openrouter-navy');
 
   cleanup(rootDir);
   cleanup(binDir);
@@ -190,7 +190,7 @@ test('ccrouter brand preset writes tweakcc config', () => {
   cleanup(binDir);
 });
 
-test('mirror brand preset writes tweakcc config and respects team mode support', () => {
+test('mirror brand preset writes tweakcc config and disables prompt pack', () => {
   const rootDir = makeTempDir();
   const binDir = makeTempDir();
 
@@ -211,14 +211,9 @@ test('mirror brand preset writes tweakcc config and respects team mode support',
   const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
   assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'mirror-claude');
 
-  // Verify variant.json has team mode enabled only when supported
+  // Verify variant.json has prompt pack disabled
   const variantPath = path.join(rootDir, 'mirror-test', 'variant.json');
-  const variant = JSON.parse(readFile(variantPath)) as { teamModeEnabled?: boolean; promptPack?: boolean };
-  assert.equal(
-    variant.teamModeEnabled,
-    core.TEAM_MODE_SUPPORTED ? true : false,
-    'mirror provider should respect team mode support'
-  );
+  const variant = JSON.parse(readFile(variantPath)) as { promptPack?: boolean };
   assert.equal(variant.promptPack, false, 'mirror provider should have promptPack disabled');
 
   // Verify settings.json has no auth overrides (pure Claude Code)

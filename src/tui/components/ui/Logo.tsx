@@ -30,7 +30,7 @@ export const LogoBanner: React.FC = () => (
     </Text>
     <Text>
       <Text color={colors.logo1}>{'  ██║     ██║     '}</Text>
-      <Text color={colors.gold}>{'Multi-agent orchestration. One command.'}</Text>
+      <Text color={colors.gold}>{'Provider variants. One command.'}</Text>
     </Text>
     <Text>
       <Text color={colors.logo1}>{'  ╚██████╗╚██████╗'}</Text>

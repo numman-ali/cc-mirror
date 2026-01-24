@@ -17,7 +17,6 @@ const external = [
   'ink-select-input',
   'ink-text-input',
   // Other dependencies
-  'tweakcc',
 ];
 
 // Build CLI

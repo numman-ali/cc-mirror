@@ -24,7 +24,7 @@ export function getProviderDefaults(key?: string | null): ProviderDefaults {
     promptPack: key === 'zai' || key === 'minimax',
     // promptPackMode is deprecated - always use 'minimal'
     promptPackMode: 'minimal',
-    skillInstall: key === 'zai' || key === 'minimax',
+    skillInstall: false,
     shellEnv: key === 'zai',
   };
 }
@@ -84,7 +84,7 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
   // promptPackMode is deprecated - always 'minimal'
   const promptPackMode = 'minimal' as const;
   const setPromptPackMode = (_mode: 'minimal' | 'maximal') => {}; // no-op for backward compat
-  const [installSkill, setInstallSkill] = useState(true);
+  const [installSkill, setInstallSkill] = useState(false);
   const [shellEnv, setShellEnv] = useState(true);
   const [skillUpdate, setSkillUpdate] = useState(false);
 

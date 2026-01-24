@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-01-17T22:52:03.295Z",
-  "count": 21,
+  "generatedAt": "2026-01-23T13:29:59.600Z",
+  "count": 22,
   "items": [
     {
       "id": 7,
       "type": "issue",
-      "title": "[Bug] installation on Windows fails",
+      "title": "",
       "actionability": "ready",
       "priorityScore": 49,
       "sentimentScore": 0,
@@ -28,7 +28,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-8.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 10,
@@ -42,7 +42,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-10.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 12,
@@ -56,7 +56,7 @@
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-12.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 14,
@@ -70,7 +70,7 @@
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-14.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 16,
@@ -84,7 +84,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-16.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 19,
@@ -98,7 +98,7 @@
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-19.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 23,
@@ -112,7 +112,7 @@
       "linkedIssues": [],
       "labels": ["enhancement"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-23.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 24,
@@ -126,49 +126,49 @@
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-24.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 27,
       "type": "issue",
       "title": "[Bug] EJ.has is not a function",
       "actionability": "needs-info",
-      "priorityScore": 19,
+      "priorityScore": 31,
       "sentimentScore": 0,
       "needsInfoScore": 3,
       "needsInfoSignals": ["missing-repro", "missing-expected-actual"],
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-27.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 29,
       "type": "issue",
       "title": "[Bug] Unable to compact",
       "actionability": "needs-info",
-      "priorityScore": 10,
+      "priorityScore": 12,
       "sentimentScore": 0,
       "needsInfoScore": 2,
       "needsInfoSignals": ["missing-expected-actual", "missing-logs"],
       "linkedIssues": [],
       "labels": ["bug"],
       "notePath": ".github/maintainer/notes/issues/000/ISSUE-29.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 4,
       "type": "pr",
       "title": "feat: add GatewayZ provider with Anthropic API support",
       "actionability": "needs-analysis",
-      "priorityScore": 8,
-      "implementationScoreAuto": 9,
-      "implementationScoreFinal": 9,
+      "priorityScore": 12,
+      "implementationScoreAuto": 14,
+      "implementationScoreFinal": 16,
       "implementationTierAuto": "weak",
       "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
-      "relationshipScore": 0,
+      "agentScore": 4,
+      "agentConfidence": "low",
+      "relationshipScore": 2,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
       "relationshipQualityFinal": "none",
@@ -178,7 +178,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-4.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 5,
@@ -187,12 +187,12 @@
       "actionability": "needs-analysis",
       "priorityScore": 6,
       "implementationScoreAuto": 0,
-      "implementationScoreFinal": 0,
+      "implementationScoreFinal": 1,
       "implementationTierAuto": "weak",
       "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
-      "relationshipScore": 0,
+      "agentScore": 2,
+      "agentConfidence": "low",
+      "relationshipScore": 2,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
       "relationshipQualityFinal": "none",
@@ -202,20 +202,20 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-5.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 9,
       "type": "pr",
       "title": "feat: add Sync Variants feature to copy config between variants",
       "actionability": "needs-analysis",
-      "priorityScore": 21,
-      "implementationScoreAuto": 26,
-      "implementationScoreFinal": 26,
+      "priorityScore": 16,
+      "implementationScoreAuto": 23,
+      "implementationScoreFinal": 29,
       "implementationTierAuto": "medium",
       "implementationTierFinal": "medium",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "agentScore": 6,
+      "agentConfidence": "medium",
       "relationshipScore": 12,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "strong",
@@ -226,12 +226,12 @@
       "linkedIssues": [8],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-9.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 11,
       "type": "pr",
-      "title": "feat: add Windows compatibility",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 21,
       "implementationScoreAuto": 32,
@@ -255,7 +255,7 @@
     {
       "id": 17,
       "type": "pr",
-      "title": "feat: add Windows splash screen support for all providers",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 9,
@@ -283,11 +283,11 @@
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
-      "implementationScoreFinal": 0,
+      "implementationScoreFinal": 2,
       "implementationTierAuto": "weak",
       "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "agentScore": 3,
+      "agentConfidence": "low",
       "relationshipScore": 0,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
@@ -298,7 +298,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-20.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 21,
@@ -307,12 +307,12 @@
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
-      "implementationScoreFinal": 0,
+      "implementationScoreFinal": 2,
       "implementationTierAuto": "weak",
       "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
-      "relationshipScore": 0,
+      "agentScore": 4,
+      "agentConfidence": "low",
+      "relationshipScore": 2,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
       "relationshipQualityFinal": "none",
@@ -322,7 +322,7 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-21.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 22,
@@ -331,11 +331,11 @@
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 0,
-      "implementationScoreFinal": 0,
+      "implementationScoreFinal": 11,
       "implementationTierAuto": "weak",
       "implementationTierFinal": "weak",
-      "agentScore": 0,
-      "agentConfidence": "unset",
+      "agentScore": 7,
+      "agentConfidence": "high",
       "relationshipScore": 0,
       "relationshipOverlap": 0,
       "relationshipQualityAuto": "none",
@@ -346,12 +346,12 @@
       "linkedIssues": [],
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-22.md",
-      "lastSeenAt": "2026-01-17T22:52:03.295Z"
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     },
     {
       "id": 26,
       "type": "pr",
-      "title": "Claude Code 2.1.7 alignment: retire team mode for now",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 32,
       "implementationScoreAuto": 4,
@@ -375,7 +375,7 @@
     {
       "id": 30,
       "type": "pr",
-      "title": "fix: update Claude Code to 2.1.7 with Windows support",
+      "title": "",
       "actionability": "needs-analysis",
       "priorityScore": 0,
       "implementationScoreAuto": 48,
@@ -395,6 +395,30 @@
       "labels": [],
       "notePath": ".github/maintainer/notes/prs/000/PR-30.md",
       "lastSeenAt": "2026-01-17T22:52:03.295Z"
+    },
+    {
+      "id": 31,
+      "type": "pr",
+      "title": "Add gateway providers and default dev-browser off",
+      "actionability": "needs-analysis",
+      "priorityScore": 12,
+      "implementationScoreAuto": 3,
+      "implementationScoreFinal": 3,
+      "implementationTierAuto": "weak",
+      "implementationTierFinal": "weak",
+      "agentScore": 0,
+      "agentConfidence": "unset",
+      "relationshipScore": 3,
+      "relationshipOverlap": 0,
+      "relationshipQualityAuto": "medium",
+      "relationshipQualityFinal": "medium",
+      "sentimentScore": 0,
+      "needsInfoScore": 0,
+      "needsInfoSignals": [],
+      "linkedIssues": [23],
+      "labels": [],
+      "notePath": ".github/maintainer/notes/prs/000/PR-31.md",
+      "lastSeenAt": "2026-01-23T13:29:59.600Z"
     }
   ]
 }

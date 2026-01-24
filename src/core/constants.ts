@@ -4,8 +4,6 @@ import path from 'node:path';
 export const DEFAULT_ROOT = path.join(os.homedir(), '.cc-mirror');
 export const DEFAULT_BIN_DIR =
   process.platform === 'win32' ? path.join(DEFAULT_ROOT, 'bin') : path.join(os.homedir(), '.local', 'bin');
-export const TWEAKCC_VERSION = '3.2.2';
+export const TWEAKCC_VERSION = '3.4.0';
 export const DEFAULT_NPM_PACKAGE = '@anthropic-ai/claude-code';
-export const DEFAULT_NPM_VERSION = '2.1.12';
-// Team mode is intentionally disabled in current development builds.
-export const TEAM_MODE_SUPPORTED = false;
+export const DEFAULT_NPM_VERSION = '2.1.19';

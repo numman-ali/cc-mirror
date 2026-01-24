@@ -25,7 +25,6 @@ test('Provider Feature Matrix', async (t) => {
   await t.test('mirror provider has clean defaults', () => {
     const mirror = getProvider('mirror');
     assert.ok(mirror, 'mirror provider should exist');
-    assert.ok(!mirror.enablesTeamMode, 'mirror should not auto-enable team mode');
     assert.ok(mirror.noPromptPack, 'mirror should have noPromptPack: true');
     assert.ok(mirror.credentialOptional, 'mirror should have credentialOptional: true');
     assert.equal(mirror.authMode, 'none', 'mirror should have authMode: none');
@@ -43,6 +42,16 @@ test('Provider Feature Matrix', async (t) => {
     assert.ok(openrouter, 'openrouter provider should exist');
     assert.ok(openrouter.requiresModelMapping, 'openrouter should require model mapping');
     assert.equal(openrouter.authMode, 'authToken', 'openrouter should use authToken mode');
+  });
+
+  await t.test('ollama provider uses auth token + api key', () => {
+    const ollama = getProvider('ollama');
+    assert.ok(ollama, 'ollama provider should exist');
+    assert.equal(ollama.authMode, 'authToken', 'ollama should use authToken mode');
+    assert.ok(ollama.authTokenAlsoSetsApiKey, 'ollama should keep API key with auth token');
+    assert.ok(ollama.requiresModelMapping, 'ollama should require model mapping');
+    assert.ok(ollama.env.ANTHROPIC_AUTH_TOKEN, 'ollama should have default auth token');
+    assert.ok(ollama.env.ANTHROPIC_API_KEY, 'ollama should have default api key');
   });
 
   await t.test('zai and minimax providers have splash styles', () => {

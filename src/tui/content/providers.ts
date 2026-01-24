@@ -112,6 +112,83 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     setupNote:
       'Install: npm i -g @musistudio/claude-code-router, run "ccr start". Configure models in ~/.claude-code-router/config.json',
   },
+  ollama: {
+    headline: 'Ollama — Local + Cloud Models',
+    tagline: 'Warm, local-first models',
+    features: [
+      'Run local models with the Ollama runtime',
+      'Cloud models available via ollama.com',
+      'Alias models for clean mappings',
+      'Ember-themed interface',
+    ],
+    bestFor: 'Local-first workstations and hybrid local/cloud setups',
+    models: {
+      opus: 'glm-4.7:cloud',
+      sonnet: 'qwen3-coder',
+      haiku: 'gpt-oss:20b',
+    },
+    requiresMapping: true,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://ollama.com',
+      apiKey: 'https://ollama.com',
+      docs: 'https://docs.ollama.com/api/anthropic-compatibility',
+    },
+    setupNote:
+      'Local: set key to "ollama" (values ignored). Cloud: set base URL to https://ollama.com and use your API key.',
+  },
+  gatewayz: {
+    headline: 'GatewayZ — AI Gateway',
+    tagline: 'One gateway, many providers',
+    features: [
+      'Claude Code endpoint support',
+      'Single API key for multiple providers',
+      'Gateway-style routing',
+      'Violet-themed interface',
+    ],
+    bestFor: 'Routing multiple model providers through a single endpoint',
+    requiresMapping: true,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://gatewayz.ai',
+      apiKey: 'https://gatewayz.ai',
+      docs: 'https://docs.gatewayz.ai/docs/anthropic-compatibility',
+    },
+    setupNote: 'GatewayZ uses Claude Code endpoints. Configure model mapping for your preferred models.',
+  },
+  vercel: {
+    headline: 'Vercel AI Gateway',
+    tagline: 'Unified AI routing on Vercel',
+    features: [
+      'Claude Code endpoint support',
+      'Use provider/model identifiers',
+      'Centralized usage + billing',
+      'Monochrome + green accents',
+    ],
+    bestFor: 'Teams already using Vercel AI Gateway',
+    requiresMapping: true,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://vercel.com/ai',
+      apiKey: 'https://vercel.com/account/tokens',
+      docs: 'https://vercel.com/docs/ai-gateway',
+    },
+    setupNote: 'Set ANTHROPIC_AUTH_TOKEN and keep ANTHROPIC_API_KEY empty.',
+  },
+  nanogpt: {
+    headline: 'NanoGPT',
+    tagline: 'Lean gateway, fast setup',
+    features: ['Claude Code endpoint support', 'Simple API key auth', 'Neon-themed interface'],
+    bestFor: 'Simple Claude Code usage with minimal setup',
+    requiresMapping: false,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://nano-gpt.com',
+      apiKey: 'https://nano-gpt.com',
+      docs: 'https://docs.nano-gpt.com/docs/anthropic-compatibility',
+    },
+    setupNote: 'Use the NanoGPT base URL and API key to authenticate.',
+  },
   mirror: {
     headline: 'The Fastest Path to Claude Code',
     tagline: 'Claude Code, Unshackled',
@@ -143,10 +220,10 @@ export const getProviderEducation = (providerKey: string): ProviderEducation | n
  * Quick comparison points for provider selection
  */
 export const PROVIDER_COMPARISON = {
-  fullySupported: ['mirror', 'zai', 'minimax'],
-  requiresMapping: ['openrouter'],
+  fullySupported: ['mirror', 'zai', 'minimax', 'openrouter', 'ccrouter', 'ollama', 'gatewayz', 'vercel', 'nanogpt'],
+  requiresMapping: ['openrouter', 'ollama', 'gatewayz', 'vercel'],
   hasPromptPack: ['zai', 'minimax'],
-  localFirst: ['ccrouter'],
+  localFirst: ['ccrouter', 'ollama'],
   pureClaudeCode: ['mirror'],
   recommended: ['mirror'],
 };

@@ -29,15 +29,9 @@ export function runUpdateCommand({ opts }: UpdateCommandOptions): void {
   const skillInstall = opts['no-skill-install'] ? false : undefined;
   const skillUpdate = Boolean(opts['skill-update']);
   const shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
-  const enableTeamMode = opts['enable-team-mode'] ? true : undefined;
-  const disableTeamMode = opts['disable-team-mode'] ? true : undefined;
   const rawTweakccStdio = opts['tweakcc-stdio'] as string | undefined;
   const tweakccStdio =
     rawTweakccStdio === 'inherit' || opts.verbose ? 'inherit' : rawTweakccStdio === 'pipe' ? 'pipe' : 'pipe';
-
-  if (!core.TEAM_MODE_SUPPORTED && (enableTeamMode || disableTeamMode)) {
-    console.log('Team mode flags are ignored in this release. Use cc-mirror 1.6.3 for team mode support.');
-  }
 
   for (const name of names) {
     const result = core.updateVariant(rootDir, name, {
@@ -49,8 +43,6 @@ export function runUpdateCommand({ opts }: UpdateCommandOptions): void {
       skillInstall,
       shellEnv,
       skillUpdate,
-      enableTeamMode,
-      disableTeamMode,
       tweakccStdio,
     });
     const wrapperPath = getWrapperPath(binDir, name);
