@@ -51,7 +51,6 @@ export interface CreateVariantParams {
   installSkill: boolean;
   shellEnv: boolean;
   skillUpdate: boolean;
-  enableTeamMode: boolean;
   provider: ProviderTemplate | null;
 }
 

@@ -18,7 +18,10 @@ This document summarizes tweakcc capabilities and concrete implementation ideas 
 - Fix spinner freeze when `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set
 - Allow custom context window size (env `CLAUDE_CODE_CONTEXT_LIMIT`)
 
-tweakcc patches the Claude Code `cli.js` from the npm install.
+tweakcc can patch either:
+
+- **npm-based installs** (patches `cli.js` directly), or
+- **native installs** (extracts the bundled JS from the `claude` binary, patches it, then repacks the binary).
 
 ## How cc-mirror uses tweakcc
 
@@ -27,8 +30,9 @@ tweakcc patches the Claude Code `cli.js` from the npm install.
   - `~/.cc-mirror/<variant>/tweakcc/system-prompts/`
 - Patch apply uses:
   - `TWEAKCC_CONFIG_DIR=~/.cc-mirror/<variant>/tweakcc`
-  - `TWEAKCC_CC_INSTALLATION_PATH=~/.cc-mirror/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js`
+  - `TWEAKCC_CC_INSTALLATION_PATH=...` (either a `cli.js` path or a native `claude` binary path)
 - cc-mirror applies tweakcc after create/update, unless `--no-tweak`.
+  - To re-apply patches without reinstalling Claude Code, run: `npx cc-mirror apply <variant>`
 
 ## Recommended implementation patterns
 

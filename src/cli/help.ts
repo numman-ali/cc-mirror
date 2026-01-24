@@ -15,7 +15,6 @@ export const printHelp = () => {
 
 FOCUS
   CC-MIRROR focuses on provider enablement and stable workflows.
-  Team mode is only supported in cc-mirror 1.6.3 (published release).
 
 QUICK START
   npx cc-mirror quick --provider mirror    # Fastest path to Claude
@@ -28,10 +27,10 @@ COMMANDS
   create [options]             Full configuration wizard
   list                         List all variants
   update [name]                Update to latest Claude Code
+  apply <name>                 Re-apply tweakcc patches (no reinstall)
   remove <name>                Remove a variant
   doctor                       Health check all variants
   tweak <name>                 Launch tweakcc customization
-  tasks [operation]            Manage legacy team tasks (cc-mirror 1.6.3 only)
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
@@ -66,7 +65,7 @@ PROVIDERS
 EXAMPLES
   npx cc-mirror quick --provider mirror --name mclaude
   npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
-  npx cc-mirror tasks graph
+  npx cc-mirror apply mclaude
   npx cc-mirror doctor
 
 LEARN MORE

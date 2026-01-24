@@ -30,7 +30,6 @@ export type Screen =
   | 'create-prompt-pack'
   // 'create-prompt-pack-mode' removed - promptPackMode is deprecated
   | 'create-skill-install'
-  | 'create-team-mode'
   | 'create-shell-env'
   | 'create-env-confirm'
   | 'create-env-add'

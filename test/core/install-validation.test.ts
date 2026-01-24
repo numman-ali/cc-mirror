@@ -11,7 +11,7 @@ test('installNpmClaude rejects invalid npm package', () => {
         installNpmClaude({
           npmDir: tempDir,
           npmPackage: 'bad&pkg',
-          npmVersion: '2.1.12',
+          npmVersion: '2.1.19',
           stdio: 'pipe',
         }),
       /Invalid npm package/
@@ -46,7 +46,7 @@ test('installNpmClaudeAsync rejects invalid npm package', async () => {
       installNpmClaudeAsync({
         npmDir: tempDir,
         npmPackage: 'bad/pkg',
-        npmVersion: '2.1.12',
+        npmVersion: '2.1.19',
         stdio: 'pipe',
       }),
       /Invalid npm package/

@@ -24,7 +24,6 @@ import {
   useVariantUpdate,
   useUpdateAll,
   useModelConfig,
-  useTeamModeToggle,
   type CompletionResult,
 } from './hooks/index.js';
 
@@ -45,7 +44,6 @@ import {
   EnvEditorScreen,
   AboutScreen,
   FeedbackScreen,
-  TeamModeScreen,
 } from './screens/index.js';
 
 // Import UI components
@@ -60,7 +58,6 @@ export interface CoreModule {
   DEFAULT_BIN_DIR: string;
   DEFAULT_NPM_PACKAGE: string;
   DEFAULT_NPM_VERSION: string;
-  TEAM_MODE_SUPPORTED: boolean;
   listVariants: (rootDir: string) => VariantEntry[];
   createVariant: (params: {
     name: string;
@@ -217,14 +214,13 @@ export const App: React.FC<AppProps> = ({
   const [rootDir, _setRootDir] = useState(initialRootDir || core.DEFAULT_ROOT);
   const [binDir, _setBinDir] = useState(initialBinDir || core.DEFAULT_BIN_DIR);
   const [npmPackage, setNpmPackage] = useState(core.DEFAULT_NPM_PACKAGE || '@anthropic-ai/claude-code');
-  const npmVersion = core.DEFAULT_NPM_VERSION || '2.1.12';
+  const npmVersion = core.DEFAULT_NPM_VERSION || '2.1.19';
   const [usePromptPack, setUsePromptPack] = useState(true);
   // promptPackMode is deprecated - always use 'minimal'
   const promptPackMode = 'minimal' as const;
   const [installSkill, setInstallSkill] = useState(false);
   const [shellEnv, setShellEnv] = useState(true);
   const [skillUpdate, setSkillUpdate] = useState(false);
-  const [enableTeamMode, setEnableTeamMode] = useState(defaultCore.TEAM_MODE_SUPPORTED);
   const [extraEnv, setExtraEnv] = useState<string[]>([]);
   const [progressLines, setProgressLines] = useState<string[]>([]);
   const [doneLines, setDoneLines] = useState<string[]>([]);
@@ -332,9 +328,6 @@ export const App: React.FC<AppProps> = ({
         case 'create-models':
           setScreen('create-api-key');
           break;
-        case 'create-team-mode':
-          setScreen('create-skill-install');
-          break;
         // Model configuration screens - back through flow
         case 'manage-models':
           setScreen('manage-actions');
@@ -387,11 +380,6 @@ export const App: React.FC<AppProps> = ({
     setCompletionHelp(result.help);
   }, []);
 
-  // Stable callback to refresh variants list
-  const refreshVariants = useCallback(() => {
-    setVariants(core.listVariants(rootDir));
-  }, [core, rootDir]);
-
   // Create variant operation (extracted to useVariantCreate hook)
   const createParams = useMemo(
     () => ({
@@ -412,7 +400,6 @@ export const App: React.FC<AppProps> = ({
       installSkill,
       shellEnv,
       skillUpdate,
-      enableTeamMode: defaultCore.TEAM_MODE_SUPPORTED ? enableTeamMode : false,
     }),
     [
       name,
@@ -432,7 +419,6 @@ export const App: React.FC<AppProps> = ({
       installSkill,
       shellEnv,
       skillUpdate,
-      enableTeamMode,
     ]
   );
 
@@ -484,19 +470,6 @@ export const App: React.FC<AppProps> = ({
     onComplete: handleOperationComplete,
   });
 
-  // Team mode toggle operation
-  useTeamModeToggle({
-    screen,
-    selectedVariant,
-    rootDir,
-    binDir,
-    core,
-    setProgressLines,
-    setScreen,
-    onComplete: handleOperationComplete,
-    refreshVariants,
-  });
-
   // Update all variants operation (extracted to useUpdateAll hook)
   useUpdateAll({
     screen,
@@ -524,7 +497,6 @@ export const App: React.FC<AppProps> = ({
     setInstallSkill(true);
     setShellEnv(true);
     setSkillUpdate(false);
-    setEnableTeamMode(defaultCore.TEAM_MODE_SUPPORTED);
     setCompletionSummary([]);
     setCompletionNextSteps([]);
     setCompletionHelp([]);
@@ -901,11 +873,6 @@ export const App: React.FC<AppProps> = ({
           title="Install dev-browser skill?"
           onSelect={(value) => {
             setInstallSkill(value);
-            if (defaultCore.TEAM_MODE_SUPPORTED) {
-              setScreen('create-team-mode');
-              return;
-            }
-            setEnableTeamMode(false);
             if (providerKey === 'zai') {
               if (apiKeyDetectedFrom === 'Z_AI_API_KEY') {
                 setShellEnv(false);
@@ -921,27 +888,6 @@ export const App: React.FC<AppProps> = ({
         <Divider />
         <HintBar />
       </Frame>
-    );
-  }
-
-  if (screen === 'create-team-mode') {
-    return (
-      <TeamModeScreen
-        onSelect={(value) => {
-          setEnableTeamMode(value);
-          if (providerKey === 'zai') {
-            if (apiKeyDetectedFrom === 'Z_AI_API_KEY') {
-              setShellEnv(false);
-              setScreen('create-env-confirm');
-            } else {
-              setScreen('create-shell-env');
-            }
-          } else {
-            setScreen('create-env-confirm');
-          }
-        }}
-        onBack={() => setScreen('create-skill-install')}
-      />
     );
   }
 
@@ -1020,8 +966,6 @@ export const App: React.FC<AppProps> = ({
           usePromptPack,
           promptPackMode,
           installSkill,
-          enableTeamMode,
-          teamModeSupported: defaultCore.TEAM_MODE_SUPPORTED,
           shellEnv,
         }}
         onConfirm={() => {
@@ -1089,8 +1033,6 @@ export const App: React.FC<AppProps> = ({
           setModelHaiku('');
           setScreen('manage-models');
         }}
-        onToggleTeamMode={defaultCore.TEAM_MODE_SUPPORTED ? () => setScreen('manage-team-mode') : undefined}
-        teamModeSupported={defaultCore.TEAM_MODE_SUPPORTED}
         onTweak={() => setScreen('manage-tweak')}
         onRemove={() => setScreen('manage-remove')}
         onBack={() => setScreen('manage')}
@@ -1106,27 +1048,6 @@ export const App: React.FC<AppProps> = ({
     return (
       <CompletionScreen
         title="Update variant"
-        lines={doneLines}
-        summary={completionSummary}
-        nextSteps={completionNextSteps}
-        help={completionHelp}
-        onDone={(value) => {
-          if (value === 'home') setScreen('home');
-          else setScreen('exit');
-        }}
-      />
-    );
-  }
-
-  if (screen === 'manage-team-mode' && selectedVariant) {
-    const action = selectedVariant.teamModeEnabled ? 'Disabling' : 'Enabling';
-    return <ProgressScreen title={`${action} team mode`} lines={progressLines} />;
-  }
-
-  if (screen === 'manage-team-mode-done') {
-    return (
-      <CompletionScreen
-        title="Team Mode"
         lines={doneLines}
         summary={completionSummary}
         nextSteps={completionNextSteps}

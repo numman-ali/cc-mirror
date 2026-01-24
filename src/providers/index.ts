@@ -16,8 +16,6 @@ export interface ProviderTemplate {
   credentialOptional?: boolean;
   /** Mark as experimental/coming soon - hidden from main provider list */
   experimental?: boolean;
-  /** Auto-enable team mode patch for this provider (legacy) */
-  enablesTeamMode?: boolean;
   /** Skip prompt pack overlays (pure Claude experience) */
   noPromptPack?: boolean;
   /** Require empty ANTHROPIC_API_KEY (for authToken providers like Vercel AI Gateway) */

@@ -35,9 +35,6 @@ src/
 │   ├── zai.ts             # Z.ai theme + blocked tools
 │   ├── minimax.ts         # MiniMax theme + blocked tools
 │   └── *.ts               # Other brand configs
-└── team-pack/              # Team mode enhancements
-    ├── index.ts           # copyTeamPackPrompts, configureTeamToolset
-    └── *.md               # Prompt overlay files
 
 test/                       # Node test runner tests
 ├── e2e/                   # End-to-end tests
@@ -52,7 +49,6 @@ repos/                      # Upstream reference copies (vendor data, history)
 
 notes/                      # Research notes and deep dive documentation
 ├── CLI-VERSIONS.md               # Version comparison notes
-├── TEAM-PACK-DESIGN.md           # Team pack architecture decisions
 ├── *-DEEP-DIVE.md                # Feature research and analysis
 └── RECONSTRUCTION-LEDGER.md      # Project state and decisions
 
@@ -88,14 +84,12 @@ npm run render:tui-svg  # Regenerate docs/cc-mirror-tree.svg
 ├── config/
 │   ├── settings.json       # Env overrides (API keys, base URLs, model defaults)
 │   ├── .claude.json        # API-key approvals + onboarding/theme + MCP servers
-│   ├── tasks/<team>/       # Team mode task storage (JSON files)
-│   └── skills/             # Installed skills (orchestrator)
 ├── tweakcc/
 │   ├── config.json         # Brand preset + theme list + toolsets
 │   └── system-prompts/     # Prompt-pack overlays (after tweakcc apply)
 ├── npm/
 │   └── node_modules/@anthropic-ai/claude-code/cli.js
-└── variant.json            # Metadata (includes teamModeEnabled flag)
+└── variant.json            # Metadata
 ```
 
 ### Wrapper Script
@@ -125,57 +119,6 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 - `ANTHROPIC_DEFAULT_HAIKU_MODEL`
 - Optional: `ANTHROPIC_SMALL_FAST_MODEL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_SUBAGENT_MODEL`
 
-## Team Mode
-
-**Legacy notice:** Team mode is only supported in the published cc-mirror **1.6.3** release. Current development builds do not patch Claude Code; focus is provider enablement and stable updates.
-
-Team mode patches `cli.js` to enable Task\* tools for multi-agent collaboration.
-
-### How It Works
-
-```javascript
-// Target function in cli.js
-function sU() {
-  return !1;
-} // disabled (default)
-function sU() {
-  return !0;
-} // enabled (patched)
-```
-
-- Backup stored at `cli.js.backup` before patching
-- Task storage: `~/.cc-mirror/<variant>/config/tasks/<team_name>/`
-
-### Dynamic Team Names (v1.3.0+)
-
-Team names are **purely directory-based** at runtime:
-
-| Command           | Team Name                  |
-| ----------------- | -------------------------- |
-| `mc`              | `<project-folder>`         |
-| `TEAM=A mc`       | `<project-folder>-A`       |
-| `TEAM=backend mc` | `<project-folder>-backend` |
-
-This ensures tasks are isolated per-project. The variant name is NOT included in the team name. Use the `TEAM` env var to run multiple teams in the same project folder.
-
-### Team Mode Components
-
-1. **cli.js patch**: Enables TaskCreate, TaskGet, TaskUpdate, TaskList tools
-2. **Orchestrator skill**: Installed to `config/skills/orchestration/`
-3. **Team Pack**: Prompt files + toolset config (blocks TodoWrite, merges provider blocked tools)
-
-### Agent Identity Env Vars
-
-| Variable                 | Purpose                                                            |
-| ------------------------ | ------------------------------------------------------------------ |
-| `CLAUDE_CODE_TEAM_MODE`  | Enables team mode (set in settings.json)                           |
-| `CLAUDE_CODE_TEAM_NAME`  | Actual team name (set by wrapper at runtime, NOT in settings.json) |
-| `TEAM`                   | Optional modifier for multiple teams in same project               |
-| `CLAUDE_CODE_AGENT_ID`   | Unique identifier for this agent                                   |
-| `CLAUDE_CODE_AGENT_TYPE` | Agent role: `team-lead` or `worker`                                |
-
-**Important**: `CLAUDE_CODE_TEAM_NAME` must NOT be in settings.json, or Claude Code will overwrite the wrapper's dynamic value. The wrapper checks `CLAUDE_CODE_TEAM_MODE` and sets `CLAUDE_CODE_TEAM_NAME` based on the project folder.
-
 ## Provider Blocked Tools
 
 Providers can block tools via TweakCC toolsets. Defined in `src/brands/*.ts`.
@@ -200,8 +143,6 @@ export const MINIMAX_BLOCKED_TOOLS = [
 ];
 ```
 
-**Team mode merging**: When enabled, `configureTeamToolset` merges provider's blocked tools with `['TodoWrite']`.
-
 ## Prompt Pack
 
 - Only `minimal` mode supported (maximal deprecated)
@@ -219,7 +160,6 @@ export const MINIMAX_BLOCKED_TOOLS = [
 | Modify prompt pack overlays | `src/core/prompt-pack/providers/*.ts`                   |
 | Add build step              | `src/core/variant-builder/steps/`                       |
 | Add TUI screen              | `src/tui/screens/` + `app.tsx` + `router/routes.ts`     |
-| Add team pack prompt        | `src/team-pack/*.md` + `TEAM_PACK_FILES` in `index.ts`  |
 
 ## Debugging & Verification
 
@@ -236,18 +176,6 @@ cat ~/.cc-mirror/<variant>/tweakcc/config.json
 
 # Wrapper script
 cat <bin-dir>/<variant>
-```
-
-### Team Mode Verification
-
-```bash
-# Check if cli.js is patched
-grep "function sU(){return" ~/.cc-mirror/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js
-# Should show: function sU(){return!0}  (enabled)
-# Not: function sU(){return!1}  (disabled)
-
-# List team tasks
-ls ~/.cc-mirror/<variant>/config/tasks/<team_name>/
 ```
 
 ### Health Check
@@ -312,22 +240,18 @@ npm test -- --test-name-pattern="TUI"      # TUI tests only
 Key test files:
 
 - `test/e2e/creation.test.ts` - Variant creation for all providers
-- `test/e2e/team-mode.test.ts` - Team mode + team pack
 - `test/e2e/blocked-tools.test.ts` - Provider blocked tools
 - `test/tui/*.test.tsx` - TUI component tests
 
 ## Architecture Notes
 
 - **Step-based builds**: Each step is isolated, can be sync or async
-- **Build order**: PrepareDirectories → InstallNpm → WriteConfig → BrandTheme → TeamMode → Tweakcc → Wrapper → ShellEnv → SkillInstall → Finalize
-- **BrandTheme before TeamMode**: Ensures `tweakcc/config.json` exists for toolset config
-- **Toolset merging**: Team mode inherits provider's blocked tools + adds TodoWrite
+- **Build order**: PrepareDirectories → InstallNpm → WriteConfig → BrandTheme → Tweakcc → Wrapper → ShellEnv → SkillInstall → Finalize
 
 ## Documentation
 
 - `README.md` - User-facing documentation
 - `DESIGN.md` - Architecture design document
-- `docs/features/team-mode.md` - Team mode user guide
 - `docs/features/mirror-claude.md` - Mirror provider guide
 - `docs/architecture/overview.md` - Architecture overview
 - `docs/RECONSTRUCTION-LEDGER.md` - Current state + decisions
@@ -341,16 +265,18 @@ Key test files:
 When users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively. Skills provide specialized capabilities and domain knowledge.
 
 How to use skills:
+
 - Invoke: `npx openskills read <skill-name>` (run in your shell)
   - For multiple: `npx openskills read skill-one,skill-two`
 - The skill content will load with detailed instructions on how to complete the task
 - Base directory provided in output for resolving bundled resources (references/, scripts/, assets/)
 
 Usage notes:
+
 - Only use skills listed in <available_skills> below
 - Do not invoke a skill that is already loaded in your context
 - Each skill invocation is stateless
-</usage>
+  </usage>
 
 <available_skills>
 
@@ -361,6 +287,7 @@ Usage notes:
 </skill>
 
 </available_skills>
+
 <!-- SKILLS_TABLE_END -->
 
 </skills_system>

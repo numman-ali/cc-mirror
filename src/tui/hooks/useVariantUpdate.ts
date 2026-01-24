@@ -28,11 +28,7 @@ export interface UseVariantUpdateOptions {
 /**
  * Build the summary lines for an updated variant
  */
-export function buildUpdateSummary(
-  meta: VariantMeta,
-  notes: string[] | undefined,
-  teamModeSupported: boolean
-): string[] {
+export function buildUpdateSummary(meta: VariantMeta, notes: string[] | undefined): string[] {
   // Build prompt pack description with provider-specific routing info
   const getPromptPackDescription = (): string => {
     if (!meta.promptPack) return 'off';
@@ -41,17 +37,10 @@ export function buildUpdateSummary(
     return 'on';
   };
 
-  // Build team mode description
-  const getTeamModeDescription = (): string => {
-    if (!meta.teamModeEnabled) return 'off';
-    return 'on (orchestrator skill, TodoWrite blocked)';
-  };
-
   return [
     `Provider: ${meta.provider}`,
     `Prompt pack: ${getPromptPackDescription()}`,
     `dev-browser skill: ${meta.skillInstall ? 'on' : 'off'}`,
-    ...(teamModeSupported ? [`Team mode: ${getTeamModeDescription()}`] : []),
     ...(meta.provider === 'zai' ? [`Shell env: ${meta.shellEnv ? 'write Z_AI_API_KEY' : 'manual'}`] : []),
     ...(notes || []),
   ];
@@ -102,7 +91,7 @@ export function useVariantUpdate(options: UseVariantUpdateOptions): void {
 
         const completion: CompletionResult = {
           doneLines: [`Updated ${selectedVariant.name}`],
-          summary: buildUpdateSummary(result.meta, result.notes, core.TEAM_MODE_SUPPORTED),
+          summary: buildUpdateSummary(result.meta, result.notes),
           nextSteps: buildUpdateNextSteps(selectedVariant.name, rootDir),
           help: buildHelpLines(),
         };

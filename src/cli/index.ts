@@ -11,8 +11,8 @@ import {
   runRemoveCommand,
   runTweakCommand,
   runUpdateCommand,
+  runApplyCommand,
   runCreateCommand,
-  runTasksCommand,
 } from './commands/index.js';
 
 const main = async () => {
@@ -30,8 +30,7 @@ const main = async () => {
   if (cmd === 'quick') cmd = 'create';
 
   // Help command (only for main help, not subcommand help)
-  // Subcommands like 'tasks' handle their own --help
-  const commandsWithOwnHelp = ['tasks'];
+  const commandsWithOwnHelp: string[] = [];
   if (cmd === 'help' || cmd === '--help' || (opts.help && !commandsWithOwnHelp.includes(cmd))) {
     printHelp();
     return;
@@ -63,6 +62,10 @@ const main = async () => {
       runUpdateCommand({ opts });
       break;
 
+    case 'apply':
+      runApplyCommand({ opts });
+      break;
+
     case 'remove':
       runRemoveCommand({ opts });
       break;
@@ -73,10 +76,6 @@ const main = async () => {
 
     case 'create':
       await runCreateCommand({ opts, quickMode });
-      break;
-
-    case 'tasks':
-      await runTasksCommand({ opts });
       break;
 
     default:

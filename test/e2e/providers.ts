@@ -23,9 +23,9 @@ export const PROVIDERS = [
     key: 'openrouter',
     name: 'OpenRouter',
     apiKey: 'test-openrouter-key',
-    expectedThemeId: 'openrouter-teal',
+    expectedThemeId: 'openrouter-navy',
     expectedSplashStyle: 'openrouter',
-    colorCode: '\\x1b[38;5;43m', // Teal
+    colorCode: '\\x1b[38;5;60m', // Navy
   },
   {
     key: 'ccrouter',
@@ -39,9 +39,9 @@ export const PROVIDERS = [
     key: 'ollama',
     name: 'Ollama',
     apiKey: 'ollama',
-    expectedThemeId: 'ollama-ember',
+    expectedThemeId: 'ollama-llama',
     expectedSplashStyle: 'ollama',
-    colorCode: '\\x1b[38;5;202m', // Deep orange
+    colorCode: '\\x1b[38;5;180m', // Tan/sorrel
   },
   {
     key: 'gatewayz',

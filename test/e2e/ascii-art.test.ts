@@ -53,22 +53,22 @@ test('E2E: Colored ASCII art content verification', async (t) => {
       ? {
           zai: /\\u001b\[38;5;220m/, // Gold
           minimax: /\\u001b\[38;5;203m/, // Coral/salmon red
-          openrouter: /\\u001b\[38;5;43m/, // Teal
+          openrouter: /\\u001b\[38;5;60m/, // Navy
           ccrouter: /\\u001b\[38;5;39m/, // Sky blue
           gatewayz: /\\u001b\[38;5;141m/, // Violet
           vercel: /\\u001b\[38;5;250m/, // Light gray
           nanogpt: /\\u001b\[38;5;81m/, // Neon cyan
-          ollama: /\\u001b\[38;5;202m/, // Deep orange
+          ollama: /\\u001b\[38;5;180m/, // Tan/sorrel
         }
       : {
           zai: /\x1b\[38;5;220m/, // Gold
           minimax: /\x1b\[38;5;203m/, // Coral/salmon red
-          openrouter: /\x1b\[38;5;43m/, // Teal
+          openrouter: /\x1b\[38;5;60m/, // Navy
           ccrouter: /\x1b\[38;5;39m/, // Sky blue
           gatewayz: /\x1b\[38;5;141m/, // Violet
           vercel: /\x1b\[38;5;250m/, // Light gray
           nanogpt: /\x1b\[38;5;81m/, // Neon cyan
-          ollama: /\x1b\[38;5;202m/, // Deep orange
+          ollama: /\x1b\[38;5;180m/, // Tan/sorrel
         };
     /* eslint-enable no-control-regex */
 
@@ -80,14 +80,14 @@ test('E2E: Colored ASCII art content verification', async (t) => {
 
     // Verify ASCII art text content - check for taglines and block patterns
     const asciiPatterns: Record<string, string[]> = {
-      zai: ['███████╗', 'GLM Coding Plan'],
-      minimax: ['███╗   ███╗', 'MiniMax-M2.1', 'AGI for All'],
-      openrouter: ['██████╗ ██████╗', 'One API', 'Any Model'],
-      ccrouter: ['██████╗ ██████╗██████╗', 'Claude Code Router', 'Any Model'],
-      gatewayz: ['██████╗  █████╗', 'GatewayZ'],
-      vercel: ['██╗   ██╗', 'Vercel AI Gateway'],
-      nanogpt: ['███╗   ██╗', 'NanoGPT Anthropic API'],
-      ollama: ['██████╗', 'Ollama Anthropic API'],
+      zai: ['GLM Coding Plan', 'A I'],
+      minimax: ['MiniMax-M2.1', 'AGI for All'],
+      openrouter: ['OpenRouter', 'One API', 'Any Model'],
+      ccrouter: ['Claude Code Router', 'ROUTER', 'LLM'],
+      gatewayz: ['GatewayZ', 'G A T E W A Y'],
+      vercel: ['Vercel AI Gateway', '▲'],
+      nanogpt: ['NanoGPT', 'NANO', '◉'],
+      ollama: ['Ollama', 'OLLAMA', '◕◕'],
     };
 
     for (const [providerKey, patterns] of Object.entries(asciiPatterns)) {

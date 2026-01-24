@@ -40,8 +40,7 @@ export const routes: Record<Screen, RouteDefinition> = {
   'create-prompt-pack': { screen: 'create-prompt-pack', flow: 'create', parent: 'create-model-haiku' },
   // 'create-prompt-pack-mode' removed - promptPackMode is deprecated
   'create-skill-install': { screen: 'create-skill-install', flow: 'create', parent: 'create-prompt-pack' },
-  'create-team-mode': { screen: 'create-team-mode', flow: 'create', parent: 'create-skill-install' },
-  'create-shell-env': { screen: 'create-shell-env', flow: 'create', parent: 'create-team-mode' },
+  'create-shell-env': { screen: 'create-shell-env', flow: 'create', parent: 'create-skill-install' },
   'create-env-confirm': { screen: 'create-env-confirm', flow: 'create', parent: 'create-shell-env' },
   'create-env-add': { screen: 'create-env-add', flow: 'create', parent: 'create-env-confirm' },
   'create-summary': { screen: 'create-summary', flow: 'create', parent: 'create-env-add' },

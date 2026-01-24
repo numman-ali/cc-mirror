@@ -1,12 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import {
-  DEFAULT_BIN_DIR,
-  DEFAULT_NPM_PACKAGE,
-  DEFAULT_NPM_VERSION,
-  DEFAULT_ROOT,
-  TEAM_MODE_SUPPORTED,
-} from './constants.js';
+import { DEFAULT_BIN_DIR, DEFAULT_NPM_PACKAGE, DEFAULT_NPM_VERSION, DEFAULT_ROOT } from './constants.js';
 import { ensureDir } from './fs.js';
 import { expandTilde, getWrapperPath, getWrapperScriptPath, isWindows } from './paths.js';
 import { ensureTweakccConfig, launchTweakccUi } from './tweakcc.js';
@@ -22,7 +16,7 @@ import type {
   VariantEntry,
 } from './types.js';
 
-export { DEFAULT_ROOT, DEFAULT_BIN_DIR, DEFAULT_NPM_PACKAGE, DEFAULT_NPM_VERSION, TEAM_MODE_SUPPORTED };
+export { DEFAULT_ROOT, DEFAULT_BIN_DIR, DEFAULT_NPM_PACKAGE, DEFAULT_NPM_VERSION };
 export { expandTilde } from './paths.js';
 
 export const createVariant = (params: CreateVariantParams): CreateVariantResult => {

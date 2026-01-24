@@ -26,8 +26,6 @@ export function buildCreateSummary(params: {
   npmVersion: string;
   usePromptPack: boolean;
   installSkill: boolean;
-  enableTeamMode: boolean;
-  teamModeSupported: boolean;
   modelOverrides: ModelOverrides;
   providerKey: string;
   shellEnv: boolean;
@@ -39,8 +37,6 @@ export function buildCreateSummary(params: {
     npmVersion,
     usePromptPack,
     installSkill,
-    enableTeamMode,
-    teamModeSupported,
     modelOverrides,
     providerKey,
     shellEnv,
@@ -55,18 +51,11 @@ export function buildCreateSummary(params: {
     return 'on';
   };
 
-  // Build team mode description
-  const getTeamModeDescription = (): string => {
-    if (!enableTeamMode) return 'off';
-    return 'on (orchestrator skill, TodoWrite blocked)';
-  };
-
   return [
     `Provider: ${providerLabel}`,
     `Install: npm ${npmPackage}@${npmVersion}`,
     `Prompt pack: ${getPromptPackDescription()}`,
     `dev-browser skill: ${installSkill ? 'on' : 'off'}`,
-    ...(teamModeSupported ? [`Team mode: ${getTeamModeDescription()}`] : []),
     ...(modelOverrides.sonnet || modelOverrides.opus || modelOverrides.haiku
       ? [
           `Models: sonnet=${modelOverrides.sonnet || '-'}, opus=${modelOverrides.opus || '-'}, haiku=${modelOverrides.haiku || '-'}`,
@@ -131,7 +120,6 @@ export function useVariantCreate(options: UseVariantCreateOptions): void {
           skillInstall: params.installSkill,
           shellEnv: params.shellEnv,
           skillUpdate: params.skillUpdate,
-          enableTeamMode: params.enableTeamMode,
           tweakccStdio: 'pipe' as const,
           onProgress: (step: string) => setProgressLines((prev) => [...prev, step]),
         };
@@ -149,8 +137,6 @@ export function useVariantCreate(options: UseVariantCreateOptions): void {
           npmVersion: params.npmVersion,
           usePromptPack: params.usePromptPack,
           installSkill: params.installSkill,
-          enableTeamMode: params.enableTeamMode,
-          teamModeSupported: core.TEAM_MODE_SUPPORTED,
           modelOverrides: params.modelOverrides,
           providerKey: params.providerKey,
           shellEnv: params.shellEnv,

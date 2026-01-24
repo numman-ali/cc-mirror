@@ -4,7 +4,6 @@
 
 import path from 'node:path';
 import { writeJson } from '../../fs.js';
-import { TEAM_MODE_SUPPORTED } from '../../constants.js';
 import type { VariantMeta } from '../../types.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
@@ -22,12 +21,7 @@ export class FinalizeStep implements BuildStep {
   }
 
   private finalize(ctx: BuildContext): void {
-    const { params, paths, prefs, state, provider } = ctx;
-
-    // Check if team mode was enabled (via params OR provider defaults)
-    const teamModeEnabled = TEAM_MODE_SUPPORTED
-      ? Boolean(params.enableTeamMode) || Boolean(provider.enablesTeamMode)
-      : false;
+    const { params, paths, prefs, state } = ctx;
 
     const meta: VariantMeta = {
       name: params.name,
@@ -47,7 +41,6 @@ export class FinalizeStep implements BuildStep {
       npmDir: paths.npmDir,
       npmPackage: prefs.resolvedNpmPackage,
       npmVersion: prefs.resolvedNpmVersion,
-      teamModeEnabled,
     };
 
     writeJson(path.join(paths.variantDir, 'variant.json'), meta);

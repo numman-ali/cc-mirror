@@ -2,8 +2,6 @@
 
 This document explains how cc-mirror works under the hood.
 
-> **Note:** Team mode patching is legacy (cc-mirror 1.6.3 only). Current builds do not patch Claude Code.
-
 ---
 
 ## System Overview
@@ -113,17 +111,19 @@ src/
 │   │                             │                                         │ │
 │   │   2. InstallNpmStep         npm install @anthropic-ai/claude-code     │ │
 │   │                             │                                         │ │
-│   │   3. TeamModeStep (legacy)  Patch cli.js if --enable-team-mode        │ │
+│   │   3. WriteConfigStep        Write settings.json, .claude.json         │ │
 │   │                             │                                         │ │
-│   │   4. TweakccStep            Apply brand theme via tweakcc             │ │
+│   │   4. BrandThemeStep         Write tweakcc/config.json                 │ │
 │   │                             │                                         │ │
-│   │   5. ConfigStep             Write settings.json, .claude.json         │ │
+│   │   5. TweakccStep            Apply customization via tweakcc           │ │
 │   │                             │                                         │ │
-│   │   6. PromptPackStep         Copy system-prompt overlays               │ │
+│   │   6. WrapperStep            Create <bin-dir>/<name>                   │ │
 │   │                             │                                         │ │
-│   │   7. WrapperStep            Create <bin-dir>/<name>                   │ │
+│   │   7. ShellEnvStep           Optional shell profile env                │ │
 │   │                             │                                         │ │
-│   │   8. FinalizeStep           Write variant.json metadata               │ │
+│   │   8. SkillInstallStep       Optional dev-browser skill                │ │
+│   │                             │                                         │ │
+│   │   9. FinalizeStep           Write variant.json metadata               │ │
 │   │                                                                       │ │
 │   └───────────────────────────────────────────────────────────────────────┘ │
 │                                                                             │
@@ -146,14 +146,13 @@ npx cc-mirror update <name>
 │                        UPDATE STEPS                                       │
 │                                                                           │
 │   1. InstallNpmUpdateStep    Reinstall npm package (unless settingsOnly)  │
-│   2. TeamModeUpdateStep      Legacy team mode cleanup (cc-mirror 1.6.3)   │
-│   3. ModelOverridesStep      Update model mappings                        │
-│   4. TweakccUpdateStep       Re-apply theme                               │
-│   5. WrapperUpdateStep       Regenerate wrapper script                    │
-│   6. ConfigUpdateStep        Update settings.json                         │
-│   7. ShellEnvUpdateStep      Update shell env integration                 │
-│   8. SkillInstallUpdateStep  Update installed skills                      │
-│   9. FinalizeUpdateStep      Update variant.json                          │
+│   2. ModelOverridesStep      Update model mappings                        │
+│   3. TweakccUpdateStep       Re-apply theme                               │
+│   4. WrapperUpdateStep       Regenerate wrapper script                    │
+│   5. ConfigUpdateStep        Update settings.json                         │
+│   6. ShellEnvUpdateStep      Update shell env integration                 │
+│   7. SkillInstallUpdateStep  Update installed skills                      │
+│   8. FinalizeUpdateStep      Update variant.json                          │
 │                                                                           │
 └───────────────────────────────────────────────────────────────────────────┘
 ```
@@ -172,18 +171,14 @@ npx cc-mirror update <name>
 │  │       └── @anthropic-ai/                                                 │
 │  │           └── claude-code/                                               │
 │  │               ├── cli.js          Main CLI (unpatched in current builds) │
-│  │               └── cli.js.backup   Original backup                        │
 │  │                                                                          │
 │  ├── config/                         CLAUDE_CONFIG_DIR                      │
 │  │   ├── settings.json              Env vars (API keys, base URLs)          │
 │  │   ├── .claude.json               MCP servers, approvals, onboarding      │
-│  │   └── tasks/                     Team mode task storage (legacy)         │
-│  │       └── <team_name>/                                                   │
-│  │           ├── 1.json             Task files                              │
-│  │           └── 2.json                                                     │
 │  │                                                                          │
 │  ├── tweakcc/                        tweakcc configuration                  │
 │  │   ├── config.json                Theme and UI customization              │
+│  │   ├── cli.js.backup              tweakcc-managed backup                  │
 │  │   └── system-prompts/            Prompt pack overlays                    │
 │  │                                                                          │
 │  └── variant.json                    Variant metadata                       │
@@ -213,7 +208,6 @@ interface ProviderTemplate {
   credentialOptional?: boolean;
 
   // Feature flags
-  enablesTeamMode?: boolean; // Legacy: auto-enable team mode (cc-mirror 1.6.3)
   noPromptPack?: boolean; // Skip prompt pack overlays
 }
 ```
@@ -233,7 +227,6 @@ interface ProviderTemplate {
 │ API_KEY       │ ✓ Set      │ Optional   │ ✗ Not set  │ Auth credential    │
 │ Model mapping │ Auto/Req   │ Handled    │ ✗ Not set  │ Sonnet/Opus/Haiku  │
 │ Prompt pack   │ Optional   │ ✗          │ ✗          │ System overlays    │
-│ Team mode     │ Optional   │ Optional   │ ✓ Default  │ Task tools         │
 └───────────────┴────────────┴────────────┴────────────┴────────────────────┘
 ```
 
@@ -266,42 +259,8 @@ On Windows, the wrapper is `<bin-dir>\\zai.cmd` with a sibling `<bin-dir>\\zai.m
 
 ---
 
-## Team Mode Patching
-
-Team mode is enabled by patching a function in `cli.js`:
-
-```javascript
-// Original (disabled)
-function sU() {
-  return !1;
-}
-
-// Patched (enabled)
-function sU() {
-  return !0;
-}
-```
-
-### Patch Steps (Legacy: cc-mirror 1.6.3)
-
-1. **Backup**: Copy `cli.js` to `cli.js.backup`
-2. **Patch**: Replace `function sU(){return!1}` with `function sU(){return!0}`
-3. **Verify**: Confirm the patch was applied
-
-### When Patching Occurs (Legacy)
-
-| Trigger | Condition                                     |
-| ------- | --------------------------------------------- |
-| Create  | `--enable-team-mode` flag (legacy)            |
-| Create  | Provider has `enablesTeamMode: true` (legacy) |
-| Update  | `--enable-team-mode` flag (legacy)            |
-| Update  | Existing variant has `teamModeEnabled: true`  |
-
----
-
 ## 🔙 Related
 
 - [Provider System](provider-system.md) - Adding new providers
 - [Variant Lifecycle](variant-lifecycle.md) - Detailed create/update flows
-- [Team Mode](../features/team-mode.md) - Legacy team mode documentation
 - [Mirror Claude](../features/mirror-claude.md) - Pure Claude variant

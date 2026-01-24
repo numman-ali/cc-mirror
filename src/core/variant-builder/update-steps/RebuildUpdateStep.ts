@@ -1,7 +1,7 @@
 /**
  * RebuildUpdateStep - Resets variant install dirs for a clean update
  *
- * Keeps config (settings, approvals, tasks, skills) but rebuilds npm/tweakcc + wrapper.
+ * Keeps config (settings, approvals, skills) but rebuilds npm/tweakcc + wrapper.
  */
 
 import fs from 'node:fs';

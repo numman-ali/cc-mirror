@@ -58,12 +58,11 @@ No API key required at setup. When you run `mclaude`, authenticate via:
 
 ## 🎯 What You Get
 
-| Feature               | Description                                                          |
-| --------------------- | -------------------------------------------------------------------- |
-| 🤖 **Team Mode**      | Enabled by default - TaskCreate, TaskGet, TaskUpdate, TaskList tools |
-| 🎨 **Premium Theme**  | Silver/chrome aesthetic with electric blue accents                   |
-| 📁 **Full Isolation** | Separate config, sessions, and task storage                          |
-| ✨ **Pure Claude**    | No prompt packs or model overrides - authentic experience            |
+| Feature               | Description                                               |
+| --------------------- | --------------------------------------------------------- |
+| 🎨 **Premium Theme**  | Silver/chrome aesthetic with electric blue accents        |
+| 📁 **Full Isolation** | Separate config and sessions                              |
+| ✨ **Pure Claude**    | No prompt packs or model overrides - authentic experience |
 
 ---
 
@@ -80,7 +79,6 @@ No API key required at setup. When you run `mclaude`, authenticate via:
 │   ANTHROPIC_API_KEY    │ ✓ Set    │ ✓ Set    │ ✗          │ ✗ Not set       │
 │   Model Mappings       │ ✓ Auto   │ ✓ Auto   │ ✓ Required │ ✗ Not set       │
 │   Prompt Pack          │ ✓ Full   │ ✓ Full   │ ✗          │ ✗ Pure          │
-│   Team Mode            │ Optional │ Optional │ Optional   │ ✓ Default       │
 │   Config Isolation     │ ✓        │ ✓        │ ✓          │ ✓               │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
@@ -164,7 +162,6 @@ mclaude
 │  ├── config/                                            │
 │  │   ├── settings.json       Minimal env (splash only)  │
 │  │   ├── .claude.json        MCP servers, approvals     │
-│  │   └── tasks/<team>/       Team mode task storage (legacy) │
 │  ├── tweakcc/                                           │
 │  │   └── config.json         Mirror theme config        │
 │  └── variant.json            Variant metadata           │
@@ -225,6 +222,5 @@ ANTHROPIC_API_KEY="$PERSONAL_KEY" personal-claude
 
 ## 🔙 Related
 
-- [Team Mode](team-mode.md) - Legacy team mode documentation (cc-mirror 1.6.3)
 - [Brand Themes](brand-themes.md) - Theme customization
 - [Architecture Overview](../architecture/overview.md) - How cc-mirror works
