@@ -34,6 +34,11 @@ const C = {
   mirSecondary: '\x1b[38;5;250m', // Platinum
   mirAccent: '\x1b[38;5;45m', // Electric cyan
   mirDim: '\x1b[38;5;243m', // Muted silver
+  // Poe: Violet/Purple gradient
+  poePrimary: '\x1b[38;5;135m', // Violet
+  poeSecondary: '\x1b[38;5;141m', // Light violet
+  poeAccent: '\x1b[38;5;99m', // Deep purple
+  poeDim: '\x1b[38;5;97m', // Muted violet
   // Default: White/Gray
   defPrimary: '\x1b[38;5;255m', // White
   defDim: '\x1b[38;5;245m', // Gray
@@ -111,6 +116,19 @@ const SPLASH_ART: SplashArt = {
     `${C.mirSecondary}      Claude ${C.mirDim}━${C.mirSecondary} Pure Reflection${C.reset}`,
     '',
   ],
+  poe: [
+    '',
+    `${C.poePrimary}    ██████╗  ██████╗ ███████╗${C.reset}`,
+    `${C.poePrimary}    ██╔══██╗██╔═══██╗██╔════╝${C.reset}`,
+    `${C.poeSecondary}    ██████╔╝██║   ██║█████╗${C.reset}`,
+    `${C.poeSecondary}    ██╔═══╝ ██║   ██║██╔══╝${C.reset}`,
+    `${C.poeAccent}    ██║     ╚██████╔╝███████╗${C.reset}`,
+    `${C.poeAccent}    ╚═╝      ╚═════╝ ╚══════╝${C.reset}`,
+    '',
+    `${C.poeDim}    ━━━━━━━━━${C.poePrimary}◆${C.poeDim}━━━━━━━━━${C.reset}`,
+    `${C.poeSecondary}      Claude via Poe${C.reset}`,
+    '',
+  ],
   default: [
     '',
     `${C.defPrimary}    ██████╗ ██████╗   ${C.defDim}━━  M I R R O R${C.reset}`,
@@ -123,7 +141,7 @@ const SPLASH_ART: SplashArt = {
   ],
 };
 
-const KNOWN_SPLASH_STYLES = ['zai', 'minimax', 'openrouter', 'ccrouter', 'mirror'];
+const KNOWN_SPLASH_STYLES = ['zai', 'minimax', 'openrouter', 'ccrouter', 'mirror', 'poe'];
 
 const buildWindowsWrapperScript = (opts: {
   configDir: string;
@@ -341,6 +359,12 @@ export const writeWrapper = (
     "        cat <<'CCMMIR'",
     ...SPLASH_ART.mirror,
     'CCMMIR',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      poe)',
+    "        cat <<'CCMPOE'",
+    ...SPLASH_ART.poe,
+    'CCMPOE',
     '        __cc_show_label="0"',
     '        ;;',
     '      *)',
