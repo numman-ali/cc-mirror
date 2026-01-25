@@ -161,7 +161,7 @@ export const buildPoeTweakccConfig = (): TweakccConfig => ({
         'Converging',
         'Materializing',
         'Orchestrating',
-        'Harmonizing',
+        'Attuning',
         'Aligning',
         'Unifying',
       ],

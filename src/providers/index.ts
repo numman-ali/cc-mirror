@@ -129,6 +129,7 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     },
     apiKeyLabel: 'Poe API key',
     authMode: 'authToken',
+    noPromptPack: true,
   },
   custom: {
     key: 'custom',
