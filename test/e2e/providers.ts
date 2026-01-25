@@ -35,4 +35,12 @@ export const PROVIDERS = [
     expectedSplashStyle: 'ccrouter',
     colorCode: '\\x1b[38;5;39m', // Sky blue
   },
+  {
+    key: 'poe',
+    name: 'Poe',
+    apiKey: 'test-poe-key',
+    expectedThemeId: 'poe-violet',
+    expectedSplashStyle: 'poe',
+    colorCode: '\\x1b[38;5;135m', // Violet
+  },
 ];

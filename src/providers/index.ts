@@ -116,6 +116,20 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     requiresModelMapping: false, // Models configured in ~/.claude-code-router/config.json
     credentialOptional: true, // No API key needed - CCRouter handles auth
   },
+  poe: {
+    key: 'poe',
+    label: 'Poe',
+    description: 'Claude via Poe - save up to 15% with unified billing',
+    baseUrl: 'https://api.poe.com',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'Poe',
+      CC_MIRROR_SPLASH_STYLE: 'poe',
+    },
+    apiKeyLabel: 'Poe API key',
+    authMode: 'authToken',
+  },
   custom: {
     key: 'custom',
     label: 'Custom',
