@@ -58,13 +58,16 @@ test('Task Resolve', async (t) => {
     });
 
     await st.test('extracts variant from CLAUDE_CONFIG_DIR path', () => {
-      setEnv('CLAUDE_CONFIG_DIR', path.join(path.sep, 'Users', 'test', '.cc-mirror', 'myvariant', 'config'));
+      setEnv('CLAUDE_CONFIG_DIR', path.join(path.sep, 'Users', 'test', '.claude-sneakpeek', 'myvariant', 'config'));
       const result = detectVariantFromEnv();
       assert.equal(result, 'myvariant');
     });
 
     await st.test('handles variant names with hyphens', () => {
-      setEnv('CLAUDE_CONFIG_DIR', path.join(path.sep, 'home', 'user', '.cc-mirror', 'my-long-variant', 'config'));
+      setEnv(
+        'CLAUDE_CONFIG_DIR',
+        path.join(path.sep, 'home', 'user', '.claude-sneakpeek', 'my-long-variant', 'config')
+      );
       const result = detectVariantFromEnv();
       assert.equal(result, 'my-long-variant');
     });
@@ -207,17 +210,17 @@ test('Task Resolve', async (t) => {
       const tmpDir = makeTempDir();
       createdDirs.push(tmpDir);
 
-      // Create variant with tasks - use .cc-mirror pattern for env detection
-      const ccMirrorDir = path.join(tmpDir, '.cc-mirror');
+      // Create variant with tasks - use .claude-sneakpeek pattern for env detection
+      const ccMirrorDir = path.join(tmpDir, '.claude-sneakpeek');
       const tasksDir = path.join(ccMirrorDir, 'detected', 'config', 'tasks', 'myteam');
       fs.mkdirSync(tasksDir, { recursive: true });
       fs.writeFileSync(path.join(ccMirrorDir, 'detected', 'variant.json'), '{"name":"detected"}');
 
-      // Set env var with correct .cc-mirror pattern
+      // Set env var with correct .claude-sneakpeek pattern
       setEnv('CLAUDE_CONFIG_DIR', path.join(ccMirrorDir, 'detected', 'config'));
 
       const result = resolveContext({
-        rootDir: ccMirrorDir, // Use .cc-mirror dir as rootDir
+        rootDir: ccMirrorDir, // Use .claude-sneakpeek dir as rootDir
         team: 'myteam',
       });
 
@@ -311,14 +314,14 @@ test('Task Resolve', async (t) => {
   });
 
   await t.test('resolveTasksDir', async (st) => {
-    await st.test('returns cc-mirror path for regular variant', () => {
-      const rootDir = path.join(path.sep, 'root', '.cc-mirror');
+    await st.test('returns claude-sneakpeek path for regular variant', () => {
+      const rootDir = path.join(path.sep, 'root', '.claude-sneakpeek');
       const result = resolveTasksDir(rootDir, 'myvariant', 'myteam');
       assert.equal(result, path.join(rootDir, 'myvariant', 'config', 'tasks', 'myteam'));
     });
 
     await st.test('returns ~/.claude path for _default variant', () => {
-      const rootDir = path.join(path.sep, 'root', '.cc-mirror');
+      const rootDir = path.join(path.sep, 'root', '.claude-sneakpeek');
       const result = resolveTasksDir(rootDir, '_default', 'myteam');
       assert.equal(result, path.join(os.homedir(), '.claude', 'tasks', 'myteam'));
     });

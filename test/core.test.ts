@@ -279,7 +279,7 @@ test('settingsOnly update preserves binary and only updates settings', () => {
   const npmDir = path.join(variantDir, 'npm');
   const binaryPath = resolveNpmCliPath(npmDir, core.DEFAULT_NPM_PACKAGE);
 
-  const marker = '\n// cc-mirror-settings-only-test\n';
+  const marker = '\n// claude-sneakpeek-settings-only-test\n';
   fs.appendFileSync(binaryPath, marker);
   const beforeUpdate = readFile(binaryPath);
 
@@ -296,7 +296,10 @@ test('settingsOnly update preserves binary and only updates settings', () => {
 
   const afterUpdate = readFile(binaryPath);
   assert.equal(afterUpdate, beforeUpdate, 'settingsOnly update should not reinstall npm package');
-  assert.ok(afterUpdate.includes('cc-mirror-settings-only-test'), 'settingsOnly update should keep binary intact');
+  assert.ok(
+    afterUpdate.includes('claude-sneakpeek-settings-only-test'),
+    'settingsOnly update should keep binary intact'
+  );
 
   // But settings should be updated with model overrides
   const configPath = path.join(variantDir, 'config', 'settings.json');

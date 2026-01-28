@@ -60,7 +60,7 @@ testTeamMode('E2E: Team Mode', async (t) => {
     assert.ok(fs.existsSync(path.join(skillPath, 'SKILL.md')), 'SKILL.md should exist');
 
     // Verify marker file
-    const markerPath = path.join(skillPath, '.cc-mirror-managed');
+    const markerPath = path.join(skillPath, '.claude-sneakpeek-managed');
     assert.ok(fs.existsSync(markerPath), 'managed marker should exist');
 
     // Verify variant.json has teamModeEnabled

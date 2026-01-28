@@ -1,5 +1,5 @@
 /**
- * Menu components for CC-MIRROR TUI
+ * Menu components for CLAUDE-SNEAKPEEK TUI
  */
 
 import React from 'react';

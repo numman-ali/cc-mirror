@@ -1,6 +1,6 @@
-# tweakcc Integration Guide (cc-mirror)
+# tweakcc Integration Guide (claude-sneakpeek)
 
-This document summarizes tweakcc capabilities and concrete implementation ideas for cc-mirror variants. It is intentionally practical: you can copy/paste snippets, adopt patterns, or expand into your own presets.
+This document summarizes tweakcc capabilities and concrete implementation ideas for claude-sneakpeek variants. It is intentionally practical: you can copy/paste snippets, adopt patterns, or expand into your own presets.
 
 ## What tweakcc can do (from upstream README)
 
@@ -20,15 +20,15 @@ This document summarizes tweakcc capabilities and concrete implementation ideas 
 
 tweakcc patches the Claude Code `cli.js` from the npm install.
 
-## How cc-mirror uses tweakcc
+## How claude-sneakpeek uses tweakcc
 
 - Per-variant config lives at:
-  - `~/.cc-mirror/<variant>/tweakcc/config.json`
-  - `~/.cc-mirror/<variant>/tweakcc/system-prompts/`
+  - `~/.claude-sneakpeek/<variant>/tweakcc/config.json`
+  - `~/.claude-sneakpeek/<variant>/tweakcc/system-prompts/`
 - Patch apply uses:
-  - `TWEAKCC_CONFIG_DIR=~/.cc-mirror/<variant>/tweakcc`
-  - `TWEAKCC_CC_INSTALLATION_PATH=~/.cc-mirror/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js`
-- cc-mirror applies tweakcc after create/update, unless `--no-tweak`.
+  - `TWEAKCC_CONFIG_DIR=~/.claude-sneakpeek/<variant>/tweakcc`
+  - `TWEAKCC_CC_INSTALLATION_PATH=~/.claude-sneakpeek/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js`
+- claude-sneakpeek applies tweakcc after create/update, unless `--no-tweak`.
 
 ## Recommended implementation patterns
 
@@ -122,7 +122,7 @@ Suggested workflow:
 
 1. Run tweakcc UI or open the system prompts folder.
 2. Edit a single prompt file.
-3. Run `tweakcc --apply` (cc-mirror does this on update).
+3. Run `tweakcc --apply` (claude-sneakpeek does this on update).
 
 ### 7) Context limit overrides
 
@@ -135,7 +135,7 @@ Use `CLAUDE_CODE_CONTEXT_LIMIT` only for custom endpoints that support larger wi
 - tweakcc is sensitive to Claude Code versions. Patch failures are expected after CC updates.
 - The `tweakcc` UI will still work even when one patch fails.
 
-## Recommended cc-mirror UX flows
+## Recommended claude-sneakpeek UX flows
 
 ### Quick path (simple install)
 
@@ -162,7 +162,7 @@ Use `CLAUDE_CODE_CONTEXT_LIMIT` only for custom endpoints that support larger wi
 
 ## Startup ASCII art
 
-tweakcc can **show or hide** Claude Code’s built‑in startup banner and clawd art. It does not currently support **custom** startup ASCII art. cc-mirror can optionally print a small wrapper splash when `CC_MIRROR_SPLASH=1`, and skips it for non‑TTY output or `--output-format` runs.
+tweakcc can **show or hide** Claude Code’s built‑in startup banner and clawd art. It does not currently support **custom** startup ASCII art. claude-sneakpeek can optionally print a small wrapper splash when `CLAUDE_SNEAKPEEK_SPLASH=1`, and skips it for non‑TTY output or `--output-format` runs.
 
 ## Where to look in this repo
 

@@ -5,6 +5,7 @@ import {
   DEFAULT_NPM_PACKAGE,
   DEFAULT_NPM_VERSION,
   DEFAULT_ROOT,
+  NATIVE_MULTIAGENT_SUPPORTED,
   TEAM_MODE_SUPPORTED,
 } from './constants.js';
 import { ensureDir } from './fs.js';
@@ -22,7 +23,14 @@ import type {
   VariantEntry,
 } from './types.js';
 
-export { DEFAULT_ROOT, DEFAULT_BIN_DIR, DEFAULT_NPM_PACKAGE, DEFAULT_NPM_VERSION, TEAM_MODE_SUPPORTED };
+export {
+  DEFAULT_ROOT,
+  DEFAULT_BIN_DIR,
+  DEFAULT_NPM_PACKAGE,
+  DEFAULT_NPM_VERSION,
+  NATIVE_MULTIAGENT_SUPPORTED,
+  TEAM_MODE_SUPPORTED,
+};
 export { expandTilde } from './paths.js';
 
 export const createVariant = (params: CreateVariantParams): CreateVariantResult => {

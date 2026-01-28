@@ -234,8 +234,8 @@ test('writeWrapper includes env loader', () => {
     if (isWindows) {
       assert.ok(content.includes('process.env[key]'), 'Should assign env vars from settings');
     } else {
-      assert.ok(content.includes('__cc_mirror_env_file'), 'Should use temp env file');
-      assert.ok(content.includes('source "$__cc_mirror_env_file"'), 'Should source env file');
+      assert.ok(content.includes('__claude_sneakpeek_env_file'), 'Should use temp env file');
+      assert.ok(content.includes('source "$__claude_sneakpeek_env_file"'), 'Should source env file');
     }
   } finally {
     cleanup(tempDir);
@@ -254,7 +254,7 @@ test('writeWrapper handles unset auth token option', () => {
     writeWrapper(wrapperPath, configDir, binaryPath);
 
     const content = fs.readFileSync(isWindows ? scriptPath : wrapperPath, 'utf8');
-    assert.ok(content.includes('CC_MIRROR_UNSET_AUTH_TOKEN'), 'Should check unset auth token option');
+    assert.ok(content.includes('CLAUDE_SNEAKPEEK_UNSET_AUTH_TOKEN'), 'Should check unset auth token option');
     if (isWindows) {
       assert.ok(content.includes('delete process.env.ANTHROPIC_AUTH_TOKEN'), 'Should unset auth token when requested');
     } else {

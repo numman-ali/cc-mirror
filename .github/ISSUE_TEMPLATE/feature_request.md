@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for cc-mirror
+about: Suggest an idea for claude-sneakpeek
 title: '[Feature] '
 labels: enhancement
 assignees: ''

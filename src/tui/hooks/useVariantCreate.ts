@@ -83,8 +83,8 @@ export function buildCreateSummary(params: {
 export function buildCreateNextSteps(name: string, rootDir: string): string[] {
   return [
     `Run: ${name}`,
-    `Update: cc-mirror update ${name}`,
-    `Tweak: cc-mirror tweak ${name}`,
+    `Update: claude-sneakpeek update ${name}`,
+    `Tweak: claude-sneakpeek tweak ${name}`,
     `Config: ${path.join(rootDir, name, 'config', 'settings.json')}`,
   ];
 }
@@ -93,7 +93,7 @@ export function buildCreateNextSteps(name: string, rootDir: string): string[] {
  * Build the help lines
  */
 export function buildHelpLines(): string[] {
-  return ['Help: cc-mirror help', 'List: cc-mirror list', 'Doctor: cc-mirror doctor'];
+  return ['Help: claude-sneakpeek help', 'List: claude-sneakpeek list', 'Doctor: claude-sneakpeek doctor'];
 }
 
 /**

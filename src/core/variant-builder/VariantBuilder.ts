@@ -12,6 +12,7 @@ import {
   DEFAULT_NPM_PACKAGE,
   DEFAULT_NPM_VERSION,
   DEFAULT_ROOT,
+  NATIVE_MULTIAGENT_SUPPORTED,
   TEAM_MODE_SUPPORTED,
 } from '../constants.js';
 import { assertValidVariantName, expandTilde, getWrapperPath } from '../paths.js';
@@ -22,6 +23,7 @@ import type { BuildContext, BuildPaths, BuildPreferences, BuildState, BuildStep,
 import { PrepareDirectoriesStep } from './steps/PrepareDirectoriesStep.js';
 import { InstallNpmStep } from './steps/InstallNpmStep.js';
 import { TeamModeStep } from './steps/TeamModeStep.js';
+import { SwarmModeStep } from './steps/SwarmModeStep.js';
 import { WriteConfigStep } from './steps/WriteConfigStep.js';
 import { BrandThemeStep } from './steps/BrandThemeStep.js';
 import { TweakccStep } from './steps/TweakccStep.js';
@@ -59,9 +61,10 @@ export class VariantBuilder {
     this.steps = [
       new PrepareDirectoriesStep(),
       new InstallNpmStep(),
+      ...(NATIVE_MULTIAGENT_SUPPORTED ? [new SwarmModeStep()] : []), // Swarm mode (native multi-agent) enabled by default
       new WriteConfigStep(),
       new BrandThemeStep(), // Creates tweakcc/config.json
-      ...(TEAM_MODE_SUPPORTED ? [new TeamModeStep()] : []), // Team mode is gated by TEAM_MODE_SUPPORTED
+      ...(TEAM_MODE_SUPPORTED ? [new TeamModeStep()] : []), // Legacy team mode (deprecated)
       new TweakccStep(),
       new WrapperStep(),
       new ShellEnvStep(),

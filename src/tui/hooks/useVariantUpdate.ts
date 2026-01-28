@@ -63,7 +63,7 @@ export function buildUpdateSummary(
 export function buildUpdateNextSteps(name: string, rootDir: string): string[] {
   return [
     `Run: ${name}`,
-    `Tweak: cc-mirror tweak ${name}`,
+    `Tweak: claude-sneakpeek tweak ${name}`,
     `Config: ${path.join(rootDir, name, 'config', 'settings.json')}`,
   ];
 }

@@ -126,7 +126,7 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     setupLinks: {
       subscribe: 'https://console.anthropic.com/settings/plans',
       apiKey: 'https://console.anthropic.com/settings/keys',
-      docs: 'https://github.com/numman-ali/cc-mirror/blob/main/docs/features/mirror-claude.md',
+      docs: 'https://github.com/mikekelly/claude-sneakpeek/blob/main/docs/features/mirror-claude.md',
     },
     setupNote: 'Uses normal Claude authentication. Sign in via OAuth or set ANTHROPIC_API_KEY.',
   },

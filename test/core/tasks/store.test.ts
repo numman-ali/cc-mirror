@@ -32,7 +32,7 @@ test('Task Store', async (t) => {
   });
 
   await t.test('getTasksDir returns correct path', () => {
-    const rootDir = path.join(path.sep, 'home', 'user', '.cc-mirror');
+    const rootDir = path.join(path.sep, 'home', 'user', '.claude-sneakpeek');
     const result = getTasksDir(rootDir, 'myvariant', 'myteam');
     assert.equal(result, path.join(rootDir, 'myvariant', 'config', 'tasks', 'myteam'));
   });

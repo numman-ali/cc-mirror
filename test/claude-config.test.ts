@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { ensureOnboardingState } from '../src/core/claude-config.js';
 
-const makeTempDir = () => fs.mkdtempSync(path.join(os.tmpdir(), 'cc-mirror-claude-config-'));
+const makeTempDir = () => fs.mkdtempSync(path.join(os.tmpdir(), 'claude-sneakpeek-claude-config-'));
 
 test('ensureOnboardingState writes dark theme + onboarding flag', () => {
   const tempDir = makeTempDir();

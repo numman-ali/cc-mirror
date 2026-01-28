@@ -1,4 +1,4 @@
-# CC-MIRROR Documentation
+# CLAUDE-SNEAKPEEK Documentation
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -27,7 +27,7 @@
 
 | Document                                   | Description                          |
 | ------------------------------------------ | ------------------------------------ |
-| [Team Mode](features/team-mode.md)         | Legacy team mode (cc-mirror 1.6.3)   |
+| [Team Mode](features/team-mode.md)         | Legacy team mode (claude-sneakpeek 1.6.3)   |
 | [Mirror Claude](features/mirror-claude.md) | Pure Claude Code with clean defaults |
 | [Brand Themes](features/brand-themes.md)   | Custom color schemes per provider    |
 | [Prompt Packs](features/prompt-packs.md)   | Enhanced system prompts              |
@@ -36,7 +36,7 @@
 
 | Document                                               | Description                        |
 | ------------------------------------------------------ | ---------------------------------- |
-| [Overview](architecture/overview.md)                   | How cc-mirror works under the hood |
+| [Overview](architecture/overview.md)                   | How claude-sneakpeek works under the hood |
 | [Provider System](architecture/provider-system.md)     | Adding and configuring providers   |
 | [Variant Lifecycle](architecture/variant-lifecycle.md) | Create, update, and remove flows   |
 
@@ -74,7 +74,7 @@ docs/
 
 ## 💡 Quick Links
 
-- **New to cc-mirror?** Start with the [Quick Start](../README.md#quick-start)
+- **New to claude-sneakpeek?** Start with the [Quick Start](../README.md#quick-start)
 - **Want team features?** Legacy docs: [Team Mode](features/team-mode.md)
 - **Pure Claude experience?** Try [Mirror Claude](features/mirror-claude.md)
 - **Adding a provider?** See [Provider System](architecture/provider-system.md)

@@ -1,5 +1,5 @@
 /**
- * Theme constants for CC-MIRROR TUI
+ * Theme constants for CLAUDE-SNEAKPEEK TUI
  *
  * Professional deep blue and golden yellow color scheme.
  * Warm, inviting, and memorable.

@@ -1,7 +1,7 @@
 /**
  * About Screen
  *
- * Educational screen explaining what CC-MIRROR does and how it works.
+ * Educational screen explaining what CLAUDE-SNEAKPEEK does and how it works.
  * Features toggling between poem view and guide view.
  */
 
@@ -34,7 +34,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ onBack }) => {
 
   return (
     <ScreenLayout
-      title="About CC-MIRROR"
+      title="About CLAUDE-SNEAKPEEK"
       subtitle={view === 'poem' ? 'A poem for the mirror' : 'How it works'}
       hints={[keyHints.back, toggleHint]}
     >
@@ -44,7 +44,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ onBack }) => {
       ) : (
         // Guide view - educational content
         <>
-          {/* What is CC-MIRROR */}
+          {/* What is CLAUDE-SNEAKPEEK */}
           <Box flexDirection="column" marginY={1}>
             <FancyHeader title={EDUCATION.whatIsCcMirror.title} />
             <Box marginLeft={2} flexDirection="column">

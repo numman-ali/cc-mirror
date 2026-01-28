@@ -1,8 +1,8 @@
 # 🏗️ Architecture Overview
 
-This document explains how cc-mirror works under the hood.
+This document explains how claude-sneakpeek works under the hood.
 
-> **Note:** Team mode patching is legacy (cc-mirror 1.6.3 only). Current builds do not patch Claude Code.
+> **Note:** Team mode patching is legacy (claude-sneakpeek 1.6.3 only). Current builds do not patch Claude Code.
 
 ---
 
@@ -15,7 +15,7 @@ This document explains how cc-mirror works under the hood.
 │   ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────────────┐ │
 │   │                 │    │                  │    │                         │ │
 │   │   CLI / TUI     │───▶│   Core Engine    │───▶│   Variant Directory     │ │
-│   │                 │    │                  │    │   ~/.cc-mirror/<name>/  │ │
+│   │                 │    │                  │    │   ~/.claude-sneakpeek/<name>/  │ │
 │   └─────────────────┘    └──────────────────┘    └─────────────────────────┘ │
 │          │                       │                         │                  │
 │          │                       │                         ▼                  │
@@ -37,7 +37,7 @@ This document explains how cc-mirror works under the hood.
 └───────────────────────────────────────────────────────────────────────────────┘
 ```
 
-Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
+Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.claude-sneakpeek/bin` on Windows.
 
 ---
 
@@ -88,7 +88,7 @@ src/
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                                                                             │
-│   npx cc-mirror create                                                      │
+│   npx claude-sneakpeek create                                                      │
 │         │                                                                   │
 │         ▼                                                                   │
 │   ┌───────────────┐                                                         │
@@ -105,7 +105,7 @@ src/
 │   ┌───────────────────────────────────────────────────────────────────────┐ │
 │   │                        BUILD STEPS                                    │ │
 │   │                                                                       │ │
-│   │   1. CreateDirectoryStep    Create ~/.cc-mirror/<name>/               │ │
+│   │   1. CreateDirectoryStep    Create ~/.claude-sneakpeek/<name>/               │ │
 │   │                             │                                         │ │
 │   │   2. InstallNpmStep         npm install @anthropic-ai/claude-code     │ │
 │   │                             │                                         │ │
@@ -129,7 +129,7 @@ src/
 ### Update Flow
 
 ```
-npx cc-mirror update <name>
+npx claude-sneakpeek update <name>
         │
         ▼
 ┌───────────────┐
@@ -142,7 +142,7 @@ npx cc-mirror update <name>
 │                        UPDATE STEPS                                       │
 │                                                                           │
 │   1. InstallNpmUpdateStep    Reinstall npm package (unless settingsOnly)  │
-│   2. TeamModeUpdateStep      Legacy team mode cleanup (cc-mirror 1.6.3)   │
+│   2. TeamModeUpdateStep      Legacy team mode cleanup (claude-sneakpeek 1.6.3)   │
 │   3. ModelOverridesStep      Update model mappings                        │
 │   4. TweakccUpdateStep       Re-apply theme                               │
 │   5. WrapperUpdateStep       Regenerate wrapper script                    │
@@ -161,7 +161,7 @@ npx cc-mirror update <name>
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                                                                             │
-│  ~/.cc-mirror/<variant>/                                                    │
+│  ~/.claude-sneakpeek/<variant>/                                                    │
 │                                                                             │
 │  ├── npm/                           Claude Code npm installation            │
 │  │   └── node_modules/                                                      │
@@ -193,7 +193,7 @@ npx cc-mirror update <name>
 
 ## Provider System
 
-Providers define how cc-mirror connects to different APIs.
+Providers define how claude-sneakpeek connects to different APIs.
 
 ```typescript
 interface ProviderTemplate {
@@ -209,7 +209,7 @@ interface ProviderTemplate {
   credentialOptional?: boolean;
 
   // Feature flags
-  enablesTeamMode?: boolean; // Legacy: auto-enable team mode (cc-mirror 1.6.3)
+  enablesTeamMode?: boolean; // Legacy: auto-enable team mode (claude-sneakpeek 1.6.3)
   noPromptPack?: boolean; // Skip prompt pack overlays
 }
 ```
@@ -244,21 +244,21 @@ The wrapper script makes variants accessible as commands:
 # <bin-dir>/zai
 
 # Show splash art (if TTY and enabled)
-if [ -t 1 ] && [ "${CC_MIRROR_SPLASH:-1}" != "0" ]; then
+if [ -t 1 ] && [ "${CLAUDE_SNEAKPEEK_SPLASH:-1}" != "0" ]; then
   # ASCII art here...
 fi
 
 # Set Claude Code config directory
-export CLAUDE_CONFIG_DIR="$HOME/.cc-mirror/zai/config"
+export CLAUDE_CONFIG_DIR="$HOME/.claude-sneakpeek/zai/config"
 
 # Load environment from settings.json
 # (API keys, base URLs, model mappings)
 
 # Run Claude Code
-exec "$HOME/.cc-mirror/zai/npm/node_modules/.bin/claude" "$@"
+exec "$HOME/.claude-sneakpeek/zai/npm/node_modules/.bin/claude" "$@"
 ```
 
-On Windows, the wrapper is `<bin-dir>\\zai.cmd` with a sibling `<bin-dir>\\zai.mjs` launcher script. Add `%USERPROFILE%\\.cc-mirror\\bin` to `PATH` to run wrappers without a full path.
+On Windows, the wrapper is `<bin-dir>\\zai.cmd` with a sibling `<bin-dir>\\zai.mjs` launcher script. Add `%USERPROFILE%\\.claude-sneakpeek\\bin` to `PATH` to run wrappers without a full path.
 
 ---
 
@@ -278,7 +278,7 @@ function sU() {
 }
 ```
 
-### Patch Steps (Legacy: cc-mirror 1.6.3)
+### Patch Steps (Legacy: claude-sneakpeek 1.6.3)
 
 1. **Backup**: Copy `cli.js` to `cli.js.backup`
 2. **Patch**: Replace `function sU(){return!1}` with `function sU(){return!0}`

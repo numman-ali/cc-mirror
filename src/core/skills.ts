@@ -16,7 +16,7 @@ export interface SkillInstallResult {
 const DEV_BROWSER_REPO = 'https://github.com/SawyerHood/dev-browser.git';
 const DEV_BROWSER_ARCHIVE = 'https://github.com/SawyerHood/dev-browser/archive/refs/heads/main.tar.gz';
 const SKILL_SUBDIR = path.join('skills', 'dev-browser');
-const MANAGED_MARKER = '.cc-mirror-managed';
+const MANAGED_MARKER = '.claude-sneakpeek-managed';
 
 const ensureDir = (dir: string) => {
   fs.mkdirSync(dir, { recursive: true });
@@ -83,7 +83,7 @@ export const ensureDevBrowserSkill = (opts: {
 
   ensureDir(skillRoot);
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-mirror-skill-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-sneakpeek-skill-'));
   try {
     let fetchResult = cloneRepo(tmpDir);
     if (!fetchResult.ok) {
@@ -104,7 +104,7 @@ export const ensureDevBrowserSkill = (opts: {
     copyDir(sourceDir, targetDir);
     fs.writeFileSync(
       markerPath,
-      JSON.stringify({ managedBy: 'cc-mirror', updatedAt: new Date().toISOString() }, null, 2)
+      JSON.stringify({ managedBy: 'claude-sneakpeek', updatedAt: new Date().toISOString() }, null, 2)
     );
     return { status: exists ? 'updated' : 'installed', path: targetDir };
   } catch (error) {
@@ -116,7 +116,7 @@ export const ensureDevBrowserSkill = (opts: {
 };
 
 // ============================================================================
-// Orchestration Skill (bundled with cc-mirror)
+// Orchestration Skill (bundled with claude-sneakpeek)
 // ============================================================================
 
 const ORCHESTRATOR_SKILL_NAME = 'orchestration';
@@ -138,7 +138,7 @@ const findBundledSkillDir = (): string | null => {
   const distPath = path.join(thisDir, 'skills', ORCHESTRATOR_SKILL_NAME);
   if (fs.existsSync(distPath)) return distPath;
 
-  // Try relative to dist/cc-mirror.mjs
+  // Try relative to dist/claude-sneakpeek.mjs
   const distPath2 = path.join(thisDir, '..', 'skills', ORCHESTRATOR_SKILL_NAME);
   if (fs.existsSync(distPath2)) return distPath2;
 
@@ -180,7 +180,7 @@ export const installOrchestratorSkill = (configDir: string): OrchestratorSkillRe
     copyDir(sourceDir, targetDir);
     fs.writeFileSync(
       markerPath,
-      JSON.stringify({ managedBy: 'cc-mirror', updatedAt: new Date().toISOString() }, null, 2)
+      JSON.stringify({ managedBy: 'claude-sneakpeek', updatedAt: new Date().toISOString() }, null, 2)
     );
 
     return { status: 'installed', path: targetDir };
@@ -218,7 +218,7 @@ export const removeOrchestratorSkill = (configDir: string): OrchestratorSkillRes
 };
 
 // ============================================================================
-// Task Manager Skill (bundled with cc-mirror, for team mode)
+// Task Manager Skill (bundled with claude-sneakpeek, for team mode)
 // ============================================================================
 
 const TASK_MANAGER_SKILL_NAME = 'task-manager';
@@ -238,7 +238,7 @@ const findBundledTaskManagerSkillDir = (): string | null => {
   const distPath = path.join(thisDir, 'skills', TASK_MANAGER_SKILL_NAME);
   if (fs.existsSync(distPath)) return distPath;
 
-  // Try relative to dist/cc-mirror.mjs
+  // Try relative to dist/claude-sneakpeek.mjs
   const distPath2 = path.join(thisDir, '..', 'skills', TASK_MANAGER_SKILL_NAME);
   if (fs.existsSync(distPath2)) return distPath2;
 
@@ -274,7 +274,7 @@ export const installTaskManagerSkill = (configDir: string): OrchestratorSkillRes
     copyDir(sourceDir, targetDir);
     fs.writeFileSync(
       markerPath,
-      JSON.stringify({ managedBy: 'cc-mirror', updatedAt: new Date().toISOString() }, null, 2)
+      JSON.stringify({ managedBy: 'claude-sneakpeek', updatedAt: new Date().toISOString() }, null, 2)
     );
 
     return { status: 'installed', path: targetDir };
@@ -366,7 +366,7 @@ export const ensureDevBrowserSkillAsync = async (opts: {
 
   ensureDir(skillRoot);
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-mirror-skill-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-sneakpeek-skill-'));
   try {
     let fetchResult = await cloneRepoAsync(tmpDir);
     if (!fetchResult.ok) {
@@ -387,7 +387,7 @@ export const ensureDevBrowserSkillAsync = async (opts: {
     copyDir(sourceDir, targetDir);
     fs.writeFileSync(
       markerPath,
-      JSON.stringify({ managedBy: 'cc-mirror', updatedAt: new Date().toISOString() }, null, 2)
+      JSON.stringify({ managedBy: 'claude-sneakpeek', updatedAt: new Date().toISOString() }, null, 2)
     );
     return { status: exists ? 'updated' : 'installed', path: targetDir };
   } catch (error) {

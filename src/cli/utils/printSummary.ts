@@ -42,7 +42,9 @@ export function printSummary(opts: PrintSummaryOptions): void {
     console.log(`  dev-browser skill: ${meta.skillInstall ? 'on' : 'off'}`);
   }
   if (meta.teamModeEnabled !== undefined) {
-    const teamModeDescription = TEAM_MODE_SUPPORTED ? getTeamModeDescription() : 'unsupported (use cc-mirror 1.6.3)';
+    const teamModeDescription = TEAM_MODE_SUPPORTED
+      ? getTeamModeDescription()
+      : 'unsupported (use claude-sneakpeek 1.6.3)';
     console.log(`  Team mode: ${teamModeDescription}`);
   }
   if (meta.shellEnv !== undefined && meta.provider === 'zai') {

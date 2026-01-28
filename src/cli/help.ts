@@ -4,7 +4,7 @@ import { DEFAULT_BIN_DIR, DEFAULT_ROOT } from '../core/constants.js';
 export const printHelp = () => {
   console.log(`
 ╔══════════════════════════════════════════════════════════════════════════╗
-║                           CC-MIRROR                                      ║
+║                        CLAUDE-SNEAKPEEK                                  ║
 ║                     Claude Code, Unshackled                              ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 
@@ -14,13 +14,13 @@ export const printHelp = () => {
   One command. Instant power-up.
 
 FOCUS
-  CC-MIRROR focuses on provider enablement and stable workflows.
-  Team mode is only supported in cc-mirror 1.6.3 (published release).
+  CLAUDE-SNEAKPEEK focuses on provider enablement and stable workflows.
+  Team mode is only supported in claude-sneakpeek 1.6.3 (published release).
 
 QUICK START
-  npx cc-mirror quick --provider mirror    # Fastest path to multi-agent
-  npx cc-mirror quick --provider zai       # Z.ai with GLM models
-  npx cc-mirror                            # Interactive TUI
+  npx claude-sneakpeek quick --provider mirror    # Fastest path to multi-agent
+  npx claude-sneakpeek quick --provider zai       # Z.ai with GLM models
+  npx claude-sneakpeek                            # Interactive TUI
 
 COMMANDS
   quick [options]              Fast setup: provider → ready in 30s
@@ -30,7 +30,7 @@ COMMANDS
   remove <name>                Remove a variant
   doctor                       Health check all variants
   tweak <name>                 Launch tweakcc customization
-  tasks [operation]            Manage legacy team tasks (cc-mirror 1.6.3 only)
+  tasks [operation]            Manage legacy team tasks (claude-sneakpeek 1.6.3 only)
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
@@ -59,13 +59,13 @@ PROVIDERS
   ccrouter      Local LLMs via Claude Code Router
 
 EXAMPLES
-  npx cc-mirror quick --provider mirror --name mclaude
-  npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
-  npx cc-mirror tasks graph
-  npx cc-mirror doctor
+  npx claude-sneakpeek quick --provider mirror --name mclaude
+  npx claude-sneakpeek quick --provider zai --api-key "$Z_AI_API_KEY"
+  npx claude-sneakpeek tasks graph
+  npx claude-sneakpeek doctor
 
 LEARN MORE
-  https://github.com/numman-ali/cc-mirror
+  https://github.com/mikekelly/claude-sneakpeek
 
 ────────────────────────────────────────────────────────────────────────────
 Created by Numman Ali • https://x.com/nummanali

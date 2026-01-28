@@ -452,7 +452,7 @@ export const App: React.FC<AppProps> = ({
     // Can't launch tweakcc from within TUI (both are ink apps that conflict)
     // Show user the command to run instead
     setDoneLines([`To customize ${selectedVariant.name}, run:`]);
-    setCompletionSummary([`cc-mirror tweak ${selectedVariant.name}`]);
+    setCompletionSummary([`claude-sneakpeek tweak ${selectedVariant.name}`]);
     setCompletionNextSteps(['Exit this TUI first (press ESC or q)', 'Then run the command above in your terminal']);
     setCompletionHelp(['tweakcc lets you customize themes, overlays, and more']);
     setScreen('manage-tweak-done');
@@ -530,7 +530,7 @@ export const App: React.FC<AppProps> = ({
   if (screen === 'exit') {
     return (
       <Frame>
-        <Header title="CC-MIRROR" subtitle="Goodbye. Happy coding!" />
+        <Header title="CLAUDE-SNEAKPEEK" subtitle="Goodbye. Happy coding!" />
       </Frame>
     );
   }
@@ -1207,7 +1207,7 @@ export const App: React.FC<AppProps> = ({
                     'Use "Create" to make a new variant',
                     'Run "List" to see remaining variants',
                   ]);
-                  setCompletionHelp(['Help: cc-mirror help', 'List: cc-mirror list']);
+                  setCompletionHelp(['Help: claude-sneakpeek help', 'List: claude-sneakpeek list']);
                   setDoneLines([`Removed ${selectedVariant.name}`]);
                 } catch (error) {
                   const message = error instanceof Error ? error.message : String(error);
@@ -1279,7 +1279,7 @@ export const App: React.FC<AppProps> = ({
 
   return (
     <Frame>
-      <Header title="CC-MIRROR" subtitle="Unknown state" />
+      <Header title="CLAUDE-SNEAKPEEK" subtitle="Unknown state" />
     </Frame>
   );
 };

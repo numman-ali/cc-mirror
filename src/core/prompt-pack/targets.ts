@@ -1,8 +1,8 @@
 import type { OverlayKey } from './types.js';
 
 export const OVERLAY_MARKERS = {
-  start: '<!-- cc-mirror:provider-overlay start -->',
-  end: '<!-- cc-mirror:provider-overlay end -->',
+  start: '<!-- claude-sneakpeek:provider-overlay start -->',
+  end: '<!-- claude-sneakpeek:provider-overlay end -->',
 };
 
 export type OverlayTarget = {

@@ -16,8 +16,8 @@ export interface ShellEnvResult {
 }
 
 const SETTINGS_FILE = 'settings.json';
-const BLOCK_START = '# cc-mirror: Z.ai env start';
-const BLOCK_END = '# cc-mirror: Z.ai env end';
+const BLOCK_START = '# claude-sneakpeek: Z.ai env start';
+const BLOCK_END = '# claude-sneakpeek: Z.ai env end';
 const PLACEHOLDER_KEY = '<API_KEY>';
 
 const normalizeApiKey = (value?: string | null): string | null => {

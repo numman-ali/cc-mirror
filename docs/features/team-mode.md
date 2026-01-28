@@ -1,6 +1,6 @@
 # 🤖 Team Mode (Legacy)
 
-> **Legacy:** Team mode is only supported in the published **cc-mirror 1.6.3** release.  
+> **Legacy:** Team mode is only supported in the published **claude-sneakpeek 1.6.3** release.  
 > Newer development builds do not patch Claude Code; this doc is historical reference.
 
 Team Mode enables multi-agent collaboration in Claude Code through shared task management. Multiple agents can work together on complex projects, each claiming and completing tasks from a shared queue.
@@ -48,16 +48,16 @@ Team Mode unlocks these tools in Claude Code:
 
 ```bash
 # Any provider with team mode
-npx cc-mirror create --provider zai --name zai-team --enable-team-mode
+npx claude-sneakpeek create --provider zai --name zai-team --enable-team-mode
 
 # Mirror Claude has team mode by default
-npx cc-mirror create --provider mirror --name mclaude
+npx claude-sneakpeek create --provider mirror --name mclaude
 ```
 
 ### Enable on Existing Variants
 
 ```bash
-npx cc-mirror update myvariant --enable-team-mode
+npx claude-sneakpeek update myvariant --enable-team-mode
 ```
 
 ### Verify Team Mode
@@ -90,7 +90,7 @@ function sU() {
 }
 ```
 
-When you use `--enable-team-mode`, cc-mirror patches this function automatically.
+When you use `--enable-team-mode`, claude-sneakpeek patches this function automatically.
 
 ### Task Storage
 
@@ -98,7 +98,7 @@ Tasks are stored per-variant in isolated directories:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  ~/.cc-mirror/<variant>/config/                         │
+│  ~/.claude-sneakpeek/<variant>/config/                         │
 │  └── tasks/                                             │
 │      └── <team_name>/                                   │
 │          ├── 1.json        Task #1                      │
@@ -107,7 +107,7 @@ Tasks are stored per-variant in isolated directories:
 └─────────────────────────────────────────────────────────┘
 ```
 
-Each cc-mirror variant has completely isolated task storage via `CLAUDE_CONFIG_DIR`.
+Each claude-sneakpeek variant has completely isolated task storage via `CLAUDE_CONFIG_DIR`.
 
 ### Dynamic Team Names (v1.2.0+)
 
@@ -139,7 +139,7 @@ Each team has its own isolated task storage.
 
 ## 🎯 Orchestration Skill
 
-When team mode is enabled, cc-mirror automatically installs an **orchestration skill** that teaches Claude how to effectively coordinate work using the team mode tools.
+When team mode is enabled, claude-sneakpeek automatically installs an **orchestration skill** that teaches Claude how to effectively coordinate work using the team mode tools.
 
 ### The Conductor Identity
 
@@ -213,7 +213,7 @@ Milestone celebrations:
 ### Skill Location
 
 ```
-~/.cc-mirror/<variant>/config/skills/orchestration/
+~/.claude-sneakpeek/<variant>/config/skills/orchestration/
 ├── SKILL.md              # Identity, philosophy, core workflow
 └── references/
     ├── patterns.md       # All patterns with visual diagrams
@@ -227,7 +227,7 @@ Milestone celebrations:
 
 ## 📦 Team Pack
 
-When team mode is enabled, cc-mirror also installs **Team Pack** — enhanced prompt files and toolset configuration.
+When team mode is enabled, claude-sneakpeek also installs **Team Pack** — enhanced prompt files and toolset configuration.
 
 ### What Team Pack Does
 
@@ -249,9 +249,9 @@ Team mode provides `TaskCreate`, `TaskGet`, `TaskUpdate`, and `TaskList` as the 
 
 ### Managed vs User Skills
 
-cc-mirror marks its installed skill with a `.cc-mirror-managed` file. If you want to customize the orchestrator:
+claude-sneakpeek marks its installed skill with a `.claude-sneakpeek-managed` file. If you want to customize the orchestrator:
 
-1. Delete the `.cc-mirror-managed` marker
+1. Delete the `.claude-sneakpeek-managed` marker
 2. Edit the skill files as needed
 3. Future updates won't overwrite your changes
 
@@ -444,26 +444,26 @@ echo "All agents complete"
 
 ## 🛠️ CLI Task Management
 
-cc-mirror provides a CLI for managing team tasks directly from the command line.
+claude-sneakpeek provides a CLI for managing team tasks directly from the command line.
 
 ### Command Structure
 
 ```bash
-npx cc-mirror tasks [operation] [id] [options]
+npx claude-sneakpeek tasks [operation] [id] [options]
 ```
 
 ### Operations
 
 | Operation | Command                            | Description                              |
 | --------- | ---------------------------------- | ---------------------------------------- |
-| List      | `npx cc-mirror tasks`              | List open tasks (default)                |
-| Show      | `npx cc-mirror tasks show <id>`    | Show detailed task info                  |
-| Create    | `npx cc-mirror tasks create`       | Create a new task                        |
-| Update    | `npx cc-mirror tasks update <id>`  | Update an existing task                  |
-| Delete    | `npx cc-mirror tasks delete <id>`  | Permanently delete a task                |
-| Archive   | `npx cc-mirror tasks archive <id>` | Move task to archive (preserves history) |
-| Clean     | `npx cc-mirror tasks clean`        | Bulk cleanup of tasks                    |
-| Graph     | `npx cc-mirror tasks graph`        | Visualize task dependencies              |
+| List      | `npx claude-sneakpeek tasks`              | List open tasks (default)                |
+| Show      | `npx claude-sneakpeek tasks show <id>`    | Show detailed task info                  |
+| Create    | `npx claude-sneakpeek tasks create`       | Create a new task                        |
+| Update    | `npx claude-sneakpeek tasks update <id>`  | Update an existing task                  |
+| Delete    | `npx claude-sneakpeek tasks delete <id>`  | Permanently delete a task                |
+| Archive   | `npx claude-sneakpeek tasks archive <id>` | Move task to archive (preserves history) |
+| Clean     | `npx claude-sneakpeek tasks clean`        | Bulk cleanup of tasks                    |
+| Graph     | `npx claude-sneakpeek tasks graph`        | Visualize task dependencies              |
 
 ### Common Options
 
@@ -480,46 +480,46 @@ npx cc-mirror tasks [operation] [id] [options]
 
 ```bash
 # List open tasks for current project
-npx cc-mirror tasks
+npx claude-sneakpeek tasks
 
 # List all tasks (including resolved)
-npx cc-mirror tasks --status all
+npx claude-sneakpeek tasks --status all
 
 # Show task details
-npx cc-mirror tasks show 18
+npx claude-sneakpeek tasks show 18
 
 # Create a new task
-npx cc-mirror tasks create --subject "Implement auth" --description "Add JWT tokens"
+npx claude-sneakpeek tasks create --subject "Implement auth" --description "Add JWT tokens"
 
 # Mark a task as resolved with comment
-npx cc-mirror tasks update 5 --status resolved --add-comment "Done"
+npx claude-sneakpeek tasks update 5 --status resolved --add-comment "Done"
 
 # Delete a task permanently
-npx cc-mirror tasks delete 42 --force
+npx claude-sneakpeek tasks delete 42 --force
 
 # Archive a task (preserves history in archive/ folder)
-npx cc-mirror tasks archive 5
+npx claude-sneakpeek tasks archive 5
 
 # Clean up resolved tasks (dry run)
-npx cc-mirror tasks clean --resolved --dry-run
+npx claude-sneakpeek tasks clean --resolved --dry-run
 
 # Clean tasks older than 30 days
-npx cc-mirror tasks clean --older-than 30 --force
+npx claude-sneakpeek tasks clean --older-than 30 --force
 
 # View tasks across all teams in a variant
-npx cc-mirror tasks --variant mc --all
+npx claude-sneakpeek tasks --variant mc --all
 
 # JSON output for scripting
-npx cc-mirror tasks --json | jq '.tasks[] | select(.status == "open")'
+npx claude-sneakpeek tasks --json | jq '.tasks[] | select(.status == "open")'
 
 # Filter to ready tasks only (open + not blocked)
-npx cc-mirror tasks --ready --json
+npx claude-sneakpeek tasks --ready --json
 
 # View task dependency graph
-npx cc-mirror tasks graph --variant mc --team my-project
+npx claude-sneakpeek tasks graph --variant mc --team my-project
 
 # Graph as JSON for programmatic analysis
-npx cc-mirror tasks graph --json
+npx claude-sneakpeek tasks graph --json
 ```
 
 ### Enriched JSON Output (v1.6.1+)
@@ -602,7 +602,7 @@ The CLI automatically detects:
 - **Team name**: Based on current git repository folder name (matches wrapper logic)
 - **Variant**: First variant with tasks, or specify with `--variant`
 
-This means running `npx cc-mirror tasks` in `/Users/you/projects/my-api` will automatically target the `my-api` team.
+This means running `npx claude-sneakpeek tasks` in `/Users/you/projects/my-api` will automatically target the `my-api` team.
 
 ---
 
@@ -619,13 +619,13 @@ This means running `npx cc-mirror tasks` in `/Users/you/projects/my-api` will au
 
 ```bash
 # List all tasks for a team
-ls ~/.cc-mirror/<variant>/config/tasks/<team_name>/
+ls ~/.claude-sneakpeek/<variant>/config/tasks/<team_name>/
 
 # View a specific task
-cat ~/.cc-mirror/<variant>/config/tasks/<team_name>/1.json | jq
+cat ~/.claude-sneakpeek/<variant>/config/tasks/<team_name>/1.json | jq
 
 # Check if team mode is enabled (look for patched function)
-grep "function sU(){return" ~/.cc-mirror/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js
+grep "function sU(){return" ~/.claude-sneakpeek/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js
 # Should show: function sU(){return!0}
 ```
 
@@ -633,7 +633,7 @@ grep "function sU(){return" ~/.cc-mirror/<variant>/npm/node_modules/@anthropic-a
 
 ## ⚠️ Limitations
 
-1. **Task storage is local** - Tasks stored in `~/.cc-mirror/<variant>/config/tasks/` - not shared across machines
+1. **Task storage is local** - Tasks stored in `~/.claude-sneakpeek/<variant>/config/tasks/` - not shared across machines
 2. **Manual coordination** - Workers don't automatically poll for new tasks
 3. **Minified function** - The patched function name may change in future Claude Code versions
 
@@ -642,5 +642,5 @@ grep "function sU(){return" ~/.cc-mirror/<variant>/npm/node_modules/@anthropic-a
 ## 🔙 Related
 
 - [Mirror Claude](mirror-claude.md) - Has team mode enabled by default
-- [Architecture Overview](../architecture/overview.md) - How cc-mirror works
+- [Architecture Overview](../architecture/overview.md) - How claude-sneakpeek works
 - [CLI Reference](../reference/cli-reference.md) - `--enable-team-mode` flag

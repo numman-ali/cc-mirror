@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { installOrchestratorSkill, removeOrchestratorSkill } from '../src/core/skills.js';
 
-const makeTempDir = () => fs.mkdtempSync(path.join(os.tmpdir(), 'cc-mirror-skills-'));
+const makeTempDir = () => fs.mkdtempSync(path.join(os.tmpdir(), 'claude-sneakpeek-skills-'));
 
 test('installOrchestratorSkill installs skill to config directory', () => {
   const tempDir = makeTempDir();
@@ -21,7 +21,7 @@ test('installOrchestratorSkill installs skill to config directory', () => {
   assert.ok(fs.existsSync(skillDir), 'skill directory should exist');
   assert.ok(fs.existsSync(path.join(skillDir, 'SKILL.md')), 'SKILL.md should exist');
   assert.ok(fs.existsSync(path.join(skillDir, 'references')), 'references directory should exist');
-  assert.ok(fs.existsSync(path.join(skillDir, '.cc-mirror-managed')), 'managed marker should exist');
+  assert.ok(fs.existsSync(path.join(skillDir, '.claude-sneakpeek-managed')), 'managed marker should exist');
 
   fs.rmSync(tempDir, { recursive: true, force: true });
 });

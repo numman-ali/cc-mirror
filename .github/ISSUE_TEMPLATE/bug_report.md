@@ -14,7 +14,7 @@ A clear and concise description of what the bug is.
 
 Steps to reproduce the behavior:
 
-1. Run `npx cc-mirror ...`
+1. Run `npx claude-sneakpeek ...`
 2. Select '...'
 3. See error
 
@@ -30,7 +30,7 @@ If applicable, add screenshots to help explain your problem.
 
 - **OS**: [e.g., macOS 14.0, Ubuntu 22.04, Windows 11]
 - **Node.js version**: [e.g., 20.10.0]
-- **cc-mirror version**: [e.g., 1.0.0]
+- **claude-sneakpeek version**: [e.g., 1.0.0]
 - **Provider**: [e.g., zai, minimax, openrouter, ccrouter]
 
 ## Additional Context

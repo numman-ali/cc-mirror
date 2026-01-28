@@ -22,7 +22,7 @@ const escapeXml = (value: string) =>
 const renderHomeScreen = async () => {
   const app = render(
     React.createElement(App, {
-      initialRootDir: '~/.cc-mirror',
+      initialRootDir: '~/.claude-sneakpeek',
       initialBinDir: '~/.local/bin',
     })
   );
@@ -50,7 +50,7 @@ const buildSvg = (lines: string[]) => {
     .join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="cc-mirror TUI">
+<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="claude-sneakpeek TUI">
   <rect width="${width}" height="${height}" fill="${bg}" />
   <g font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">
 ${text}
@@ -62,7 +62,7 @@ ${text}
 const main = async () => {
   const lines = await renderHomeScreen();
   const svg = buildSvg(lines);
-  const target = path.join(process.cwd(), 'docs', 'cc-mirror-tree.svg');
+  const target = path.join(process.cwd(), 'docs', 'claude-sneakpeek-tree.svg');
   fs.writeFileSync(target, svg);
   console.log(`Wrote ${target}`);
 };

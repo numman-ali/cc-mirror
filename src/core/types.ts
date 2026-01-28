@@ -23,6 +23,8 @@ export interface VariantMeta {
   npmVersion?: string;
   /** Whether team mode is enabled (legacy) */
   teamModeEnabled?: boolean;
+  /** Whether swarm mode is enabled (native multi-agent features) */
+  swarmModeEnabled?: boolean;
 }
 
 export interface VariantEntry {
@@ -59,6 +61,8 @@ export interface CreateVariantParams {
   tweakccStdio?: 'pipe' | 'inherit';
   /** Enable team mode by patching cli.js (legacy) */
   enableTeamMode?: boolean;
+  /** Disable swarm mode (native multi-agent features are enabled by default) */
+  disableSwarmMode?: boolean;
   /** Callback for progress updates during installation */
   onProgress?: ProgressCallback;
 }

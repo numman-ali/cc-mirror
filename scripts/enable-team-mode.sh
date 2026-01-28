@@ -1,11 +1,11 @@
 #!/bin/bash
 # enable-team-mode.sh
-# Patches a cc-mirror variant to enable team mode features
+# Patches a claude-sneakpeek variant to enable team mode features
 
 set -e
 
 VARIANT_NAME="${1:-team-mode}"
-CC_MIRROR_ROOT="$HOME/.cc-mirror"
+CC_MIRROR_ROOT="$HOME/.claude-sneakpeek"
 VARIANT_DIR="$CC_MIRROR_ROOT/$VARIANT_NAME"
 CLI_PATH="$VARIANT_DIR/npm/node_modules/@anthropic-ai/claude-code/cli.js"
 SETTINGS_PATH="$VARIANT_DIR/config/settings.json"
@@ -16,7 +16,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${YELLOW}Team Mode Enabler for cc-mirror${NC}"
+echo -e "${YELLOW}Team Mode Enabler for claude-sneakpeek${NC}"
 echo "=================================="
 echo ""
 
@@ -120,7 +120,7 @@ echo "Or with custom agent identity:"
 echo "  CLAUDE_CODE_AGENT_ID=worker-1 $VARIANT_NAME"
 echo ""
 echo "Task storage location (isolated per variant):"
-echo "  ~/.cc-mirror/$VARIANT_NAME/config/tasks/$VARIANT_NAME/"
+echo "  ~/.claude-sneakpeek/$VARIANT_NAME/config/tasks/$VARIANT_NAME/"
 echo ""
 echo "To restore original CLI:"
 echo "  cp '$BACKUP_PATH' '$CLI_PATH'"

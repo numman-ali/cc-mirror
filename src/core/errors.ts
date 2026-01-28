@@ -1,10 +1,10 @@
 const extractErrorHint = (text: string) => {
   const normalized = text.toLowerCase();
   if (normalized.includes('could not extract js from native binary')) {
-    return 'tweakcc reported a native Claude Code binary. cc-mirror uses npm installs only; update or recreate the variant, or run with --no-tweak.';
+    return 'tweakcc reported a native Claude Code binary. claude-sneakpeek uses npm installs only; update or recreate the variant, or run with --no-tweak.';
   }
   if (normalized.includes('node-lief')) {
-    return 'tweakcc requires node-lief for native Claude Code binaries. cc-mirror uses npm installs only; update or recreate the variant, or run with --no-tweak.';
+    return 'tweakcc requires node-lief for native Claude Code binaries. claude-sneakpeek uses npm installs only; update or recreate the variant, or run with --no-tweak.';
   }
   return null;
 };

@@ -89,12 +89,12 @@ test('buildCreateSummary shows provider-specific prompt pack routing', () => {
 });
 
 test('buildCreateNextSteps includes variant name and paths', () => {
-  const rootDir = path.join(path.sep, 'home', 'user', '.cc-mirror');
+  const rootDir = path.join(path.sep, 'home', 'user', '.claude-sneakpeek');
   const steps = buildCreateNextSteps('my-variant', rootDir);
 
   assert.ok(steps.some((line) => line.includes('Run: my-variant')));
-  assert.ok(steps.some((line) => line.includes('Update: cc-mirror update my-variant')));
-  assert.ok(steps.some((line) => line.includes('Tweak: cc-mirror tweak my-variant')));
+  assert.ok(steps.some((line) => line.includes('Update: claude-sneakpeek update my-variant')));
+  assert.ok(steps.some((line) => line.includes('Tweak: claude-sneakpeek tweak my-variant')));
   assert.ok(steps.some((line) => line.includes('Config:')));
   assert.ok(steps.some((line) => line.includes(rootDir)));
 });
@@ -103,9 +103,9 @@ test('buildHelpLines returns standard help commands', () => {
   const help = buildHelpLines();
 
   assert.equal(help.length, 3);
-  assert.ok(help.some((line) => line.includes('cc-mirror help')));
-  assert.ok(help.some((line) => line.includes('cc-mirror list')));
-  assert.ok(help.some((line) => line.includes('cc-mirror doctor')));
+  assert.ok(help.some((line) => line.includes('claude-sneakpeek help')));
+  assert.ok(help.some((line) => line.includes('claude-sneakpeek list')));
+  assert.ok(help.some((line) => line.includes('claude-sneakpeek doctor')));
 });
 
 // Helper to create a valid VariantMeta for testing
@@ -174,10 +174,10 @@ test('buildUpdateSummary omits shell env for non-zai providers', () => {
 });
 
 test('buildUpdateNextSteps includes variant operations', () => {
-  const rootDir = path.join(path.sep, 'home', 'user', '.cc-mirror');
+  const rootDir = path.join(path.sep, 'home', 'user', '.claude-sneakpeek');
   const steps = buildUpdateNextSteps('my-variant', rootDir);
 
   assert.ok(steps.some((line) => line.includes('Run: my-variant')));
-  assert.ok(steps.some((line) => line.includes('Tweak: cc-mirror tweak my-variant')));
+  assert.ok(steps.some((line) => line.includes('Tweak: claude-sneakpeek tweak my-variant')));
   assert.ok(steps.some((line) => line.includes('Config:')));
 });

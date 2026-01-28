@@ -40,15 +40,15 @@ interface CreateParams {
 /**
  * Prepare common parameters for create command
  */
-async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
+async function prepareCreateParams(opts: ParsedArgs, quickMode = false): Promise<CreateParams> {
   let providerKey = opts.provider as string | undefined;
-  if (!providerKey && !opts.yes) {
+  if (!providerKey && !opts.yes && !quickMode) {
     const providers = listProviders()
       .map((p) => p.key)
       .join(', ');
-    providerKey = await prompt(`Provider (${providers})`, 'zai');
+    providerKey = await prompt(`Provider (${providers})`, 'mirror');
   }
-  providerKey = providerKey || 'zai';
+  providerKey = providerKey || 'mirror';
 
   const provider = getProvider(providerKey);
   if (!provider) {
@@ -307,9 +307,9 @@ async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams):
  * Execute the create command
  */
 export async function runCreateCommand({ opts, quickMode }: CreateCommandOptions): Promise<void> {
-  const params = await prepareCreateParams(opts);
+  const params = await prepareCreateParams(opts, quickMode);
   if (!core.TEAM_MODE_SUPPORTED && (opts['enable-team-mode'] || opts['disable-team-mode'])) {
-    console.log('Team mode flags are ignored in this release. Use cc-mirror 1.6.3 for team mode support.');
+    console.log('Team mode flags are ignored in this release. Use claude-sneakpeek 1.6.3 for team mode support.');
   }
 
   if (quickMode) {

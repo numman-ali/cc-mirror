@@ -2,7 +2,7 @@
  * Educational Content
  *
  * Conceptual explanations for users who want to understand
- * what CC-MIRROR does and how it works under the hood.
+ * what CLAUDE-SNEAKPEEK does and how it works under the hood.
  */
 
 import path from 'node:path';
@@ -14,10 +14,10 @@ const WRAPPER_HINT = getWrapperPath(DEFAULT_BIN_DIR, '<name>');
 
 export const EDUCATION = {
   whatIsCcMirror: {
-    title: 'What is CC-MIRROR?',
+    title: 'What is CLAUDE-SNEAKPEEK?',
     brief: 'Create isolated Claude Code variants with custom providers.',
     detailed: [
-      'CC-MIRROR creates isolated Claude Code installations that connect to',
+      'CLAUDE-SNEAKPEEK creates isolated Claude Code installations that connect to',
       'different AI providers. Each variant has its own configuration, theme,',
       'and settings—completely independent from your main Claude Code.',
       '',

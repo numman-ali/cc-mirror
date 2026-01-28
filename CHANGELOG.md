@@ -17,7 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Documentation
 
-- README and docs now mark team mode as legacy (cc-mirror 1.6.3 only).
+- README and docs now mark team mode as legacy (claude-sneakpeek 1.6.3 only).
 
 ## [1.6.5] - 2026-01-12
 
@@ -29,7 +29,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- `cc-mirror update` now resets `npm/` and `tweakcc/` before reinstalling, preserving config/tasks/skills for a clean rebuild.
+- `claude-sneakpeek update` now resets `npm/` and `tweakcc/` before reinstalling, preserving config/tasks/skills for a clean rebuild.
 - Update command defaults to quiet tweakcc output; use `--verbose` to show full logs.
 
 ### Added
@@ -67,7 +67,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - **Complete messaging overhaul: "Claude Code, Unshackled"**
-  - New tagline positions CC-MIRROR as an opinionated Claude Code distribution
+  - New tagline positions CLAUDE-SNEAKPEEK as an opinionated Claude Code distribution
   - "We did the hacking — you get the superpowers"
   - Team mode (multi-agent orchestration) is now the flagship feature
 
@@ -77,10 +77,10 @@ All notable changes to this project will be documented in this file.
   - Updated provider descriptions across CLI, TUI, and documentation
 
 - **README.md completely rewritten**
-  - New hero section: "The Unlock" — explains what CC-MIRROR enables
+  - New hero section: "The Unlock" — explains what CLAUDE-SNEAKPEEK enables
   - Before/after ASCII diagram showing the transformation
   - Mirror Claude Quick Start at the top
-  - "What is CC-MIRROR?" section explains the opinionated distribution model
+  - "What is CLAUDE-SNEAKPEEK?" section explains the opinionated distribution model
   - Orchestrator skill section with example workflow
   - Clear documentation of team mode as default (with disable instructions)
 
@@ -116,7 +116,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **All commands now use `npx cc-mirror`** for portability - no global install required
+- **All commands now use `npx claude-sneakpeek`** for portability - no global install required
   - Updated task-manager skill with `npx` prefix
   - Updated README.md command examples
   - Updated team-mode.md CLI examples
@@ -307,7 +307,7 @@ All notable changes to this project will be documented in this file.
   - AskUserQuestion as mandatory tool (never text menus)
   - Background agents by default (`run_in_background=True`)
   - 8 domain-specific reference guides (code review, testing, devops, documentation, etc.)
-  - Managed skill marker (`.cc-mirror-managed`) for safe updates without overwriting user customizations
+  - Managed skill marker (`.claude-sneakpeek-managed`) for safe updates without overwriting user customizations
 
 - **Documentation**
   - `docs/features/team-mode.md` - Complete team mode guide with architecture diagrams
@@ -339,7 +339,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Fixed bin path to use relative path (`./dist/cc-mirror.mjs`)
+- Fixed bin path to use relative path (`./dist/claude-sneakpeek.mjs`)
 - Added missing `@eslint/js` dev dependency
 
 ## [1.0.2] - 2025-01-03

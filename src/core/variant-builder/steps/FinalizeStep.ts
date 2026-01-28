@@ -4,7 +4,7 @@
 
 import path from 'node:path';
 import { writeJson } from '../../fs.js';
-import { TEAM_MODE_SUPPORTED } from '../../constants.js';
+import { NATIVE_MULTIAGENT_SUPPORTED, TEAM_MODE_SUPPORTED } from '../../constants.js';
 import type { VariantMeta } from '../../types.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
@@ -24,10 +24,13 @@ export class FinalizeStep implements BuildStep {
   private finalize(ctx: BuildContext): void {
     const { params, paths, prefs, state, provider } = ctx;
 
-    // Check if team mode was enabled (via params OR provider defaults)
+    // Check if team mode was enabled (via params OR provider defaults) - legacy
     const teamModeEnabled = TEAM_MODE_SUPPORTED
       ? Boolean(params.enableTeamMode) || Boolean(provider.enablesTeamMode)
       : false;
+
+    // Check if swarm mode was enabled (default: true unless explicitly disabled)
+    const swarmModeEnabled = NATIVE_MULTIAGENT_SUPPORTED ? Boolean(state.swarmModeEnabled) : false;
 
     const meta: VariantMeta = {
       name: params.name,
@@ -48,6 +51,7 @@ export class FinalizeStep implements BuildStep {
       npmPackage: prefs.resolvedNpmPackage,
       npmVersion: prefs.resolvedNpmVersion,
       teamModeEnabled,
+      swarmModeEnabled,
     };
 
     writeJson(path.join(paths.variantDir, 'variant.json'), meta);

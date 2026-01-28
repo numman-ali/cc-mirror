@@ -183,7 +183,9 @@ export const ModelConfigScreen: React.FC<ModelConfigScreenProps> = ({
           </Box>
           <Box marginTop={1}>
             <Text color={colors.warning}>
-              {'⚠ Not all models work with Claude Code. If issues occur, use "cc-mirror update" to switch models.'}
+              {
+                '⚠ Not all models work with Claude Code. If issues occur, use "claude-sneakpeek update" to switch models.'
+              }
             </Text>
           </Box>
         </Box>

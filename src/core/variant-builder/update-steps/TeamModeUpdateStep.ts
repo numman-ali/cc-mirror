@@ -244,7 +244,9 @@ export class TeamModeUpdateStep implements UpdateStep {
       return;
     }
 
-    state.notes.push('Team mode is not supported in this cc-mirror release; disabling and removing team assets.');
+    state.notes.push(
+      'Team mode is not supported in this claude-sneakpeek release; disabling and removing team assets.'
+    );
     meta.teamModeEnabled = false;
 
     this.removeSkill(ctx);

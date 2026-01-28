@@ -1,5 +1,5 @@
 /**
- * Progress components for CC-MIRROR TUI
+ * Progress components for CLAUDE-SNEAKPEEK TUI
  */
 
 import React, { useState, useEffect } from 'react';

@@ -19,10 +19,10 @@ export const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ onBack }) => {
   });
 
   return (
-    <ScreenLayout title="Feedback & Contributions" subtitle="Help make CC-MIRROR better" hints={[keyHints.back]}>
+    <ScreenLayout title="Feedback & Contributions" subtitle="Help make CLAUDE-SNEAKPEEK better" hints={[keyHints.back]}>
       <Box flexDirection="column" marginBottom={1}>
         <Text color={colors.textMuted}>
-          CC-MIRROR is open source and welcomes contributions, bug reports, and feature requests.
+          CLAUDE-SNEAKPEEK is open source and welcomes contributions, bug reports, and feature requests.
         </Text>
       </Box>
 
@@ -32,10 +32,10 @@ export const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ onBack }) => {
         </Text>
         <Box flexDirection="column" marginLeft={2} marginTop={1}>
           <Text color={colors.textMuted}>
-            GitHub: <Text color={colors.primaryBright}>https://github.com/numman-ali/cc-mirror</Text>
+            GitHub: <Text color={colors.primaryBright}>https://github.com/mikekelly/claude-sneakpeek</Text>
           </Text>
           <Text color={colors.textMuted}>
-            Issues: <Text color={colors.primaryBright}>https://github.com/numman-ali/cc-mirror/issues</Text>
+            Issues: <Text color={colors.primaryBright}>https://github.com/mikekelly/claude-sneakpeek/issues</Text>
           </Text>
         </Box>
       </Box>

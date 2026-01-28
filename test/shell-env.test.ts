@@ -7,7 +7,7 @@ import { ensureZaiShellEnv } from '../src/core/shell-env.js';
 
 delete process.env.Z_AI_API_KEY;
 
-const makeTempDir = () => fs.mkdtempSync(path.join(os.tmpdir(), 'cc-mirror-shell-env-'));
+const makeTempDir = () => fs.mkdtempSync(path.join(os.tmpdir(), 'claude-sneakpeek-shell-env-'));
 
 const writeSettings = (configDir: string, apiKey: string) => {
   fs.mkdirSync(configDir, { recursive: true });
@@ -41,7 +41,7 @@ test('ensureZaiShellEnv skips when profile already has a key', () => {
   assert.ok(content.includes('existing-key'));
 });
 
-test('ensureZaiShellEnv writes a cc-mirror block when missing', () => {
+test('ensureZaiShellEnv writes a claude-sneakpeek block when missing', () => {
   const tempDir = makeTempDir();
   const configDir = path.join(tempDir, 'config');
   const profilePath = path.join(tempDir, '.zshrc');
@@ -50,6 +50,6 @@ test('ensureZaiShellEnv writes a cc-mirror block when missing', () => {
   const result = ensureZaiShellEnv({ configDir, profilePath });
   assert.equal(result.status, 'updated');
   const content = fs.readFileSync(profilePath, 'utf8');
-  assert.ok(content.includes('cc-mirror: Z.ai env start'));
+  assert.ok(content.includes('claude-sneakpeek: Z.ai env start'));
   assert.ok(content.includes('export Z_AI_API_KEY="abc123"'));
 });

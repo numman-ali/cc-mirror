@@ -1,5 +1,5 @@
 /**
- * Home Screen - Main menu for CC-MIRROR
+ * Home Screen - Main menu for CLAUDE-SNEAKPEEK
  *
  * Features:
  * - Time-based greeting
@@ -66,7 +66,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onSelect }) => {
     { value: 'manage', label: 'Manage Variants', description: 'Update, remove, or inspect' },
     { value: 'updateAll', label: 'Update All', description: 'Sync all variants to latest' },
     { value: 'doctor', label: 'Diagnostics', description: 'Health check all variants' },
-    { value: 'about', label: 'About', description: 'Learn how CC-MIRROR works' },
+    { value: 'about', label: 'About', description: 'Learn how CLAUDE-SNEAKPEEK works' },
     { value: 'feedback', label: 'Feedback', description: 'Links, issues, and contributions' },
     { value: 'exit', label: 'Until next time', icon: 'exit' },
   ];
@@ -76,7 +76,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onSelect }) => {
       {/* ASCII Art Banner - Rainbow if easter egg active */}
       {showEasterEgg ? (
         <Box flexDirection="column" alignItems="center" marginBottom={1}>
-          <RainbowText>{'CC-MIRROR'}</RainbowText>
+          <RainbowText>{'CLAUDE-SNEAKPEEK'}</RainbowText>
           <Text color={colors.gold}>{'You found the secret! 🎮'}</Text>
         </Box>
       ) : (

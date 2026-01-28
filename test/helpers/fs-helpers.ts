@@ -11,7 +11,7 @@ import path from 'node:path';
 /**
  * Create a temporary directory for testing
  */
-export const makeTempDir = (prefix = 'cc-mirror-test-') => fs.mkdtempSync(path.join(os.tmpdir(), prefix));
+export const makeTempDir = (prefix = 'claude-sneakpeek-test-') => fs.mkdtempSync(path.join(os.tmpdir(), prefix));
 
 /**
  * Write an executable file

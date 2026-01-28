@@ -11,8 +11,8 @@ import { listTeams, getTasksDir } from './store.js';
 import type { ResolvedContext, TaskLocation } from './types.js';
 
 /**
- * Special variant name for vanilla Claude Code (no cc-mirror variant)
- * Maps to ~/.claude/tasks/<team>/ instead of ~/.cc-mirror/_default/config/tasks/<team>/
+ * Special variant name for vanilla Claude Code (no claude-sneakpeek variant)
+ * Maps to ~/.claude/tasks/<team>/ instead of ~/.claude-sneakpeek/_default/config/tasks/<team>/
  */
 export const DEFAULT_VARIANT = '_default';
 
@@ -32,15 +32,15 @@ export interface ResolveOptions {
 
 /**
  * Detect variant from CLAUDE_CONFIG_DIR environment variable
- * CLAUDE_CONFIG_DIR format: ~/.cc-mirror/<variant>/config
+ * CLAUDE_CONFIG_DIR format: ~/.claude-sneakpeek/<variant>/config
  */
 export function detectVariantFromEnv(): string | null {
   const configDir = process.env.CLAUDE_CONFIG_DIR;
   if (!configDir) return null;
 
-  // Extract variant name from path: ~/.cc-mirror/<variant>/config
+  // Extract variant name from path: ~/.claude-sneakpeek/<variant>/config
   const normalized = configDir.replace(/\\/g, '/');
-  const match = normalized.match(/\.cc-mirror\/([^/]+)\/config/);
+  const match = normalized.match(/\.claude-sneakpeek\/([^/]+)\/config/);
   return match ? match[1] : null;
 }
 
@@ -105,7 +105,7 @@ export function resolveTasksDir(rootDir: string, variant: string, team: string):
     // Vanilla Claude Code: ~/.claude/tasks/<team>/
     return path.join(DEFAULT_CLAUDE_CONFIG_DIR, 'tasks', team);
   }
-  // cc-mirror variant: ~/.cc-mirror/<variant>/config/tasks/<team>/
+  // claude-sneakpeek variant: ~/.claude-sneakpeek/<variant>/config/tasks/<team>/
   return getTasksDir(rootDir, variant, team);
 }
 
@@ -140,7 +140,7 @@ export function resolveContext(opts: ResolveOptions): ResolvedContext {
   // Determine which variants to scan
   let variants: string[];
   if (allVariants) {
-    // Include all cc-mirror variants that have tasks
+    // Include all claude-sneakpeek variants that have tasks
     variants = listVariantsWithTasks(rootDir);
     // Also include _default if it has tasks
     const defaultTeams = resolveTeams(rootDir, DEFAULT_VARIANT);

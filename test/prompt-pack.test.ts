@@ -8,7 +8,7 @@ import { resolveOverlays } from '../src/core/prompt-pack/overlays.js';
 import { sanitizeOverlayMap, sanitizeOverlayText } from '../src/core/prompt-pack/sanitize.js';
 import { OVERLAY_MARKERS, PROMPT_PACK_TARGETS } from '../src/core/prompt-pack/targets.js';
 
-const makeTempDir = () => fs.mkdtempSync(path.join(os.tmpdir(), 'cc-mirror-prompt-pack-'));
+const makeTempDir = () => fs.mkdtempSync(path.join(os.tmpdir(), 'claude-sneakpeek-prompt-pack-'));
 
 const cleanup = (dir: string) => {
   fs.rmSync(dir, { recursive: true, force: true });

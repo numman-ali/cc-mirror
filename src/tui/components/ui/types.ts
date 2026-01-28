@@ -1,5 +1,5 @@
 /**
- * TypeScript types for CC-MIRROR TUI components
+ * TypeScript types for CLAUDE-SNEAKPEEK TUI components
  */
 
 import type { ReactNode } from 'react';

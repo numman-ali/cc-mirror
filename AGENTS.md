@@ -68,8 +68,8 @@ npm run dev          # Run CLI from TypeScript sources
 npm run tui          # Launch TUI wizard
 npm test             # Run all tests
 npm run typecheck    # TypeScript check without emit
-npm run bundle       # Build dist/cc-mirror.mjs
-npm run render:tui-svg  # Regenerate docs/cc-mirror-tree.svg
+npm run bundle       # Build dist/claude-sneakpeek.mjs
+npm run render:tui-svg  # Regenerate docs/claude-sneakpeek-tree.svg
 ```
 
 ## Coding Conventions
@@ -84,7 +84,7 @@ npm run render:tui-svg  # Regenerate docs/cc-mirror-tree.svg
 ### Variant Directory Structure
 
 ```
-~/.cc-mirror/<variant>/
+~/.claude-sneakpeek/<variant>/
 ├── config/
 │   ├── settings.json       # Env overrides (API keys, base URLs, model defaults)
 │   ├── .claude.json        # API-key approvals + onboarding/theme + MCP servers
@@ -102,11 +102,11 @@ npm run render:tui-svg  # Regenerate docs/cc-mirror-tree.svg
 
 Location: `<bin-dir>/<variant>` (macOS/Linux) or `<bin-dir>/<variant>.cmd` (Windows)
 
-Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
+Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.claude-sneakpeek/bin` on Windows.
 
 - Sets `CLAUDE_CONFIG_DIR` to variant config
 - Loads `settings.json` into env at runtime
-- Shows provider splash ASCII art when TTY and `CC_MIRROR_SPLASH != 0`
+- Shows provider splash ASCII art when TTY and `CLAUDE_SNEAKPEEK_SPLASH != 0`
 - Auto-update disable: `DISABLE_AUTOUPDATER=1` in settings.json env
 
 ### Provider Auth Modes
@@ -127,7 +127,7 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 
 ## Team Mode
 
-**Legacy notice:** Team mode is only supported in the published cc-mirror **1.6.3** release. Current development builds do not patch Claude Code; focus is provider enablement and stable updates.
+**Legacy notice:** Team mode is only supported in the published claude-sneakpeek **1.6.3** release. Current development builds do not patch Claude Code; focus is provider enablement and stable updates.
 
 Team mode patches `cli.js` to enable Task\* tools for multi-agent collaboration.
 
@@ -144,7 +144,7 @@ function sU() {
 ```
 
 - Backup stored at `cli.js.backup` before patching
-- Task storage: `~/.cc-mirror/<variant>/config/tasks/<team_name>/`
+- Task storage: `~/.claude-sneakpeek/<variant>/config/tasks/<team_name>/`
 
 ### Dynamic Team Names (v1.3.0+)
 
@@ -227,12 +227,12 @@ export const MINIMAX_BLOCKED_TOOLS = [
 
 ```bash
 # Variant config
-cat ~/.cc-mirror/<variant>/config/settings.json
-cat ~/.cc-mirror/<variant>/config/.claude.json
-cat ~/.cc-mirror/<variant>/variant.json
+cat ~/.claude-sneakpeek/<variant>/config/settings.json
+cat ~/.claude-sneakpeek/<variant>/config/.claude.json
+cat ~/.claude-sneakpeek/<variant>/variant.json
 
 # TweakCC config
-cat ~/.cc-mirror/<variant>/tweakcc/config.json
+cat ~/.claude-sneakpeek/<variant>/tweakcc/config.json
 
 # Wrapper script
 cat <bin-dir>/<variant>
@@ -242,18 +242,18 @@ cat <bin-dir>/<variant>
 
 ```bash
 # Check if cli.js is patched
-grep "function sU(){return" ~/.cc-mirror/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js
+grep "function sU(){return" ~/.claude-sneakpeek/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js
 # Should show: function sU(){return!0}  (enabled)
 # Not: function sU(){return!1}  (disabled)
 
 # List team tasks
-ls ~/.cc-mirror/<variant>/config/tasks/<team_name>/
+ls ~/.claude-sneakpeek/<variant>/config/tasks/<team_name>/
 ```
 
 ### Health Check
 
 ```bash
-npx cc-mirror doctor
+npx claude-sneakpeek doctor
 ```
 
 ### Reference Files
@@ -261,17 +261,17 @@ npx cc-mirror doctor
 - **Upstream CLI references**: `repos/anthropic-claude-code-*/cli.js` (multiple versions for comparison)
 - **System prompt sources**: `repos/claude-code-system-prompts/` (includes CHANGELOG.md)
 - **Research notes**: `notes/` (deep dives, version analysis, design decisions)
-- **Applied prompts**: `~/.cc-mirror/<variant>/tweakcc/system-prompts/`
-- **Debug logs**: `~/.cc-mirror/<variant>/config/debug/*.txt`
+- **Applied prompts**: `~/.claude-sneakpeek/<variant>/tweakcc/system-prompts/`
+- **Debug logs**: `~/.claude-sneakpeek/<variant>/config/debug/*.txt`
 
 ### CLI Feature Gates
 
 ```bash
 # Search for feature flags in cli.js
-rg "tengu_prompt_suggestion|promptSuggestionEnabled" ~/.cc-mirror/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js
+rg "tengu_prompt_suggestion|promptSuggestionEnabled" ~/.claude-sneakpeek/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js
 
 # Check cached gates
-cat ~/.cc-mirror/<variant>/config/.claude.json | jq '.statsig'
+cat ~/.claude-sneakpeek/<variant>/config/.claude.json | jq '.statsig'
 ```
 
 ## ZAI CLI (for Z.ai variants)
@@ -299,7 +299,7 @@ Requires `Z_AI_API_KEY` in environment.
 2. Verify `variant.json` exists
 3. Verify `.claude.json` has `hasCompletedOnboarding` + `theme`
 4. Run wrapper in TTY and confirm splash + no onboarding prompt
-5. Use `npx cc-mirror update test-zai` to validate update flow
+5. Use `npx claude-sneakpeek update test-zai` to validate update flow
 
 ## Testing
 

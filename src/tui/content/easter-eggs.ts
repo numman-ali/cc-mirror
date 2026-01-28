@@ -44,16 +44,16 @@ export const LATE_NIGHT_MESSAGE = "Late night coding? Respect. Here's your varia
  * Creator acknowledgment trigger
  */
 export const CREATOR_TRIGGER = 'numman';
-export const CREATOR_MESSAGE = 'Thanks for using CC-MIRROR!';
+export const CREATOR_MESSAGE = 'Thanks for using CLAUDE-SNEAKPEEK!';
 
 /**
  * Random fun facts shown occasionally
  */
 export const FUN_FACTS = [
-  'CC-MIRROR was built with Claude Code itself.',
+  'CLAUDE-SNEAKPEEK was built with Claude Code itself.',
   'The gold theme for Zai was inspired by sunrise.',
   'Each variant is completely isolated—they never talk to each other.',
-  "You can run 'cc-mirror doctor' anytime to check your variants.",
+  "You can run 'claude-sneakpeek doctor' anytime to check your variants.",
   'The haikus are original poetry, not generated.',
 ];
 

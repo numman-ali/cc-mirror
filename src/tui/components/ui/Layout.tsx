@@ -1,5 +1,5 @@
 /**
- * Layout components for CC-MIRROR TUI
+ * Layout components for CLAUDE-SNEAKPEEK TUI
  *
  * Uses ink's built-in Box with borderStyle for clean layouts.
  */

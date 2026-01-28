@@ -43,7 +43,7 @@ Mirror Claude is a **pure Claude Code variant** with advanced features enabled. 
 
 ```bash
 # Create a Mirror Claude variant
-npx cc-mirror create --provider mirror --name mclaude
+npx claude-sneakpeek create --provider mirror --name mclaude
 
 # Run it - authenticate via normal Claude flow
 mclaude
@@ -159,7 +159,7 @@ mclaude
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  ~/.cc-mirror/mclaude/                                  │
+│  ~/.claude-sneakpeek/mclaude/                                  │
 │  ├── npm/                    Claude Code installation   │
 │  ├── config/                                            │
 │  │   ├── settings.json       Minimal env (splash only)  │
@@ -173,18 +173,18 @@ mclaude
 └─────────────────────────────────────────────────────────┘
 ```
 
-Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
+Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.claude-sneakpeek/bin` on Windows.
 
-**Windows tip:** add `%USERPROFILE%\\.cc-mirror\\bin` to `PATH` (wrapper is `<variant>.cmd` with a sibling `<variant>.mjs` launcher).
+**Windows tip:** add `%USERPROFILE%\\.claude-sneakpeek\\bin` to `PATH` (wrapper is `<variant>.cmd` with a sibling `<variant>.mjs` launcher).
 
 ### What Mirror Sets
 
 ```json
 {
   "env": {
-    "CC_MIRROR_SPLASH": "1",
-    "CC_MIRROR_PROVIDER_LABEL": "Mirror Claude",
-    "CC_MIRROR_SPLASH_STYLE": "mirror",
+    "CLAUDE_SNEAKPEEK_SPLASH": "1",
+    "CLAUDE_SNEAKPEEK_PROVIDER_LABEL": "Mirror Claude",
+    "CLAUDE_SNEAKPEEK_SPLASH_STYLE": "mirror",
     "DISABLE_AUTOUPDATER": "1"
   }
 }
@@ -204,17 +204,17 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 
 ```bash
 # Mirror with shell env integration (for Zsh/Bash profile)
-npx cc-mirror create --provider mirror --name mclaude --shell-env
+npx claude-sneakpeek create --provider mirror --name mclaude --shell-env
 ```
 
 ### Run Multiple Mirrors
 
 ```bash
 # Work account
-npx cc-mirror create --provider mirror --name work-claude
+npx claude-sneakpeek create --provider mirror --name work-claude
 
 # Personal account
-npx cc-mirror create --provider mirror --name personal-claude
+npx claude-sneakpeek create --provider mirror --name personal-claude
 
 # Run each with different API keys
 ANTHROPIC_API_KEY="$WORK_KEY" work-claude
@@ -225,6 +225,6 @@ ANTHROPIC_API_KEY="$PERSONAL_KEY" personal-claude
 
 ## 🔙 Related
 
-- [Team Mode](team-mode.md) - Legacy team mode documentation (cc-mirror 1.6.3)
+- [Team Mode](team-mode.md) - Legacy team mode documentation (claude-sneakpeek 1.6.3)
 - [Brand Themes](brand-themes.md) - Theme customization
-- [Architecture Overview](../architecture/overview.md) - How cc-mirror works
+- [Architecture Overview](../architecture/overview.md) - How claude-sneakpeek works

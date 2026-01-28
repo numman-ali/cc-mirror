@@ -52,6 +52,8 @@ export interface BuildState {
   env?: ProviderEnv;
   resolvedApiKey?: string;
   meta?: VariantMeta;
+  /** Whether swarm mode was successfully enabled */
+  swarmModeEnabled?: boolean;
 }
 
 /**

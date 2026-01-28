@@ -23,7 +23,7 @@ const external = [
 // Build CLI
 await build({
   entryPoints: [path.join(root, 'src', 'cli', 'index.ts')],
-  outfile: path.join(distDir, 'cc-mirror.mjs'),
+  outfile: path.join(distDir, 'claude-sneakpeek.mjs'),
   bundle: true,
   platform: 'node',
   format: 'esm',
@@ -45,7 +45,7 @@ await build({
   external,
 });
 
-fs.chmodSync(path.join(distDir, 'cc-mirror.mjs'), 0o755);
+fs.chmodSync(path.join(distDir, 'claude-sneakpeek.mjs'), 0o755);
 
 // Copy bundled skills to dist
 const skillsSrcDir = path.join(root, 'src', 'skills');
@@ -55,4 +55,4 @@ if (fs.existsSync(skillsSrcDir)) {
   console.log('Copied skills to dist/skills');
 }
 
-console.log('Bundled to dist/cc-mirror.mjs and dist/tui.mjs');
+console.log('Bundled to dist/claude-sneakpeek.mjs and dist/tui.mjs');

@@ -26,7 +26,7 @@ test('printHelp outputs usage information', () => {
   const text = output[0];
 
   // Check main commands are documented
-  assert.ok(text.includes('cc-mirror'), 'Should include tool name');
+  assert.ok(text.includes('claude-sneakpeek'), 'Should include tool name');
   assert.ok(text.includes('create'), 'Should include create command');
   assert.ok(text.includes('quick'), 'Should include quick command');
   assert.ok(text.includes('list'), 'Should include list command');
@@ -82,7 +82,7 @@ test('printHelp documents CLI sections', () => {
   const text = output[0];
 
   // New format has clear sections
-  assert.ok(text.includes('WHAT IS CC-MIRROR') || text.includes('CC-MIRROR'), 'Should have intro');
+  assert.ok(text.includes('WHAT IS CLAUDE-SNEAKPEEK') || text.includes('CLAUDE-SNEAKPEEK'), 'Should have intro');
   assert.ok(text.includes('COMMANDS') || text.includes('create'), 'Should have commands section');
   assert.ok(text.includes('OPTIONS') || text.includes('--'), 'Should have options section');
 });

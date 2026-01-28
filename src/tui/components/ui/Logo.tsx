@@ -1,5 +1,5 @@
 /**
- * ASCII Art Logo for CC-MIRROR
+ * ASCII Art Logo for CLAUDE-SNEAKPEEK
  *
  * Professional, memorable ASCII art with deep blue and gold theme.
  */
@@ -9,7 +9,7 @@ import { Box, Text } from 'ink';
 import { colors } from './theme.js';
 
 /**
- * Main CC-MIRROR ASCII Art Banner
+ * Main CLAUDE-SNEAKPEEK ASCII Art Banner
  * Clean, readable design that fits within 68 characters
  */
 export const LogoBanner: React.FC = () => (

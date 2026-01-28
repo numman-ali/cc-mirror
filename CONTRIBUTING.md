@@ -1,4 +1,4 @@
-# Contributing to cc-mirror
+# Contributing to claude-sneakpeek
 
 Thanks for your interest in contributing!
 
@@ -6,8 +6,8 @@ Thanks for your interest in contributing!
 
 ```bash
 # Clone the repo
-git clone https://github.com/numman-ali/cc-mirror.git
-cd cc-mirror
+git clone https://github.com/numman-ali/claude-sneakpeek.git
+cd claude-sneakpeek
 
 # Install dependencies
 npm install

@@ -2,7 +2,7 @@
  * Tasks command - Main router for task operations
  *
  * Usage:
- *   cc-mirror tasks [operation] [id] [options]
+ *   claude-sneakpeek tasks [operation] [id] [options]
  *
  * Operations:
  *   list (default)  List tasks
@@ -43,10 +43,10 @@ function parseIds(value: string | undefined): string[] | undefined {
  */
 function showTasksHelp(): void {
   console.log(`
-npx cc-mirror tasks - Manage legacy team tasks (cc-mirror 1.6.3 only)
+npx claude-sneakpeek tasks - Manage legacy team tasks (claude-sneakpeek 1.6.3 only)
 
 USAGE:
-  npx cc-mirror tasks [operation] [id] [options]
+  npx claude-sneakpeek tasks [operation] [id] [options]
 
 OPERATIONS:
   list              List tasks (default if no operation specified)
@@ -100,13 +100,13 @@ CLEAN OPTIONS:
   --force           Skip confirmation
 
 EXAMPLES:
-  npx cc-mirror tasks                           # List open tasks
-  npx cc-mirror tasks --status all              # List all tasks
-  npx cc-mirror tasks show 5                    # Show task #5
-  npx cc-mirror tasks create --subject "Fix bug" --description "..."
-  npx cc-mirror tasks update 5 --status resolved
-  npx cc-mirror tasks delete 5 --force
-  npx cc-mirror tasks clean --resolved --dry-run
+  npx claude-sneakpeek tasks                           # List open tasks
+  npx claude-sneakpeek tasks --status all              # List all tasks
+  npx claude-sneakpeek tasks show 5                    # Show task #5
+  npx claude-sneakpeek tasks create --subject "Fix bug" --description "..."
+  npx claude-sneakpeek tasks update 5 --status resolved
+  npx claude-sneakpeek tasks delete 5 --force
+  npx claude-sneakpeek tasks clean --resolved --dry-run
 `);
 }
 
@@ -117,7 +117,9 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
   const rootDir = (opts.root as string) || core.DEFAULT_ROOT;
   const positional = opts._ || [];
   if (!core.TEAM_MODE_SUPPORTED) {
-    console.log('Note: Team mode is disabled in this release. Tasks are legacy and only supported in cc-mirror 1.6.3.');
+    console.log(
+      'Note: Team mode is disabled in this release. Tasks are legacy and only supported in claude-sneakpeek 1.6.3.'
+    );
   }
 
   // Check for help
@@ -141,7 +143,7 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
   switch (operation) {
     case 'show': {
       if (!taskId) {
-        console.error('Error: Task ID required. Usage: npx cc-mirror tasks show <id>');
+        console.error('Error: Task ID required. Usage: npx claude-sneakpeek tasks show <id>');
         process.exitCode = 1;
         return;
       }
@@ -172,7 +174,7 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
 
     case 'update': {
       if (!taskId) {
-        console.error('Error: Task ID required. Usage: npx cc-mirror tasks update <id>');
+        console.error('Error: Task ID required. Usage: npx claude-sneakpeek tasks update <id>');
         process.exitCode = 1;
         return;
       }
@@ -198,7 +200,7 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
 
     case 'delete': {
       if (!taskId) {
-        console.error('Error: Task ID required. Usage: npx cc-mirror tasks delete <id>');
+        console.error('Error: Task ID required. Usage: npx claude-sneakpeek tasks delete <id>');
         process.exitCode = 1;
         return;
       }
@@ -270,7 +272,7 @@ export async function runTasksCommand({ opts }: TasksCommandOptions): Promise<vo
 
     default:
       console.error(`Unknown operation: ${operation}`);
-      console.error('Run "npx cc-mirror tasks --help" for usage.');
+      console.error('Run "npx claude-sneakpeek tasks --help" for usage.');
       process.exitCode = 1;
   }
 }

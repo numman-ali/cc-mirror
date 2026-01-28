@@ -1,5 +1,5 @@
 /**
- * Typography components for CC-MIRROR TUI
+ * Typography components for CLAUDE-SNEAKPEEK TUI
  */
 
 import React from 'react';

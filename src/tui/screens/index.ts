@@ -1,5 +1,5 @@
 /**
- * CC-MIRROR Screen Components
+ * CLAUDE-SNEAKPEEK Screen Components
  *
  * Clean, professional screens using the UI component library.
  */

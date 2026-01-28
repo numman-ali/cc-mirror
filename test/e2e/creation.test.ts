@@ -120,10 +120,10 @@ test('E2E: Create variants for all providers', async (t) => {
         assert.ok(wrapperContent.includes('\x1b[0m'), `${provider.name} wrapper should contain color reset code`);
       }
 
-      // Verify CC_MIRROR_SPLASH_STYLE env var is read
+      // Verify CLAUDE_SNEAKPEEK_SPLASH_STYLE env var is read
       assert.ok(
-        wrapperContent.includes('CC_MIRROR_SPLASH_STYLE'),
-        `${provider.name} wrapper should reference CC_MIRROR_SPLASH_STYLE`
+        wrapperContent.includes('CLAUDE_SNEAKPEEK_SPLASH_STYLE'),
+        `${provider.name} wrapper should reference CLAUDE_SNEAKPEEK_SPLASH_STYLE`
       );
     }
   });
