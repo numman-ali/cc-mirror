@@ -34,9 +34,9 @@ COMMANDS
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
-  --provider <name>            Provider: mirror | zai | minimax | openrouter | ccrouter
+  --provider <name>            Provider: mirror | zai | minimax | openrouter | ccrouter | bedrock
   --api-key <key>              Provider API key
-  --brand <preset>             Theme: auto | none | mirror | zai | minimax
+  --brand <preset>             Theme: auto | none | mirror | zai | minimax | bedrock
   --tui / --no-tui             Force TUI on/off
 
 OPTIONS (advanced)
@@ -57,6 +57,7 @@ PROVIDERS
   minimax       MiniMax-M2.1 via MiniMax Cloud
   openrouter    100+ models via OpenRouter
   ccrouter      Local LLMs via Claude Code Router
+  bedrock       Claude via AWS Bedrock (requires model flags)
 
 EXAMPLES
   npx cc-mirror quick --provider mirror --name mclaude

@@ -117,6 +117,7 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 | openrouter           | Auth Token | `ANTHROPIC_AUTH_TOKEN`      |
 | ccrouter             | Optional   | placeholder token           |
 | mirror               | None       | user authenticates normally |
+| bedrock              | None       | AWS SDK credential chain    |
 
 ### Model Mapping (env vars)
 
@@ -200,7 +201,53 @@ export const MINIMAX_BLOCKED_TOOLS = [
 ];
 ```
 
+**bedrock blocked tools:** None (pure Claude experience)
+
 **Team mode merging**: When enabled, `configureTeamToolset` merges provider's blocked tools with `['TodoWrite']`.
+
+## Amazon Bedrock Provider
+
+Bedrock uses Claude Code's native AWS SDK integration. Key configuration:
+
+### Environment Variables
+
+```bash
+# Required - enables Bedrock mode
+CLAUDE_CODE_USE_BEDROCK=1
+
+# Default region (overridable)
+AWS_REGION=us-east-1
+
+# Model IDs - user must provide (requiresModelMapping: true)
+ANTHROPIC_DEFAULT_SONNET_MODEL=us.anthropic.claude-sonnet-4-5-20250929-v1:0
+ANTHROPIC_DEFAULT_OPUS_MODEL=us.anthropic.claude-opus-4-5-20251101-v1:0
+ANTHROPIC_DEFAULT_HAIKU_MODEL=us.anthropic.claude-haiku-4-5-20251001-v1:0
+```
+
+### Authentication (handled by AWS SDK)
+
+1. `AWS_BEARER_TOKEN_BEDROCK` - Bearer token (highest priority)
+2. `AWS_ACCESS_KEY_ID` + `AWS_SECRET_ACCESS_KEY` - Explicit credentials
+3. `AWS_SESSION_TOKEN` - For temporary credentials
+4. `AWS_PROFILE` - AWS profile name
+5. Default credential chain (`~/.aws/credentials`, IAM roles)
+
+### Model ID Formats
+
+| Format | Example | Use Case |
+| ------ | ------- | -------- |
+| Regional (`us.`) | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` | Routes to specific region |
+| Global (`global.`) | `global.anthropic.claude-sonnet-4-5-20250929-v1:0` | Cross-region routing |
+| Inference Profile ARN | `arn:aws:bedrock:us-east-1:123456789012:inference-profile/my-profile` | Custom profiles |
+
+### Create Example
+
+```bash
+npx cc-mirror create --provider bedrock --name br \
+  --model-sonnet "us.anthropic.claude-sonnet-4-5-20250929-v1:0" \
+  --model-opus "us.anthropic.claude-opus-4-5-20251101-v1:0" \
+  --model-haiku "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+```
 
 ## Prompt Pack
 

@@ -116,6 +116,28 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     requiresModelMapping: false, // Models configured in ~/.claude-code-router/config.json
     credentialOptional: true, // No API key needed - CCRouter handles auth
   },
+  bedrock: {
+    key: 'bedrock',
+    label: 'Amazon Bedrock',
+    description: 'Claude models via AWS Bedrock',
+    baseUrl: '', // Empty - uses Bedrock SDK internally (NOT ANTHROPIC_BASE_URL)
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      // CRITICAL: This enables Bedrock mode in Claude Code
+      CLAUDE_CODE_USE_BEDROCK: '1',
+      // Default region (user can override via AWS_REGION env or extraEnv)
+      AWS_REGION: 'us-east-1',
+      // Cosmetic settings
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'Amazon Bedrock',
+      CC_MIRROR_SPLASH_STYLE: 'bedrock',
+    },
+    apiKeyLabel: '', // Empty - skip credential prompt (AWS auth handled externally)
+    authMode: 'none', // AWS credentials via SDK credential chain or AWS_BEARER_TOKEN_BEDROCK
+    credentialOptional: true,
+    noPromptPack: true, // Pure Claude experience (no tool routing overrides)
+    requiresModelMapping: true, // User must provide Bedrock model IDs or inference profile ARNs
+  },
   custom: {
     key: 'custom',
     label: 'Custom',
@@ -180,8 +202,10 @@ export const buildEnv = ({ providerKey, baseUrl, apiKey, extraEnv, modelOverride
   const env: ProviderEnv = { ...provider.env };
   const authMode = provider.authMode ?? 'apiKey';
 
-  // For 'none' authMode, only apply cosmetic env vars - no auth or base URL
+  // For 'none' authMode, apply model overrides and extraEnv but no auth or base URL
   if (authMode === 'none') {
+    // Apply model overrides (for bedrock, openrouter-style model mapping)
+    applyModelOverrides(env, modelOverrides);
     // Still allow extraEnv for user customization
     if (Array.isArray(extraEnv)) {
       for (const entry of extraEnv) {

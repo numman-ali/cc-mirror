@@ -140,12 +140,13 @@ npx cc-mirror quick --provider mirror --name mclaude
 
 Want to use different models? CC-MIRROR supports multiple providers:
 
-| Provider       | Models                 | Auth       | Best For                        |
-| -------------- | ---------------------- | ---------- | ------------------------------- |
-| **Z.ai**       | GLM-4.7, GLM-4.5-Air   | API Key    | Heavy coding with GLM reasoning |
-| **MiniMax**    | MiniMax-M2.1           | API Key    | Unified model experience        |
-| **OpenRouter** | 100+ models            | Auth Token | Model flexibility, pay-per-use  |
-| **CCRouter**   | Ollama, DeepSeek, etc. | Optional   | Local-first development         |
+| Provider       | Models                 | Auth         | Best For                        |
+| -------------- | ---------------------- | ------------ | ------------------------------- |
+| **Z.ai**       | GLM-4.7, GLM-4.5-Air   | API Key      | Heavy coding with GLM reasoning |
+| **MiniMax**    | MiniMax-M2.1           | API Key      | Unified model experience        |
+| **OpenRouter** | 100+ models            | Auth Token   | Model flexibility, pay-per-use  |
+| **CCRouter**   | Ollama, DeepSeek, etc. | Optional     | Local-first development         |
+| **Bedrock**    | Claude via AWS         | AWS SDK      | Enterprise AWS integration      |
 
 ```bash
 # Z.ai (GLM Coding Plan)
@@ -160,6 +161,40 @@ npx cc-mirror quick --provider openrouter --api-key "$OPENROUTER_API_KEY" \
 
 # Claude Code Router (local LLMs)
 npx cc-mirror quick --provider ccrouter
+
+# Amazon Bedrock (Claude via AWS)
+npx cc-mirror quick --provider bedrock --name br \
+  --model-sonnet "us.anthropic.claude-sonnet-4-5-20250929-v1:0" \
+  --model-opus "us.anthropic.claude-opus-4-5-20251101-v1:0" \
+  --model-haiku "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+```
+
+### Amazon Bedrock
+
+Bedrock uses native AWS SDK authentication. No API key is needed — configure AWS credentials via:
+- Environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`)
+- AWS profile (`AWS_PROFILE`)
+- IAM role (EC2/ECS/Lambda)
+- Bearer token (`AWS_BEARER_TOKEN_BEDROCK`)
+
+Model IDs use Bedrock format. Use `us.` prefix for regional or `global.` for cross-region routing:
+
+```bash
+# Regional (routes to specific region)
+npx cc-mirror quick --provider bedrock --name br-regional \
+  --model-sonnet "us.anthropic.claude-sonnet-4-5-20250929-v1:0" \
+  --model-opus "us.anthropic.claude-opus-4-5-20251101-v1:0" \
+  --model-haiku "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+
+# Global (cross-region routing for higher availability)
+npx cc-mirror quick --provider bedrock --name br-global \
+  --model-sonnet "global.anthropic.claude-sonnet-4-5-20250929-v1:0" \
+  --model-opus "global.anthropic.claude-opus-4-5-20251101-v1:0" \
+  --model-haiku "global.anthropic.claude-haiku-4-5-20251001-v1:0"
+
+# Custom inference profile ARN
+npx cc-mirror quick --provider bedrock --name br-profile \
+  --model-sonnet "arn:aws:bedrock:us-east-1:123456789012:inference-profile/my-profile"
 ```
 
 ---
@@ -298,14 +333,14 @@ minimax                           # Run MiniMax variant
 ## CLI Options
 
 ```
---provider <name>        mirror | zai | minimax | openrouter | ccrouter | custom
+--provider <name>        mirror | zai | minimax | openrouter | ccrouter | bedrock | custom
 --name <name>            Variant name (becomes the CLI command)
 --api-key <key>          Provider API key
 --base-url <url>         Custom API endpoint
 --model-sonnet <name>    Map to sonnet model
 --model-opus <name>      Map to opus model
 --model-haiku <name>     Map to haiku model
---brand <preset>         Theme: auto | zai | minimax | openrouter | ccrouter | mirror
+--brand <preset>         Theme: auto | zai | minimax | openrouter | ccrouter | mirror | bedrock
 --no-tweak               Skip tweakcc theme
 --no-prompt-pack         Skip provider prompt pack
 --verbose               Show full tweakcc output during update
@@ -324,6 +359,7 @@ Each provider includes a custom color theme via [tweakcc](https://github.com/Pie
 | **minimax**    | Coral/red/orange spectrum        |
 | **openrouter** | Teal/cyan gradient               |
 | **ccrouter**   | Sky blue accents                 |
+| **bedrock**    | AWS orange/amber with navy       |
 
 ---
 

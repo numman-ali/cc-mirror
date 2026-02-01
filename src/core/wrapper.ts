@@ -34,6 +34,11 @@ const C = {
   mirSecondary: '\x1b[38;5;250m', // Platinum
   mirAccent: '\x1b[38;5;45m', // Electric cyan
   mirDim: '\x1b[38;5;243m', // Muted silver
+  // Bedrock: AWS Orange gradient
+  brPrimary: '\x1b[38;5;208m', // AWS Orange
+  brSecondary: '\x1b[38;5;214m', // Light orange
+  brAccent: '\x1b[38;5;172m', // Dark amber
+  brDim: '\x1b[38;5;130m', // Muted brown-orange
   // Default: White/Gray
   defPrimary: '\x1b[38;5;255m', // White
   defDim: '\x1b[38;5;245m', // Gray
@@ -111,6 +116,19 @@ const SPLASH_ART: SplashArt = {
     `${C.mirSecondary}      Claude ${C.mirDim}━${C.mirSecondary} Pure Reflection${C.reset}`,
     '',
   ],
+  bedrock: [
+    '',
+    `${C.brPrimary}    ██████╗ ███████╗██████╗ ██████╗  ██████╗  ██████╗██╗  ██╗${C.reset}`,
+    `${C.brPrimary}    ██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝${C.reset}`,
+    `${C.brSecondary}    ██████╔╝█████╗  ██║  ██║██████╔╝██║   ██║██║     █████╔╝${C.reset}`,
+    `${C.brSecondary}    ██╔══██╗██╔══╝  ██║  ██║██╔══██╗██║   ██║██║     ██╔═██╗${C.reset}`,
+    `${C.brAccent}    ██████╔╝███████╗██████╔╝██║  ██║╚██████╔╝╚██████╗██║  ██╗${C.reset}`,
+    `${C.brAccent}    ╚═════╝ ╚══════╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝${C.reset}`,
+    '',
+    `${C.brDim}    ━━━━━━━━━━━━━━${C.brPrimary}◆${C.brDim}━━━━━━━━━━━━━━${C.reset}`,
+    `${C.brSecondary}      Amazon Bedrock ${C.brDim}━${C.brSecondary} Claude${C.reset}`,
+    '',
+  ],
   default: [
     '',
     `${C.defPrimary}    ██████╗ ██████╗   ${C.defDim}━━  M I R R O R${C.reset}`,
@@ -123,7 +141,7 @@ const SPLASH_ART: SplashArt = {
   ],
 };
 
-const KNOWN_SPLASH_STYLES = ['zai', 'minimax', 'openrouter', 'ccrouter', 'mirror'];
+const KNOWN_SPLASH_STYLES = ['zai', 'minimax', 'openrouter', 'ccrouter', 'mirror', 'bedrock'];
 
 const buildWindowsWrapperScript = (opts: {
   configDir: string;
@@ -341,6 +359,12 @@ export const writeWrapper = (
     "        cat <<'CCMMIR'",
     ...SPLASH_ART.mirror,
     'CCMMIR',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      bedrock)',
+    "        cat <<'CCMBED'",
+    ...SPLASH_ART.bedrock,
+    'CCMBED',
     '        __cc_show_label="0"',
     '        ;;',
     '      *)',

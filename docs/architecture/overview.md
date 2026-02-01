@@ -68,7 +68,7 @@ src/
 │   └── prompt-pack/       # System prompt overlays
 │
 ├── providers/              # Provider templates
-│   └── index.ts           # zai, minimax, openrouter, ccrouter, mirror
+│   └── index.ts           # zai, minimax, openrouter, ccrouter, mirror, bedrock
 │
 └── brands/                 # Theme presets
     ├── index.ts           # Brand registry
@@ -76,7 +76,8 @@ src/
     ├── minimax.ts         # Coral theme
     ├── openrouter.ts      # Teal theme
     ├── ccrouter.ts        # Sky theme
-    └── mirror.ts          # Silver/chrome theme
+    ├── mirror.ts          # Silver/chrome theme
+    └── bedrock.ts         # AWS orange/amber theme
 ```
 
 ---
@@ -217,20 +218,22 @@ interface ProviderTemplate {
 ### Provider Comparison
 
 ```
-┌───────────────┬────────────────────────────────────────────────────────────┐
-│               │                    Provider Types                          │
-│               ├────────────┬────────────┬────────────┬────────────────────┤
-│   Feature     │ Proxy      │ Router     │ Direct     │ Description        │
-│               │ (zai,      │ (ccrouter) │ (mirror)   │                    │
-│               │ minimax,   │            │            │                    │
-│               │ openrouter)│            │            │                    │
-├───────────────┼────────────┼────────────┼────────────┼────────────────────┤
-│ BASE_URL      │ ✓ Set      │ ✓ Set      │ ✗ Not set  │ API endpoint       │
-│ API_KEY       │ ✓ Set      │ Optional   │ ✗ Not set  │ Auth credential    │
-│ Model mapping │ Auto/Req   │ Handled    │ ✗ Not set  │ Sonnet/Opus/Haiku  │
-│ Prompt pack   │ Optional   │ ✗          │ ✗          │ System overlays    │
-│ Team mode     │ Optional   │ Optional   │ ✓ Default  │ Task tools         │
-└───────────────┴────────────┴────────────┴────────────┴────────────────────┘
+┌───────────────┬──────────────────────────────────────────────────────────────────────┐
+│               │                         Provider Types                                │
+│               ├────────────┬────────────┬────────────┬────────────┬──────────────────┤
+│   Feature     │ Proxy      │ Router     │ Direct     │ Bedrock    │ Description      │
+│               │ (zai,      │ (ccrouter) │ (mirror)   │            │                  │
+│               │ minimax,   │            │            │            │                  │
+│               │ openrouter)│            │            │            │                  │
+├───────────────┼────────────┼────────────┼────────────┼────────────┼──────────────────┤
+│ BASE_URL      │ ✓ Set      │ ✓ Set      │ ✗ Not set  │ ✗ Not set  │ API endpoint     │
+│ API_KEY       │ ✓ Set      │ Optional   │ ✗ Not set  │ ✗ Not set  │ Auth credential  │
+│ Model mapping │ Auto/Req   │ Handled    │ ✗ Not set  │ ✓ Required │ Sonnet/Opus/Haiku│
+│ Prompt pack   │ Optional   │ ✗          │ ✗          │ ✗          │ System overlays  │
+│ Team mode     │ Optional   │ Optional   │ ✓ Default  │ Optional   │ Task tools       │
+│ Special env   │ ✗          │ ✗          │ ✗          │ AWS SDK    │ CLAUDE_CODE_USE_ │
+│               │            │            │            │            │ BEDROCK=1        │
+└───────────────┴────────────┴────────────┴────────────┴────────────┴──────────────────┘
 ```
 
 ---

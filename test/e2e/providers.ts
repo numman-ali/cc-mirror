@@ -35,4 +35,12 @@ export const PROVIDERS = [
     expectedSplashStyle: 'ccrouter',
     colorCode: '\\x1b[38;5;39m', // Sky blue
   },
+  {
+    key: 'bedrock',
+    name: 'Amazon Bedrock',
+    apiKey: '', // No API key (AWS credentials via SDK)
+    expectedThemeId: 'bedrock-aws',
+    expectedSplashStyle: 'bedrock',
+    colorCode: '\\x1b[38;5;208m', // AWS Orange
+  },
 ];

@@ -4,6 +4,7 @@ import { buildMinimaxTweakccConfig } from './minimax.js';
 import { buildOpenRouterTweakccConfig } from './openrouter.js';
 import { buildCCRouterTweakccConfig } from './ccrouter.js';
 import { buildMirrorTweakccConfig } from './mirror.js';
+import { buildBedrockTweakccConfig } from './bedrock.js';
 
 export interface BrandPreset {
   key: string;
@@ -42,6 +43,12 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
     label: 'Mirror Claude',
     description: 'Reflective silver/chrome theme for pure Claude Code experience.',
     buildTweakccConfig: buildMirrorTweakccConfig,
+  },
+  bedrock: {
+    key: 'bedrock',
+    label: 'Bedrock AWS',
+    description: 'AWS-themed with orange/amber accents for Amazon Bedrock.',
+    buildTweakccConfig: buildBedrockTweakccConfig,
   },
 };
 
