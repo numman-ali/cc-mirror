@@ -37,7 +37,7 @@ export function buildUpdateSummary(meta: VariantMeta, notes: string[] | undefine
     return 'on';
   };
 
-  const installLine = `Install: native ${meta.nativeVersion || 'stable'} (${meta.claudeOrig.replace('native:', 'v')})`;
+  const installLine = `Install: native ${meta.nativeVersion || 'latest'} (${meta.claudeOrig.replace('native:', 'v')})`;
 
   return [
     `Provider: ${meta.provider}`,

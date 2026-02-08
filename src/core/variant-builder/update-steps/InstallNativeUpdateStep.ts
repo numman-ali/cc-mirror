@@ -2,7 +2,7 @@
  * InstallNativeUpdateStep - Installs Claude Code via native binary download
  */
 
-import { DEFAULT_CLAUDE_NATIVE_CACHE_DIR } from '../../constants.js';
+import { DEFAULT_CLAUDE_NATIVE_CACHE_DIR, DEFAULT_CLAUDE_VERSION } from '../../constants.js';
 import { ensureDir } from '../../fs.js';
 import { installNativeClaudeAsync } from '../../install.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
@@ -33,6 +33,12 @@ export class InstallNativeUpdateStep implements UpdateStep {
     meta.binaryPath = install.binaryPath;
     meta.nativeDir = paths.nativeDir;
     meta.nativeVersion = prefs.resolvedClaudeVersion;
+    const explicit = typeof ctx.opts.claudeVersion === 'string' && ctx.opts.claudeVersion.trim().length > 0;
+    if (explicit) {
+      meta.nativeVersionSource = meta.nativeVersion === DEFAULT_CLAUDE_VERSION ? 'default' : 'pinned';
+    } else {
+      meta.nativeVersionSource = meta.nativeVersionSource ?? 'default';
+    }
     meta.nativePlatform = install.platform;
     meta.claudeOrig = `native:${install.resolvedVersion}`;
   }

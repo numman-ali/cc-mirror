@@ -19,6 +19,12 @@ export interface VariantMeta {
   binDir?: string;
   nativeDir?: string;
   nativeVersion?: string;
+  /**
+   * Whether nativeVersion was user-pinned or should follow the project default.
+   * - pinned: keep using nativeVersion unless overridden by --claude-version
+   * - default: ignore nativeVersion on update and follow DEFAULT_CLAUDE_VERSION
+   */
+  nativeVersionSource?: 'default' | 'pinned';
   nativePlatform?: string;
 }
 

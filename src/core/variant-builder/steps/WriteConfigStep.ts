@@ -38,6 +38,12 @@ export class WriteConfigStep implements BuildStep {
       env.TWEAKCC_CONFIG_DIR = paths.tweakDir;
     }
 
+    // Claude Code native installs assume a global installer layout (~/.local/bin/claude).
+    // CC-MIRROR intentionally installs per-variant, so we suppress upstream install warnings.
+    if (!Object.hasOwn(env, 'DISABLE_INSTALLATION_CHECKS')) {
+      env.DISABLE_INSTALLATION_CHECKS = '1';
+    }
+
     const authMode = provider.authMode ?? 'apiKey';
     if (authMode === 'apiKey' && !env.ANTHROPIC_API_KEY) {
       env.ANTHROPIC_API_KEY = '<API_KEY>';

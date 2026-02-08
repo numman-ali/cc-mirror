@@ -60,12 +60,13 @@ export class ConfigUpdateStep implements UpdateStep {
       TWEAKCC_CONFIG_DIR: meta.tweakDir,
       DISABLE_AUTOUPDATER: '1',
       DISABLE_AUTO_MIGRATE_TO_NATIVE: '1',
+      DISABLE_INSTALLATION_CHECKS: '1',
       CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION: '1',
     });
 
     if (envDefaultsUpdated) {
       state.notes.push(
-        'Disabled Claude Code auto-updater and auto-migration (DISABLE_AUTOUPDATER=1, DISABLE_AUTO_MIGRATE_TO_NATIVE=1).'
+        'Disabled Claude Code auto-updater/migration/install checks (DISABLE_AUTOUPDATER=1, DISABLE_AUTO_MIGRATE_TO_NATIVE=1, DISABLE_INSTALLATION_CHECKS=1).'
       );
     }
     if (onboarding.themeChanged) {

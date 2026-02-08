@@ -214,7 +214,7 @@ export const App: React.FC<AppProps> = ({
   const [modelHaiku, setModelHaiku] = useState('');
   const [rootDir, _setRootDir] = useState(initialRootDir || core.DEFAULT_ROOT);
   const [binDir, _setBinDir] = useState(initialBinDir || core.DEFAULT_BIN_DIR);
-  const [claudeVersion, setClaudeVersion] = useState(core.DEFAULT_CLAUDE_VERSION || 'stable');
+  const [claudeVersion, setClaudeVersion] = useState(core.DEFAULT_CLAUDE_VERSION || 'latest');
   const [usePromptPack, setUsePromptPack] = useState(true);
   // promptPackMode is deprecated - always use 'minimal'
   const promptPackMode = 'minimal' as const;
@@ -489,7 +489,7 @@ export const App: React.FC<AppProps> = ({
     setModelOpus('');
     setModelHaiku('');
     setApiKeyDetectedFrom(null);
-    setClaudeVersion(core.DEFAULT_CLAUDE_VERSION || 'stable');
+    setClaudeVersion(core.DEFAULT_CLAUDE_VERSION || 'latest');
     setExtraEnv([]);
     setUsePromptPack(true);
     setInstallSkill(true);

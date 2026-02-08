@@ -14,7 +14,7 @@ export const printHelp = () => {
   One command. Instant power-up.
 
 FOCUS
-  CC-MIRROR focuses on provider enablement and stable workflows.
+  CC-MIRROR focuses on provider enablement and maintainable workflows.
 
 QUICK START
   npx cc-mirror quick --provider mirror    # Fastest path to Claude
@@ -26,7 +26,7 @@ COMMANDS
   quick [options]              Fast setup: provider → ready in 30s
   create [options]             Full configuration wizard
   list                         List all variants
-  update [name]                Update Claude Code (default: stable)
+  update [name]                Update Claude Code (default: latest)
   apply <name>                 Re-apply tweakcc patches (no reinstall)
   remove <name>                Remove a variant
   doctor                       Health check all variants

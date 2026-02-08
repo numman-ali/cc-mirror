@@ -42,6 +42,7 @@ test('core create/update/remove/doctor flows', async () => {
   assert.equal(configJson.env.ANTHROPIC_API_KEY, '<API_KEY>');
   assert.equal(configJson.env.DISABLE_AUTOUPDATER, '1');
   assert.equal(configJson.env.DISABLE_AUTO_MIGRATE_TO_NATIVE, '1');
+  assert.equal(configJson.env.DISABLE_INSTALLATION_CHECKS, '1');
   assert.equal(configJson.env.CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION, '1');
 
   const metaBefore = JSON.parse(readFile(variantMetaPath)) as { updatedAt?: string };

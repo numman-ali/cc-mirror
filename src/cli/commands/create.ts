@@ -73,7 +73,7 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
   const brand = (opts.brand as string) || 'auto';
   const rootDir = (opts.root as string) || core.DEFAULT_ROOT;
   const binDir = (opts['bin-dir'] as string) || core.DEFAULT_BIN_DIR;
-  const claudeVersion = (opts['claude-version'] as string) || core.DEFAULT_CLAUDE_VERSION || 'stable';
+  const claudeVersion = (opts['claude-version'] as string) || core.DEFAULT_CLAUDE_VERSION || 'latest';
   const extraEnv = buildExtraEnv(opts);
   const requiresCredential = !provider.credentialOptional;
   // Don't prompt for API key if credential is optional (mirror, ccrouter)

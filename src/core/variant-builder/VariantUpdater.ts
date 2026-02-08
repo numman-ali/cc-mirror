@@ -30,6 +30,24 @@ const normalizeClaudeVersion = (value?: string) => {
   return trimmed.length > 0 ? trimmed : DEFAULT_CLAUDE_VERSION;
 };
 
+const resolveClaudeVersionForUpdate = (
+  meta: { nativeVersion?: string; nativeVersionSource?: string },
+  opts: UpdateVariantOptions
+) => {
+  // Explicit flag always wins.
+  if (typeof opts.claudeVersion === 'string' && opts.claudeVersion.trim().length > 0) {
+    return normalizeClaudeVersion(opts.claudeVersion);
+  }
+
+  // If the variant was explicitly pinned, keep using its stored version/channel.
+  if (meta.nativeVersionSource === 'pinned') {
+    return normalizeClaudeVersion(meta.nativeVersion);
+  }
+
+  // Missing/unknown source means "follow project defaults" (migrates old variants automatically).
+  return DEFAULT_CLAUDE_VERSION;
+};
+
 const shouldEnablePromptPack = (providerKey: string) => {
   // Check if provider has noPromptPack set (e.g., mirror provider)
   const provider = getProvider(providerKey);
@@ -75,9 +93,7 @@ export class VariantUpdater {
     const meta = loadVariantMeta(variantDir);
     if (!meta) throw new Error(`Variant not found: ${name}`);
 
-    const resolvedClaudeVersion = normalizeClaudeVersion(
-      opts.claudeVersion ?? meta.nativeVersion ?? DEFAULT_CLAUDE_VERSION
-    );
+    const resolvedClaudeVersion = resolveClaudeVersionForUpdate(meta, opts);
     const promptPackPreference = opts.promptPack ?? meta.promptPack ?? shouldEnablePromptPack(meta.provider);
     const promptPackEnabled = !opts.noTweak && promptPackPreference;
     const skillInstallEnabled = opts.skillInstall ?? meta.skillInstall ?? shouldInstallSkills(meta.provider);

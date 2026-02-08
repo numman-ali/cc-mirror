@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* global console */
+
 /**
  * Preview all provider splash screens
  * Run: node scripts/preview-splash.mjs

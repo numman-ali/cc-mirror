@@ -24,7 +24,7 @@ export const makeCore = () => {
   const core = {
     DEFAULT_ROOT: '/tmp/cc-mirror-test',
     DEFAULT_BIN_DIR: '/tmp/cc-mirror-bin',
-    DEFAULT_CLAUDE_VERSION: 'stable',
+    DEFAULT_CLAUDE_VERSION: 'latest',
     DEFAULT_CLAUDE_NATIVE_CACHE_DIR: '/tmp/cc-mirror-test/.cache/claude-native',
     listVariants: () => [
       {
@@ -39,7 +39,8 @@ export const makeCore = () => {
           tweakDir: '/tmp/alpha/tweakcc',
           wrapperPath: '/tmp/bin/alpha',
           nativeDir: '/tmp/alpha/native',
-          nativeVersion: 'stable',
+          nativeVersion: 'latest',
+          nativeVersionSource: 'default' as const,
           nativePlatform: 'darwin-arm64',
         },
       },
@@ -55,7 +56,8 @@ export const makeCore = () => {
           tweakDir: '/tmp/beta/tweakcc',
           wrapperPath: '/tmp/bin/beta',
           nativeDir: '/tmp/beta/native',
-          nativeVersion: 'stable',
+          nativeVersion: 'latest',
+          nativeVersionSource: 'default' as const,
           nativePlatform: 'darwin-arm64',
         },
       },

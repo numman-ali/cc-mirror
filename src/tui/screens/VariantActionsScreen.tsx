@@ -63,7 +63,7 @@ export const VariantActionsScreen: React.FC<VariantActionsScreenProps> = ({
   };
 
   const subtitle = meta.provider ? `Provider: ${meta.provider}` : undefined;
-  const installValue = `Native (${meta.nativeVersion || 'stable'})`;
+  const installValue = `Native (${meta.nativeVersion || 'latest'})`;
 
   return (
     <ScreenLayout title={meta.name} subtitle={subtitle} icon={null}>

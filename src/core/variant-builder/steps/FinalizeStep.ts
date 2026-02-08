@@ -4,6 +4,7 @@
 
 import path from 'node:path';
 import { writeJson } from '../../fs.js';
+import { DEFAULT_CLAUDE_VERSION } from '../../constants.js';
 import type { VariantMeta } from '../../types.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
@@ -41,6 +42,7 @@ export class FinalizeStep implements BuildStep {
 
     meta.nativeDir = paths.nativeDir;
     meta.nativeVersion = prefs.resolvedClaudeVersion;
+    meta.nativeVersionSource = meta.nativeVersion === DEFAULT_CLAUDE_VERSION ? 'default' : 'pinned';
     meta.nativePlatform = state.nativePlatform;
 
     writeJson(path.join(paths.variantDir, 'variant.json'), meta);

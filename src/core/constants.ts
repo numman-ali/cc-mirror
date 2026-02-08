@@ -7,5 +7,5 @@ export const DEFAULT_BIN_DIR =
 export const TWEAKCC_VERSION = '3.4.0';
 // Claude Code version/channel used for installs unless overridden.
 // "stable" tracks the upstream stable channel; "latest" tracks newest releases.
-export const DEFAULT_CLAUDE_VERSION = 'stable';
+export const DEFAULT_CLAUDE_VERSION = 'latest';
 export const DEFAULT_CLAUDE_NATIVE_CACHE_DIR = path.join(DEFAULT_ROOT, '.cache', 'claude-native');
