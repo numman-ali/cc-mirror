@@ -32,6 +32,21 @@ mclaude
 
 That's it. You now have a Claude Code variant ready to run.
 
+### Claude Code Version (Stable/Latest/Pin)
+
+By default, CC-MIRROR installs the **latest** Claude Code native release. You can pin a channel or version:
+
+```bash
+# Track upstream stable channel
+npx cc-mirror quick --provider mirror --name mclaude --claude-version stable
+
+# Track upstream latest channel
+npx cc-mirror update mclaude --claude-version latest
+
+# Pin a specific version
+npx cc-mirror update mclaude --claude-version 2.1.37
+```
+
 <p align="center">
   <img src="./assets/cc-mirror-home.png" alt="CC-MIRROR Home Screen" width="600">
 </p>
