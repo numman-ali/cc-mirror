@@ -5,7 +5,7 @@
 import * as core from '../../core/index.js';
 import { getWrapperPath } from '../../core/paths.js';
 import type { ParsedArgs } from '../args.js';
-import { printSummary } from '../utils/index.js';
+import { getModelOverridesFromArgs, printSummary } from '../utils/index.js';
 
 export interface UpdateCommandOptions {
   opts: ParsedArgs;
@@ -29,6 +29,8 @@ export async function runUpdateCommand({ opts }: UpdateCommandOptions): Promise<
   const skillInstall = opts['no-skill-install'] ? false : undefined;
   const skillUpdate = Boolean(opts['skill-update']);
   const shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
+  const settingsOnly = Boolean(opts['settings-only']);
+  const modelOverrides = getModelOverridesFromArgs(opts);
   const rawTweakccStdio = opts['tweakcc-stdio'] as string | undefined;
   const tweakccStdio =
     rawTweakccStdio === 'inherit' || opts.verbose ? 'inherit' : rawTweakccStdio === 'pipe' ? 'pipe' : 'pipe';
@@ -39,11 +41,13 @@ export async function runUpdateCommand({ opts }: UpdateCommandOptions): Promise<
       claudeVersion: opts['claude-version'] as string | undefined,
       brand: opts.brand as string | undefined,
       noTweak: Boolean(opts.noTweak),
+      settingsOnly,
       promptPack,
       skillInstall,
       shellEnv,
       skillUpdate,
       tweakccStdio,
+      modelOverrides: Object.keys(modelOverrides).length > 0 ? modelOverrides : undefined,
     });
     const wrapperPath = getWrapperPath(binDir, name);
     printSummary({

@@ -59,10 +59,12 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
   const baseUrl = (opts['base-url'] as string) || provider.baseUrl;
   const envZaiKey = providerKey === 'zai' ? process.env.Z_AI_API_KEY : undefined;
   const envAnthropicKey = providerKey === 'zai' ? process.env.ANTHROPIC_API_KEY : undefined;
-  const hasApiKeyFlag = Boolean(opts['api-key']);
+  const apiKeyFlag = typeof opts['api-key'] === 'string' ? (opts['api-key'] as string) : '';
+  const authTokenFlag = typeof opts['auth-token'] === 'string' ? (opts['auth-token'] as string) : '';
+  const hasCredentialFlag = Boolean(apiKeyFlag || authTokenFlag);
   const hasZaiEnv = Boolean(envZaiKey);
-  const apiKeyDetected = !hasApiKeyFlag && hasZaiEnv;
-  const apiKey = (opts['api-key'] as string) || (providerKey === 'zai' ? envZaiKey || envAnthropicKey || '' : '');
+  const apiKeyDetected = !hasCredentialFlag && hasZaiEnv;
+  const apiKey = apiKeyFlag || authTokenFlag || (providerKey === 'zai' ? envZaiKey || envAnthropicKey || '' : '');
 
   if (apiKeyDetected && !opts.yes) {
     console.log('Detected Z_AI_API_KEY in environment. Using it by default.');
@@ -76,7 +78,7 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
   const requiresCredential = !provider.credentialOptional;
   // Don't prompt for API key if credential is optional (mirror, ccrouter)
   const shouldPromptApiKey =
-    !provider.credentialOptional && !opts.yes && !hasApiKeyFlag && (providerKey === 'zai' ? !hasZaiEnv : !apiKey);
+    !provider.credentialOptional && !opts.yes && !hasCredentialFlag && (providerKey === 'zai' ? !hasZaiEnv : !apiKey);
 
   return {
     provider,

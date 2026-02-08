@@ -36,12 +36,15 @@ OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
   --provider <name>            Provider: mirror | zai | minimax | openrouter | ccrouter | ollama | gatewayz | vercel | nanogpt
   --api-key <key>              Provider API key
+  --auth-token <token>         Alias for --api-key (auth-token providers)
   --brand <preset>             Theme: auto | none | mirror | zai | minimax | openrouter | ccrouter | ollama | gatewayz | vercel | nanogpt
   --tui / --no-tui             Force TUI on/off
 
 OPTIONS (advanced)
   --base-url <url>             ANTHROPIC_BASE_URL override
   --claude-version <spec>      Claude Code: stable | latest | x.y.z
+  --settings-only              Skip Claude reinstall (update settings/theme only)
+  --model <name>               Set Sonnet/Opus/Haiku all at once
   --model-sonnet <name>        Default Sonnet model
   --model-opus <name>          Default Opus model
   --model-haiku <name>         Default Haiku model
@@ -51,6 +54,9 @@ OPTIONS (advanced)
   --no-prompt-pack             Skip provider prompt pack
   --shell-env                  Write env vars to shell profile
   --verbose                    Show full tweakcc output during update
+  --json                       Machine-readable output (list/doctor)
+  --full                       Verbose output (list)
+  --live                       Live provider probe (doctor)
 
 PROVIDERS
   mirror        Pure Claude (recommended)

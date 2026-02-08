@@ -92,6 +92,22 @@ test('getModelOverridesFromArgs ignores non-string values', () => {
   assert.equal(overrides.opus, undefined);
 });
 
+test('getModelOverridesFromArgs supports --model convenience flag', () => {
+  const opts = createOpts({ model: 'anthropic/claude-3.5-sonnet' as unknown as string });
+  const overrides = getModelOverridesFromArgs(opts);
+  assert.equal(overrides.sonnet, 'anthropic/claude-3.5-sonnet');
+  assert.equal(overrides.opus, 'anthropic/claude-3.5-sonnet');
+  assert.equal(overrides.haiku, 'anthropic/claude-3.5-sonnet');
+});
+
+test('getModelOverridesFromArgs prefers explicit tier flags over --model', () => {
+  const opts = createOpts({ model: 'all', 'model-sonnet': 'sonnet-only' });
+  const overrides = getModelOverridesFromArgs(opts);
+  assert.equal(overrides.sonnet, 'sonnet-only');
+  assert.equal(overrides.opus, 'all');
+  assert.equal(overrides.haiku, 'all');
+});
+
 // formatModelNote tests
 test('formatModelNote returns null for empty overrides', () => {
   const result = formatModelNote({});

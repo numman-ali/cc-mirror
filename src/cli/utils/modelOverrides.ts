@@ -11,14 +11,35 @@ import { requirePrompt } from './requirePrompt.js';
  * Extract model overrides from parsed CLI arguments
  */
 export function getModelOverridesFromArgs(opts: ParsedArgs): ModelOverrides {
-  return {
-    sonnet: typeof opts['model-sonnet'] === 'string' ? (opts['model-sonnet'] as string) : undefined,
-    opus: typeof opts['model-opus'] === 'string' ? (opts['model-opus'] as string) : undefined,
-    haiku: typeof opts['model-haiku'] === 'string' ? (opts['model-haiku'] as string) : undefined,
-    smallFast: typeof opts['model-small-fast'] === 'string' ? (opts['model-small-fast'] as string) : undefined,
-    defaultModel: typeof opts['model-default'] === 'string' ? (opts['model-default'] as string) : undefined,
-    subagentModel: typeof opts['model-subagent'] === 'string' ? (opts['model-subagent'] as string) : undefined,
-  };
+  const overrides: ModelOverrides = {};
+
+  // Convenience: set the 3 main tiers at once.
+  if (typeof opts.model === 'string') {
+    const value = opts.model.trim();
+    if (value) {
+      overrides.sonnet = value;
+      overrides.opus = value;
+      overrides.haiku = value;
+    }
+  }
+
+  // Explicit tier flags override --model when provided.
+  if (typeof opts['model-sonnet'] === 'string') overrides.sonnet = (opts['model-sonnet'] as string).trim();
+  if (typeof opts['model-opus'] === 'string') overrides.opus = (opts['model-opus'] as string).trim();
+  if (typeof opts['model-haiku'] === 'string') overrides.haiku = (opts['model-haiku'] as string).trim();
+  if (typeof opts['model-small-fast'] === 'string') overrides.smallFast = (opts['model-small-fast'] as string).trim();
+  if (typeof opts['model-default'] === 'string') overrides.defaultModel = (opts['model-default'] as string).trim();
+  if (typeof opts['model-subagent'] === 'string') overrides.subagentModel = (opts['model-subagent'] as string).trim();
+
+  // Avoid writing empty-string overrides into settings.json.
+  for (const key of Object.keys(overrides) as Array<keyof ModelOverrides>) {
+    const value = overrides[key];
+    if (typeof value === 'string' && value.trim().length === 0) {
+      delete overrides[key];
+    }
+  }
+
+  return overrides;
 }
 
 /**
