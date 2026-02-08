@@ -37,8 +37,11 @@ export function buildUpdateSummary(meta: VariantMeta, notes: string[] | undefine
     return 'on';
   };
 
+  const installLine = `Install: native ${meta.nativeVersion || 'stable'} (${meta.claudeOrig.replace('native:', 'v')})`;
+
   return [
     `Provider: ${meta.provider}`,
+    installLine,
     `Prompt pack: ${getPromptPackDescription()}`,
     `dev-browser skill: ${meta.skillInstall ? 'on' : 'off'}`,
     ...(meta.provider === 'zai' ? [`Shell env: ${meta.shellEnv ? 'write Z_AI_API_KEY' : 'manual'}`] : []),

@@ -63,7 +63,7 @@ Each variant is completely isolated — its own config, sessions, MCP servers, a
 │  ~/.cc-mirror/                                                          │
 │                                                                         │
 │  ├── mclaude/                        ← Mirror Claude                     │
-│  │   ├── npm/                        Claude Code installation           │
+│  │   ├── native/                     Claude Code installation           │
 │  │   ├── config/                     API keys, sessions, MCP servers    │
 │  │   ├── tweakcc/                    Theme customization                │
 │  │   └── variant.json                Metadata                           │

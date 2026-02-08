@@ -11,8 +11,7 @@ import { buildUpdateSummary, buildUpdateNextSteps } from '../../src/tui/hooks/us
 test('buildCreateSummary includes all expected fields', () => {
   const summary = buildCreateSummary({
     providerLabel: 'Zai Cloud',
-    npmPackage: '@anthropic-ai/claude-code',
-    npmVersion: '2.1.19',
+    install: 'Install: native stable (v2.1.25)',
     usePromptPack: true,
     installSkill: true,
     modelOverrides: { sonnet: 'model-a', opus: 'model-b', haiku: 'model-c' },
@@ -22,7 +21,7 @@ test('buildCreateSummary includes all expected fields', () => {
   });
 
   assert.ok(summary.some((line) => line.includes('Zai Cloud')));
-  assert.ok(summary.some((line) => line.includes('@anthropic-ai/claude-code')));
+  assert.ok(summary.some((line) => line.includes('Install: native')));
   assert.ok(summary.some((line) => line.includes('Prompt pack: on (zai-cli routing)')));
   assert.ok(summary.some((line) => line.includes('dev-browser skill: on')));
   assert.ok(summary.some((line) => line.includes('Models:')));
@@ -33,8 +32,7 @@ test('buildCreateSummary includes all expected fields', () => {
 test('buildCreateSummary omits models when not set', () => {
   const summary = buildCreateSummary({
     providerLabel: 'OpenRouter',
-    npmPackage: '@anthropic-ai/claude-code',
-    npmVersion: '2.1.19',
+    install: 'Install: npm @anthropic-ai/claude-code@stable',
     usePromptPack: false,
     installSkill: false,
     modelOverrides: {},
@@ -49,8 +47,7 @@ test('buildCreateSummary omits models when not set', () => {
 test('buildCreateSummary shows prompt pack off when disabled', () => {
   const summary = buildCreateSummary({
     providerLabel: 'Custom',
-    npmPackage: '@anthropic-ai/claude-code',
-    npmVersion: '2.1.19',
+    install: 'Install: native stable (v2.1.25)',
     usePromptPack: false,
     installSkill: false,
     modelOverrides: {},
@@ -65,8 +62,7 @@ test('buildCreateSummary shows provider-specific prompt pack routing', () => {
   // MiniMax should show MCP routing
   const minimaxSummary = buildCreateSummary({
     providerLabel: 'MiniMax',
-    npmPackage: '@anthropic-ai/claude-code',
-    npmVersion: '2.1.19',
+    install: 'Install: native stable (v2.1.25)',
     usePromptPack: true,
     installSkill: false,
     modelOverrides: {},

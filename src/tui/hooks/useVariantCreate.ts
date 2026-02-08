@@ -22,8 +22,7 @@ export interface UseVariantCreateOptions {
  */
 export function buildCreateSummary(params: {
   providerLabel: string;
-  npmPackage: string;
-  npmVersion: string;
+  install: string;
   usePromptPack: boolean;
   installSkill: boolean;
   modelOverrides: ModelOverrides;
@@ -31,17 +30,7 @@ export function buildCreateSummary(params: {
   shellEnv: boolean;
   notes?: string[];
 }): string[] {
-  const {
-    providerLabel,
-    npmPackage,
-    npmVersion,
-    usePromptPack,
-    installSkill,
-    modelOverrides,
-    providerKey,
-    shellEnv,
-    notes,
-  } = params;
+  const { providerLabel, install, usePromptPack, installSkill, modelOverrides, providerKey, shellEnv, notes } = params;
 
   // Build prompt pack description with provider-specific routing info
   const getPromptPackDescription = (): string => {
@@ -53,7 +42,7 @@ export function buildCreateSummary(params: {
 
   return [
     `Provider: ${providerLabel}`,
-    `Install: npm ${npmPackage}@${npmVersion}`,
+    install,
     `Prompt pack: ${getPromptPackDescription()}`,
     `dev-browser skill: ${installSkill ? 'on' : 'off'}`,
     ...(modelOverrides.sonnet || modelOverrides.opus || modelOverrides.haiku
@@ -110,11 +99,11 @@ export function useVariantCreate(options: UseVariantCreateOptions): void {
           baseUrl: params.baseUrl,
           apiKey: params.apiKey,
           extraEnv: params.extraEnv,
+          claudeVersion: params.claudeVersion,
           modelOverrides: params.modelOverrides,
           brand: params.brandKey,
           rootDir: params.rootDir,
           binDir: params.binDir,
-          npmPackage: params.npmPackage,
           noTweak: false, // Always apply tweakcc patches
           promptPack: params.usePromptPack,
           skillInstall: params.installSkill,
@@ -131,10 +120,10 @@ export function useVariantCreate(options: UseVariantCreateOptions): void {
         if (cancelled) return;
 
         const providerLabel = params.provider?.label || params.providerKey || 'Provider';
+        const installLine = `Install: native ${result.meta.nativeVersion || params.claudeVersion} (${result.meta.claudeOrig.replace('native:', 'v')})`;
         const summary = buildCreateSummary({
           providerLabel,
-          npmPackage: params.npmPackage,
-          npmVersion: params.npmVersion,
+          install: installLine,
           usePromptPack: params.usePromptPack,
           installSkill: params.installSkill,
           modelOverrides: params.modelOverrides,

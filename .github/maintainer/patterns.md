@@ -3,6 +3,7 @@
 ## Recurring Issues
 
 ### Windows Path Handling
+
 - **First seen:** 2025-12-15
 - **Frequency:** 8 duplicate reports
 - **Root cause:** Hardcoded `/` instead of `path.sep`
@@ -10,6 +11,7 @@
 - **Prevention:** Added Windows CI
 
 ### Version Display Mismatch
+
 - **First seen:** 2025-12-19
 - **Cause:** Hardcoded version string not updated
 - **Resolution:** Read from package.json dynamically

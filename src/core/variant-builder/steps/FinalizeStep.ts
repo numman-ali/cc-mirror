@@ -37,11 +37,11 @@ export class FinalizeStep implements BuildStep {
       skillInstall: prefs.skillInstallEnabled,
       shellEnv: prefs.shellEnvEnabled,
       binDir: paths.resolvedBin,
-      installType: 'npm',
-      npmDir: paths.npmDir,
-      npmPackage: prefs.resolvedNpmPackage,
-      npmVersion: prefs.resolvedNpmVersion,
     };
+
+    meta.nativeDir = paths.nativeDir;
+    meta.nativeVersion = prefs.resolvedClaudeVersion;
+    meta.nativePlatform = state.nativePlatform;
 
     writeJson(path.join(paths.variantDir, 'variant.json'), meta);
 

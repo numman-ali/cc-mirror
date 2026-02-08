@@ -24,8 +24,7 @@ interface SummaryData {
   modelHaiku?: string;
   rootDir: string;
   binDir: string;
-  npmPackage: string;
-  npmVersion: string;
+  claudeVersion: string;
   usePromptPack: boolean;
   promptPackMode: 'minimal' | 'maximal';
   installSkill: boolean;
@@ -76,8 +75,8 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({ data, onConfirm, o
       </Section>
 
       <Section title="Installation">
-        <SummaryRow label="Package" value={data.npmPackage} />
-        <SummaryRow label="Version" value={data.npmVersion} />
+        <SummaryRow label="Install type" value="Native (portable)" />
+        <SummaryRow label="Claude Code" value={data.claudeVersion} />
         <SummaryRow
           label="Prompt pack"
           value={

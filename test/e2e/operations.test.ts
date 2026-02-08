@@ -19,16 +19,17 @@ test('E2E: Update and remove variants', async (t) => {
     }
   });
 
-  await t.test('can update a variant', () => {
+  await t.test('can update a variant', async () => {
     const rootDir = makeTempDir();
     const binDir = makeTempDir();
     createdDirs.push(rootDir, binDir);
 
     // Create variant
-    core.createVariant({
+    await core.createVariantAsync({
       name: 'update-test',
       providerKey: 'zai',
       apiKey: 'test-key',
+      claudeVersion: 'stable',
       rootDir,
       binDir,
       brand: 'zai',
@@ -39,7 +40,7 @@ test('E2E: Update and remove variants', async (t) => {
     });
 
     // Update variant
-    const updateResult = core.updateVariant(rootDir, 'update-test', {
+    const updateResult = await core.updateVariantAsync(rootDir, 'update-test', {
       noTweak: true,
       tweakccStdio: 'pipe',
       binDir,
@@ -53,16 +54,17 @@ test('E2E: Update and remove variants', async (t) => {
     assert.ok(fs.existsSync(variantDir), 'Variant should still exist after update');
   });
 
-  await t.test('can remove a variant', () => {
+  await t.test('can remove a variant', async () => {
     const rootDir = makeTempDir();
     const binDir = makeTempDir();
     createdDirs.push(rootDir, binDir);
 
     // Create variant
-    core.createVariant({
+    await core.createVariantAsync({
       name: 'remove-test',
       providerKey: 'minimax',
       apiKey: 'test-key',
+      claudeVersion: 'stable',
       rootDir,
       binDir,
       brand: 'minimax',
@@ -91,17 +93,18 @@ test('E2E: List variants', async (t) => {
     }
   });
 
-  await t.test('lists all created variants', () => {
+  await t.test('lists all created variants', async () => {
     const rootDir = makeTempDir();
     const binDir = makeTempDir();
     createdDirs.push(rootDir, binDir);
 
     // Create variants for all providers
     for (const provider of PROVIDERS) {
-      core.createVariant({
+      await core.createVariantAsync({
         name: `list-${provider.key}`,
         providerKey: provider.key,
         apiKey: provider.apiKey,
+        claudeVersion: 'stable',
         rootDir,
         binDir,
         brand: provider.key,

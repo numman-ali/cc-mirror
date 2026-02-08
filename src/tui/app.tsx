@@ -56,8 +56,7 @@ import { colors } from './components/ui/theme.js';
 export interface CoreModule {
   DEFAULT_ROOT: string;
   DEFAULT_BIN_DIR: string;
-  DEFAULT_NPM_PACKAGE: string;
-  DEFAULT_NPM_VERSION: string;
+  DEFAULT_CLAUDE_VERSION?: string;
   listVariants: (rootDir: string) => VariantEntry[];
   createVariant: (params: {
     name: string;
@@ -65,6 +64,7 @@ export interface CoreModule {
     baseUrl?: string;
     apiKey?: string;
     extraEnv?: string[];
+    claudeVersion?: string;
     modelOverrides?: {
       sonnet?: string;
       opus?: string;
@@ -76,7 +76,6 @@ export interface CoreModule {
     brand?: string;
     rootDir?: string;
     binDir?: string;
-    npmPackage?: string;
     noTweak?: boolean;
     promptPack?: boolean;
     promptPackMode?: 'minimal' | 'maximal';
@@ -92,6 +91,7 @@ export interface CoreModule {
     opts?: {
       tweakccStdio?: 'pipe' | 'inherit';
       binDir?: string;
+      claudeVersion?: string;
       promptPack?: boolean;
       promptPackMode?: 'minimal' | 'maximal';
       skillInstall?: boolean;
@@ -116,6 +116,7 @@ export interface CoreModule {
     baseUrl?: string;
     apiKey?: string;
     extraEnv?: string[];
+    claudeVersion?: string;
     modelOverrides?: {
       sonnet?: string;
       opus?: string;
@@ -127,7 +128,6 @@ export interface CoreModule {
     brand?: string;
     rootDir?: string;
     binDir?: string;
-    npmPackage?: string;
     noTweak?: boolean;
     promptPack?: boolean;
     promptPackMode?: 'minimal' | 'maximal';
@@ -143,6 +143,7 @@ export interface CoreModule {
     opts?: {
       tweakccStdio?: 'pipe' | 'inherit';
       binDir?: string;
+      claudeVersion?: string;
       promptPack?: boolean;
       promptPackMode?: 'minimal' | 'maximal';
       skillInstall?: boolean;
@@ -213,8 +214,7 @@ export const App: React.FC<AppProps> = ({
   const [modelHaiku, setModelHaiku] = useState('');
   const [rootDir, _setRootDir] = useState(initialRootDir || core.DEFAULT_ROOT);
   const [binDir, _setBinDir] = useState(initialBinDir || core.DEFAULT_BIN_DIR);
-  const [npmPackage, setNpmPackage] = useState(core.DEFAULT_NPM_PACKAGE || '@anthropic-ai/claude-code');
-  const npmVersion = core.DEFAULT_NPM_VERSION || '2.1.19';
+  const [claudeVersion, setClaudeVersion] = useState(core.DEFAULT_CLAUDE_VERSION || 'stable');
   const [usePromptPack, setUsePromptPack] = useState(true);
   // promptPackMode is deprecated - always use 'minimal'
   const promptPackMode = 'minimal' as const;
@@ -389,12 +389,11 @@ export const App: React.FC<AppProps> = ({
       baseUrl: effectiveBaseUrl,
       apiKey,
       extraEnv,
+      claudeVersion,
       modelOverrides,
       brandKey,
       rootDir,
       binDir,
-      npmPackage,
-      npmVersion,
       usePromptPack,
       promptPackMode,
       installSkill,
@@ -408,12 +407,11 @@ export const App: React.FC<AppProps> = ({
       effectiveBaseUrl,
       apiKey,
       extraEnv,
+      claudeVersion,
       modelOverrides,
       brandKey,
       rootDir,
       binDir,
-      npmPackage,
-      npmVersion,
       usePromptPack,
       promptPackMode,
       installSkill,
@@ -491,7 +489,7 @@ export const App: React.FC<AppProps> = ({
     setModelOpus('');
     setModelHaiku('');
     setApiKeyDetectedFrom(null);
-    setNpmPackage(core.DEFAULT_NPM_PACKAGE || '@anthropic-ai/claude-code');
+    setClaudeVersion(core.DEFAULT_CLAUDE_VERSION || 'stable');
     setExtraEnv([]);
     setUsePromptPack(true);
     setInstallSkill(true);
@@ -961,8 +959,7 @@ export const App: React.FC<AppProps> = ({
           modelHaiku: modelOverrides.haiku,
           rootDir,
           binDir,
-          npmPackage,
-          npmVersion,
+          claudeVersion,
           usePromptPack,
           promptPackMode,
           installSkill,

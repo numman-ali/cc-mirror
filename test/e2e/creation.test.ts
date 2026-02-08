@@ -22,16 +22,17 @@ test('E2E: Create variants for all providers', async (t) => {
     }
   });
 
-  await t.test('creates all provider variants with correct configuration', () => {
+  await t.test('creates all provider variants with correct configuration', async () => {
     for (const provider of PROVIDERS) {
       const rootDir = makeTempDir();
       const binDir = makeTempDir();
       createdDirs.push(rootDir, binDir);
 
-      const result = core.createVariant({
+      const result = await core.createVariantAsync({
         name: provider.key,
         providerKey: provider.key,
         apiKey: provider.apiKey,
+        claudeVersion: 'stable',
         rootDir,
         binDir,
         brand: provider.key,
@@ -70,16 +71,17 @@ test('E2E: Create variants for all providers', async (t) => {
     }
   });
 
-  await t.test('wrapper scripts contain colored ASCII art', () => {
+  await t.test('wrapper scripts contain colored ASCII art', async () => {
     for (const provider of PROVIDERS) {
       const rootDir = makeTempDir();
       const binDir = makeTempDir();
       createdDirs.push(rootDir, binDir);
 
-      core.createVariant({
+      await core.createVariantAsync({
         name: `${provider.key}-art`,
         providerKey: provider.key,
         apiKey: provider.apiKey,
+        claudeVersion: 'stable',
         rootDir,
         binDir,
         brand: provider.key,
@@ -128,16 +130,17 @@ test('E2E: Create variants for all providers', async (t) => {
     }
   });
 
-  await t.test('variant.json metadata is created correctly', () => {
+  await t.test('variant.json metadata is created correctly', async () => {
     for (const provider of PROVIDERS) {
       const rootDir = makeTempDir();
       const binDir = makeTempDir();
       createdDirs.push(rootDir, binDir);
 
-      core.createVariant({
+      await core.createVariantAsync({
         name: `${provider.key}-meta`,
         providerKey: provider.key,
         apiKey: provider.apiKey,
+        claudeVersion: 'stable',
         rootDir,
         binDir,
         brand: provider.key,

@@ -17,10 +17,9 @@ export interface VariantMeta {
   skillInstall?: boolean;
   shellEnv?: boolean;
   binDir?: string;
-  installType?: 'native' | 'npm';
-  npmDir?: string;
-  npmPackage?: string;
-  npmVersion?: string;
+  nativeDir?: string;
+  nativeVersion?: string;
+  nativePlatform?: string;
 }
 
 export interface VariantEntry {
@@ -37,6 +36,8 @@ export interface CreateVariantParams {
   baseUrl?: string;
   apiKey?: string;
   extraEnv?: string[];
+  /** Claude Code version or channel: stable | latest | x.y.z */
+  claudeVersion?: string;
   modelOverrides?: {
     sonnet?: string;
     opus?: string;
@@ -47,7 +48,6 @@ export interface CreateVariantParams {
   };
   rootDir?: string;
   binDir?: string;
-  npmPackage?: string;
   brand?: string;
   noTweak?: boolean;
   promptPack?: boolean;
@@ -61,10 +61,11 @@ export interface CreateVariantParams {
 
 export interface UpdateVariantOptions {
   binDir?: string;
-  npmPackage?: string;
+  /** Claude Code version or channel: stable | latest | x.y.z */
+  claudeVersion?: string;
   brand?: string;
   noTweak?: boolean;
-  /** Skip npm package reinstall - for settings-only updates (models, env) */
+  /** Skip Claude Code reinstall - for settings-only updates (models, env) */
   settingsOnly?: boolean;
   promptPack?: boolean;
   skillInstall?: boolean;

@@ -1,7 +1,7 @@
 /**
  * RebuildUpdateStep - Resets variant install dirs for a clean update
  *
- * Keeps config (settings, approvals, skills) but rebuilds npm/tweakcc + wrapper.
+ * Keeps config (settings, approvals, skills) but rebuilds claude/tweakcc + wrapper.
  */
 
 import fs from 'node:fs';
@@ -39,8 +39,13 @@ export class RebuildUpdateStep implements UpdateStep {
       }
     }
 
-    if (fs.existsSync(paths.npmDir)) {
-      fs.rmSync(paths.npmDir, { recursive: true, force: true });
+    const legacyNpmDir = path.join(paths.variantDir, 'npm');
+    if (fs.existsSync(legacyNpmDir)) {
+      fs.rmSync(legacyNpmDir, { recursive: true, force: true });
+    }
+
+    if (fs.existsSync(paths.nativeDir)) {
+      fs.rmSync(paths.nativeDir, { recursive: true, force: true });
     }
 
     if (shouldResetTweakcc && fs.existsSync(meta.tweakDir)) {

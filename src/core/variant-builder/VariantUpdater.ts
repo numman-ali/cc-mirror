@@ -7,7 +7,7 @@
 
 import path from 'node:path';
 import { getProvider } from '../../providers/index.js';
-import { DEFAULT_NPM_PACKAGE, DEFAULT_NPM_VERSION, DEFAULT_ROOT } from '../constants.js';
+import { DEFAULT_CLAUDE_VERSION, DEFAULT_ROOT } from '../constants.js';
 import { expandTilde } from '../paths.js';
 import { loadVariantMeta } from '../variants.js';
 import type { UpdateVariantOptions, UpdateVariantResult } from '../types.js';
@@ -15,7 +15,7 @@ import type { ReportFn, UpdateContext, UpdatePaths, UpdatePreferences, UpdateSta
 
 // Import steps
 import { RebuildUpdateStep } from './update-steps/RebuildUpdateStep.js';
-import { InstallNpmUpdateStep } from './update-steps/InstallNpmUpdateStep.js';
+import { InstallNativeUpdateStep } from './update-steps/InstallNativeUpdateStep.js';
 import { ModelOverridesStep } from './update-steps/ModelOverridesStep.js';
 import { TweakccUpdateStep } from './update-steps/TweakccUpdateStep.js';
 import { WrapperUpdateStep } from './update-steps/WrapperUpdateStep.js';
@@ -25,9 +25,10 @@ import { SkillInstallUpdateStep } from './update-steps/SkillInstallUpdateStep.js
 import { FinalizeUpdateStep } from './update-steps/FinalizeUpdateStep.js';
 
 // Helper functions
-const normalizeNpmPackage = (value?: string) => (value && value.trim().length > 0 ? value.trim() : DEFAULT_NPM_PACKAGE);
-
-const normalizeNpmVersion = () => DEFAULT_NPM_VERSION;
+const normalizeClaudeVersion = (value?: string) => {
+  const trimmed = (value ?? '').trim();
+  return trimmed.length > 0 ? trimmed : DEFAULT_CLAUDE_VERSION;
+};
 
 const shouldEnablePromptPack = (providerKey: string) => {
   // Check if provider has noPromptPack set (e.g., mirror provider)
@@ -54,7 +55,7 @@ export class VariantUpdater {
     // Register steps in execution order
     this.steps = [
       new RebuildUpdateStep(),
-      new InstallNpmUpdateStep(),
+      new InstallNativeUpdateStep(),
       new ModelOverridesStep(),
       new TweakccUpdateStep(),
       new WrapperUpdateStep(),
@@ -74,8 +75,9 @@ export class VariantUpdater {
     const meta = loadVariantMeta(variantDir);
     if (!meta) throw new Error(`Variant not found: ${name}`);
 
-    const resolvedNpmPackage = normalizeNpmPackage(opts.npmPackage ?? meta.npmPackage);
-    const resolvedNpmVersion = normalizeNpmVersion();
+    const resolvedClaudeVersion = normalizeClaudeVersion(
+      opts.claudeVersion ?? meta.nativeVersion ?? DEFAULT_CLAUDE_VERSION
+    );
     const promptPackPreference = opts.promptPack ?? meta.promptPack ?? shouldEnablePromptPack(meta.provider);
     const promptPackEnabled = !opts.noTweak && promptPackPreference;
     const skillInstallEnabled = opts.skillInstall ?? meta.skillInstall ?? shouldInstallSkills(meta.provider);
@@ -87,12 +89,11 @@ export class VariantUpdater {
       resolvedRoot,
       resolvedBin: opts.binDir ? (expandTilde(opts.binDir) ?? opts.binDir) : meta.binDir,
       variantDir,
-      npmDir: meta.npmDir || path.join(variantDir, 'npm'),
+      nativeDir: meta.nativeDir || path.join(variantDir, 'native'),
     };
 
     const prefs: UpdatePreferences = {
-      resolvedNpmPackage,
-      resolvedNpmVersion,
+      resolvedClaudeVersion,
       promptPackPreference,
       promptPackEnabled,
       skillInstallEnabled,

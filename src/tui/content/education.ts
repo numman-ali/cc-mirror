@@ -50,7 +50,7 @@ export const EDUCATION = {
       {
         step: 2,
         title: 'Installs Claude Code',
-        detail: 'Fresh npm install in the variant directory',
+        detail: 'Downloads and verifies native Claude Code binary',
       },
       {
         step: 3,
@@ -88,7 +88,7 @@ export const EDUCATION = {
       '',
       '  • CLAUDE_CONFIG_DIR  → settings, MCP servers, OAuth',
       '  • TWEAKCC_CONFIG_DIR → theme customizations',
-      '  • npm installation   → Claude Code binary',
+      '  • native binary      → Claude Code executable',
       '  • API credentials    → stored in settings.json',
       '',
       'Running `zai` vs `minimax` uses completely different',

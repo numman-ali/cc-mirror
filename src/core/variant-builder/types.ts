@@ -23,15 +23,14 @@ export interface BuildPaths {
   configDir: string;
   tweakDir: string;
   wrapperPath: string;
-  npmDir: string;
+  nativeDir: string;
 }
 
 /**
  * Resolved preferences computed from params and defaults
  */
 export interface BuildPreferences {
-  resolvedNpmPackage: string;
-  resolvedNpmVersion: string;
+  resolvedClaudeVersion: string;
   promptPackPreference: boolean;
   promptPackEnabled: boolean;
   skillInstallEnabled: boolean;
@@ -49,6 +48,8 @@ export interface BuildState {
   claudeBinary: string;
   notes: string[];
   tweakResult: TweakResult | null;
+  nativePlatform?: string;
+  nativeResolvedVersion?: string;
   env?: ProviderEnv;
   resolvedApiKey?: string;
   meta?: VariantMeta;
@@ -113,15 +114,14 @@ export interface UpdatePaths {
   resolvedRoot: string;
   resolvedBin: string | undefined;
   variantDir: string;
-  npmDir: string;
+  nativeDir: string;
 }
 
 /**
  * Resolved preferences for update operations
  */
 export interface UpdatePreferences {
-  resolvedNpmPackage: string;
-  resolvedNpmVersion: string;
+  resolvedClaudeVersion: string;
   promptPackPreference: boolean;
   promptPackEnabled: boolean;
   skillInstallEnabled: boolean;

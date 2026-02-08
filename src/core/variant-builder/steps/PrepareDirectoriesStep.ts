@@ -14,7 +14,7 @@ export class PrepareDirectoriesStep implements BuildStep {
     ensureDir(ctx.paths.configDir);
     ensureDir(ctx.paths.tweakDir);
     ensureDir(ctx.paths.resolvedBin);
-    ensureDir(ctx.paths.npmDir);
+    ensureDir(ctx.paths.nativeDir);
   }
 
   async executeAsync(ctx: BuildContext): Promise<void> {
@@ -23,6 +23,6 @@ export class PrepareDirectoriesStep implements BuildStep {
     ensureDir(ctx.paths.configDir);
     ensureDir(ctx.paths.tweakDir);
     ensureDir(ctx.paths.resolvedBin);
-    ensureDir(ctx.paths.npmDir);
+    ensureDir(ctx.paths.nativeDir);
   }
 }

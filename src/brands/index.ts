@@ -43,8 +43,8 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
   },
   ollama: {
     key: 'ollama',
-    label: 'Ollama Ember',
-    description: 'Warm ember palette for Ollama local + cloud.',
+    label: 'Ollama Llama',
+    description: 'Warm sandstone palette with earthy llama tones.',
     buildTweakccConfig: buildOllamaTweakccConfig,
   },
   gatewayz: {
@@ -56,13 +56,13 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
   vercel: {
     key: 'vercel',
     label: 'Vercel Mono',
-    description: 'Minimal monochrome palette with neon green accents.',
+    description: 'Minimal monochrome palette with Vercel blue accents.',
     buildTweakccConfig: buildVercelTweakccConfig,
   },
   nanogpt: {
     key: 'nanogpt',
-    label: 'NanoGPT Neon',
-    description: 'Neon blue + pink accents for NanoGPT.',
+    label: 'NanoGPT Teal',
+    description: 'Dark teal/cyan palette matching the NanoGPT crystal brand.',
     buildTweakccConfig: buildNanoGPTTweakccConfig,
   },
   mirror: {

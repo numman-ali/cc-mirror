@@ -14,7 +14,7 @@ export interface UpdateCommandOptions {
 /**
  * Execute the update command
  */
-export function runUpdateCommand({ opts }: UpdateCommandOptions): void {
+export async function runUpdateCommand({ opts }: UpdateCommandOptions): Promise<void> {
   const target = opts._ && opts._[0];
   const rootDir = (opts.root as string) || core.DEFAULT_ROOT;
   const binDir = (opts['bin-dir'] as string) || core.DEFAULT_BIN_DIR;
@@ -34,9 +34,9 @@ export function runUpdateCommand({ opts }: UpdateCommandOptions): void {
     rawTweakccStdio === 'inherit' || opts.verbose ? 'inherit' : rawTweakccStdio === 'pipe' ? 'pipe' : 'pipe';
 
   for (const name of names) {
-    const result = core.updateVariant(rootDir, name, {
+    const result = await core.updateVariantAsync(rootDir, name, {
       binDir,
-      npmPackage: opts['npm-package'] as string | undefined,
+      claudeVersion: opts['claude-version'] as string | undefined,
       brand: opts.brand as string | undefined,
       noTweak: Boolean(opts.noTweak),
       promptPack,

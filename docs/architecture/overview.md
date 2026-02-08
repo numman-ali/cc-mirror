@@ -28,7 +28,7 @@ This document explains how cc-mirror works under the hood.
 │          │                                         ┌───────────────────┐     │
 │          │                                         │                   │     │
 │          └─────────────────────────────────────────│   Claude Code     │     │
-│                                                    │   (npm package)   │     │
+│                                                    │  (native binary)  │     │
 │                                                    │                   │     │
 │                                                    └───────────────────┘     │
 │                                                                               │
@@ -107,9 +107,9 @@ src/
 │   ┌───────────────────────────────────────────────────────────────────────┐ │
 │   │                        BUILD STEPS                                    │ │
 │   │                                                                       │ │
-│   │   1. CreateDirectoryStep    Create ~/.cc-mirror/<name>/               │ │
+│   │   1. PrepareDirectoriesStep Create ~/.cc-mirror/<name>/               │ │
 │   │                             │                                         │ │
-│   │   2. InstallNpmStep         npm install @anthropic-ai/claude-code     │ │
+│   │   2. InstallNativeStep      Download + verify native Claude Code      │ │
 │   │                             │                                         │ │
 │   │   3. WriteConfigStep        Write settings.json, .claude.json         │ │
 │   │                             │                                         │ │
@@ -145,14 +145,15 @@ npx cc-mirror update <name>
 ┌───────────────────────────────────────────────────────────────────────────┐
 │                        UPDATE STEPS                                       │
 │                                                                           │
-│   1. InstallNpmUpdateStep    Reinstall npm package (unless settingsOnly)  │
-│   2. ModelOverridesStep      Update model mappings                        │
-│   3. TweakccUpdateStep       Re-apply theme                               │
-│   4. WrapperUpdateStep       Regenerate wrapper script                    │
-│   5. ConfigUpdateStep        Update settings.json                         │
-│   6. ShellEnvUpdateStep      Update shell env integration                 │
-│   7. SkillInstallUpdateStep  Update installed skills                      │
-│   8. FinalizeUpdateStep      Update variant.json                          │
+│   1. RebuildUpdateStep       Reset claude/tweakcc dirs (keep config)      │
+│   2. InstallNativeUpdateStep Download + verify native CC (unless settingsOnly) │
+│   3. ModelOverridesStep      Update model mappings                        │
+│   4. TweakccUpdateStep       Re-apply theme                               │
+│   5. WrapperUpdateStep       Regenerate wrapper script                    │
+│   6. ConfigUpdateStep        Update settings.json                         │
+│   7. ShellEnvUpdateStep      Update shell env integration                 │
+│   8. SkillInstallUpdateStep  Update installed skills                      │
+│   9. FinalizeUpdateStep      Update variant.json                          │
 │                                                                           │
 └───────────────────────────────────────────────────────────────────────────┘
 ```
@@ -166,11 +167,8 @@ npx cc-mirror update <name>
 │                                                                             │
 │  ~/.cc-mirror/<variant>/                                                    │
 │                                                                             │
-│  ├── npm/                           Claude Code npm installation            │
-│  │   └── node_modules/                                                      │
-│  │       └── @anthropic-ai/                                                 │
-│  │           └── claude-code/                                               │
-│  │               ├── cli.js          Main CLI (unpatched in current builds) │
+│  ├── native/                        Claude Code native installation         │
+│  │   ├── claude                      Claude Code binary                     │
 │  │                                                                          │
 │  ├── config/                         CLAUDE_CONFIG_DIR                      │
 │  │   ├── settings.json              Env vars (API keys, base URLs)          │
@@ -252,7 +250,7 @@ export CLAUDE_CONFIG_DIR="$HOME/.cc-mirror/zai/config"
 # (API keys, base URLs, model mappings)
 
 # Run Claude Code
-exec "$HOME/.cc-mirror/zai/npm/node_modules/.bin/claude" "$@"
+exec "$HOME/.cc-mirror/zai/native/claude" "$@"
 ```
 
 On Windows, the wrapper is `<bin-dir>\\zai.cmd` with a sibling `<bin-dir>\\zai.mjs` launcher script. Add `%USERPROFILE%\\.cc-mirror\\bin` to `PATH` to run wrappers without a full path.

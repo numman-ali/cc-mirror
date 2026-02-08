@@ -7,14 +7,14 @@
 
 import path from 'node:path';
 import { getProvider, type ProviderTemplate } from '../../providers/index.js';
-import { DEFAULT_BIN_DIR, DEFAULT_NPM_PACKAGE, DEFAULT_NPM_VERSION, DEFAULT_ROOT } from '../constants.js';
+import { DEFAULT_BIN_DIR, DEFAULT_CLAUDE_VERSION, DEFAULT_ROOT } from '../constants.js';
 import { assertValidVariantName, expandTilde, getWrapperPath } from '../paths.js';
 import type { CreateVariantParams, CreateVariantResult } from '../types.js';
 import type { BuildContext, BuildPaths, BuildPreferences, BuildState, BuildStep, ReportFn } from './types.js';
 
 // Import steps (will be created incrementally)
 import { PrepareDirectoriesStep } from './steps/PrepareDirectoriesStep.js';
-import { InstallNpmStep } from './steps/InstallNpmStep.js';
+import { InstallNativeStep } from './steps/InstallNativeStep.js';
 import { WriteConfigStep } from './steps/WriteConfigStep.js';
 import { BrandThemeStep } from './steps/BrandThemeStep.js';
 import { TweakccStep } from './steps/TweakccStep.js';
@@ -24,9 +24,10 @@ import { SkillInstallStep } from './steps/SkillInstallStep.js';
 import { FinalizeStep } from './steps/FinalizeStep.js';
 
 // Helper functions
-const normalizeNpmPackage = (value?: string) => (value && value.trim().length > 0 ? value.trim() : DEFAULT_NPM_PACKAGE);
-
-const normalizeNpmVersion = () => DEFAULT_NPM_VERSION;
+const normalizeClaudeVersion = (value?: string) => {
+  const trimmed = (value ?? '').trim();
+  return trimmed.length > 0 ? trimmed : DEFAULT_CLAUDE_VERSION;
+};
 
 const shouldEnablePromptPack = (providerKey: string, provider?: ProviderTemplate) => {
   // Providers with noPromptPack: true skip prompt pack overlays
@@ -51,7 +52,7 @@ export class VariantBuilder {
     // Register steps in execution order
     this.steps = [
       new PrepareDirectoriesStep(),
-      new InstallNpmStep(),
+      new InstallNativeStep(),
       new WriteConfigStep(),
       new BrandThemeStep(), // Creates tweakcc/config.json
       new TweakccStep(),
@@ -80,7 +81,7 @@ export class VariantBuilder {
     const configDir = path.join(variantDir, 'config');
     const tweakDir = path.join(variantDir, 'tweakcc');
     const wrapperPath = getWrapperPath(resolvedBin, params.name);
-    const npmDir = path.join(variantDir, 'npm');
+    const nativeDir = path.join(variantDir, 'native');
 
     const paths: BuildPaths = {
       resolvedRoot,
@@ -89,11 +90,10 @@ export class VariantBuilder {
       configDir,
       tweakDir,
       wrapperPath,
-      npmDir,
+      nativeDir,
     };
 
-    const resolvedNpmPackage = normalizeNpmPackage(params.npmPackage);
-    const resolvedNpmVersion = normalizeNpmVersion();
+    const resolvedClaudeVersion = normalizeClaudeVersion(params.claudeVersion);
     const promptPackPreference = params.promptPack ?? shouldEnablePromptPack(params.providerKey, provider);
     const promptPackEnabled = !params.noTweak && promptPackPreference;
     const skillInstallEnabled = params.skillInstall ?? shouldInstallSkills(params.providerKey);
@@ -102,8 +102,7 @@ export class VariantBuilder {
     const commandStdio = params.tweakccStdio ?? 'inherit';
 
     const prefs: BuildPreferences = {
-      resolvedNpmPackage,
-      resolvedNpmVersion,
+      resolvedClaudeVersion,
       promptPackPreference,
       promptPackEnabled,
       skillInstallEnabled,

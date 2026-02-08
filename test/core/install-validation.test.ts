@@ -1,57 +1,36 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { installNpmClaude, installNpmClaudeAsync } from '../../src/core/install.js';
+import { installNativeClaudeAsync } from '../../src/core/install.js';
 import { makeTempDir, cleanup } from '../helpers/index.js';
 
-test('installNpmClaude rejects invalid npm package', () => {
-  const tempDir = makeTempDir();
-  try {
-    assert.throws(
-      () =>
-        installNpmClaude({
-          npmDir: tempDir,
-          npmPackage: 'bad&pkg',
-          npmVersion: '2.1.19',
-          stdio: 'pipe',
-        }),
-      /Invalid npm package/
-    );
-  } finally {
-    cleanup(tempDir);
-  }
-});
-
-test('installNpmClaude rejects invalid npm version', () => {
-  const tempDir = makeTempDir();
-  try {
-    assert.throws(
-      () =>
-        installNpmClaude({
-          npmDir: tempDir,
-          npmPackage: '@anthropic-ai/claude-code',
-          npmVersion: '1.0.0 & calc',
-          stdio: 'pipe',
-        }),
-      /Invalid npm version/
-    );
-  } finally {
-    cleanup(tempDir);
-  }
-});
-
-test('installNpmClaudeAsync rejects invalid npm package', async () => {
-  const tempDir = makeTempDir();
+test('installNativeClaudeAsync rejects invalid version spec', async () => {
+  const nativeDir = makeTempDir();
   try {
     await assert.rejects(
-      installNpmClaudeAsync({
-        npmDir: tempDir,
-        npmPackage: 'bad/pkg',
-        npmVersion: '2.1.19',
+      installNativeClaudeAsync({
+        nativeDir,
+        version: '2.1.25 && rm -rf /',
         stdio: 'pipe',
       }),
-      /Invalid npm package/
+      /Invalid Claude Code version/
     );
   } finally {
-    cleanup(tempDir);
+    cleanup(nativeDir);
+  }
+});
+
+test('installNativeClaudeAsync rejects empty version spec', async () => {
+  const nativeDir = makeTempDir();
+  try {
+    await assert.rejects(
+      installNativeClaudeAsync({
+        nativeDir,
+        version: '',
+        stdio: 'pipe',
+      }),
+      /Invalid Claude Code version/
+    );
+  } finally {
+    cleanup(nativeDir);
   }
 });

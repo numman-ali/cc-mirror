@@ -26,28 +26,31 @@ test('Live E2E: update keeps headless CLI working', { skip: !shouldRun, timeout:
 
   const variantName = 'live-zai';
 
-  core.createVariant({
-    name: variantName,
-    providerKey: 'zai',
-    apiKey: apiKey as string,
-    rootDir,
-    binDir,
-    brand: 'zai',
-    promptPack: true,
-    skillInstall: false,
-    tweakccStdio: 'pipe',
-  });
+  return (async () => {
+    await core.createVariantAsync({
+      name: variantName,
+      providerKey: 'zai',
+      apiKey: apiKey as string,
+      claudeVersion: 'stable',
+      rootDir,
+      binDir,
+      brand: 'zai',
+      promptPack: true,
+      skillInstall: false,
+      tweakccStdio: 'pipe',
+    });
 
-  core.updateVariant(rootDir, variantName, {
-    binDir,
-    tweakccStdio: 'pipe',
-  });
+    await core.updateVariantAsync(rootDir, variantName, {
+      binDir,
+      tweakccStdio: 'pipe',
+    });
 
-  const wrapperPath = path.join(binDir, variantName);
-  const result = spawnSync(wrapperPath, ['-p', 'hello'], {
-    env: { ...process.env, CC_MIRROR_SPLASH: '0' },
-    encoding: 'utf8',
-  });
+    const wrapperPath = path.join(binDir, variantName);
+    const result = spawnSync(wrapperPath, ['-p', 'hello'], {
+      env: { ...process.env, CC_MIRROR_SPLASH: '0' },
+      encoding: 'utf8',
+    });
 
-  assert.equal(result.status, 0, `headless CLI failed: ${result.stderr || result.stdout}`);
+    assert.equal(result.status, 0, `headless CLI failed: ${result.stderr || result.stdout}`);
+  })();
 });

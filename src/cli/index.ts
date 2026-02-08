@@ -59,11 +59,11 @@ const main = async () => {
       break;
 
     case 'update':
-      runUpdateCommand({ opts });
+      await runUpdateCommand({ opts });
       break;
 
     case 'apply':
-      runApplyCommand({ opts });
+      await runApplyCommand({ opts });
       break;
 
     case 'remove':

@@ -4,21 +4,19 @@ import fs from 'node:fs';
 import path from 'node:path';
 import * as core from '../src/core/index.js';
 import { getWrapperPath } from '../src/core/paths.js';
-import { makeTempDir, readFile, cleanup, resolveNpmCliPath } from './helpers/index.js';
-
-const resolveNpmPackageJsonPath = (npmDir: string, npmPackage: string) =>
-  path.join(npmDir, 'node_modules', ...npmPackage.split('/'), 'package.json');
+import { makeTempDir, readFile, cleanup, resolveNativeClaudePath } from './helpers/index.js';
 
 test('core create/update/remove/doctor flows', async () => {
   const rootDir = makeTempDir();
   const binDir = makeTempDir();
 
-  const result = core.createVariant({
+  const result = await core.createVariantAsync({
     name: 'alpha',
     providerKey: 'custom',
     baseUrl: 'http://localhost:4000/anthropic',
     apiKey: '',
     extraEnv: ['FOO=bar'],
+    claudeVersion: 'stable',
     rootDir,
     binDir,
     noTweak: true,
@@ -26,15 +24,13 @@ test('core create/update/remove/doctor flows', async () => {
   });
 
   const variantDir = path.join(rootDir, 'alpha');
-  const npmDir = path.join(variantDir, 'npm');
-  const binaryPath = resolveNpmCliPath(npmDir, core.DEFAULT_NPM_PACKAGE);
-  const packageJsonPath = resolveNpmPackageJsonPath(npmDir, core.DEFAULT_NPM_PACKAGE);
+  const nativeDir = path.join(variantDir, 'native');
+  const binaryPath = resolveNativeClaudePath(nativeDir);
   const configPath = path.join(variantDir, 'config', 'settings.json');
   const wrapperPath = getWrapperPath(binDir, 'alpha');
   const variantMetaPath = path.join(variantDir, 'variant.json');
 
   assert.ok(fs.existsSync(binaryPath));
-  assert.ok(fs.existsSync(packageJsonPath));
   assert.ok(fs.existsSync(configPath));
   assert.ok(fs.existsSync(wrapperPath));
   assert.ok(fs.existsSync(variantMetaPath));
@@ -48,18 +44,12 @@ test('core create/update/remove/doctor flows', async () => {
   assert.equal(configJson.env.DISABLE_AUTO_MIGRATE_TO_NATIVE, '1');
   assert.equal(configJson.env.CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION, '1');
 
-  const pkgBefore = JSON.parse(readFile(packageJsonPath)) as { version?: string };
-  assert.equal(pkgBefore.version, core.DEFAULT_NPM_VERSION);
-
   const metaBefore = JSON.parse(readFile(variantMetaPath)) as { updatedAt?: string };
   await new Promise((resolve) => setTimeout(resolve, 10));
-  core.updateVariant(rootDir, 'alpha', { noTweak: true, tweakccStdio: 'pipe' });
+  await core.updateVariantAsync(rootDir, 'alpha', { noTweak: true, tweakccStdio: 'pipe' });
   const metaAfter = JSON.parse(readFile(variantMetaPath)) as { updatedAt?: string };
   assert.ok(metaAfter.updatedAt, 'updatedAt should be set after update');
   assert.notEqual(metaAfter.updatedAt, metaBefore.updatedAt);
-
-  const pkgAfter = JSON.parse(readFile(packageJsonPath)) as { version?: string };
-  assert.equal(pkgAfter.version, core.DEFAULT_NPM_VERSION);
 
   const doctorReport = core.doctor(rootDir, binDir);
   assert.equal(doctorReport.length, 1);
@@ -72,235 +62,256 @@ test('core create/update/remove/doctor flows', async () => {
   cleanup(binDir);
 });
 
-test('zai brand preset writes tweakcc config', () => {
+test('zai brand preset writes tweakcc config', async () => {
   const rootDir = makeTempDir();
   const binDir = makeTempDir();
 
-  core.createVariant({
-    name: 'zai',
-    providerKey: 'zai',
-    apiKey: '',
-    rootDir,
-    binDir,
-    brand: 'zai',
-    promptPack: false,
-    skillInstall: false,
-    noTweak: true,
-    tweakccStdio: 'pipe',
-  });
+  try {
+    await core.createVariantAsync({
+      name: 'zai',
+      providerKey: 'zai',
+      apiKey: '',
+      claudeVersion: 'stable',
+      rootDir,
+      binDir,
+      brand: 'zai',
+      promptPack: false,
+      skillInstall: false,
+      noTweak: true,
+      tweakccStdio: 'pipe',
+    });
 
-  const tweakConfigPath = path.join(rootDir, 'zai', 'tweakcc', 'config.json');
-  assert.ok(fs.existsSync(tweakConfigPath));
-  const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
-  assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'zai-carbon');
-
-  cleanup(rootDir);
-  cleanup(binDir);
+    const tweakConfigPath = path.join(rootDir, 'zai', 'tweakcc', 'config.json');
+    assert.ok(fs.existsSync(tweakConfigPath));
+    const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
+    assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'zai-carbon');
+  } finally {
+    cleanup(rootDir);
+    cleanup(binDir);
+  }
 });
 
-test('minimax brand preset writes tweakcc config', () => {
+test('minimax brand preset writes tweakcc config', async () => {
   const rootDir = makeTempDir();
   const binDir = makeTempDir();
 
-  core.createVariant({
-    name: 'minimax',
-    providerKey: 'minimax',
-    apiKey: '',
-    rootDir,
-    binDir,
-    brand: 'minimax',
-    promptPack: false,
-    skillInstall: false,
-    noTweak: true,
-    tweakccStdio: 'pipe',
-  });
+  try {
+    await core.createVariantAsync({
+      name: 'minimax',
+      providerKey: 'minimax',
+      apiKey: '',
+      claudeVersion: 'stable',
+      rootDir,
+      binDir,
+      brand: 'minimax',
+      promptPack: false,
+      skillInstall: false,
+      noTweak: true,
+      tweakccStdio: 'pipe',
+    });
 
-  const tweakConfigPath = path.join(rootDir, 'minimax', 'tweakcc', 'config.json');
-  assert.ok(fs.existsSync(tweakConfigPath));
-  const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
-  const themeIds = tweakConfig.settings?.themes?.map((theme) => theme?.id) ?? [];
-  assert.equal(themeIds[0], 'minimax-pulse');
-  assert.equal(themeIds.includes('minimax-glass'), false);
-  assert.equal(themeIds.includes('minimax-blade'), false);
-  assert.equal(themeIds.includes('minimax-ember'), false);
+    const tweakConfigPath = path.join(rootDir, 'minimax', 'tweakcc', 'config.json');
+    assert.ok(fs.existsSync(tweakConfigPath));
+    const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
+    const themeIds = tweakConfig.settings?.themes?.map((theme) => theme?.id) ?? [];
+    assert.equal(themeIds[0], 'minimax-pulse');
+    assert.equal(themeIds.includes('minimax-glass'), false);
+    assert.equal(themeIds.includes('minimax-blade'), false);
+    assert.equal(themeIds.includes('minimax-ember'), false);
 
-  const claudeConfigPath = path.join(rootDir, 'minimax', 'config', '.claude.json');
-  assert.ok(fs.existsSync(claudeConfigPath));
-  const claudeConfig = JSON.parse(readFile(claudeConfigPath)) as {
-    mcpServers?: Record<string, { command?: string; args?: string[]; env?: Record<string, string> }>;
-  };
-  const minimaxServer = claudeConfig.mcpServers?.MiniMax;
-  assert.ok(minimaxServer);
-  assert.equal(minimaxServer?.command, 'uvx');
-  assert.deepEqual(minimaxServer?.args, ['minimax-coding-plan-mcp', '-y']);
-
-  cleanup(rootDir);
-  cleanup(binDir);
+    const claudeConfigPath = path.join(rootDir, 'minimax', 'config', '.claude.json');
+    assert.ok(fs.existsSync(claudeConfigPath));
+    const claudeConfig = JSON.parse(readFile(claudeConfigPath)) as {
+      mcpServers?: Record<string, { command?: string; args?: string[]; env?: Record<string, string> }>;
+    };
+    const minimaxServer = claudeConfig.mcpServers?.MiniMax;
+    assert.ok(minimaxServer);
+    assert.equal(minimaxServer?.command, 'uvx');
+    assert.deepEqual(minimaxServer?.args, ['minimax-coding-plan-mcp', '-y']);
+  } finally {
+    cleanup(rootDir);
+    cleanup(binDir);
+  }
 });
 
-test('openrouter brand preset writes tweakcc config', () => {
+test('openrouter brand preset writes tweakcc config', async () => {
   const rootDir = makeTempDir();
   const binDir = makeTempDir();
 
-  core.createVariant({
-    name: 'openrouter',
-    providerKey: 'openrouter',
-    apiKey: 'or-key',
-    rootDir,
-    binDir,
-    brand: 'openrouter',
-    promptPack: false,
-    skillInstall: false,
-    noTweak: true,
-    tweakccStdio: 'pipe',
-  });
+  try {
+    await core.createVariantAsync({
+      name: 'openrouter',
+      providerKey: 'openrouter',
+      apiKey: 'or-key',
+      claudeVersion: 'stable',
+      rootDir,
+      binDir,
+      brand: 'openrouter',
+      promptPack: false,
+      skillInstall: false,
+      noTweak: true,
+      tweakccStdio: 'pipe',
+    });
 
-  const tweakConfigPath = path.join(rootDir, 'openrouter', 'tweakcc', 'config.json');
-  assert.ok(fs.existsSync(tweakConfigPath));
-  const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
-  assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'openrouter-navy');
-
-  cleanup(rootDir);
-  cleanup(binDir);
+    const tweakConfigPath = path.join(rootDir, 'openrouter', 'tweakcc', 'config.json');
+    assert.ok(fs.existsSync(tweakConfigPath));
+    const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
+    assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'openrouter-navy');
+  } finally {
+    cleanup(rootDir);
+    cleanup(binDir);
+  }
 });
 
-test('ccrouter brand preset writes tweakcc config', () => {
+test('ccrouter brand preset writes tweakcc config', async () => {
   const rootDir = makeTempDir();
   const binDir = makeTempDir();
 
-  core.createVariant({
-    name: 'ccrouter',
-    providerKey: 'ccrouter',
-    apiKey: '',
-    rootDir,
-    binDir,
-    brand: 'ccrouter',
-    promptPack: false,
-    skillInstall: false,
-    noTweak: true,
-    tweakccStdio: 'pipe',
-  });
+  try {
+    await core.createVariantAsync({
+      name: 'ccrouter',
+      providerKey: 'ccrouter',
+      apiKey: '',
+      claudeVersion: 'stable',
+      rootDir,
+      binDir,
+      brand: 'ccrouter',
+      promptPack: false,
+      skillInstall: false,
+      noTweak: true,
+      tweakccStdio: 'pipe',
+    });
 
-  const tweakConfigPath = path.join(rootDir, 'ccrouter', 'tweakcc', 'config.json');
-  assert.ok(fs.existsSync(tweakConfigPath));
-  const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
-  assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'ccrouter-sky');
-
-  cleanup(rootDir);
-  cleanup(binDir);
+    const tweakConfigPath = path.join(rootDir, 'ccrouter', 'tweakcc', 'config.json');
+    assert.ok(fs.existsSync(tweakConfigPath));
+    const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
+    assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'ccrouter-sky');
+  } finally {
+    cleanup(rootDir);
+    cleanup(binDir);
+  }
 });
 
-test('mirror brand preset writes tweakcc config and disables prompt pack', () => {
+test('mirror brand preset writes tweakcc config and disables prompt pack', async () => {
   const rootDir = makeTempDir();
   const binDir = makeTempDir();
 
-  core.createVariant({
-    name: 'mirror-test',
-    providerKey: 'mirror',
-    apiKey: '',
-    rootDir,
-    binDir,
-    brand: 'mirror',
-    noTweak: true,
-    tweakccStdio: 'pipe',
-  });
+  try {
+    await core.createVariantAsync({
+      name: 'mirror-test',
+      providerKey: 'mirror',
+      apiKey: '',
+      claudeVersion: 'stable',
+      rootDir,
+      binDir,
+      brand: 'mirror',
+      noTweak: true,
+      tweakccStdio: 'pipe',
+    });
 
-  // Verify tweakcc config with mirror theme
-  const tweakConfigPath = path.join(rootDir, 'mirror-test', 'tweakcc', 'config.json');
-  assert.ok(fs.existsSync(tweakConfigPath));
-  const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
-  assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'mirror-claude');
+    // Verify tweakcc config with mirror theme
+    const tweakConfigPath = path.join(rootDir, 'mirror-test', 'tweakcc', 'config.json');
+    assert.ok(fs.existsSync(tweakConfigPath));
+    const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as { settings?: { themes?: { id?: string }[] } };
+    assert.equal(tweakConfig.settings?.themes?.[0]?.id, 'mirror-claude');
 
-  // Verify variant.json has prompt pack disabled
-  const variantPath = path.join(rootDir, 'mirror-test', 'variant.json');
-  const variant = JSON.parse(readFile(variantPath)) as { promptPack?: boolean };
-  assert.equal(variant.promptPack, false, 'mirror provider should have promptPack disabled');
+    // Verify variant.json has prompt pack disabled
+    const variantPath = path.join(rootDir, 'mirror-test', 'variant.json');
+    const variant = JSON.parse(readFile(variantPath)) as { promptPack?: boolean };
+    assert.equal(variant.promptPack, false, 'mirror provider should have promptPack disabled');
 
-  // Verify settings.json has no auth overrides (pure Claude Code)
-  const settingsPath = path.join(rootDir, 'mirror-test', 'config', 'settings.json');
-  const settings = JSON.parse(readFile(settingsPath)) as { env?: Record<string, unknown> };
-  assert.ok(!settings.env?.ANTHROPIC_BASE_URL, 'mirror should not set ANTHROPIC_BASE_URL');
-  assert.ok(!settings.env?.ANTHROPIC_API_KEY, 'mirror should not set ANTHROPIC_API_KEY');
-  assert.ok(settings.env?.CC_MIRROR_SPLASH, 'mirror should set splash env');
-
-  cleanup(rootDir);
-  cleanup(binDir);
+    // Verify settings.json has no auth overrides (pure Claude Code)
+    const settingsPath = path.join(rootDir, 'mirror-test', 'config', 'settings.json');
+    const settings = JSON.parse(readFile(settingsPath)) as { env?: Record<string, unknown> };
+    assert.ok(!settings.env?.ANTHROPIC_BASE_URL, 'mirror should not set ANTHROPIC_BASE_URL');
+    assert.ok(!settings.env?.ANTHROPIC_API_KEY, 'mirror should not set ANTHROPIC_API_KEY');
+    assert.ok(settings.env?.CC_MIRROR_SPLASH, 'mirror should set splash env');
+  } finally {
+    cleanup(rootDir);
+    cleanup(binDir);
+  }
 });
 
-test('api key approvals are written to .claude.json', () => {
+test('api key approvals are written to .claude.json', async () => {
   const rootDir = makeTempDir();
   const binDir = makeTempDir();
 
   const apiKey = 'sk-test-1234567890abcdefghijklmnopqrstuvwxyz';
 
-  core.createVariant({
-    name: 'beta',
-    providerKey: 'custom',
-    baseUrl: 'http://localhost:4000/anthropic',
-    apiKey,
-    rootDir,
-    binDir,
-    noTweak: true,
-    tweakccStdio: 'pipe',
-  });
+  try {
+    await core.createVariantAsync({
+      name: 'beta',
+      providerKey: 'custom',
+      baseUrl: 'http://localhost:4000/anthropic',
+      apiKey,
+      claudeVersion: 'stable',
+      rootDir,
+      binDir,
+      noTweak: true,
+      tweakccStdio: 'pipe',
+    });
 
-  const claudeConfigPath = path.join(rootDir, 'beta', 'config', '.claude.json');
-  assert.ok(fs.existsSync(claudeConfigPath));
-  const config = JSON.parse(readFile(claudeConfigPath)) as {
-    customApiKeyResponses?: { approved?: string[] };
-  };
-  const approved = config.customApiKeyResponses?.approved ?? [];
-  assert.ok(approved.includes(apiKey.slice(-20)));
-
-  cleanup(rootDir);
-  cleanup(binDir);
+    const claudeConfigPath = path.join(rootDir, 'beta', 'config', '.claude.json');
+    assert.ok(fs.existsSync(claudeConfigPath));
+    const config = JSON.parse(readFile(claudeConfigPath)) as {
+      customApiKeyResponses?: { approved?: string[] };
+    };
+    const approved = config.customApiKeyResponses?.approved ?? [];
+    assert.ok(approved.includes(apiKey.slice(-20)));
+  } finally {
+    cleanup(rootDir);
+    cleanup(binDir);
+  }
 });
 
 test('settingsOnly update preserves binary and only updates settings', () => {
   const rootDir = makeTempDir();
   const binDir = makeTempDir();
 
-  core.createVariant({
-    name: 'gamma',
-    providerKey: 'openrouter',
-    apiKey: 'or-key',
-    rootDir,
-    binDir,
-    noTweak: true,
-    tweakccStdio: 'pipe',
-  });
+  return (async () => {
+    await core.createVariantAsync({
+      name: 'gamma',
+      providerKey: 'openrouter',
+      apiKey: 'or-key',
+      claudeVersion: 'stable',
+      rootDir,
+      binDir,
+      noTweak: true,
+      tweakccStdio: 'pipe',
+    });
 
-  const variantDir = path.join(rootDir, 'gamma');
-  const npmDir = path.join(variantDir, 'npm');
-  const binaryPath = resolveNpmCliPath(npmDir, core.DEFAULT_NPM_PACKAGE);
+    const variantDir = path.join(rootDir, 'gamma');
+    const nativeDir = path.join(variantDir, 'native');
+    const binaryPath = resolveNativeClaudePath(nativeDir);
 
-  const marker = '\n// cc-mirror-settings-only-test\n';
-  fs.appendFileSync(binaryPath, marker);
-  const beforeUpdate = readFile(binaryPath);
+    const marker = '\ncc-mirror-settings-only-test\n';
+    fs.appendFileSync(binaryPath, marker);
+    const beforeUpdate = readFile(binaryPath);
 
-  // Update with settingsOnly - should NOT reinstall npm package
-  core.updateVariant(rootDir, 'gamma', {
-    settingsOnly: true,
-    noTweak: true,
-    tweakccStdio: 'pipe',
-    modelOverrides: {
-      sonnet: 'anthropic/claude-sonnet',
-      haiku: 'anthropic/claude-haiku',
-    },
-  });
+    // Update with settingsOnly - should NOT reinstall Claude Code binary
+    await core.updateVariantAsync(rootDir, 'gamma', {
+      settingsOnly: true,
+      noTweak: true,
+      tweakccStdio: 'pipe',
+      modelOverrides: {
+        sonnet: 'anthropic/claude-sonnet',
+        haiku: 'anthropic/claude-haiku',
+      },
+    });
 
-  const afterUpdate = readFile(binaryPath);
-  assert.equal(afterUpdate, beforeUpdate, 'settingsOnly update should not reinstall npm package');
-  assert.ok(afterUpdate.includes('cc-mirror-settings-only-test'), 'settingsOnly update should keep binary intact');
+    const afterUpdate = readFile(binaryPath);
+    assert.equal(afterUpdate, beforeUpdate, 'settingsOnly update should keep binary intact');
+    assert.ok(afterUpdate.includes('cc-mirror-settings-only-test'), 'settingsOnly update should keep binary intact');
 
-  // But settings should be updated with model overrides
-  const configPath = path.join(variantDir, 'config', 'settings.json');
-  const configJson = JSON.parse(readFile(configPath)) as {
-    env: Record<string, string>;
-  };
-  assert.equal(configJson.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'anthropic/claude-sonnet');
-  assert.equal(configJson.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'anthropic/claude-haiku');
+    // But settings should be updated with model overrides
+    const configPath = path.join(variantDir, 'config', 'settings.json');
+    const configJson = JSON.parse(readFile(configPath)) as {
+      env: Record<string, string>;
+    };
+    assert.equal(configJson.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'anthropic/claude-sonnet');
+    assert.equal(configJson.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'anthropic/claude-haiku');
 
-  cleanup(rootDir);
-  cleanup(binDir);
+    cleanup(rootDir);
+    cleanup(binDir);
+  })();
 });

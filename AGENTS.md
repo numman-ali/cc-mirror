@@ -20,7 +20,7 @@ src/
 │   ├── variant-builder/   # Step-based variant creation
 │   │   ├── VariantBuilder.ts
 │   │   ├── VariantUpdater.ts
-│   │   ├── steps/         # Build steps (PrepareDirectories, InstallNpm, etc.)
+│   │   ├── steps/         # Build steps (PrepareDirectories, InstallNative, etc.)
 │   │   └── update-steps/  # Update steps
 │   ├── prompt-pack/       # System prompt overlays
 │   │   ├── providers/     # Per-provider overlays (zai.ts, minimax.ts)
@@ -87,8 +87,8 @@ npm run render:tui-svg  # Regenerate docs/cc-mirror-tree.svg
 ├── tweakcc/
 │   ├── config.json         # Brand preset + theme list + toolsets
 │   └── system-prompts/     # Prompt-pack overlays (after tweakcc apply)
-├── npm/
-│   └── node_modules/@anthropic-ai/claude-code/cli.js
+├── native/
+│   └── claude              # Native Claude Code binary (or claude.exe on Windows)
 └── variant.json            # Metadata
 ```
 
@@ -195,8 +195,9 @@ npx cc-mirror doctor
 ### CLI Feature Gates
 
 ```bash
-# Search for feature flags in cli.js
-rg "tengu_prompt_suggestion|promptSuggestionEnabled" ~/.cc-mirror/<variant>/npm/node_modules/@anthropic-ai/claude-code/cli.js
+# Native installs don't have cli.js on disk. Use tweakcc to unpack first:
+npx tweakcc unpack /tmp/claude-code.js ~/.cc-mirror/<variant>/native/claude
+rg "tengu_prompt_suggestion|promptSuggestionEnabled" /tmp/claude-code.js
 
 # Check cached gates
 cat ~/.cc-mirror/<variant>/config/.claude.json | jq '.statsig'
@@ -246,7 +247,7 @@ Key test files:
 ## Architecture Notes
 
 - **Step-based builds**: Each step is isolated, can be sync or async
-- **Build order**: PrepareDirectories → InstallNpm → WriteConfig → BrandTheme → Tweakcc → Wrapper → ShellEnv → SkillInstall → Finalize
+- **Build order**: PrepareDirectories → InstallNative → WriteConfig → BrandTheme → Tweakcc → Wrapper → ShellEnv → SkillInstall → Finalize
 
 ## Documentation
 

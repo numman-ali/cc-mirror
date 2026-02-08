@@ -30,7 +30,7 @@ interface CreateParams {
   brand: string;
   rootDir: string;
   binDir: string;
-  npmPackage: string;
+  claudeVersion: string;
   extraEnv: string[];
   requiresCredential: boolean;
   shouldPromptApiKey: boolean;
@@ -71,7 +71,7 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
   const brand = (opts.brand as string) || 'auto';
   const rootDir = (opts.root as string) || core.DEFAULT_ROOT;
   const binDir = (opts['bin-dir'] as string) || core.DEFAULT_BIN_DIR;
-  const npmPackage = (opts['npm-package'] as string) || core.DEFAULT_NPM_PACKAGE;
+  const claudeVersion = (opts['claude-version'] as string) || core.DEFAULT_CLAUDE_VERSION || 'stable';
   const extraEnv = buildExtraEnv(opts);
   const requiresCredential = !provider.credentialOptional;
   // Don't prompt for API key if credential is optional (mirror, ccrouter)
@@ -87,7 +87,7 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
     brand,
     rootDir,
     binDir,
-    npmPackage,
+    claudeVersion,
     extraEnv,
     requiresCredential,
     shouldPromptApiKey,
@@ -130,7 +130,7 @@ async function handleQuickMode(opts: ParsedArgs, params: CreateParams): Promise<
     }
   }
 
-  const result = core.createVariant({
+  const result = await core.createVariantAsync({
     name: params.name,
     providerKey: params.providerKey,
     baseUrl: params.baseUrl,
@@ -139,7 +139,7 @@ async function handleQuickMode(opts: ParsedArgs, params: CreateParams): Promise<
     extraEnv: params.extraEnv,
     rootDir: params.rootDir,
     binDir: params.binDir,
-    npmPackage: params.npmPackage,
+    claudeVersion: params.claudeVersion,
     noTweak: Boolean(opts.noTweak),
     promptPack,
     skillInstall,
@@ -172,6 +172,7 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
 
   const nextName = await prompt('Variant name', params.name);
   const nextBase = await prompt('ANTHROPIC_BASE_URL', params.baseUrl);
+  const nextClaudeVersion = await prompt('Claude Code version (stable/latest/x.y.z)', params.claudeVersion);
 
   let nextKey = params.shouldPromptApiKey
     ? params.requiresCredential
@@ -191,7 +192,6 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
   const nextBrand = await prompt(`Brand preset (${brandHint})`, params.brand);
   const nextRoot = await prompt('Variants root directory', params.rootDir);
   const nextBin = await prompt('Wrapper install directory', params.binDir);
-  const nextNpmPackage = await prompt('NPM package', params.npmPackage);
 
   const envInput = await prompt('Extra env (KEY=VALUE, comma separated)', params.extraEnv.join(','));
   const parsedEnv = envInput
@@ -208,7 +208,7 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
     }
   }
 
-  const result = core.createVariant({
+  const result = await core.createVariantAsync({
     name: nextName,
     providerKey: params.providerKey,
     baseUrl: nextBase,
@@ -217,7 +217,7 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
     extraEnv: parsedEnv,
     rootDir: nextRoot,
     binDir: nextBin,
-    npmPackage: nextNpmPackage,
+    claudeVersion: nextClaudeVersion,
     noTweak: Boolean(opts.noTweak),
     promptPack,
     skillInstall,
@@ -253,16 +253,16 @@ async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams):
 
   const resolvedModelOverrides = await ensureModelMapping(params.providerKey, opts, { ...modelOverrides });
 
-  const result = core.createVariant({
+  const result = await core.createVariantAsync({
     name: params.name,
     providerKey: params.providerKey,
     baseUrl: params.baseUrl,
     apiKey: params.apiKey,
+    claudeVersion: params.claudeVersion,
     brand: params.brand,
     extraEnv: params.extraEnv,
     rootDir: params.rootDir,
     binDir: params.binDir,
-    npmPackage: params.npmPackage,
     noTweak: Boolean(opts.noTweak),
     promptPack,
     skillInstall,

@@ -2,7 +2,7 @@
  * Variant Updater Steps - Barrel Export
  */
 
-export { InstallNpmUpdateStep } from './InstallNpmUpdateStep.js';
+export { InstallNativeUpdateStep } from './InstallNativeUpdateStep.js';
 export { ModelOverridesStep } from './ModelOverridesStep.js';
 export { TweakccUpdateStep } from './TweakccUpdateStep.js';
 export { WrapperUpdateStep } from './WrapperUpdateStep.js';

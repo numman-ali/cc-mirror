@@ -30,7 +30,7 @@ export class WrapperUpdateStep implements UpdateStep {
     if (resolvedBin) {
       ensureDir(resolvedBin);
       const wrapperPath = getWrapperPath(resolvedBin, name);
-      writeWrapper(wrapperPath, meta.configDir, meta.binaryPath, 'node');
+      writeWrapper(wrapperPath, meta.configDir, meta.binaryPath, 'native');
       meta.binDir = resolvedBin;
     }
   }

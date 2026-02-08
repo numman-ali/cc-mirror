@@ -51,11 +51,10 @@ export function resolveZaiApiKey(): {
 export interface UseAppStateOptions {
   initialRootDir: string;
   initialBinDir: string;
-  defaultNpmPackage: string;
 }
 
 export function useCreateAppState(options: UseAppStateOptions): { state: AppState; actions: AppActions } {
-  const { initialRootDir, initialBinDir, defaultNpmPackage } = options;
+  const { initialRootDir, initialBinDir } = options;
 
   // Navigation
   const [screen, setScreen] = useState<Screen>('home');
@@ -76,7 +75,6 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
   // Paths
   const [rootDir, setRootDir] = useState(initialRootDir);
   const [binDir, setBinDir] = useState(initialBinDir);
-  const [npmPackage, setNpmPackage] = useState(defaultNpmPackage);
 
   // Feature flags
   const [useTweak, setUseTweak] = useState(true);
@@ -114,7 +112,6 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
     setModelOpus('');
     setModelHaiku('');
     setApiKeyDetectedFrom(null);
-    setNpmPackage(defaultNpmPackage);
     setExtraEnv([]);
     setUseTweak(true);
     setUsePromptPack(true);
@@ -123,7 +120,7 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
     setShellEnv(true);
     setSkillUpdate(false);
     setCompletion(defaultCompletion);
-  }, [defaultNpmPackage]);
+  }, []);
 
   // Navigate back based on current screen
   const navigateBack = useCallback(() => {
@@ -224,7 +221,6 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
       modelHaiku,
       rootDir,
       binDir,
-      npmPackage,
       useTweak,
       usePromptPack,
       promptPackMode,
@@ -252,7 +248,6 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
       modelHaiku,
       rootDir,
       binDir,
-      npmPackage,
       useTweak,
       usePromptPack,
       promptPackMode,
@@ -285,7 +280,6 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
       setModelHaiku,
       setRootDir,
       setBinDir,
-      setNpmPackage,
       setUseTweak,
       setUsePromptPack,
       setPromptPackMode,

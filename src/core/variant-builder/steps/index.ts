@@ -3,7 +3,7 @@
  */
 
 export { PrepareDirectoriesStep } from './PrepareDirectoriesStep.js';
-export { InstallNpmStep } from './InstallNpmStep.js';
+export { InstallNativeStep } from './InstallNativeStep.js';
 export { WriteConfigStep } from './WriteConfigStep.js';
 export { BrandThemeStep } from './BrandThemeStep.js';
 export { TweakccStep } from './TweakccStep.js';

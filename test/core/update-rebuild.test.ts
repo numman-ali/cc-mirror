@@ -16,18 +16,19 @@ const createContext = (rootDir: string, binDir: string, opts: UpdateContext['opt
   const variantDir = path.join(rootDir, name);
   const configDir = path.join(variantDir, 'config');
   const tweakDir = path.join(variantDir, 'tweakcc');
-  const npmDir = path.join(variantDir, 'npm');
+  const nativeDir = path.join(variantDir, 'native');
 
   const meta = {
     name,
     provider: 'zai',
     createdAt: new Date().toISOString(),
-    claudeOrig: 'npm:@anthropic-ai/claude-code@2.1.19',
-    binaryPath: path.join(npmDir, 'node_modules', '@anthropic-ai', 'claude-code', 'cli.js'),
+    claudeOrig: 'native:2.1.25',
+    binaryPath: path.join(nativeDir, process.platform === 'win32' ? 'claude.exe' : 'claude'),
     configDir,
     tweakDir,
     binDir,
-    npmDir,
+    nativeDir,
+    nativeVersion: 'stable',
     brand: 'zai',
   } as UpdateContext['meta'];
 
@@ -39,11 +40,10 @@ const createContext = (rootDir: string, binDir: string, opts: UpdateContext['opt
       resolvedRoot: rootDir,
       resolvedBin: binDir,
       variantDir,
-      npmDir,
+      nativeDir,
     },
     prefs: {
-      resolvedNpmPackage: '@anthropic-ai/claude-code',
-      resolvedNpmVersion: '2.1.19',
+      resolvedClaudeVersion: 'stable',
       promptPackPreference: true,
       promptPackEnabled: true,
       skillInstallEnabled: true,
@@ -63,7 +63,7 @@ const createContext = (rootDir: string, binDir: string, opts: UpdateContext['opt
   return ctx;
 };
 
-test('RebuildUpdateStep resets npm/tweakcc but preserves config', () => {
+test('RebuildUpdateStep resets claude/tweakcc but preserves config', () => {
   const rootDir = makeTempDir('update-rebuild-');
   const binDir = makeTempDir('update-bin-');
 
@@ -78,8 +78,8 @@ test('RebuildUpdateStep resets npm/tweakcc but preserves config', () => {
     fs.mkdirSync(path.join(meta.tweakDir, 'system-prompts'), { recursive: true });
     fs.writeFileSync(path.join(meta.tweakDir, 'system-prompts', 'old.md'), 'old');
 
-    fs.mkdirSync(paths.npmDir, { recursive: true });
-    fs.writeFileSync(path.join(paths.npmDir, 'marker.txt'), 'old');
+    fs.mkdirSync(paths.nativeDir, { recursive: true });
+    fs.writeFileSync(path.join(paths.nativeDir, 'marker.txt'), 'old');
 
     const wrapperPath = getWrapperPath(binDir, ctx.name);
     fs.writeFileSync(wrapperPath, 'wrapper');
@@ -89,7 +89,7 @@ test('RebuildUpdateStep resets npm/tweakcc but preserves config', () => {
 
     new RebuildUpdateStep().execute(ctx);
 
-    assert.equal(fs.existsSync(paths.npmDir), false, 'npm dir should be removed');
+    assert.equal(fs.existsSync(paths.nativeDir), false, 'native dir should be removed');
     assert.ok(fs.existsSync(meta.tweakDir), 'tweakcc dir should be recreated');
     assert.ok(fs.existsSync(path.join(meta.tweakDir, 'config.json')), 'tweakcc config should be preserved');
     assert.equal(

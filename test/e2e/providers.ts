@@ -63,7 +63,7 @@ export const PROVIDERS = [
     key: 'nanogpt',
     name: 'NanoGPT',
     apiKey: 'test-nanogpt-key',
-    expectedThemeId: 'nanogpt-neon',
+    expectedThemeId: 'nanogpt-teal',
     expectedSplashStyle: 'nanogpt',
     colorCode: '\\x1b[38;5;81m', // Neon cyan
   },

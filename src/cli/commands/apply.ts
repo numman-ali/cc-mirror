@@ -14,7 +14,7 @@ export interface ApplyCommandOptions {
 /**
  * Execute the apply command
  */
-export function runApplyCommand({ opts }: ApplyCommandOptions): void {
+export async function runApplyCommand({ opts }: ApplyCommandOptions): Promise<void> {
   const target = opts._ && opts._[0];
   if (!target) {
     console.error('apply requires a variant name');
@@ -27,7 +27,7 @@ export function runApplyCommand({ opts }: ApplyCommandOptions): void {
   const tweakccStdio =
     rawTweakccStdio === 'inherit' || opts.verbose ? 'inherit' : rawTweakccStdio === 'pipe' ? 'pipe' : 'pipe';
 
-  const result = core.updateVariant(rootDir, target, {
+  const result = await core.updateVariantAsync(rootDir, target, {
     binDir,
     settingsOnly: true,
     noTweak: Boolean(opts.noTweak),

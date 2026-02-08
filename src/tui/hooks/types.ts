@@ -40,12 +40,11 @@ export interface CreateVariantParams {
   baseUrl: string;
   apiKey: string;
   extraEnv: string[];
+  claudeVersion: string;
   modelOverrides: ModelOverrides;
   brandKey: string;
   rootDir: string;
   binDir: string;
-  npmPackage: string;
-  npmVersion: string;
   usePromptPack: boolean;
   promptPackMode: 'minimal' | 'maximal';
   installSkill: boolean;

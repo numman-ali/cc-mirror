@@ -110,7 +110,6 @@ export interface AppState {
   // Paths
   rootDir: string;
   binDir: string;
-  npmPackage: string;
 
   // Feature flags
   usePromptPack: boolean;
@@ -159,7 +158,6 @@ export interface AppActions {
   // Paths
   setRootDir: (dir: string) => void;
   setBinDir: (dir: string) => void;
-  setNpmPackage: (pkg: string) => void;
 
   // Feature flags
   setUsePromptPack: (value: boolean) => void;

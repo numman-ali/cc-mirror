@@ -57,7 +57,7 @@ export function useModelConfig(options: UseModelConfigOptions): void {
         const opts = {
           tweakccStdio: 'pipe' as const,
           binDir,
-          settingsOnly: true, // Skip npm reinstall, just update settings.json
+          settingsOnly: true, // Skip Claude Code reinstall, just update settings.json
           noTweak: true, // Don't re-run tweakcc patches
           modelOverrides: {
             opus: modelOpus.trim() || undefined,

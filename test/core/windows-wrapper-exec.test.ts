@@ -14,29 +14,32 @@ test('windows wrapper executes CLI', { skip: process.platform !== 'win32' }, () 
   const binDir = makeTempDir();
 
   try {
-    const result = core.createVariant({
-      name: 'win-smoke',
-      providerKey: 'custom',
-      baseUrl: 'http://localhost:4000/anthropic',
-      apiKey: '',
-      rootDir,
-      binDir,
-      noTweak: true,
-      promptPack: false,
-      skillInstall: false,
-      tweakccStdio: 'pipe',
-    });
+    return (async () => {
+      const result = await core.createVariantAsync({
+        name: 'win-smoke',
+        providerKey: 'custom',
+        baseUrl: 'http://localhost:4000/anthropic',
+        apiKey: '',
+        claudeVersion: 'stable',
+        rootDir,
+        binDir,
+        noTweak: true,
+        promptPack: false,
+        skillInstall: false,
+        tweakccStdio: 'pipe',
+      });
 
-    const wrapperPath = getWrapperPath(binDir, result.meta.name);
-    const exec = spawnSync(wrapperPath, ['--version'], {
-      encoding: 'utf8',
-      shell: true,
-      env: { ...process.env, CC_MIRROR_SPLASH: '0' },
-    });
+      const wrapperPath = getWrapperPath(binDir, result.meta.name);
+      const exec = spawnSync(wrapperPath, ['--version'], {
+        encoding: 'utf8',
+        shell: true,
+        env: { ...process.env, CC_MIRROR_SPLASH: '0' },
+      });
 
-    assert.equal(exec.status, 0);
-    const output = `${exec.stdout ?? ''}${exec.stderr ?? ''}`;
-    assert.match(output, /\d+\.\d+\.\d+/, 'Expected --version output to include a semver');
+      assert.equal(exec.status, 0);
+      const output = `${exec.stdout ?? ''}${exec.stderr ?? ''}`;
+      assert.match(output, /\d+\.\d+\.\d+/, 'Expected --version output to include a semver');
+    })();
   } finally {
     cleanup(rootDir);
     cleanup(binDir);

@@ -10,11 +10,11 @@ export class WrapperStep implements BuildStep {
 
   execute(ctx: BuildContext): void {
     ctx.report('Writing CLI wrapper...');
-    writeWrapper(ctx.paths.wrapperPath, ctx.paths.configDir, ctx.state.binaryPath, 'node');
+    writeWrapper(ctx.paths.wrapperPath, ctx.paths.configDir, ctx.state.binaryPath, 'native');
   }
 
   async executeAsync(ctx: BuildContext): Promise<void> {
     await ctx.report('Writing CLI wrapper...');
-    writeWrapper(ctx.paths.wrapperPath, ctx.paths.configDir, ctx.state.binaryPath, 'node');
+    writeWrapper(ctx.paths.wrapperPath, ctx.paths.configDir, ctx.state.binaryPath, 'native');
   }
 }

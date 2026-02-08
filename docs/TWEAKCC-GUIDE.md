@@ -144,7 +144,7 @@ Use `CLAUDE_CODE_CONTEXT_LIMIT` only for custom endpoints that support larger wi
 ### Quick path (simple install)
 
 - Prompt for API key
-- Create variant (npm install, pinned version)
+- Create variant (native install, pinned version)
 - Apply brand preset + tweakcc patches
 - Exit
 

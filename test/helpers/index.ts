@@ -8,7 +8,7 @@
 export { tick, send, waitFor, KEYS } from './ink-helpers.js';
 
 // Filesystem utilities
-export { makeTempDir, writeExecutable, readFile, cleanup, resolveNpmCliPath } from './fs-helpers.js';
+export { makeTempDir, writeExecutable, readFile, cleanup, resolveNativeClaudePath } from './fs-helpers.js';
 
 // Mock core module for TUI tests
 export { makeCore } from './mock-core.js';

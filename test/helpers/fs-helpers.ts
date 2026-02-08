@@ -33,7 +33,7 @@ export const cleanup = (dir: string) => {
 };
 
 /**
- * Resolve path to npm CLI within node_modules
+ * Resolve path to native Claude Code binary within a native install dir
  */
-export const resolveNpmCliPath = (npmDir: string, npmPackage: string) =>
-  path.join(npmDir, 'node_modules', ...npmPackage.split('/'), 'cli.js');
+export const resolveNativeClaudePath = (nativeDir: string) =>
+  path.join(nativeDir, process.platform === 'win32' ? 'claude.exe' : 'claude');

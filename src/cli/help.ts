@@ -26,7 +26,7 @@ COMMANDS
   quick [options]              Fast setup: provider → ready in 30s
   create [options]             Full configuration wizard
   list                         List all variants
-  update [name]                Update to latest Claude Code
+  update [name]                Update Claude Code (default: stable)
   apply <name>                 Re-apply tweakcc patches (no reinstall)
   remove <name>                Remove a variant
   doctor                       Health check all variants
@@ -41,6 +41,7 @@ OPTIONS (create/quick)
 
 OPTIONS (advanced)
   --base-url <url>             ANTHROPIC_BASE_URL override
+  --claude-version <spec>      Claude Code: stable | latest | x.y.z
   --model-sonnet <name>        Default Sonnet model
   --model-opus <name>          Default Opus model
   --model-haiku <name>         Default Haiku model
@@ -66,6 +67,7 @@ EXAMPLES
   npx cc-mirror quick --provider mirror --name mclaude
   npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
   npx cc-mirror apply mclaude
+  npx cc-mirror update mclaude --claude-version latest
   npx cc-mirror doctor
 
 LEARN MORE

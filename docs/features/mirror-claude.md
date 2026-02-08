@@ -158,7 +158,7 @@ mclaude
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  ~/.cc-mirror/mclaude/                                  │
-│  ├── npm/                    Claude Code installation   │
+│  ├── native/                 Claude Code installation   │
 │  ├── config/                                            │
 │  │   ├── settings.json       Minimal env (splash only)  │
 │  │   ├── .claude.json        MCP servers, approvals     │

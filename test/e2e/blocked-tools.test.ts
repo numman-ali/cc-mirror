@@ -23,15 +23,16 @@ test('E2E: Blocked Tools', async (t) => {
     }
   });
 
-  await t.test('zai brand has blocked tools configured', () => {
+  await t.test('zai brand has blocked tools configured', async () => {
     const rootDir = makeTempDir();
     const binDir = makeTempDir();
     createdDirs.push(rootDir, binDir);
 
-    core.createVariant({
+    await core.createVariantAsync({
       name: 'test-zai-blocked',
       providerKey: 'zai',
       apiKey: 'test-key',
+      claudeVersion: 'stable',
       rootDir,
       binDir,
       promptPack: false,
@@ -60,15 +61,16 @@ test('E2E: Blocked Tools', async (t) => {
     assert.equal(config.settings.defaultToolset, 'zai', 'default toolset should be zai');
   });
 
-  await t.test('minimax brand has blocked tools configured', () => {
+  await t.test('minimax brand has blocked tools configured', async () => {
     const rootDir = makeTempDir();
     const binDir = makeTempDir();
     createdDirs.push(rootDir, binDir);
 
-    core.createVariant({
+    await core.createVariantAsync({
       name: 'test-minimax-blocked',
       providerKey: 'minimax',
       apiKey: 'test-key',
+      claudeVersion: 'stable',
       rootDir,
       binDir,
       promptPack: false,

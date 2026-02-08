@@ -24,8 +24,8 @@ export const makeCore = () => {
   const core = {
     DEFAULT_ROOT: '/tmp/cc-mirror-test',
     DEFAULT_BIN_DIR: '/tmp/cc-mirror-bin',
-    DEFAULT_NPM_PACKAGE: '@anthropic-ai/claude-code',
-    DEFAULT_NPM_VERSION: '2.1.19',
+    DEFAULT_CLAUDE_VERSION: 'stable',
+    DEFAULT_CLAUDE_NATIVE_CACHE_DIR: '/tmp/cc-mirror-test/.cache/claude-native',
     listVariants: () => [
       {
         name: 'alpha',
@@ -38,6 +38,9 @@ export const makeCore = () => {
           configDir: '/tmp/alpha/config',
           tweakDir: '/tmp/alpha/tweakcc',
           wrapperPath: '/tmp/bin/alpha',
+          nativeDir: '/tmp/alpha/native',
+          nativeVersion: 'stable',
+          nativePlatform: 'darwin-arm64',
         },
       },
       {
@@ -51,6 +54,9 @@ export const makeCore = () => {
           configDir: '/tmp/beta/config',
           tweakDir: '/tmp/beta/tweakcc',
           wrapperPath: '/tmp/bin/beta',
+          nativeDir: '/tmp/beta/native',
+          nativeVersion: 'stable',
+          nativePlatform: 'darwin-arm64',
         },
       },
     ],

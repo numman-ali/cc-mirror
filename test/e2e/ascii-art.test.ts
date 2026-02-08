@@ -20,7 +20,7 @@ test('E2E: Colored ASCII art content verification', async (t) => {
     }
   });
 
-  await t.test('each provider has distinct color scheme in wrapper', () => {
+  await t.test('each provider has distinct color scheme in wrapper', async () => {
     const rootDir = makeTempDir();
     const binDir = makeTempDir();
     createdDirs.push(rootDir, binDir);
@@ -29,10 +29,11 @@ test('E2E: Colored ASCII art content verification', async (t) => {
     const wrapperContents: Map<string, string> = new Map();
 
     for (const provider of PROVIDERS) {
-      core.createVariant({
+      await core.createVariantAsync({
         name: `color-${provider.key}`,
         providerKey: provider.key,
         apiKey: provider.apiKey,
+        claudeVersion: 'stable',
         rootDir,
         binDir,
         brand: provider.key,
@@ -82,12 +83,12 @@ test('E2E: Colored ASCII art content verification', async (t) => {
     const asciiPatterns: Record<string, string[]> = {
       zai: ['GLM Coding Plan', 'A I'],
       minimax: ['MiniMax-M2.1', 'AGI for All'],
-      openrouter: ['OpenRouter', 'One API', 'Any Model'],
-      ccrouter: ['Claude Code Router', 'ROUTER', 'LLM'],
-      gatewayz: ['GatewayZ', 'G A T E W A Y'],
-      vercel: ['Vercel AI Gateway', '▲'],
-      nanogpt: ['NanoGPT', 'NANO', '◉'],
-      ollama: ['Ollama', 'OLLAMA', '◕◕'],
+      openrouter: ['One API', 'Any Model', '██'],
+      ccrouter: ['CC ROUTER', 'Claude Code', 'Any Model'],
+      gatewayz: ['GATEWAY Z', 'AI Gateway', '██'],
+      vercel: ['AI Gateway', '▲', '██'],
+      nanogpt: ['All Models', 'No Subscription', '██'],
+      ollama: ['Run Models Locally', '██'],
     };
 
     for (const [providerKey, patterns] of Object.entries(asciiPatterns)) {

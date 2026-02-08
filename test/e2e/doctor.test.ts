@@ -16,17 +16,18 @@ test('E2E: Doctor command', async (t) => {
     }
   });
 
-  await t.test('doctor reports healthy variants', () => {
+  await t.test('doctor reports healthy variants', async () => {
     const rootDir = makeTempDir();
     const binDir = makeTempDir();
     createdDirs.push(rootDir, binDir);
 
     // Create multiple variants
     for (const provider of ['zai', 'minimax']) {
-      core.createVariant({
+      await core.createVariantAsync({
         name: `doctor-${provider}`,
         providerKey: provider,
         apiKey: 'test-key',
+        claudeVersion: 'stable',
         rootDir,
         binDir,
         brand: provider,

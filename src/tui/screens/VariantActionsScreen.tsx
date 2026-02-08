@@ -13,6 +13,8 @@ import type { MenuItem } from '../components/ui/types.js';
 interface VariantMeta {
   name: string;
   provider?: string;
+  claudeOrig?: string;
+  nativeVersion?: string;
   binaryPath: string;
   configDir: string;
   wrapperPath: string;
@@ -61,11 +63,12 @@ export const VariantActionsScreen: React.FC<VariantActionsScreenProps> = ({
   };
 
   const subtitle = meta.provider ? `Provider: ${meta.provider}` : undefined;
+  const installValue = `Native (${meta.nativeVersion || 'stable'})`;
 
   return (
     <ScreenLayout title={meta.name} subtitle={subtitle} icon={null}>
       <Section title="Details">
-        <SummaryRow label="Install" value="NPM (cli.js)" />
+        <SummaryRow label="Install" value={installValue} />
         <SummaryRow label="Binary" value={meta.binaryPath} />
         <SummaryRow label="Config" value={meta.configDir} />
         <SummaryRow label="Wrapper" value={meta.wrapperPath} />
