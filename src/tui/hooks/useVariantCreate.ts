@@ -62,7 +62,6 @@ export function buildCreateNextSteps(name: string, rootDir: string): string[] {
   return [
     `Run: ${name}`,
     `Update: cc-mirror update ${name}`,
-    `Tweak: cc-mirror tweak ${name}`,
     `Config: ${path.join(rootDir, name, 'config', 'settings.json')}`,
   ];
 }

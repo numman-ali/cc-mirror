@@ -53,11 +53,7 @@ export function buildUpdateSummary(meta: VariantMeta, notes: string[] | undefine
  * Build the next steps for an updated variant
  */
 export function buildUpdateNextSteps(name: string, rootDir: string): string[] {
-  return [
-    `Run: ${name}`,
-    `Tweak: cc-mirror tweak ${name}`,
-    `Config: ${path.join(rootDir, name, 'config', 'settings.json')}`,
-  ];
+  return [`Run: ${name}`, `Config: ${path.join(rootDir, name, 'config', 'settings.json')}`];
 }
 
 /**

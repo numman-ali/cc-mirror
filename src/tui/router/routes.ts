@@ -52,8 +52,6 @@ export const routes: Record<Screen, RouteDefinition> = {
   'manage-actions': { screen: 'manage-actions', flow: 'manage', parent: 'manage' },
   'manage-update': { screen: 'manage-update', flow: 'manage', parent: 'manage-actions' },
   'manage-update-done': { screen: 'manage-update-done', flow: 'manage', parent: 'home' },
-  'manage-tweak': { screen: 'manage-tweak', flow: 'manage', parent: 'manage-actions' },
-  'manage-tweak-done': { screen: 'manage-tweak-done', flow: 'manage', parent: 'home' },
   'manage-remove': { screen: 'manage-remove', flow: 'manage', parent: 'manage-actions' },
   'manage-remove-done': { screen: 'manage-remove-done', flow: 'manage', parent: 'home' },
   'manage-models-opus': { screen: 'manage-models-opus', flow: 'manage', parent: 'manage-actions' },

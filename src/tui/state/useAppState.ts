@@ -178,7 +178,6 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
       // Completion/done screens - back to home
       case 'create-done':
       case 'manage-update-done':
-      case 'manage-tweak-done':
       case 'manage-remove-done':
       case 'updateAll-done':
         setScreen('home');

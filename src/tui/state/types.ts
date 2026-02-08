@@ -41,8 +41,6 @@ export type Screen =
   | 'manage-actions'
   | 'manage-update'
   | 'manage-update-done'
-  | 'manage-tweak'
-  | 'manage-tweak-done'
   | 'manage-remove'
   | 'manage-remove-done'
   | 'manage-models-opus'

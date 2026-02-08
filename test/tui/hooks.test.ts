@@ -79,7 +79,6 @@ test('buildCreateNextSteps includes variant name and paths', () => {
 
   assert.ok(steps.some((line) => line.includes('Run: my-variant')));
   assert.ok(steps.some((line) => line.includes('Update: cc-mirror update my-variant')));
-  assert.ok(steps.some((line) => line.includes('Tweak: cc-mirror tweak my-variant')));
   assert.ok(steps.some((line) => line.includes('Config:')));
   assert.ok(steps.some((line) => line.includes(rootDir)));
 });
@@ -155,6 +154,5 @@ test('buildUpdateNextSteps includes variant operations', () => {
   const steps = buildUpdateNextSteps('my-variant', rootDir);
 
   assert.ok(steps.some((line) => line.includes('Run: my-variant')));
-  assert.ok(steps.some((line) => line.includes('Tweak: cc-mirror tweak my-variant')));
   assert.ok(steps.some((line) => line.includes('Config:')));
 });

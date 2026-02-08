@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import * as fs from 'node:fs';
 import { Box, Text, useApp, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import { getWrapperPath } from '../core/paths.js';
@@ -326,7 +327,13 @@ export const App: React.FC<AppProps> = ({
           setScreen('create-name');
           break;
         case 'create-models':
-          setScreen('create-api-key');
+          // Some providers can skip API key entry (e.g., zai with detected Z_AI_API_KEY).
+          // Going "back" from models should return to the actual previous screen.
+          setScreen(
+            (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional
+              ? 'create-base-url'
+              : 'create-api-key'
+          );
           break;
         // Model configuration screens - back through flow
         case 'manage-models':
@@ -338,7 +345,6 @@ export const App: React.FC<AppProps> = ({
         // Completion/done screens - back to home
         case 'create-done':
         case 'manage-update-done':
-        case 'manage-tweak-done':
         case 'manage-remove-done':
         case 'updateAll-done':
           setScreen('home');
@@ -440,18 +446,6 @@ export const App: React.FC<AppProps> = ({
     setScreen,
     onComplete: handleOperationComplete,
   });
-
-  useEffect(() => {
-    if (screen !== 'manage-tweak') return;
-    if (!selectedVariant) return;
-    // Can't launch tweakcc from within TUI (both are ink apps that conflict)
-    // Show user the command to run instead
-    setDoneLines([`To customize ${selectedVariant.name}, run:`]);
-    setCompletionSummary([`cc-mirror tweak ${selectedVariant.name}`]);
-    setCompletionNextSteps(['Exit this TUI first (press ESC or q)', 'Then run the command above in your terminal']);
-    setCompletionHelp(['tweakcc lets you customize themes, overlays, and more']);
-    setScreen('manage-tweak-done');
-  }, [screen, selectedVariant]);
 
   // Save model configuration operation (extracted to useModelConfig hook)
   useModelConfig({
@@ -674,14 +668,15 @@ export const App: React.FC<AppProps> = ({
           const defaults = providerDefaults(value);
           const keyDefaults =
             value === 'zai' ? resolveZaiApiKey() : { value: '', detectedFrom: null, skipPrompt: false };
+          const prefillModels = value === 'zai' || value === 'minimax';
           setProviderKey(value);
           setName(value === 'mirror' ? 'mclaude' : value);
           setBaseUrl(selected?.baseUrl || '');
           setApiKey(keyDefaults.value);
           setApiKeyDetectedFrom(keyDefaults.detectedFrom);
-          setModelSonnet('');
-          setModelOpus('');
-          setModelHaiku('');
+          setModelOpus(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_OPUS_MODEL ?? '').trim() : '');
+          setModelSonnet(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_SONNET_MODEL ?? '').trim() : '');
+          setModelHaiku(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_HAIKU_MODEL ?? '').trim() : '');
           setExtraEnv([]);
           setBrandKey('auto');
           setUsePromptPack(defaults.promptPack);
@@ -716,7 +711,7 @@ export const App: React.FC<AppProps> = ({
     ];
     return (
       <Frame>
-        <Header title="Choose Theme" subtitle="Optional: re-skin the UI with tweakcc presets" />
+        <Header title="Choose Theme" subtitle="Optional: re-skin the UI with presets" />
         <Divider />
         <Box flexDirection="column" marginY={1}>
           <SelectInput
@@ -776,6 +771,8 @@ export const App: React.FC<AppProps> = ({
   if (screen === 'create-base-url') {
     // Skip API key for: zai with detected key, or any provider with credentialOptional
     const skipApiKey = (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional;
+    const shouldConfigureModels =
+      Boolean(provider?.requiresModelMapping) || providerKey === 'zai' || providerKey === 'minimax';
     // promptPackMode is deprecated - skip mode selection, go directly to skill-install
     const nextScreen = 'create-skill-install';
     return (
@@ -788,7 +785,7 @@ export const App: React.FC<AppProps> = ({
             value={baseUrl}
             onChange={setBaseUrl}
             onSubmit={() =>
-              setScreen(skipApiKey ? (provider?.requiresModelMapping ? 'create-models' : nextScreen) : 'create-api-key')
+              setScreen(skipApiKey ? (shouldConfigureModels ? 'create-models' : nextScreen) : 'create-api-key')
             }
             placeholder={provider?.baseUrl || 'Leave blank for defaults'}
             hint="Leave blank to keep provider defaults"
@@ -803,6 +800,8 @@ export const App: React.FC<AppProps> = ({
   if (screen === 'create-api-key') {
     // promptPackMode is deprecated - skip mode selection, go directly to skill-install
     const nextScreen = 'create-skill-install';
+    const shouldConfigureModels =
+      Boolean(provider?.requiresModelMapping) || providerKey === 'zai' || providerKey === 'minimax';
     return (
       <ApiKeyScreen
         providerLabel={provider?.label || 'Provider'}
@@ -810,7 +809,7 @@ export const App: React.FC<AppProps> = ({
         envVarName={provider?.authMode === 'authToken' ? 'ANTHROPIC_AUTH_TOKEN' : 'ANTHROPIC_API_KEY'}
         value={apiKey}
         onChange={setApiKey}
-        onSubmit={() => setScreen(provider?.requiresModelMapping ? 'create-models' : nextScreen)}
+        onSubmit={() => setScreen(shouldConfigureModels ? 'create-models' : nextScreen)}
         detectedFrom={apiKeyDetectedFrom || undefined}
       />
     );
@@ -820,6 +819,10 @@ export const App: React.FC<AppProps> = ({
   if (screen === 'create-models') {
     // promptPackMode is deprecated - skip mode selection, go directly to skill-install
     const nextScreen = 'create-skill-install';
+    const backScreen =
+      (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional
+        ? 'create-base-url'
+        : 'create-api-key';
     return (
       <ModelConfigScreen
         title="Model Configuration"
@@ -832,7 +835,7 @@ export const App: React.FC<AppProps> = ({
         onSonnetChange={setModelSonnet}
         onHaikuChange={setModelHaiku}
         onComplete={() => setScreen(nextScreen)}
-        onBack={() => setScreen('create-api-key')}
+        onBack={() => setScreen(backScreen)}
       />
     );
   }
@@ -1024,13 +1027,32 @@ export const App: React.FC<AppProps> = ({
         meta={selectedVariant}
         onUpdate={() => setScreen('manage-update')}
         onConfigureModels={() => {
-          // Reset model inputs and start model configuration
-          setModelOpus('');
-          setModelSonnet('');
-          setModelHaiku('');
+          const settingsPath = `${selectedVariant.configDir}/settings.json`;
+          const providerEnv = selectedVariant.provider
+            ? providers.getProvider(selectedVariant.provider)?.env
+            : undefined;
+
+          let env: Record<string, unknown> = {};
+          try {
+            const raw = fs.readFileSync(settingsPath, 'utf8');
+            const parsed = JSON.parse(raw) as { env?: Record<string, unknown> };
+            env = parsed.env ?? {};
+          } catch {
+            // If settings.json doesn't exist yet (or is malformed), fall back to provider defaults.
+          }
+
+          const toStringOrEmpty = (value: unknown) =>
+            typeof value === 'string' || typeof value === 'number' ? String(value).trim() : '';
+
+          const readModel = (key: string) =>
+            toStringOrEmpty(env[key]) || toStringOrEmpty(providerEnv ? providerEnv[key] : undefined);
+
+          // Prefill with existing settings (or provider defaults) so users can edit in-place.
+          setModelOpus(readModel('ANTHROPIC_DEFAULT_OPUS_MODEL'));
+          setModelSonnet(readModel('ANTHROPIC_DEFAULT_SONNET_MODEL'));
+          setModelHaiku(readModel('ANTHROPIC_DEFAULT_HAIKU_MODEL'));
           setScreen('manage-models');
         }}
-        onTweak={() => setScreen('manage-tweak')}
         onRemove={() => setScreen('manage-remove')}
         onBack={() => setScreen('manage')}
       />
@@ -1045,26 +1067,6 @@ export const App: React.FC<AppProps> = ({
     return (
       <CompletionScreen
         title="Update variant"
-        lines={doneLines}
-        summary={completionSummary}
-        nextSteps={completionNextSteps}
-        help={completionHelp}
-        onDone={(value) => {
-          if (value === 'home') setScreen('home');
-          else setScreen('exit');
-        }}
-      />
-    );
-  }
-
-  if (screen === 'manage-tweak' && selectedVariant) {
-    return <ProgressScreen title="Launching tweakcc" lines={progressLines} />;
-  }
-
-  if (screen === 'manage-tweak-done') {
-    return (
-      <CompletionScreen
-        title="tweakcc session"
         lines={doneLines}
         summary={completionSummary}
         nextSteps={completionNextSteps}

@@ -57,6 +57,16 @@ const MODEL_FIELDS = [
 /** Get provider-specific placeholder for a model */
 function getPlaceholder(providerKey: string | undefined, model: 'opus' | 'sonnet' | 'haiku'): string {
   const placeholders: Record<string, Record<string, string>> = {
+    zai: {
+      opus: 'glm-4.7',
+      sonnet: 'glm-4.7',
+      haiku: 'glm-4.5-air',
+    },
+    minimax: {
+      opus: 'MiniMax-M2.1',
+      sonnet: 'MiniMax-M2.1',
+      haiku: 'MiniMax-M2.1',
+    },
     openrouter: {
       opus: 'anthropic/claude-3-opus',
       sonnet: 'anthropic/claude-3.5-sonnet',

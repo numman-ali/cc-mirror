@@ -22,7 +22,7 @@ test('VariantActionsScreen renders actions', async () => {
     React.createElement(VariantActionsScreen, {
       meta,
       onUpdate: () => {},
-      onTweak: () => {},
+      onConfigureModels: () => {},
       onRemove: () => {},
       onBack: () => {},
     })
@@ -32,7 +32,7 @@ test('VariantActionsScreen renders actions', async () => {
 
   assert.ok(frame.includes('test-variant'), 'Variant name should be visible');
   assert.ok(frame.includes('Update'), 'Update action should be visible');
-  assert.ok(frame.includes('Customize'), 'Customize action should be visible');
+  assert.ok(frame.includes('Configure Models'), 'Configure Models action should be visible');
   assert.ok(frame.includes('Remove'), 'Remove action should be visible');
   assert.ok(frame.includes('Back'), 'Back action should be visible');
 
@@ -55,7 +55,6 @@ test('VariantActionsScreen action selection', async () => {
       onUpdate: () => {
         updateCalled = true;
       },
-      onTweak: () => {},
       onRemove: () => {},
       onBack: () => {},
     })

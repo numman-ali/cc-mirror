@@ -23,33 +23,31 @@ interface VariantMeta {
 interface VariantActionsScreenProps {
   meta: VariantMeta;
   onUpdate: () => void;
-  onTweak: () => void;
   onRemove: () => void;
   onConfigureModels?: () => void;
   onBack: () => void;
 }
 
-// Providers that require model mapping
-const MODEL_MAPPING_PROVIDERS = ['openrouter', 'ccrouter', 'gatewayz', 'vercel', 'ollama'];
+// Providers where we want to expose Opus/Sonnet/Haiku overrides in the TUI.
+// (Some providers require mapping; others like zai/minimax have useful defaults that users may want to override.)
+const MODEL_CONFIG_PROVIDERS = ['openrouter', 'ccrouter', 'gatewayz', 'vercel', 'ollama', 'zai', 'minimax'];
 
 export const VariantActionsScreen: React.FC<VariantActionsScreenProps> = ({
   meta,
   onUpdate,
-  onTweak,
   onRemove,
   onConfigureModels,
   onBack,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const requiresModelMapping = meta.provider && MODEL_MAPPING_PROVIDERS.includes(meta.provider);
+  const canConfigureModels = meta.provider && MODEL_CONFIG_PROVIDERS.includes(meta.provider);
 
   const actions: MenuItem[] = [
     { value: 'update', label: 'Update', description: 'Re-sync binary + patches' },
-    ...(requiresModelMapping && onConfigureModels
-      ? [{ value: 'models', label: 'Configure Models', description: 'Edit Opus/Sonnet/Haiku mapping' }]
+    ...(canConfigureModels && onConfigureModels
+      ? [{ value: 'models', label: 'Configure Models', description: 'Edit Opus/Sonnet/Haiku defaults' }]
       : []),
-    { value: 'tweak', label: 'Customize', description: 'Open tweakcc' },
     { value: 'remove', label: 'Remove', description: 'Delete variant', icon: 'exit' as const },
     { value: 'back', label: 'Back', icon: 'back' as const },
   ];
@@ -57,7 +55,6 @@ export const VariantActionsScreen: React.FC<VariantActionsScreenProps> = ({
   const handleSelect = (value: string) => {
     if (value === 'update') onUpdate();
     if (value === 'models' && onConfigureModels) onConfigureModels();
-    if (value === 'tweak') onTweak();
     if (value === 'remove') onRemove();
     if (value === 'back') onBack();
   };
