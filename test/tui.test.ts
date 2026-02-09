@@ -124,8 +124,12 @@ test('TUI manage -> remove flow', async () => {
   await send(app.stdin, down); // tweak
   await send(app.stdin, down); // remove
   await send(app.stdin, enter);
-  await send(app.stdin, enter); // confirm remove
-  await waitFor(() => calls.remove.length > 0);
+  const reachedRemoveConfirm = await waitFor(() => (app.lastFrame() || '').includes('Remove Variant'));
+  assert.ok(reachedRemoveConfirm, 'Should reach remove confirmation screen');
+
+  await send(app.stdin, enter); // confirm remove (default: Remove)
+  const removed = await waitFor(() => calls.remove.length > 0);
+  assert.ok(removed, 'Remove should be invoked');
 
   assert.equal(calls.remove.length, 1);
   assert.equal(calls.remove[0].name, 'alpha');
