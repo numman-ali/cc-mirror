@@ -47,6 +47,11 @@ npx cc-mirror update mclaude --claude-version latest
 npx cc-mirror update mclaude --claude-version 2.1.37
 ```
 
+Notes:
+
+- `stable` and `latest` are upstream channels. `stable` may lag behind `latest` (that is normal).
+- cc-mirror resolves the channel to a concrete version during install/update and stores it in `variant.json`.
+
 <p align="center">
   <img src="./assets/cc-mirror-home.png" alt="CC-MIRROR Home Screen" width="600">
 </p>

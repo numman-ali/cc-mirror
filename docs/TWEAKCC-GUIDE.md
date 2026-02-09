@@ -5,18 +5,20 @@ This document summarizes tweakcc capabilities and concrete implementation ideas 
 ## What tweakcc can do (from upstream README)
 
 - Edit Claude Code system prompts (core prompt, tool descriptions, agent prompts, utilities, etc.)
-- Create custom toolsets
-- Name/rename sessions in Claude Code (tweakcc enables /title and /rename)
-- Create custom themes with RGB/HSL picker
-- Customize thinking verbs ("Thinking..." spinner text)
-- Customize thinking spinner animation phases + speed
-- Style user messages in chat history
-- Remove ASCII border from input box
+- Create custom themes (RGB/HSL picker), and switch themes in Claude Code
+- Create and manage toolsets (and use them via Claude Code’s `/toolset`)
+- Style user messages (custom label, borders, colors, padding)
+- Customize thinking verbs and spinner animation (phases + speed)
+- Remove the input box border
 - Expand thinking blocks by default
-- Indicate patched status in banner (optional)
-- Show startup banner / clawd (configurable)
-- Fix spinner freeze when `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set
-- Allow custom context window size (env `CLAUDE_CODE_CONTEXT_LIMIT`)
+- Enable session naming commands like `/title` and `/rename`
+- Configure subagent models (Plan/Explore/etc.)
+- Input pattern highlighters (highlight keywords while typing)
+- Table format toggles (Unicode/ASCII/markdown styles)
+- Session memory and “remember” features (optional)
+- Suppress installer warnings (useful when you manage Claude installs manually)
+- Misc UX patches (hide startup banner, hide clawd logo, hide “Ctrl+G to edit prompt” hint, etc.)
+- A large library of built-in patches, plus advanced `unpack`/`repack`/`adhoc-patch` workflows
 
 tweakcc can patch either:
 
@@ -33,6 +35,7 @@ tweakcc can patch either:
   - `TWEAKCC_CC_INSTALLATION_PATH=...` (either a `cli.js` path or a native `claude` binary path)
 - cc-mirror applies tweakcc after create/update, unless `--no-tweak`.
   - To re-apply patches without reinstalling Claude Code, run: `npx cc-mirror apply <variant>`
+- cc-mirror pins the tweakcc CLI version it runs (see `src/core/constants.ts`), so updates are reproducible. (You can still manually run a different version via `npx tweakcc@latest` if you need a hotfix for a brand-new Claude Code release.)
 
 ## Recommended implementation patterns
 
