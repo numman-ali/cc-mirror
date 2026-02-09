@@ -56,6 +56,10 @@ test('Quick setup flow completes successfully', async () => {
   await send(app.stdin, KEYS.enter);
   await tick();
 
+  // Accept default models (prefilled)
+  await send(app.stdin, KEYS.enter);
+  await tick();
+
   // Enter variant name (just press enter for default)
   await send(app.stdin, KEYS.enter);
 

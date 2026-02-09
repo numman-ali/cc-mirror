@@ -28,10 +28,6 @@ interface VariantActionsScreenProps {
   onBack: () => void;
 }
 
-// Providers where we want to expose Opus/Sonnet/Haiku overrides in the TUI.
-// (Some providers require mapping; others like zai/minimax have useful defaults that users may want to override.)
-const MODEL_CONFIG_PROVIDERS = ['openrouter', 'ccrouter', 'gatewayz', 'vercel', 'ollama', 'zai', 'minimax'];
-
 export const VariantActionsScreen: React.FC<VariantActionsScreenProps> = ({
   meta,
   onUpdate,
@@ -41,11 +37,9 @@ export const VariantActionsScreen: React.FC<VariantActionsScreenProps> = ({
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const canConfigureModels = meta.provider && MODEL_CONFIG_PROVIDERS.includes(meta.provider);
-
   const actions: MenuItem[] = [
     { value: 'update', label: 'Update', description: 'Re-sync binary + patches' },
-    ...(canConfigureModels && onConfigureModels
+    ...(onConfigureModels
       ? [{ value: 'models', label: 'Configure Models', description: 'Edit Opus/Sonnet/Haiku defaults' }]
       : []),
     { value: 'remove', label: 'Remove', description: 'Delete variant', icon: 'exit' as const },

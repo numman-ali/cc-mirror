@@ -304,13 +304,22 @@ export const App: React.FC<AppProps> = ({
           setScreen('quick-intro');
           break;
         case 'quick-models':
-          setScreen('quick-api-key');
+          setScreen(
+            (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional
+              ? 'quick-intro'
+              : 'quick-api-key'
+          );
           break;
         case 'quick-name':
           if (providerKey === 'ccrouter') {
             setScreen('quick-ccrouter-url');
           } else {
-            setScreen(provider?.requiresModelMapping ? 'quick-models' : 'quick-api-key');
+            const shouldConfigureModels =
+              Boolean(provider?.requiresModelMapping) || providerKey === 'zai' || providerKey === 'minimax';
+            const skipApiKey =
+              (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional;
+
+            setScreen(shouldConfigureModels ? 'quick-models' : skipApiKey ? 'quick-intro' : 'quick-api-key');
           }
           break;
         case 'quick-provider':
@@ -542,14 +551,15 @@ export const App: React.FC<AppProps> = ({
           const defaults = providerDefaults(value);
           const keyDefaults =
             value === 'zai' ? resolveZaiApiKey() : { value: '', detectedFrom: null, skipPrompt: false };
+          const prefillModels = value === 'zai' || value === 'minimax';
           setProviderKey(value);
           setName(value === 'mirror' ? 'mclaude' : value);
           setBaseUrl(selected?.baseUrl || '');
           setApiKey(keyDefaults.value);
           setApiKeyDetectedFrom(keyDefaults.detectedFrom);
-          setModelSonnet('');
-          setModelOpus('');
-          setModelHaiku('');
+          setModelOpus(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_OPUS_MODEL ?? '').trim() : '');
+          setModelSonnet(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_SONNET_MODEL ?? '').trim() : '');
+          setModelHaiku(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_HAIKU_MODEL ?? '').trim() : '');
           setExtraEnv([]);
           setBrandKey('auto');
           setUsePromptPack(defaults.promptPack);
@@ -563,7 +573,8 @@ export const App: React.FC<AppProps> = ({
 
   if (screen === 'quick-intro') {
     const keyDefaults = providerKey === 'zai' ? resolveZaiApiKey() : { skipPrompt: false };
-    const requiresModels = Boolean(provider?.requiresModelMapping);
+    const shouldConfigureModels =
+      Boolean(provider?.requiresModelMapping) || providerKey === 'zai' || providerKey === 'minimax';
     const skipApiKey = keyDefaults.skipPrompt || provider?.credentialOptional;
     return (
       <ProviderIntroScreen
@@ -575,7 +586,7 @@ export const App: React.FC<AppProps> = ({
           if (providerKey === 'ccrouter') {
             setScreen('quick-ccrouter-url');
           } else if (skipApiKey) {
-            setScreen(requiresModels ? 'quick-models' : 'quick-name');
+            setScreen(shouldConfigureModels ? 'quick-models' : 'quick-name');
           } else {
             setScreen('quick-api-key');
           }
@@ -586,6 +597,8 @@ export const App: React.FC<AppProps> = ({
   }
 
   if (screen === 'quick-api-key') {
+    const shouldConfigureModels =
+      Boolean(provider?.requiresModelMapping) || providerKey === 'zai' || providerKey === 'minimax';
     return (
       <ApiKeyScreen
         providerLabel={provider?.label || 'Provider'}
@@ -593,7 +606,7 @@ export const App: React.FC<AppProps> = ({
         envVarName={provider?.authMode === 'authToken' ? 'ANTHROPIC_AUTH_TOKEN' : 'ANTHROPIC_API_KEY'}
         value={apiKey}
         onChange={setApiKey}
-        onSubmit={() => setScreen(provider?.requiresModelMapping ? 'quick-models' : 'quick-name')}
+        onSubmit={() => setScreen(shouldConfigureModels ? 'quick-models' : 'quick-name')}
         detectedFrom={apiKeyDetectedFrom || undefined}
       />
     );
@@ -601,6 +614,7 @@ export const App: React.FC<AppProps> = ({
 
   // Consolidated model mapping screen for quick setup
   if (screen === 'quick-models') {
+    const skipApiKey = (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional;
     return (
       <ModelConfigScreen
         title="Model Configuration"
@@ -613,7 +627,7 @@ export const App: React.FC<AppProps> = ({
         onSonnetChange={setModelSonnet}
         onHaikuChange={setModelHaiku}
         onComplete={() => setScreen('quick-name')}
-        onBack={() => setScreen('quick-api-key')}
+        onBack={() => setScreen(skipApiKey ? 'quick-intro' : 'quick-api-key')}
       />
     );
   }
