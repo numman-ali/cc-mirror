@@ -54,15 +54,18 @@ test('Provider Feature Matrix', async (t) => {
     assert.ok(ollama.env.ANTHROPIC_API_KEY, 'ollama should have default api key');
   });
 
-  await t.test('zai and minimax providers have splash styles', () => {
+  await t.test('zai, minimax, and kimi providers have splash styles', () => {
     const zai = getProvider('zai');
     const minimax = getProvider('minimax');
+    const kimi = getProvider('kimi');
 
     assert.ok(zai, 'zai provider should exist');
     assert.ok(minimax, 'minimax provider should exist');
+    assert.ok(kimi, 'kimi provider should exist');
 
     assert.equal(zai.env.CC_MIRROR_SPLASH_STYLE, 'zai');
     assert.equal(minimax.env.CC_MIRROR_SPLASH_STYLE, 'minimax');
+    assert.equal(kimi.env.CC_MIRROR_SPLASH_STYLE, 'kimi');
   });
 
   await t.test('experimental providers are hidden by default', () => {
@@ -94,6 +97,14 @@ test('Provider Feature Matrix', async (t) => {
     assert.ok(zai.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'zai should have haiku model');
     assert.ok(zai.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'zai should have sonnet model');
     assert.ok(zai.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'zai should have opus model');
+  });
+
+  await t.test('kimi provider has default models', () => {
+    const kimi = getProvider('kimi');
+    assert.ok(kimi, 'kimi provider should exist');
+    assert.ok(kimi.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'kimi should have haiku model');
+    assert.ok(kimi.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'kimi should have sonnet model');
+    assert.ok(kimi.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'kimi should have opus model');
   });
 
   await t.test('minimax provider has model settings', () => {

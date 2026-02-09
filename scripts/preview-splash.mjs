@@ -22,6 +22,11 @@ const C = {
   mmSecondary: '\x1b[38;5;209m',
   mmAccent: '\x1b[38;5;208m',
   mmDim: '\x1b[38;5;167m',
+  // Kimi: Aurora green/cyan gradient
+  kmPrimary: '\x1b[38;5;120m',
+  kmSecondary: '\x1b[38;5;51m',
+  kmAccent: '\x1b[38;5;154m',
+  kmDim: '\x1b[38;5;66m',
   // OpenRouter: Navy/Indigo gradient
   orPrimary: '\x1b[38;5;60m',
   orSecondary: '\x1b[38;5;68m',
@@ -86,6 +91,23 @@ const SPLASH_ART = {
     '',
     `${C.mmDim}    ━━━━━━━━━━━━━━━━━━${C.mmPrimary}◆${C.mmDim}━━━━━━━━━━━━━━━━━━${C.reset}`,
     `${C.mmSecondary}           MiniMax-M2.1 ${C.mmDim}━${C.mmSecondary} AGI for All${C.reset}`,
+    '',
+  ],
+  kimi: [
+    '',
+    `${C.kmDim}    ◈━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━◈${C.reset}`,
+    `${C.kmSecondary}      K I M I   C O D E${C.reset}`,
+    `${C.kmDim}    ◈━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━◈${C.reset}`,
+    '',
+    `${C.kmPrimary}    ██╗  ██╗██╗███╗   ███╗██╗${C.reset}`,
+    `${C.kmPrimary}    ██║ ██╔╝██║████╗ ████║██║${C.reset}`,
+    `${C.kmSecondary}    █████╔╝ ██║██╔████╔██║██║${C.reset}`,
+    `${C.kmSecondary}    ██╔═██╗ ██║██║╚██╔╝██║██║${C.reset}`,
+    `${C.kmAccent}    ██║  ██╗██║██║ ╚═╝ ██║██║${C.reset}`,
+    `${C.kmAccent}    ╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚═╝${C.reset}`,
+    '',
+    `${C.kmDim}    ━━━━━━━━━━━━━━━━━${C.kmPrimary}◆${C.kmDim}━━━━━━━━━━━━━━━━━${C.reset}`,
+    `${C.kmSecondary}       kimi-for-coding ${C.kmDim}━${C.kmSecondary} K2.5${C.reset}`,
     '',
   ],
   openrouter: [
@@ -207,7 +229,7 @@ const SPLASH_ART = {
   ],
 };
 
-const providers = ['zai', 'minimax', 'openrouter', 'ccrouter', 'mirror', 'gatewayz', 'vercel', 'nanogpt', 'ollama'];
+const providers = ['zai', 'minimax', 'kimi', 'openrouter', 'ccrouter', 'mirror', 'gatewayz', 'vercel', 'nanogpt', 'ollama'];
 
 console.log('\n' + C.bold + '═══════════════════════════════════════' + C.reset);
 console.log(C.bold + '  CC-Mirror Provider Splash Art Preview' + C.reset);

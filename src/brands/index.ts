@@ -1,6 +1,7 @@
 import type { TweakccConfig } from './types.js';
 import { buildZaiTweakccConfig } from './zai.js';
 import { buildMinimaxTweakccConfig } from './minimax.js';
+import { buildKimiTweakccConfig } from './kimi.js';
 import { buildOpenRouterTweakccConfig } from './openrouter.js';
 import { buildCCRouterTweakccConfig } from './ccrouter.js';
 import { buildMirrorTweakccConfig } from './mirror.js';
@@ -28,6 +29,12 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
     label: 'MiniMax Pulse',
     description: 'Vibrant spectrum accents (red/orange/pink/violet) with MiniMax toolset label.',
     buildTweakccConfig: buildMinimaxTweakccConfig,
+  },
+  kimi: {
+    key: 'kimi',
+    label: 'Kimi Aurora',
+    description: 'Aurora green + cyan accents for Kimi Code (kimi-for-coding).',
+    buildTweakccConfig: buildKimiTweakccConfig,
   },
   openrouter: {
     key: 'openrouter',

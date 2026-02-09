@@ -73,6 +73,7 @@ docs/
 ├──────────────┼────────────────────┼──────────────┼────────────┤
 │ zai          │ GLM-4.7            │ API Key      │ ✓ Full     │
 │ minimax      │ MiniMax-M2.1       │ API Key      │ ✓ Full     │
+│ kimi         │ kimi-for-coding    │ API Key      │ ✗          │
 │ openrouter   │ You choose         │ Auth Token   │ ✗          │
 │ ccrouter     │ Local LLMs         │ Optional     │ ✗          │
 │ ollama       │ Local + cloud      │ Auth Token   │ ✗          │

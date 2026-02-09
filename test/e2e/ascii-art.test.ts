@@ -54,6 +54,7 @@ test('E2E: Colored ASCII art content verification', async (t) => {
       ? {
           zai: /\\u001b\[38;5;220m/, // Gold
           minimax: /\\u001b\[38;5;203m/, // Coral/salmon red
+          kimi: /\\u001b\[38;5;120m/, // Spring green
           openrouter: /\\u001b\[38;5;60m/, // Navy
           ccrouter: /\\u001b\[38;5;39m/, // Sky blue
           gatewayz: /\\u001b\[38;5;141m/, // Violet
@@ -64,6 +65,7 @@ test('E2E: Colored ASCII art content verification', async (t) => {
       : {
           zai: /\x1b\[38;5;220m/, // Gold
           minimax: /\x1b\[38;5;203m/, // Coral/salmon red
+          kimi: /\x1b\[38;5;120m/, // Spring green
           openrouter: /\x1b\[38;5;60m/, // Navy
           ccrouter: /\x1b\[38;5;39m/, // Sky blue
           gatewayz: /\x1b\[38;5;141m/, // Violet
@@ -83,6 +85,7 @@ test('E2E: Colored ASCII art content verification', async (t) => {
     const asciiPatterns: Record<string, string[]> = {
       zai: ['GLM Coding Plan', 'A I'],
       minimax: ['MiniMax-M2.1', 'AGI for All'],
+      kimi: ['K I M I   C O D E', 'kimi-for-coding', 'K2.5'],
       openrouter: ['One API', 'Any Model', '██'],
       ccrouter: ['CC ROUTER', 'Claude Code', 'Any Model'],
       gatewayz: ['GATEWAY Z', 'AI Gateway', '██'],

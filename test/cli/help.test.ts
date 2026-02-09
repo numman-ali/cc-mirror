@@ -43,6 +43,7 @@ test('printHelp documents provider options', () => {
   assert.ok(text.includes('--provider'), 'Should document provider option');
   assert.ok(text.includes('zai'), 'Should list zai provider');
   assert.ok(text.includes('minimax'), 'Should list minimax provider');
+  assert.ok(text.includes('kimi'), 'Should list kimi provider');
   assert.ok(text.includes('openrouter'), 'Should list openrouter provider');
   assert.ok(text.includes('ccrouter'), 'Should list ccrouter provider');
 });

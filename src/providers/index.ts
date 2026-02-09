@@ -87,6 +87,22 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     },
     apiKeyLabel: 'MiniMax API key',
   },
+  kimi: {
+    key: 'kimi',
+    label: 'Kimi Code',
+    description: 'kimi-for-coding via Kimi Code (K2.5)',
+    baseUrl: 'https://api.kimi.com/coding/',
+    env: {
+      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'kimi-for-coding',
+      ANTHROPIC_DEFAULT_SONNET_MODEL: 'kimi-for-coding',
+      ANTHROPIC_DEFAULT_OPUS_MODEL: 'kimi-for-coding',
+      CC_MIRROR_SPLASH: 1,
+      CC_MIRROR_PROVIDER_LABEL: 'Kimi Code',
+      CC_MIRROR_SPLASH_STYLE: 'kimi',
+    },
+    apiKeyLabel: 'Kimi API key',
+  },
   openrouter: {
     key: 'openrouter',
     label: 'OpenRouter',

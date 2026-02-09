@@ -20,6 +20,14 @@ export const PROVIDERS = [
     colorCode: '\\x1b[38;5;203m', // Coral/salmon red
   },
   {
+    key: 'kimi',
+    name: 'Kimi Code',
+    apiKey: 'test-kimi-key',
+    expectedThemeId: 'kimi-aurora',
+    expectedSplashStyle: 'kimi',
+    colorCode: '\\x1b[38;5;120m', // Spring green
+  },
+  {
     key: 'openrouter',
     name: 'OpenRouter',
     apiKey: 'test-openrouter-key',

@@ -76,6 +76,33 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     setupNote: 'Subscribe to MiniMax Coding Plan, then get your API key from the payment page.',
   },
 
+  kimi: {
+    headline: 'Kimi Code — kimi-for-coding (K2.5)',
+    tagline: 'Aurora context, crisp code',
+    features: [
+      'Anthropic-compatible endpoint',
+      'kimi-for-coding model (powered by kimi-k2.5)',
+      'Up to 262k context window',
+      'Tab toggles Kimi K2 Thinking model in Claude Code',
+      'Aurora-themed interface',
+    ],
+    bestFor: 'Long-context coding sessions via the Kimi Code plan',
+    models: {
+      opus: 'kimi-for-coding',
+      sonnet: 'kimi-for-coding',
+      haiku: 'kimi-for-coding',
+    },
+    requiresMapping: false,
+    hasPromptPack: false,
+    setupLinks: {
+      subscribe: 'https://www.kimi.com/code',
+      apiKey: 'https://www.kimi.com/code/console',
+      docs: 'https://www.kimi.com/code/docs/en/more/third-party-agents.html',
+    },
+    setupNote:
+      'Subscribe to Kimi Code, create an API key in the console, and set ANTHROPIC_BASE_URL to https://api.kimi.com/coding/.',
+  },
+
   openrouter: {
     headline: 'OpenRouter — One API, Any Model',
     tagline: 'Many paths, one door',
@@ -220,7 +247,18 @@ export const getProviderEducation = (providerKey: string): ProviderEducation | n
  * Quick comparison points for provider selection
  */
 export const PROVIDER_COMPARISON = {
-  fullySupported: ['mirror', 'zai', 'minimax', 'openrouter', 'ccrouter', 'ollama', 'gatewayz', 'vercel', 'nanogpt'],
+  fullySupported: [
+    'mirror',
+    'zai',
+    'minimax',
+    'kimi',
+    'openrouter',
+    'ccrouter',
+    'ollama',
+    'gatewayz',
+    'vercel',
+    'nanogpt',
+  ],
   requiresMapping: ['openrouter', 'ollama', 'gatewayz', 'vercel'],
   hasPromptPack: ['zai', 'minimax'],
   localFirst: ['ccrouter', 'ollama'],

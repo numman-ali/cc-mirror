@@ -19,6 +19,11 @@ const C = {
   mmSecondary: '\x1b[38;5;209m', // Light coral/orange
   mmAccent: '\x1b[38;5;208m', // Orange
   mmDim: '\x1b[38;5;167m', // Muted coral/dark red
+  // Kimi: Aurora green/cyan gradient
+  kmPrimary: '\x1b[38;5;120m', // Spring green
+  kmSecondary: '\x1b[38;5;51m', // Bright cyan
+  kmAccent: '\x1b[38;5;154m', // Lime green
+  kmDim: '\x1b[38;5;66m', // Muted teal
   // OpenRouter: Navy/Indigo gradient (brand: #284968, #6467f2)
   orPrimary: '\x1b[38;5;60m', // Navy
   orSecondary: '\x1b[38;5;68m', // Slate blue
@@ -88,6 +93,24 @@ const SPLASH_ART: SplashArt = {
     '',
     `${C.mmDim}    ━━━━━━━━━━━━━━━━━━${C.mmPrimary}◆${C.mmDim}━━━━━━━━━━━━━━━━━━${C.reset}`,
     `${C.mmSecondary}           MiniMax-M2.1 ${C.mmDim}━${C.mmSecondary} AGI for All${C.reset}`,
+    '',
+  ],
+  // Kimi: Aurora header + compact block letters
+  kimi: [
+    '',
+    `${C.kmDim}    ◈━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━◈${C.reset}`,
+    `${C.kmSecondary}      K I M I   C O D E${C.reset}`,
+    `${C.kmDim}    ◈━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━◈${C.reset}`,
+    '',
+    `${C.kmPrimary}    ██╗  ██╗██╗███╗   ███╗██╗${C.reset}`,
+    `${C.kmPrimary}    ██║ ██╔╝██║████╗ ████║██║${C.reset}`,
+    `${C.kmSecondary}    █████╔╝ ██║██╔████╔██║██║${C.reset}`,
+    `${C.kmSecondary}    ██╔═██╗ ██║██║╚██╔╝██║██║${C.reset}`,
+    `${C.kmAccent}    ██║  ██╗██║██║ ╚═╝ ██║██║${C.reset}`,
+    `${C.kmAccent}    ╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚═╝${C.reset}`,
+    '',
+    `${C.kmDim}    ━━━━━━━━━━━━━━━━━${C.kmPrimary}◆${C.kmDim}━━━━━━━━━━━━━━━━━${C.reset}`,
+    `${C.kmSecondary}       kimi-for-coding ${C.kmDim}━${C.kmSecondary} K2.5${C.reset}`,
     '',
   ],
   // OpenRouter: Stacked block letters
@@ -229,6 +252,7 @@ const SPLASH_ART: SplashArt = {
 const KNOWN_SPLASH_STYLES = [
   'zai',
   'minimax',
+  'kimi',
   'openrouter',
   'ccrouter',
   'mirror',
@@ -424,6 +448,12 @@ export const writeWrapper = (
     "        cat <<'CCMMIN'",
     ...SPLASH_ART.minimax,
     'CCMMIN',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      kimi)',
+    "        cat <<'CCMKMI'",
+    ...SPLASH_ART.kimi,
+    'CCMKMI',
     '        __cc_show_label="0"',
     '        ;;',
     '      openrouter)',
