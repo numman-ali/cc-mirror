@@ -7,7 +7,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { listProviders, getProvider } from '../src/providers/index.js';
+import { listProviders, getProvider, PROVIDER_DISPLAY_ORDER } from '../src/providers/index.js';
 
 test('Provider Feature Matrix', async (t) => {
   const providers = listProviders(true); // Include experimental
@@ -20,6 +20,14 @@ test('Provider Feature Matrix', async (t) => {
       assert.ok(typeof provider.baseUrl === 'string', `${provider.key} should have baseUrl (can be empty)`);
       assert.ok(provider.env, `${provider.key} should have env object`);
     }
+  });
+
+  await t.test('providers follow canonical display order', () => {
+    assert.deepEqual(
+      providers.map((provider) => provider.key),
+      Array.from(PROVIDER_DISPLAY_ORDER),
+      'providers should appear in canonical display order'
+    );
   });
 
   await t.test('mirror provider has clean defaults', () => {
@@ -94,9 +102,9 @@ test('Provider Feature Matrix', async (t) => {
   await t.test('zai provider has default models', () => {
     const zai = getProvider('zai');
     assert.ok(zai, 'zai provider should exist');
-    assert.ok(zai.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'zai should have haiku model');
-    assert.ok(zai.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'zai should have sonnet model');
-    assert.ok(zai.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'zai should have opus model');
+    assert.equal(zai.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'glm-4.5-air', 'zai should default haiku to glm-4.5-air');
+    assert.equal(zai.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'glm-4.7', 'zai should default sonnet to glm-4.7');
+    assert.equal(zai.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'glm-5', 'zai should default opus to glm-5');
   });
 
   await t.test('kimi provider has default models', () => {

@@ -34,10 +34,10 @@ COMMANDS
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
-  --provider <name>            Provider: mirror | zai | minimax | kimi | openrouter | ccrouter | ollama | gatewayz | vercel | nanogpt
+  --provider <name>            Provider: kimi | minimax | zai | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz
   --api-key <key>              Provider API key
   --auth-token <token>         Alias for --api-key (auth-token providers)
-  --brand <preset>             Theme: auto | none | mirror | zai | minimax | kimi | openrouter | ccrouter | ollama | gatewayz | vercel | nanogpt
+  --brand <preset>             Theme: auto | none | kimi | minimax | zai | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz
   --tui / --no-tui             Force TUI on/off
 
 OPTIONS (advanced)
@@ -59,16 +59,16 @@ OPTIONS (advanced)
   --live                       Live provider probe (doctor)
 
 PROVIDERS
-  mirror        Pure Claude (recommended)
-  zai           GLM-4.7 via Z.ai Coding Plan
-  minimax       MiniMax-M2.1 via MiniMax Cloud
   kimi          kimi-for-coding via Kimi Code
+  minimax       MiniMax-M2.1 via MiniMax Cloud
+  zai           GLM-5/4.7/4.5-Air via Z.ai Coding Plan
   openrouter    100+ models via OpenRouter
-  ccrouter      Local LLMs via Claude Code Router
-  ollama        Local + cloud models via Ollama
-  gatewayz      GatewayZ AI Gateway
   vercel        Vercel AI Gateway
+  ollama        Local + cloud models via Ollama
   nanogpt       NanoGPT
+  ccrouter      Local LLMs via Claude Code Router
+  mirror        Pure Claude (recommended)
+  gatewayz      GatewayZ AI Gateway
 
 EXAMPLES
   npx cc-mirror quick --provider mirror --name mclaude

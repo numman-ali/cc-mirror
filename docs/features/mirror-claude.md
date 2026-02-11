@@ -13,7 +13,7 @@ Mirror Claude is a **pure Claude Code variant** with advanced features enabled. 
 │   │                    PROXY PROVIDERS                                  │  │
 │   │                                                                     │  │
 │   │   ┌─────────┐     ┌─────────────┐     ┌─────────────────────────┐  │  │
-│   │   │  Z.ai   │────▶│  GLM API    │────▶│  GLM-4.7 Models         │  │  │
+│   │   │  Z.ai   │────▶│  GLM API    │────▶│  GLM-5/4.7/4.5-Air      │  │  │
 │   │   └─────────┘     └─────────────┘     └─────────────────────────┘  │  │
 │   │                                                                     │  │
 │   │   ┌─────────┐     ┌─────────────┐     ┌─────────────────────────┐  │  │
@@ -73,7 +73,7 @@ No API key required at setup. When you run `mclaude`, authenticate via:
 │                                                                              │
 │   Feature              │ zai      │ minimax  │ openrouter │ mirror          │
 │   ─────────────────────┼──────────┼──────────┼────────────┼─────────────────│
-│   Model                │ GLM-4.7  │ M2.1     │ You choose │ Claude (native) │
+│   Model                │ GLM-5/4.7│ M2.1     │ You choose │ Claude (native) │
 │   Auth Mode            │ API Key  │ API Key  │ Auth Token │ OAuth or Key    │
 │   ANTHROPIC_BASE_URL   │ ✓ Set    │ ✓ Set    │ ✓ Set      │ ✗ Not set       │
 │   ANTHROPIC_API_KEY    │ ✓ Set    │ ✓ Set    │ ✗          │ ✗ Not set       │

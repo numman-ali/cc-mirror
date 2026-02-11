@@ -71,16 +71,16 @@ docs/
 ┌──────────────┬────────────────────┬──────────────┬────────────┐
 │   Provider   │       Model        │  Auth Mode   │ Prompt Pack│
 ├──────────────┼────────────────────┼──────────────┼────────────┤
-│ zai          │ GLM-4.7            │ API Key      │ ✓ Full     │
-│ minimax      │ MiniMax-M2.1       │ API Key      │ ✓ Full     │
 │ kimi         │ kimi-for-coding    │ API Key      │ ✗          │
+│ minimax      │ MiniMax-M2.1       │ API Key      │ ✓ Full     │
+│ zai          │ GLM-5/4.7/4.5-Air  │ API Key      │ ✓ Full     │
 │ openrouter   │ You choose         │ Auth Token   │ ✗          │
-│ ccrouter     │ Local LLMs         │ Optional     │ ✗          │
-│ ollama       │ Local + cloud      │ Auth Token   │ ✗          │
-│ gatewayz     │ GatewayZ gateway   │ Auth Token   │ ✗          │
 │ vercel       │ Vercel gateway     │ Auth Token   │ ✗          │
+│ ollama       │ Local + cloud      │ Auth Token   │ ✗          │
 │ nanogpt      │ Anthropic compat   │ Auth Token   │ ✗          │
+│ ccrouter     │ Local LLMs         │ Optional     │ ✗          │
 │ mirror       │ Claude (native)    │ OAuth/Key    │ ✗ Pure     │
+│ gatewayz     │ GatewayZ gateway   │ Auth Token   │ ✗          │
 └──────────────┴────────────────────┴──────────────┴────────────┘
 ```
 

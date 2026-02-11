@@ -35,6 +35,24 @@ export interface ModelOverrides {
 
 const CCROUTER_AUTH_FALLBACK = 'ccrouter-proxy';
 
+// Canonical provider display order for CLI/TUI and docs-facing flows.
+// Any provider not listed here is appended after these entries.
+export const PROVIDER_DISPLAY_ORDER = [
+  'kimi',
+  'minimax',
+  'zai',
+  'openrouter',
+  'vercel',
+  'ollama',
+  'nanogpt',
+  'ccrouter',
+  'mirror',
+  'gatewayz',
+  'custom',
+] as const;
+
+const PROVIDER_DISPLAY_ORDER_INDEX = new Map<string, number>(PROVIDER_DISPLAY_ORDER.map((key, index) => [key, index]));
+
 const PROVIDERS: Record<string, ProviderTemplate> = {
   mirror: {
     key: 'mirror',
@@ -55,13 +73,13 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
   zai: {
     key: 'zai',
     label: 'Zai Cloud',
-    description: 'GLM-4.7 via Z.ai Coding Plan',
+    description: 'GLM-5/4.7/4.5-Air via Z.ai Coding Plan',
     baseUrl: 'https://api.z.ai/api/anthropic',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
       ANTHROPIC_DEFAULT_HAIKU_MODEL: 'glm-4.5-air',
       ANTHROPIC_DEFAULT_SONNET_MODEL: 'glm-4.7',
-      ANTHROPIC_DEFAULT_OPUS_MODEL: 'glm-4.7',
+      ANTHROPIC_DEFAULT_OPUS_MODEL: 'glm-5',
       CC_MIRROR_SPLASH: 1,
       CC_MIRROR_PROVIDER_LABEL: 'Zai Cloud',
       CC_MIRROR_SPLASH_STYLE: 'zai',
@@ -217,11 +235,14 @@ export const getProvider = (key: string): ProviderTemplate | undefined => PROVID
  * @param includeExperimental - Set to true to include experimental/coming soon providers
  */
 export const listProviders = (includeExperimental = false): ProviderTemplate[] => {
-  const providers = Object.values(PROVIDERS);
-  if (includeExperimental) {
-    return providers;
-  }
-  return providers.filter((p) => !p.experimental);
+  const providers = Object.values(PROVIDERS).filter((p) => includeExperimental || !p.experimental);
+  return providers.sort((a, b) => {
+    const aOrder = PROVIDER_DISPLAY_ORDER_INDEX.get(a.key) ?? Number.MAX_SAFE_INTEGER;
+    const bOrder = PROVIDER_DISPLAY_ORDER_INDEX.get(b.key) ?? Number.MAX_SAFE_INTEGER;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    if (a.experimental !== b.experimental) return a.experimental ? 1 : -1;
+    return a.label.localeCompare(b.label);
+  });
 };
 
 export interface BuildEnvParams {

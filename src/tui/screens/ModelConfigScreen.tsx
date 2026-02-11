@@ -58,7 +58,7 @@ const MODEL_FIELDS = [
 function getPlaceholder(providerKey: string | undefined, model: 'opus' | 'sonnet' | 'haiku'): string {
   const placeholders: Record<string, Record<string, string>> = {
     zai: {
-      opus: 'glm-4.7',
+      opus: 'glm-5',
       sonnet: 'glm-4.7',
       haiku: 'glm-4.5-air',
     },

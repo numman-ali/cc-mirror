@@ -122,47 +122,47 @@ Want to use different models? CC-MIRROR supports multiple providers:
 
 | Provider       | Models                 | Auth       | Best For                        |
 | -------------- | ---------------------- | ---------- | ------------------------------- |
-| **Z.ai**       | GLM-4.7, GLM-4.5-Air   | API Key    | Heavy coding with GLM reasoning |
-| **MiniMax**    | MiniMax-M2.1           | API Key    | Unified model experience        |
 | **Kimi**       | kimi-for-coding        | API Key    | Long-context coding (Kimi Code) |
+| **MiniMax**    | MiniMax-M2.1           | API Key    | Unified model experience        |
+| **Z.ai**       | GLM-5, 4.7, 4.5-Air    | API Key    | Heavy coding with GLM reasoning |
 | **OpenRouter** | 100+ models            | Auth Token | Model flexibility, pay-per-use  |
-| **CCRouter**   | Ollama, DeepSeek, etc. | Optional   | Local-first development         |
-| **Ollama**     | Local + cloud models   | Auth Token | Local-first + hybrid setups     |
-| **GatewayZ**   | Multi-provider gateway | Auth Token | Centralized routing             |
 | **Vercel**     | Multi-provider gateway | Auth Token | Vercel AI Gateway               |
+| **Ollama**     | Local + cloud models   | Auth Token | Local-first + hybrid setups     |
 | **NanoGPT**    | Claude Code endpoint   | Auth Token | Simple endpoint setup           |
+| **CCRouter**   | Ollama, DeepSeek, etc. | Optional   | Local-first development         |
+| **GatewayZ**   | Multi-provider gateway | Auth Token | Centralized routing             |
 
 ```bash
-# Z.ai (GLM Coding Plan)
-npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
+# Kimi Code (kimi-for-coding)
+npx cc-mirror quick --provider kimi --api-key "$KIMI_API_KEY"
 
 # MiniMax (MiniMax-M2.1)
 npx cc-mirror quick --provider minimax --api-key "$MINIMAX_API_KEY"
 
-# Kimi Code (kimi-for-coding)
-npx cc-mirror quick --provider kimi --api-key "$KIMI_API_KEY"
+# Z.ai (GLM-5/4.7/4.5-Air)
+npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
 
 # OpenRouter (100+ models)
 npx cc-mirror quick --provider openrouter --api-key "$OPENROUTER_API_KEY" \
   --model-sonnet "anthropic/claude-sonnet-4-20250514"
 
-# Claude Code Router (local LLMs)
-npx cc-mirror quick --provider ccrouter
+# Vercel AI Gateway
+npx cc-mirror quick --provider vercel --api-key "$VERCEL_AI_GATEWAY_KEY" \
+  --model-sonnet "anthropic/claude-3-5-sonnet-20241022"
 
 # Ollama
 npx cc-mirror quick --provider ollama --api-key "ollama" \
   --model-sonnet "qwen3-coder" --model-opus "qwen3-coder" --model-haiku "qwen3-coder"
 
+# NanoGPT
+npx cc-mirror quick --provider nanogpt --api-key "$NANOGPT_API_KEY"
+
+# Claude Code Router (local LLMs)
+npx cc-mirror quick --provider ccrouter
+
 # GatewayZ
 npx cc-mirror quick --provider gatewayz --api-key "$GATEWAYZ_API_KEY" \
   --model-sonnet "claude-3-5-sonnet-20241022"
-
-# Vercel AI Gateway
-npx cc-mirror quick --provider vercel --api-key "$VERCEL_AI_GATEWAY_KEY" \
-  --model-sonnet "anthropic/claude-3-5-sonnet-20241022"
-
-# NanoGPT
-npx cc-mirror quick --provider nanogpt --api-key "$NANOGPT_API_KEY"
 ```
 
 ---
@@ -193,14 +193,14 @@ kimi                              # Run Kimi Code variant
 ## CLI Options
 
 ```
---provider <name>        mirror | zai | minimax | kimi | openrouter | ccrouter | ollama | gatewayz | vercel | nanogpt | custom
+--provider <name>        kimi | minimax | zai | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz | custom
 --name <name>            Variant name (becomes the CLI command)
 --api-key <key>          Provider API key
 --base-url <url>         Custom API endpoint
 --model-sonnet <name>    Map to sonnet model
 --model-opus <name>      Map to opus model
 --model-haiku <name>     Map to haiku model
---brand <preset>         Theme: auto | mirror | zai | minimax | kimi | openrouter | ccrouter | ollama | gatewayz | vercel | nanogpt
+--brand <preset>         Theme: auto | kimi | minimax | zai | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz
 --no-tweak               Skip tweakcc theme
 --no-prompt-pack         Skip provider prompt pack
 --verbose               Show full tweakcc output during update
@@ -214,16 +214,16 @@ Each provider includes a custom color theme via [tweakcc](https://github.com/Pie
 
 | Brand          | Style                            |
 | -------------- | -------------------------------- |
-| **mirror**     | Silver/chrome with electric blue |
-| **zai**        | Dark carbon with gold accents    |
-| **minimax**    | Coral/red/orange spectrum        |
 | **kimi**       | Aurora green + cyan accents      |
+| **minimax**    | Coral/red/orange spectrum        |
+| **zai**        | Dark carbon with gold accents    |
 | **openrouter** | Teal/cyan gradient               |
-| **ccrouter**   | Sky blue accents                 |
-| **ollama**     | Warm ember/orange palette        |
-| **gatewayz**   | Violet gradients                 |
 | **vercel**     | Monochrome with green accents    |
+| **ollama**     | Warm ember/orange palette        |
 | **nanogpt**    | Neon blue + pink accents         |
+| **ccrouter**   | Sky blue accents                 |
+| **mirror**     | Silver/chrome with electric blue |
+| **gatewayz**   | Violet gradients                 |
 
 ---
 
