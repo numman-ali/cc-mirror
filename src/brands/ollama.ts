@@ -1,5 +1,6 @@
 import type { TweakccConfig, Theme } from './types.js';
 import { DEFAULT_THEMES } from './defaultThemes.js';
+import { buildBrandMiscConfig } from './miscDefaults.js';
 import { formatUserMessage, getUserLabel } from './userLabel.js';
 
 type Rgb = { r: number; g: number; b: number };
@@ -173,16 +174,7 @@ export const buildOllamaTweakccConfig = (): TweakccConfig => ({
     inputBox: {
       removeBorder: true,
     },
-    misc: {
-      showTweakccVersion: false,
-      showPatchesApplied: false,
-      expandThinkingBlocks: true,
-      enableConversationTitle: true,
-      hideStartupBanner: true,
-      hideCtrlGToEditPrompt: true,
-      hideStartupClawd: true,
-      increaseFileReadLimit: true,
-    },
+    misc: buildBrandMiscConfig(),
     toolsets: [
       {
         name: 'ollama',
@@ -191,5 +183,6 @@ export const buildOllamaTweakccConfig = (): TweakccConfig => ({
     ],
     defaultToolset: 'ollama',
     planModeToolset: 'ollama',
+    claudeMdAltNames: null,
   },
 });

@@ -7,6 +7,7 @@
 
 import type { TweakccConfig, Theme } from './types.js';
 import { DEFAULT_THEMES } from './defaultThemes.js';
+import { buildBrandMiscConfig } from './miscDefaults.js';
 import { formatUserMessage, getUserLabel } from './userLabel.js';
 
 type Rgb = { r: number; g: number; b: number };
@@ -194,16 +195,7 @@ export const buildMirrorTweakccConfig = (): TweakccConfig => ({
     inputBox: {
       removeBorder: true,
     },
-    misc: {
-      showTweakccVersion: false,
-      showPatchesApplied: false,
-      expandThinkingBlocks: true,
-      enableConversationTitle: true,
-      hideStartupBanner: true,
-      hideCtrlGToEditPrompt: true,
-      hideStartupClawd: true,
-      increaseFileReadLimit: true,
-    },
+    misc: buildBrandMiscConfig(),
     toolsets: [
       {
         name: 'mirror',
@@ -212,5 +204,6 @@ export const buildMirrorTweakccConfig = (): TweakccConfig => ({
     ],
     defaultToolset: 'mirror',
     planModeToolset: 'mirror',
+    claudeMdAltNames: null,
   },
 });

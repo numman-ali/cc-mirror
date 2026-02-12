@@ -44,15 +44,32 @@ export interface InputBoxConfig {
   removeBorder: boolean;
 }
 
+export type TableFormat = 'default' | 'ascii' | 'clean' | 'clean-top-bottom';
+
 export interface MiscConfig {
   showTweakccVersion: boolean;
   showPatchesApplied: boolean;
   expandThinkingBlocks: boolean;
   enableConversationTitle: boolean;
   hideStartupBanner: boolean;
-  hideCtrlGToEditPrompt: boolean;
+  hideCtrlGToEdit: boolean;
   hideStartupClawd: boolean;
   increaseFileReadLimit: boolean;
+  suppressLineNumbers: boolean;
+  suppressRateLimitOptions: boolean;
+  mcpConnectionNonBlocking: boolean;
+  mcpServerBatchSize: number | null;
+  statuslineThrottleMs: number | null;
+  statuslineUseFixedInterval: boolean;
+  tableFormat: TableFormat;
+  enableSwarmMode: boolean;
+  enableSessionMemory: boolean;
+  enableRememberSkill: boolean;
+  tokenCountRounding: number | null;
+  autoAcceptPlanMode: boolean;
+  allowBypassPermissionsInSudo: boolean | null;
+  suppressNativeInstallerWarning: boolean;
+  filterScrollEscapeSequences: boolean;
 }
 
 export interface Toolset {
@@ -71,6 +88,7 @@ export interface TweakccSettings {
   toolsets: Toolset[];
   defaultToolset: string | null;
   planModeToolset: string | null;
+  claudeMdAltNames: string[] | null;
 }
 
 export interface TweakccConfig {

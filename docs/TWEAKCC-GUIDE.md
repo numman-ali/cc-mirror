@@ -37,6 +37,36 @@ tweakcc can patch either:
   - To re-apply patches without reinstalling Claude Code, run: `npx cc-mirror apply <variant>`
 - cc-mirror pins the tweakcc CLI version it runs (see `src/core/constants.ts`), so updates are reproducible. (You can still manually run a different version via `npx tweakcc@latest` if you need a hotfix for a brand-new Claude Code release.)
 
+## Manual tweakcc for a single variant
+
+Use this when you want to manually enable optional tweakcc features (for example swarm mode or session memory) on one variant without adding new cc-mirror UI settings.
+
+### Fast path (recommended)
+
+```bash
+npx cc-mirror tweak <variant>
+```
+
+### Direct path (explicit target)
+
+```bash
+VARIANT=<variant>
+TWEAKCC_CONFIG_DIR="$HOME/.cc-mirror/$VARIANT/tweakcc" \
+TWEAKCC_CC_INSTALLATION_PATH="$HOME/.cc-mirror/$VARIANT/native/claude" \
+npx tweakcc@4.0.1
+```
+
+### Apply specific optional patches
+
+```bash
+VARIANT=<variant>
+TWEAKCC_CONFIG_DIR="$HOME/.cc-mirror/$VARIANT/tweakcc" \
+TWEAKCC_CC_INSTALLATION_PATH="$HOME/.cc-mirror/$VARIANT/native/claude" \
+npx tweakcc@4.0.1 --apply --patches "<patch-a>,<patch-b>"
+```
+
+Patch names depend on your tweakcc version. Run `npx tweakcc@4.0.1 --help` (or open the tweakcc UI patch list) to confirm available patch IDs.
+
 ## Recommended implementation patterns
 
 ### 1) Theme design (brand identity)
@@ -113,7 +143,7 @@ Tweakcc can simplify the UI:
   "hideStartupBanner": false,
   "hideStartupClawd": false,
   "expandThinkingBlocks": true,
-  "hideCtrlGToEditPrompt": true
+  "hideCtrlGToEdit": true
 }
 ```
 

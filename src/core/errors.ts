@@ -1,6 +1,10 @@
 const extractErrorHint = (text: string) => {
   const normalized = text.toLowerCase();
-  if (normalized.includes('could not extract js from native binary')) {
+  if (
+    normalized.includes('could not extract js from native binary') ||
+    normalized.includes('failed to extract claude.js from native installation') ||
+    normalized.includes('failed to extract javascript from native installation')
+  ) {
     return 'tweakcc could not extract JS from the native Claude Code binary. This usually means node-lief is unavailable on your system. Re-run with --no-tweak to skip theming, or follow tweakcc native-install docs to enable native patching.';
   }
   if (normalized.includes('node-lief')) {

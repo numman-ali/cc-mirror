@@ -1,5 +1,6 @@
 import type { TweakccConfig, Theme } from './types.js';
 import { DEFAULT_THEMES } from './defaultThemes.js';
+import { buildBrandMiscConfig } from './miscDefaults.js';
 import { formatUserMessage, getUserLabel } from './userLabel.js';
 
 /**
@@ -207,16 +208,7 @@ export const buildMinimaxTweakccConfig = (): TweakccConfig => ({
     inputBox: {
       removeBorder: true,
     },
-    misc: {
-      showTweakccVersion: false,
-      showPatchesApplied: false,
-      expandThinkingBlocks: true,
-      enableConversationTitle: true,
-      hideStartupBanner: true,
-      hideCtrlGToEditPrompt: true,
-      hideStartupClawd: true,
-      increaseFileReadLimit: true,
-    },
+    misc: buildBrandMiscConfig(),
     toolsets: [
       {
         name: 'minimax',
@@ -226,5 +218,6 @@ export const buildMinimaxTweakccConfig = (): TweakccConfig => ({
     ],
     defaultToolset: 'minimax',
     planModeToolset: 'minimax',
+    claudeMdAltNames: null,
   },
 });

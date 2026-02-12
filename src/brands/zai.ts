@@ -1,5 +1,6 @@
 import type { TweakccConfig, Theme } from './types.js';
 import { DEFAULT_THEMES } from './defaultThemes.js';
+import { buildBrandMiscConfig } from './miscDefaults.js';
 import { formatUserMessage, getUserLabel } from './userLabel.js';
 
 /**
@@ -193,16 +194,7 @@ export const buildZaiTweakccConfig = (): TweakccConfig => ({
     inputBox: {
       removeBorder: true,
     },
-    misc: {
-      showTweakccVersion: false,
-      showPatchesApplied: false,
-      expandThinkingBlocks: true,
-      enableConversationTitle: true,
-      hideStartupBanner: true,
-      hideCtrlGToEditPrompt: true,
-      hideStartupClawd: true,
-      increaseFileReadLimit: true,
-    },
+    misc: buildBrandMiscConfig(),
     toolsets: [
       {
         name: 'zai',
@@ -212,5 +204,6 @@ export const buildZaiTweakccConfig = (): TweakccConfig => ({
     ],
     defaultToolset: 'zai',
     planModeToolset: 'zai',
+    claudeMdAltNames: null,
   },
 });
