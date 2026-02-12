@@ -31,6 +31,22 @@ export const ensureTweakccConfig = (tweakDir: string, brandKey?: string | null):
       const looksLikeLegacy = existingThemes.length === 1 && brandThemeId && existingThemes[0]?.id === brandThemeId;
       let didUpdate = false;
 
+      // cc-mirror does not manage tweakcc toolsets. In tweakcc v4.0.1 the toolset
+      // patch can crash Claude Code interactive mode (ReferenceError: state is not defined),
+      // so we proactively strip any legacy toolset config from existing variants.
+      const settingsAny = (existing.settings || {}) as unknown as Record<string, unknown>;
+      const hadLegacyToolsets =
+        Object.hasOwn(settingsAny, 'toolsets') ||
+        Object.hasOwn(settingsAny, 'defaultToolset') ||
+        Object.hasOwn(settingsAny, 'planModeToolset');
+      if (hadLegacyToolsets) {
+        delete settingsAny.toolsets;
+        delete settingsAny.defaultToolset;
+        delete settingsAny.planModeToolset;
+        existing.settings = settingsAny as unknown as Partial<TweakccSettings>;
+        didUpdate = true;
+      }
+
       if (brandKey === 'minimax' && existingThemes.length > 0) {
         const filtered = existingThemes.filter(
           (theme) =>
