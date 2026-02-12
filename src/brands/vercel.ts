@@ -173,14 +173,6 @@ export const buildVercelTweakccConfig = (): TweakccConfig => ({
       removeBorder: true,
     },
     misc: buildBrandMiscConfig(),
-    toolsets: [
-      {
-        name: 'vercel',
-        allowedTools: '*',
-      },
-    ],
-    defaultToolset: 'vercel',
-    planModeToolset: 'vercel',
     claudeMdAltNames: null,
   },
 });

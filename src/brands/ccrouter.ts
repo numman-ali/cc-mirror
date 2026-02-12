@@ -175,14 +175,6 @@ export const buildCCRouterTweakccConfig = (): TweakccConfig => ({
       removeBorder: true,
     },
     misc: buildBrandMiscConfig(),
-    toolsets: [
-      {
-        name: 'ccrouter',
-        allowedTools: '*',
-      },
-    ],
-    defaultToolset: 'ccrouter',
-    planModeToolset: 'ccrouter',
     claudeMdAltNames: null,
   },
 });

@@ -32,10 +32,20 @@ tweakcc can patch either:
   - `~/.cc-mirror/<variant>/tweakcc/system-prompts/`
 - Patch apply uses:
   - `TWEAKCC_CONFIG_DIR=~/.cc-mirror/<variant>/tweakcc`
-  - `TWEAKCC_CC_INSTALLATION_PATH=...` (either a `cli.js` path or a native `claude` binary path)
+  - `TWEAKCC_CC_INSTALLATION_PATH=...` (cc-mirror uses the native `~/.cc-mirror/<variant>/native/claude` binary)
 - cc-mirror applies tweakcc after create/update, unless `--no-tweak`.
   - To re-apply patches without reinstalling Claude Code, run: `npx cc-mirror apply <variant>`
 - cc-mirror pins the tweakcc CLI version it runs (see `src/core/constants.ts`), so updates are reproducible. (You can still manually run a different version via `npx tweakcc@latest` if you need a hotfix for a brand-new Claude Code release.)
+
+### Tool restrictions (no toolsets)
+
+cc-mirror intentionally does **not** manage tweakcc toolsets.
+
+Instead, provider-specific tool restrictions (for example blocking `WebSearch` so the provider MCP can be used) are enforced via Claude Code's native `settings.json`:
+
+- `~/.cc-mirror/<variant>/config/settings.json` → `permissions.deny`
+
+This keeps the UX stable and avoids relying on UI-level toolset patches inside the `claude` binary.
 
 ## Manual tweakcc for a single variant
 
@@ -120,19 +130,7 @@ Ideas:
 - Longer verbs for more "deliberate" feel ("Calibrating", "Synthesizing")
 - Spinner phases like `['·','•','◦','•']` for clean minimal rhythm
 
-### 4) Toolsets
-
-Preconfigure toolsets so brand variants are scoped:
-
-```
-"toolsets": [
-  { "name": "minimax", "allowedTools": "*" }
-],
-"defaultToolset": "minimax",
-"planModeToolset": "minimax"
-```
-
-### 5) Input box + misc UX
+### 4) Input box + misc UX
 
 Tweakcc can simplify the UI:
 
@@ -147,7 +145,7 @@ Tweakcc can simplify the UI:
 }
 ```
 
-### 6) System prompts (advanced)
+### 5) System prompts (advanced)
 
 System prompt editing is powerful but risky. Suggested process:
 
@@ -161,13 +159,13 @@ Suggested workflow:
 2. Edit a single prompt file.
 3. Run `tweakcc --apply` (cc-mirror does this on update).
 
-### 7) Context limit overrides
+### 6) Context limit overrides
 
 Use `CLAUDE_CODE_CONTEXT_LIMIT` only for custom endpoints that support larger windows.
 
 - Example: `CLAUDE_CODE_CONTEXT_LIMIT=400000`
 
-### 8) Version compatibility and patch warnings
+### 7) Version compatibility and patch warnings
 
 - tweakcc is sensitive to Claude Code versions. Patch failures are expected after CC updates.
 - The `tweakcc` UI will still work even when one patch fails.
@@ -192,7 +190,6 @@ Use `CLAUDE_CODE_CONTEXT_LIMIT` only for custom endpoints that support larger wi
 - [ ] Unique theme palette with high contrast
 - [ ] Distinct thinking verbs + spinner style
 - [ ] User message banner formatting
-- [ ] Toolset default set to provider
 - [ ] Input box border removed
 - [ ] Startup banner visibility (hide or show)
 - [ ] System prompt customized (optional)
@@ -212,7 +209,6 @@ tweakcc can **show or hide** Claude Code’s built‑in startup banner and clawd
 
 1. **Theme polish pass**: iterate on one brand at a time, validate contrast, and tune borders/shimmers.
 2. **System prompt v1**: edit only the main system prompt + 1 tool description, then validate behavior.
-3. **Toolset tightening**: define provider-specific toolsets (e.g., restrict web or bash for certain endpoints).
-4. **MCP defaults**: seed provider MCP servers in `.claude.json`, then document how to manage scopes.
-5. **Update flow**: add a “reapply after CC update” hint in CLI/TUI and detect patch failures early.
-6. **UX polish**: add short “preview” messages in the TUI showing what will change before applying.
+3. **MCP defaults**: seed provider MCP servers in `.claude.json`, then document how to manage scopes.
+4. **Update flow**: add a “reapply after CC update” hint in CLI/TUI and detect patch failures early.
+5. **UX polish**: add short “preview” messages in the TUI showing what will change before applying.

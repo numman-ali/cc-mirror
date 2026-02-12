@@ -178,14 +178,6 @@ export const buildOpenRouterTweakccConfig = (): TweakccConfig => ({
       removeBorder: true,
     },
     misc: buildBrandMiscConfig(),
-    toolsets: [
-      {
-        name: 'openrouter',
-        allowedTools: '*',
-      },
-    ],
-    defaultToolset: 'openrouter',
-    planModeToolset: 'openrouter',
     claudeMdAltNames: null,
   },
 });

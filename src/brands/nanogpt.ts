@@ -173,14 +173,6 @@ export const buildNanoGPTTweakccConfig = (): TweakccConfig => ({
       removeBorder: true,
     },
     misc: buildBrandMiscConfig(),
-    toolsets: [
-      {
-        name: 'nanogpt',
-        allowedTools: '*',
-      },
-    ],
-    defaultToolset: 'nanogpt',
-    planModeToolset: 'nanogpt',
     claudeMdAltNames: null,
   },
 });

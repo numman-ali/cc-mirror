@@ -196,14 +196,6 @@ export const buildMirrorTweakccConfig = (): TweakccConfig => ({
       removeBorder: true,
     },
     misc: buildBrandMiscConfig(),
-    toolsets: [
-      {
-        name: 'mirror',
-        allowedTools: '*',
-      },
-    ],
-    defaultToolset: 'mirror',
-    planModeToolset: 'mirror',
     claudeMdAltNames: null,
   },
 });

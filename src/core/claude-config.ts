@@ -50,25 +50,37 @@ const readSettingsApiKey = (configDir: string): string | null => {
   return toStringOrNull(env.ANTHROPIC_API_KEY);
 };
 
-const ZAI_DENY_TOOLS = [
+export const ZAI_DENY_TOOLS = [
+  // Z.ai injects these MCP tools; they can break expected cc-mirror behavior.
   'mcp__4_5v_mcp__analyze_image',
   'mcp__milk_tea_server__claim_milk_tea_coupon',
   'mcp__web_reader__webReader',
+  // Built-in tools that should be routed via zai-cli instead.
+  'WebSearch',
+  'WebFetch',
 ];
 
-export const ensureZaiMcpDeny = (configDir: string): boolean => {
+export const MINIMAX_DENY_TOOLS = [
+  // WebSearch should use mcp__MiniMax__web_search instead.
+  'WebSearch',
+];
+
+export const ensureSettingsPermissionsDeny = (configDir: string, tools: string[]): boolean => {
   const settingsPath = path.join(configDir, SETTINGS_FILE);
   const existing = readJson<SettingsFile>(settingsPath) || {};
   const permissions = existing.permissions || {};
   const deny = Array.isArray(permissions.deny) ? [...permissions.deny] : [];
+
   let changed = false;
-  for (const tool of ZAI_DENY_TOOLS) {
+  for (const tool of tools) {
     if (!deny.includes(tool)) {
       deny.push(tool);
       changed = true;
     }
   }
+
   if (!changed) return false;
+
   const next: SettingsFile = {
     ...existing,
     permissions: {
@@ -76,6 +88,7 @@ export const ensureZaiMcpDeny = (configDir: string): boolean => {
       deny,
     },
   };
+
   writeJson(settingsPath, next);
   return true;
 };

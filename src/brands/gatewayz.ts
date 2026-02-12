@@ -174,14 +174,6 @@ export const buildGatewayzTweakccConfig = (): TweakccConfig => ({
       removeBorder: true,
     },
     misc: buildBrandMiscConfig(),
-    toolsets: [
-      {
-        name: 'gatewayz',
-        allowedTools: '*',
-      },
-    ],
-    defaultToolset: 'gatewayz',
-    planModeToolset: 'gatewayz',
     claudeMdAltNames: null,
   },
 });

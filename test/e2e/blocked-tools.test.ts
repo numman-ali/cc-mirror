@@ -1,8 +1,8 @@
 /**
- * E2E Tests - Blocked Tools Configuration
+ * E2E Tests - Provider Tool Denies
  *
- * Tests that provider toolsets correctly block specified tools and
- * provider brand presets include their expected blockedTools.
+ * Verifies that cc-mirror enforces provider-specific tool restrictions via
+ * Claude Code's native settings.json permissions (not tweakcc toolsets).
  */
 
 import test from 'node:test';
@@ -10,11 +10,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import * as core from '../../src/core/index.js';
-import { ZAI_BLOCKED_TOOLS } from '../../src/brands/zai.js';
-import { MINIMAX_BLOCKED_TOOLS } from '../../src/brands/minimax.js';
+import { MINIMAX_DENY_TOOLS, ZAI_DENY_TOOLS } from '../../src/core/claude-config.js';
 import { makeTempDir, readFile, cleanup } from '../helpers/index.js';
 
-test('E2E: Blocked Tools', async (t) => {
+test('E2E: Tool denies', async (t) => {
   const createdDirs: string[] = [];
 
   t.after(() => {
@@ -23,13 +22,13 @@ test('E2E: Blocked Tools', async (t) => {
     }
   });
 
-  await t.test('zai brand has blocked tools configured', async () => {
+  await t.test('zai settings.json denies provider-injected tools + built-in web tools', async () => {
     const rootDir = makeTempDir();
     const binDir = makeTempDir();
     createdDirs.push(rootDir, binDir);
 
     await core.createVariantAsync({
-      name: 'test-zai-blocked',
+      name: 'test-zai-deny',
       providerKey: 'zai',
       apiKey: 'test-key',
       claudeVersion: 'stable',
@@ -41,33 +40,27 @@ test('E2E: Blocked Tools', async (t) => {
       tweakccStdio: 'pipe',
     });
 
-    const variantDir = path.join(rootDir, 'test-zai-blocked');
-    const configPath = path.join(variantDir, 'tweakcc', 'config.json');
+    const variantDir = path.join(rootDir, 'test-zai-deny');
+    const settingsPath = path.join(variantDir, 'config', 'settings.json');
 
-    assert.ok(fs.existsSync(configPath), 'tweakcc config should exist');
+    assert.ok(fs.existsSync(settingsPath), 'settings.json should exist');
 
-    const config = JSON.parse(readFile(configPath));
-    const zaiToolset = config.settings?.toolsets?.find((t: { name: string }) => t.name === 'zai');
+    const settings = JSON.parse(readFile(settingsPath));
+    const deny = settings.permissions?.deny;
+    assert.ok(Array.isArray(deny), 'permissions.deny should be an array');
 
-    assert.ok(zaiToolset, 'zai toolset should exist');
-    assert.ok(Array.isArray(zaiToolset.blockedTools), 'blockedTools should be an array');
-
-    // Verify all expected tools are blocked
-    for (const tool of ZAI_BLOCKED_TOOLS) {
-      assert.ok(zaiToolset.blockedTools.includes(tool), `zai toolset should block ${tool}`);
+    for (const tool of ZAI_DENY_TOOLS) {
+      assert.ok(deny.includes(tool), `zai should deny ${tool}`);
     }
-
-    // Verify default toolset is zai
-    assert.equal(config.settings.defaultToolset, 'zai', 'default toolset should be zai');
   });
 
-  await t.test('minimax brand has blocked tools configured', async () => {
+  await t.test('minimax settings.json denies WebSearch', async () => {
     const rootDir = makeTempDir();
     const binDir = makeTempDir();
     createdDirs.push(rootDir, binDir);
 
     await core.createVariantAsync({
-      name: 'test-minimax-blocked',
+      name: 'test-minimax-deny',
       providerKey: 'minimax',
       apiKey: 'test-key',
       claudeVersion: 'stable',
@@ -79,23 +72,17 @@ test('E2E: Blocked Tools', async (t) => {
       tweakccStdio: 'pipe',
     });
 
-    const variantDir = path.join(rootDir, 'test-minimax-blocked');
-    const configPath = path.join(variantDir, 'tweakcc', 'config.json');
+    const variantDir = path.join(rootDir, 'test-minimax-deny');
+    const settingsPath = path.join(variantDir, 'config', 'settings.json');
 
-    assert.ok(fs.existsSync(configPath), 'tweakcc config should exist');
+    assert.ok(fs.existsSync(settingsPath), 'settings.json should exist');
 
-    const config = JSON.parse(readFile(configPath));
-    const minimaxToolset = config.settings?.toolsets?.find((t: { name: string }) => t.name === 'minimax');
+    const settings = JSON.parse(readFile(settingsPath));
+    const deny = settings.permissions?.deny;
+    assert.ok(Array.isArray(deny), 'permissions.deny should be an array');
 
-    assert.ok(minimaxToolset, 'minimax toolset should exist');
-    assert.ok(Array.isArray(minimaxToolset.blockedTools), 'blockedTools should be an array');
-
-    // Verify all expected tools are blocked
-    for (const tool of MINIMAX_BLOCKED_TOOLS) {
-      assert.ok(minimaxToolset.blockedTools.includes(tool), `minimax toolset should block ${tool}`);
+    for (const tool of MINIMAX_DENY_TOOLS) {
+      assert.ok(deny.includes(tool), `minimax should deny ${tool}`);
     }
-
-    // Verify default toolset is minimax
-    assert.equal(config.settings.defaultToolset, 'minimax', 'default toolset should be minimax');
   });
 });

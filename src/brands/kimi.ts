@@ -178,14 +178,6 @@ export const buildKimiTweakccConfig = (): TweakccConfig => ({
       removeBorder: true,
     },
     misc: buildBrandMiscConfig(),
-    toolsets: [
-      {
-        name: 'kimi',
-        allowedTools: '*',
-      },
-    ],
-    defaultToolset: 'kimi',
-    planModeToolset: 'kimi',
     claudeMdAltNames: null,
   },
 });

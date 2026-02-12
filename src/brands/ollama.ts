@@ -175,14 +175,6 @@ export const buildOllamaTweakccConfig = (): TweakccConfig => ({
       removeBorder: true,
     },
     misc: buildBrandMiscConfig(),
-    toolsets: [
-      {
-        name: 'ollama',
-        allowedTools: '*',
-      },
-    ],
-    defaultToolset: 'ollama',
-    planModeToolset: 'ollama',
     claudeMdAltNames: null,
   },
 });

@@ -21,13 +21,13 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
   zai: {
     key: 'zai',
     label: 'Z.ai Carbon',
-    description: 'Dark carbon palette, gold + blue accents, Z.ai toolset label.',
+    description: 'Dark carbon palette, gold + blue accents',
     buildTweakccConfig: buildZaiTweakccConfig,
   },
   minimax: {
     key: 'minimax',
     label: 'MiniMax Pulse',
-    description: 'Vibrant spectrum accents (red/orange/pink/violet) with MiniMax toolset label.',
+    description: 'Vibrant spectrum accents (red/orange/pink/violet)',
     buildTweakccConfig: buildMinimaxTweakccConfig,
   },
   kimi: {
@@ -39,7 +39,7 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
   openrouter: {
     key: 'openrouter',
     label: 'OpenRouter Teal',
-    description: 'Light UI with teal/cyan accents and OpenRouter toolset label.',
+    description: 'Light UI with teal/cyan accents',
     buildTweakccConfig: buildOpenRouterTweakccConfig,
   },
   ccrouter: {
