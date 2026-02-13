@@ -311,6 +311,11 @@ test('settingsOnly update preserves binary and only updates settings', () => {
     };
     assert.equal(configJson.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'anthropic/claude-sonnet');
     assert.equal(configJson.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'anthropic/claude-haiku');
+    assert.equal(
+      configJson.env.ANTHROPIC_SMALL_FAST_MODEL,
+      'anthropic/claude-haiku',
+      'small-fast model should follow haiku alias when haiku is updated'
+    );
 
     cleanup(rootDir);
     cleanup(binDir);

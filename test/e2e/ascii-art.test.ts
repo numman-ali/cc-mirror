@@ -84,7 +84,7 @@ test('E2E: Colored ASCII art content verification', async (t) => {
     // Verify ASCII art text content - check for taglines and block patterns
     const asciiPatterns: Record<string, string[]> = {
       zai: ['GLM Coding Plan', 'A I'],
-      minimax: ['MiniMax-M2.1', 'AGI for All'],
+      minimax: ['MiniMax', 'AGI for All'],
       kimi: ['K I M I   C O D E', 'kimi-for-coding', 'K2.5'],
       openrouter: ['One API', 'Any Model', '██'],
       ccrouter: ['CC ROUTER', 'Claude Code', 'Any Model'],

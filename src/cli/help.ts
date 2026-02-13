@@ -60,7 +60,7 @@ OPTIONS (advanced)
 
 PROVIDERS
   kimi          kimi-for-coding via Kimi Code
-  minimax       MiniMax-M2.1 via MiniMax Cloud
+  minimax       MiniMax via MiniMax Cloud
   zai           GLM-5/4.7/4.5-Air via Z.ai Coding Plan
   openrouter    100+ models via OpenRouter
   vercel        Vercel AI Gateway

@@ -30,7 +30,7 @@ export const EDUCATION = {
     title: 'Why Variants?',
     brief: 'Keep different AI providers separate and organized.',
     points: [
-      'Run Z.ai GLM-5/4.7 and MiniMax-M2.1 side-by-side',
+      'Run Z.ai GLM-5/4.7 and MiniMax side-by-side',
       'Experiment with OpenRouter without affecting your main setup',
       'Keep work projects separate from personal experimentation',
       'Try new models without risk—just create a new variant',

@@ -7,7 +7,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { listProviders, getProvider, PROVIDER_DISPLAY_ORDER } from '../src/providers/index.js';
+import { listProviders, getProvider, buildEnv, PROVIDER_DISPLAY_ORDER } from '../src/providers/index.js';
 
 test('Provider Feature Matrix', async (t) => {
   const providers = listProviders(true); // Include experimental
@@ -120,5 +120,35 @@ test('Provider Feature Matrix', async (t) => {
     assert.ok(minimax, 'minimax provider should exist');
     assert.ok(minimax.env.ANTHROPIC_MODEL, 'minimax should have ANTHROPIC_MODEL');
     assert.ok(minimax.env.ANTHROPIC_SMALL_FAST_MODEL, 'minimax should have ANTHROPIC_SMALL_FAST_MODEL');
+  });
+
+  await t.test('buildEnv derives startup/default models from alias mapping', () => {
+    const zaiEnv = buildEnv({ providerKey: 'zai', apiKey: 'test-key' });
+    assert.equal(
+      zaiEnv.ANTHROPIC_MODEL,
+      zaiEnv.ANTHROPIC_DEFAULT_OPUS_MODEL,
+      'ANTHROPIC_MODEL should follow the Opus alias by default'
+    );
+    assert.equal(
+      zaiEnv.ANTHROPIC_SMALL_FAST_MODEL,
+      zaiEnv.ANTHROPIC_DEFAULT_HAIKU_MODEL,
+      'ANTHROPIC_SMALL_FAST_MODEL should follow the Haiku alias by default'
+    );
+  });
+
+  await t.test('buildEnv preserves explicit default/small-fast model overrides', () => {
+    const env = buildEnv({
+      providerKey: 'zai',
+      apiKey: 'test-key',
+      modelOverrides: {
+        opus: 'glm-5',
+        haiku: 'glm-4.5-air',
+        defaultModel: 'glm-4.7',
+        smallFast: 'glm-5-air',
+      },
+    });
+
+    assert.equal(env.ANTHROPIC_MODEL, 'glm-4.7', 'explicit default model override should be preserved');
+    assert.equal(env.ANTHROPIC_SMALL_FAST_MODEL, 'glm-5-air', 'explicit small-fast override should be preserved');
   });
 });

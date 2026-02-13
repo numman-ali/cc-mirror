@@ -53,7 +53,7 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
   },
 
   minimax: {
-    headline: 'MiniMax-M2.1 — AGI for All',
+    headline: 'MiniMax — AGI for All',
     tagline: 'Coral pulses, unified model',
     features: [
       'Single model for all tiers',
@@ -63,9 +63,9 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     ],
     bestFor: 'Streamlined experience with one powerful model',
     models: {
-      opus: 'MiniMax-M2.1',
-      sonnet: 'MiniMax-M2.1',
-      haiku: 'MiniMax-M2.1',
+      opus: 'MiniMax-M2.5',
+      sonnet: 'MiniMax-M2.5',
+      haiku: 'MiniMax-M2.5',
     },
     requiresMapping: false,
     hasPromptPack: true,

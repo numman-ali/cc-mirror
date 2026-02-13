@@ -63,9 +63,9 @@ function getPlaceholder(providerKey: string | undefined, model: 'opus' | 'sonnet
       haiku: 'glm-4.5-air',
     },
     minimax: {
-      opus: 'MiniMax-M2.1',
-      sonnet: 'MiniMax-M2.1',
-      haiku: 'MiniMax-M2.1',
+      opus: 'MiniMax-M2.5',
+      sonnet: 'MiniMax-M2.5',
+      haiku: 'MiniMax-M2.5',
     },
     openrouter: {
       opus: 'anthropic/claude-3-opus',
@@ -196,6 +196,12 @@ export const ModelConfigScreen: React.FC<ModelConfigScreenProps> = ({
         <Text color={colors.textMuted}>
           Claude Code uses model aliases. Map these to your provider's actual model names.
         </Text>
+        <Text color={colors.textDim}>
+          cc-mirror keeps startup default on Opus and small-fast on Haiku unless explicitly overridden.
+        </Text>
+        {providerKey === 'zai' && (
+          <Text color={colors.textDim}>Z.ai defaults: Opus=glm-5, Sonnet=glm-4.7, Haiku=glm-4.5-air.</Text>
+        )}
       </Box>
 
       {/* Model-mapping help */}

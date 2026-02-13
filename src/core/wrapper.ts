@@ -92,7 +92,7 @@ const SPLASH_ART: SplashArt = {
     `${C.mmAccent}    ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝${C.reset}`,
     '',
     `${C.mmDim}    ━━━━━━━━━━━━━━━━━━${C.mmPrimary}◆${C.mmDim}━━━━━━━━━━━━━━━━━━${C.reset}`,
-    `${C.mmSecondary}           MiniMax-M2.1 ${C.mmDim}━${C.mmSecondary} AGI for All${C.reset}`,
+    `${C.mmSecondary}             MiniMax ${C.mmDim}━${C.mmSecondary} AGI for All${C.reset}`,
     '',
   ],
   // Kimi: Aurora header + compact block letters

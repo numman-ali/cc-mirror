@@ -89,16 +89,16 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
   minimax: {
     key: 'minimax',
     label: 'MiniMax Cloud',
-    description: 'MiniMax-M2.1 via MiniMax Cloud',
+    description: 'MiniMax via MiniMax Cloud',
     baseUrl: 'https://api.minimax.io/anthropic',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: 1,
-      ANTHROPIC_MODEL: 'MiniMax-M2.1',
-      ANTHROPIC_SMALL_FAST_MODEL: 'MiniMax-M2.1',
-      ANTHROPIC_DEFAULT_SONNET_MODEL: 'MiniMax-M2.1',
-      ANTHROPIC_DEFAULT_OPUS_MODEL: 'MiniMax-M2.1',
-      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'MiniMax-M2.1',
+      ANTHROPIC_MODEL: 'MiniMax-M2.5',
+      ANTHROPIC_SMALL_FAST_MODEL: 'MiniMax-M2.5',
+      ANTHROPIC_DEFAULT_SONNET_MODEL: 'MiniMax-M2.5',
+      ANTHROPIC_DEFAULT_OPUS_MODEL: 'MiniMax-M2.5',
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'MiniMax-M2.5',
       CC_MIRROR_SPLASH: 1,
       CC_MIRROR_PROVIDER_LABEL: 'MiniMax Cloud',
       CC_MIRROR_SPLASH_STYLE: 'minimax',
@@ -273,6 +273,37 @@ const applyModelOverrides = (env: ProviderEnv, overrides?: ModelOverrides) => {
   }
 };
 
+const getEnvModelValue = (env: ProviderEnv, key: string): string => {
+  const raw = env[key];
+  if (typeof raw === 'string') return normalizeModelValue(raw);
+  if (typeof raw === 'number') return normalizeModelValue(String(raw));
+  return '';
+};
+
+const syncCompatibilityModelDefaults = (
+  env: ProviderEnv,
+  opts: {
+    skipDefaultModelSync?: boolean;
+    skipSmallFastSync?: boolean;
+  } = {}
+) => {
+  // Keep startup/default model aligned with Opus alias unless explicitly overridden.
+  if (!opts.skipDefaultModelSync) {
+    const opus = getEnvModelValue(env, 'ANTHROPIC_DEFAULT_OPUS_MODEL');
+    if (opus) {
+      env.ANTHROPIC_MODEL = opus;
+    }
+  }
+
+  // Keep legacy small-fast setting aligned with Haiku alias unless explicitly overridden.
+  if (!opts.skipSmallFastSync) {
+    const haiku = getEnvModelValue(env, 'ANTHROPIC_DEFAULT_HAIKU_MODEL');
+    if (haiku) {
+      env.ANTHROPIC_SMALL_FAST_MODEL = haiku;
+    }
+  }
+};
+
 export const buildEnv = ({ providerKey, baseUrl, apiKey, extraEnv, modelOverrides }: BuildEnvParams): ProviderEnv => {
   const provider = getProvider(providerKey);
   if (!provider) {
@@ -335,6 +366,10 @@ export const buildEnv = ({ providerKey, baseUrl, apiKey, extraEnv, modelOverride
   }
 
   applyModelOverrides(env, modelOverrides);
+  syncCompatibilityModelDefaults(env, {
+    skipDefaultModelSync: normalizeModelValue(modelOverrides?.defaultModel).length > 0,
+    skipSmallFastSync: normalizeModelValue(modelOverrides?.smallFast).length > 0,
+  });
 
   if (Array.isArray(extraEnv)) {
     for (const entry of extraEnv) {

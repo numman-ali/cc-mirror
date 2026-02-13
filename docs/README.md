@@ -72,7 +72,7 @@ docs/
 │   Provider   │       Model        │  Auth Mode   │ Prompt Pack│
 ├──────────────┼────────────────────┼──────────────┼────────────┤
 │ kimi         │ kimi-for-coding    │ API Key      │ ✗          │
-│ minimax      │ MiniMax-M2.1       │ API Key      │ ✓ Full     │
+│ minimax      │ MiniMax-M2.5       │ API Key      │ ✓ Full     │
 │ zai          │ GLM-5/4.7/4.5-Air  │ API Key      │ ✓ Full     │
 │ openrouter   │ You choose         │ Auth Token   │ ✗          │
 │ vercel       │ Vercel gateway     │ Auth Token   │ ✗          │

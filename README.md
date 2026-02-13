@@ -89,7 +89,7 @@ Each variant is completely isolated — its own config, sessions, MCP servers, a
 │  │   └── variant.json                Metadata                           │
 │  │                                                                      │
 │  ├── zai/                            ← Z.ai variant (GLM models)        │
-│  ├── minimax/                        ← MiniMax variant (M2.1)           │
+│  ├── minimax/                        ← MiniMax variant (M2.5)           │
 │  └── kimi/                           ← Kimi Code variant (kimi-for-coding) │
 │                                                                         │
 │  Wrappers: <bin-dir>/mclaude, <bin-dir>/zai, ...                        │
@@ -123,7 +123,7 @@ Want to use different models? CC-MIRROR supports multiple providers:
 | Provider       | Models                 | Auth       | Best For                        |
 | -------------- | ---------------------- | ---------- | ------------------------------- |
 | **Kimi**       | kimi-for-coding        | API Key    | Long-context coding (Kimi Code) |
-| **MiniMax**    | MiniMax-M2.1           | API Key    | Unified model experience        |
+| **MiniMax**    | MiniMax-M2.5           | API Key    | Unified model experience        |
 | **Z.ai**       | GLM-5, 4.7, 4.5-Air    | API Key    | Heavy coding with GLM reasoning |
 | **OpenRouter** | 100+ models            | Auth Token | Model flexibility, pay-per-use  |
 | **Vercel**     | Multi-provider gateway | Auth Token | Vercel AI Gateway               |
@@ -136,7 +136,7 @@ Want to use different models? CC-MIRROR supports multiple providers:
 # Kimi Code (kimi-for-coding)
 npx cc-mirror quick --provider kimi --api-key "$KIMI_API_KEY"
 
-# MiniMax (MiniMax-M2.1)
+# MiniMax (MiniMax-M2.5)
 npx cc-mirror quick --provider minimax --api-key "$MINIMAX_API_KEY"
 
 # Z.ai (GLM-5/4.7/4.5-Air)
