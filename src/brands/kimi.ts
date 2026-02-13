@@ -1,6 +1,7 @@
 import type { TweakccConfig, Theme } from './types.js';
 import { DEFAULT_THEMES } from './defaultThemes.js';
 import { buildBrandMiscConfig } from './miscDefaults.js';
+import { buildDiffPalette } from './diffPalette.js';
 import { formatUserMessage, getUserLabel } from './userLabel.js';
 
 type Rgb = { r: number; g: number; b: number };
@@ -92,14 +93,7 @@ const theme: Theme = {
     error: rgb(palette.red),
     warning: rgb(palette.yellow),
     warningShimmer: lighten(palette.yellow, 0.25),
-    diffAdded: mix(palette.base, palette.green, 0.18),
-    diffRemoved: mix(palette.base, palette.red, 0.18),
-    diffAddedDimmed: mix(palette.base, palette.green, 0.1),
-    diffRemovedDimmed: mix(palette.base, palette.red, 0.1),
-    diffAddedWord: mix(palette.base, palette.green, 0.45),
-    diffRemovedWord: mix(palette.base, palette.red, 0.45),
-    diffAddedWordDimmed: mix(palette.base, palette.green, 0.3),
-    diffRemovedWordDimmed: mix(palette.base, palette.red, 0.3),
+    ...buildDiffPalette({ base: palette.base, added: palette.green, removed: palette.red, tint: palette.aurora }),
     red_FOR_SUBAGENTS_ONLY: rgb(palette.red),
     blue_FOR_SUBAGENTS_ONLY: rgb(palette.cyan),
     green_FOR_SUBAGENTS_ONLY: rgb(palette.green),
