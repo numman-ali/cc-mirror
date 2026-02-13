@@ -43,24 +43,24 @@ const mix = (hexA: string, hexB: string, weight: number) => {
 const lighten = (hex: string, weight: number) => mix(hex, '#ffffff', weight);
 
 // OpenRouter brand colors: #284968 (navy), #6467f2 (cornflower blue)
-// Theme: professional dark navy with vibrant blue accents
+// Theme: dark navy workspace with vivid routing accents.
 const palette = {
-  base: '#f0f4f8',
-  surface: '#f7f9fc',
-  panel: '#e4eaf2',
-  border: '#c0cfdf',
-  borderStrong: '#8da4be',
-  text: '#1a2332',
-  textMuted: '#3d4f66',
-  textDim: '#5c6f88',
+  base: '#0d1422',
+  surface: '#121b2d',
+  panel: '#162238',
+  border: '#273754',
+  borderStrong: '#375079',
+  text: '#eef4ff',
+  textMuted: '#c7d3e8',
+  textDim: '#8ea4c4',
   navy: '#284968', // Brand primary - dark navy
-  navyBright: '#3a6590',
-  navyDeep: '#1a3048',
+  navyBright: '#5d8ec8',
+  navyDeep: '#1f3650',
   indigo: '#6467f2', // Brand accent - cornflower blue
   indigoSoft: '#8a8df5',
   green: '#2f9b6d',
-  red: '#d04b5a',
-  orange: '#d28a3c',
+  red: '#d26974',
+  orange: '#d9a04d',
   purple: '#6467f2',
 };
 

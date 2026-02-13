@@ -43,24 +43,24 @@ const mix = (hexA: string, hexB: string, weight: number) => {
 const lighten = (hex: string, weight: number) => mix(hex, '#ffffff', weight);
 
 // Vercel brand colors: #0070F3 (blue ribbon), #171717 (cod gray), white
-// Theme: monochrome with signature Vercel blue accent
+// Theme: dark monochrome shell with signature Vercel blue accents.
 const palette = {
-  base: '#fafafa',
-  surface: '#ffffff',
-  panel: '#f0f0f0',
-  border: '#e0e0e0',
-  borderStrong: '#c0c0c0',
-  text: '#171717', // Brand - cod gray
-  textMuted: '#404040',
-  textDim: '#666666',
-  ink: '#171717',
-  inkSoft: '#333333',
+  base: '#0a0a0a',
+  surface: '#111111',
+  panel: '#171717',
+  border: '#2b2b2b',
+  borderStrong: '#3d3d3d',
+  text: '#f5f5f5', // Brand-inspired monochrome
+  textMuted: '#d4d4d4',
+  textDim: '#9ca3af',
+  ink: '#f5f5f5',
+  inkSoft: '#cfcfcf',
   blue: '#0070f3', // Brand - blue ribbon
   blueSoft: '#3291ff',
-  green: '#00c853',
-  red: '#d04b5a',
-  orange: '#d28a3c',
-  purple: '#6b5bd6',
+  green: '#22c55e',
+  red: '#f87171',
+  orange: '#f59e0b',
+  purple: '#8b5cf6',
 };
 
 const theme: Theme = {

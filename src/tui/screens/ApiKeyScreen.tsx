@@ -7,42 +7,28 @@ import { Box, Text } from 'ink';
 import { ScreenLayout } from '../components/ui/ScreenLayout.js';
 import { MaskedInput } from '../components/ui/Input.js';
 import { colors, icons, keyHints } from '../components/ui/theme.js';
+import { getProviderEducation } from '../content/providers.js';
 
 // Provider-specific help links and setup info
 interface ProviderLinkInfo {
-  apiKey: string;
-  subscribe: string;
-  setup?: string; // Additional setup instructions URL
-  note?: string; // Brief note about what the key is used for
+  credential: string;
+  subscribe?: string;
+  docs?: string;
+  github?: string;
+  note?: string;
 }
 
-const PROVIDER_LINKS: Record<string, ProviderLinkInfo> = {
-  zai: {
-    apiKey: 'https://z.ai/manage-apikey/apikey-list',
-    subscribe: 'https://z.ai/subscribe',
-    note: 'Your Zai API key will be stored as ANTHROPIC_API_KEY for Claude Code compatibility.',
-  },
-  minimax: {
-    apiKey: 'https://platform.minimax.io/user-center/payment/coding-plan',
-    subscribe: 'https://platform.minimax.io/subscribe/coding-plan',
-    note: 'Your MiniMax API key will be stored as ANTHROPIC_API_KEY for Claude Code compatibility.',
-  },
-  openrouter: {
-    apiKey: 'https://openrouter.ai/keys',
-    subscribe: 'https://openrouter.ai/account',
-    note: 'Your OpenRouter key will be stored as ANTHROPIC_AUTH_TOKEN.',
-  },
-  ccrouter: {
-    apiKey: 'https://github.com/musistudio/claude-code-router',
-    subscribe: 'https://github.com/musistudio/claude-code-router#installation',
-    note: 'No API key needed. Models are configured in ~/.claude-code-router/config.json',
-  },
-  ollama: {
-    apiKey: 'https://ollama.com',
-    subscribe: 'https://ollama.com',
-    setup: 'https://docs.ollama.com/integrations/claude-code',
-    note: 'Local: set key to "ollama" (values ignored). Cloud: set base URL to https://ollama.com and use your API key.',
-  },
+const getProviderLinks = (providerKey?: string): ProviderLinkInfo | null => {
+  if (!providerKey) return null;
+  const education = getProviderEducation(providerKey.toLowerCase());
+  if (!education?.setupLinks) return null;
+  return {
+    credential: education.setupLinks.apiKey,
+    subscribe: education.setupLinks.subscribe,
+    docs: education.setupLinks.docs,
+    github: education.setupLinks.github,
+    note: education.setupNote,
+  };
 };
 
 interface ApiKeyScreenProps {
@@ -64,13 +50,16 @@ export const ApiKeyScreen: React.FC<ApiKeyScreenProps> = ({
   onChange,
   onSubmit,
 }) => {
+  const usesAuthToken = envVarName === 'ANTHROPIC_AUTH_TOKEN';
+  const credentialNoun = usesAuthToken ? 'token' : 'key';
+  const credentialLabel = usesAuthToken ? 'Auth Token' : 'API Key';
   // Get provider-specific links
-  const links = providerKey ? PROVIDER_LINKS[providerKey.toLowerCase()] : null;
+  const links = getProviderLinks(providerKey);
 
   return (
     <ScreenLayout
-      title="API Key"
-      subtitle={`Enter your ${providerLabel} API key`}
+      title={credentialLabel}
+      subtitle={`Enter your ${providerLabel} ${credentialNoun}`}
       borderColor={colors.borderGold}
       icon="star"
       hints={[keyHints.continue, keyHints.back]}
@@ -85,15 +74,23 @@ export const ApiKeyScreen: React.FC<ApiKeyScreenProps> = ({
             </Text>
           </Box>
           <Box marginLeft={2} flexDirection="column">
-            <Text color={colors.textMuted}>
-              1. Subscribe: <Text color={colors.primaryBright}>{links.subscribe}</Text>
-            </Text>
-            <Text color={colors.textMuted}>
-              2. Get key: <Text color={colors.primaryBright}>{links.apiKey}</Text>
-            </Text>
-            {links.setup && (
+            {links.subscribe && (
               <Text color={colors.textMuted}>
-                3. Setup guide: <Text color={colors.primaryBright}>{links.setup}</Text>
+                1. Subscribe: <Text color={colors.primaryBright}>{links.subscribe}</Text>
+              </Text>
+            )}
+            <Text color={colors.textMuted}>
+              {links.subscribe ? '2.' : '1.'} Get {credentialNoun}:{' '}
+              <Text color={colors.primaryBright}>{links.credential}</Text>
+            </Text>
+            {links.docs && (
+              <Text color={colors.textMuted}>
+                Docs: <Text color={colors.primaryBright}>{links.docs}</Text>
+              </Text>
+            )}
+            {links.github && (
+              <Text color={colors.textMuted}>
+                GitHub: <Text color={colors.primaryBright}>{links.github}</Text>
               </Text>
             )}
           </Box>

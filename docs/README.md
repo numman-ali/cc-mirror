@@ -86,6 +86,22 @@ docs/
 
 ---
 
+## 🔗 Provider Setup Links
+
+| Provider     | Subscribe                                                     | Get Key/Token                                                    | Docs                                                             |
+| ------------ | ------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `kimi`       | https://www.kimi.com/code                                     | https://www.kimi.com/code/console                                | https://www.kimi.com/code/docs/en/more/third-party-agents.html   |
+| `minimax`    | https://platform.minimax.io/subscribe/coding-plan             | https://platform.minimax.io/user-center/payment/coding-plan      | https://platform.minimax.io/docs                                 |
+| `zai`        | https://z.ai/subscribe                                        | https://z.ai/manage-apikey/apikey-list                           | https://z.ai/docs                                                |
+| `openrouter` | https://openrouter.ai/account                                 | https://openrouter.ai/keys                                       | https://openrouter.ai/docs                                       |
+| `vercel`     | https://vercel.com/ai                                         | https://vercel.com/account/tokens                                | https://vercel.com/docs/ai-gateway                               |
+| `ollama`     | https://ollama.com                                            | https://ollama.com                                               | https://docs.ollama.com/api/anthropic-compatibility              |
+| `nanogpt`    | https://nano-gpt.com                                          | https://nano-gpt.com                                             | https://docs.nano-gpt.com/docs/anthropic-compatibility           |
+| `ccrouter`   | https://github.com/musistudio/claude-code-router#installation | https://github.com/musistudio/claude-code-router#2-configuration | https://github.com/musistudio/claude-code-router#2-configuration |
+| `gatewayz`   | https://gatewayz.ai                                           | https://gatewayz.ai                                              | https://docs.gatewayz.ai/docs/anthropic-compatibility            |
+
+---
+
 <p align="center">
   <strong>Created by <a href="https://github.com/numman-ali">Numman Ali</a></strong>
 </p>

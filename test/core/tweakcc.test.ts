@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { ensureTweakccConfig } from '../../src/core/tweakcc.js';
+import { buildBrandConfig } from '../../src/brands/index.js';
 import { makeTempDir, cleanup } from '../helpers/index.js';
 
 test('ensureTweakccConfig returns false when no brandKey provided', () => {
@@ -209,6 +210,42 @@ test('ensureTweakccConfig updates userMessageDisplay when not set', () => {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     // Should have userMessageDisplay set
     assert.ok(config.settings.userMessageDisplay);
+  } finally {
+    cleanup(tweakDir);
+  }
+});
+
+test('ensureTweakccConfig refreshes managed brand theme when content changes', () => {
+  const tweakDir = makeTempDir();
+  const configPath = path.join(tweakDir, 'config.json');
+
+  try {
+    const desiredTheme = buildBrandConfig('zai').settings.themes?.[0];
+    assert.ok(desiredTheme);
+
+    fs.writeFileSync(
+      configPath,
+      JSON.stringify({
+        settings: {
+          themes: [
+            {
+              id: desiredTheme.id,
+              name: desiredTheme.name,
+              colors: {
+                ...desiredTheme.colors,
+                diffAdded: 'rgb(255,255,255)',
+              },
+            },
+          ],
+        },
+      })
+    );
+
+    const result = ensureTweakccConfig(tweakDir, 'zai');
+
+    assert.equal(result, true);
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    assert.deepEqual(config.settings.themes[0], desiredTheme);
   } finally {
     cleanup(tweakDir);
   }

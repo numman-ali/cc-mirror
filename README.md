@@ -132,6 +132,20 @@ Want to use different models? CC-MIRROR supports multiple providers:
 | **CCRouter**   | Ollama, DeepSeek, etc. | Optional   | Local-first development         |
 | **GatewayZ**   | Multi-provider gateway | Auth Token | Centralized routing             |
 
+### Provider Setup Links
+
+| Provider       | Subscribe                                                     | Get Key/Token                                                    | Docs                                                             |
+| -------------- | ------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
+| **Kimi**       | https://www.kimi.com/code                                     | https://www.kimi.com/code/console                                | https://www.kimi.com/code/docs/en/more/third-party-agents.html   |
+| **MiniMax**    | https://platform.minimax.io/subscribe/coding-plan             | https://platform.minimax.io/user-center/payment/coding-plan      | https://platform.minimax.io/docs                                 |
+| **Z.ai**       | https://z.ai/subscribe                                        | https://z.ai/manage-apikey/apikey-list                           | https://z.ai/docs                                                |
+| **OpenRouter** | https://openrouter.ai/account                                 | https://openrouter.ai/keys                                       | https://openrouter.ai/docs                                       |
+| **Vercel**     | https://vercel.com/ai                                         | https://vercel.com/account/tokens                                | https://vercel.com/docs/ai-gateway                               |
+| **Ollama**     | https://ollama.com                                            | https://ollama.com                                               | https://docs.ollama.com/api/anthropic-compatibility              |
+| **NanoGPT**    | https://nano-gpt.com                                          | https://nano-gpt.com                                             | https://docs.nano-gpt.com/docs/anthropic-compatibility           |
+| **CCRouter**   | https://github.com/musistudio/claude-code-router#installation | https://github.com/musistudio/claude-code-router#2-configuration | https://github.com/musistudio/claude-code-router#2-configuration |
+| **GatewayZ**   | https://gatewayz.ai                                           | https://gatewayz.ai                                              | https://docs.gatewayz.ai/docs/anthropic-compatibility            |
+
 ```bash
 # Kimi Code (kimi-for-coding)
 npx cc-mirror quick --provider kimi --api-key "$KIMI_API_KEY"

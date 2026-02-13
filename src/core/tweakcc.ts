@@ -99,13 +99,21 @@ export const ensureTweakccConfig = (tweakDir: string, brandKey?: string | null):
       }
 
       if (brandThemes.length > 0) {
+        // Keep cc-mirror managed brand themes in sync even when IDs stay the same.
+        // This allows palette/hardening updates to flow into existing variants.
+        const brandThemeChanged = brandThemes.some((brandTheme) => {
+          const existingTheme = existingThemes.find((theme) => themeMatches(theme, brandTheme));
+          if (!existingTheme) return true;
+          return JSON.stringify(existingTheme) !== JSON.stringify(brandTheme);
+        });
+
         const mergedThemes = [
           ...brandThemes,
           ...existingThemes.filter((existingTheme) => !brandThemes.some((theme) => themeMatches(existingTheme, theme))),
         ];
         const sameLength = mergedThemes.length === existingThemes.length;
         const sameOrder = sameLength && mergedThemes.every((theme, idx) => themeMatches(theme, existingThemes[idx]));
-        if (!sameOrder) {
+        if (brandThemeChanged || !sameOrder) {
           existing.settings = { ...existing.settings, themes: mergedThemes };
           didUpdate = true;
         }
