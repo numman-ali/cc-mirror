@@ -43,22 +43,22 @@ const mix = (hexA: string, hexB: string, weight: number) => {
 const lighten = (hex: string, weight: number) => mix(hex, '#ffffff', weight);
 
 const palette = {
-  base: '#edf6ff',
-  surface: '#f6fbff',
-  panel: '#e3f0fb',
-  border: '#c5d9ee',
-  borderStrong: '#9fb9d8',
-  text: '#162434',
-  textMuted: '#3f546b',
-  textDim: '#6b7f95',
+  base: '#0c1320',
+  surface: '#111a2a',
+  panel: '#16233a',
+  border: '#2a3f61',
+  borderStrong: '#3f5f90',
+  text: '#e7f1ff',
+  textMuted: '#bfd0e8',
+  textDim: '#8ca4c4',
   sky: '#4da3ff',
   skySoft: '#7bbcff',
   skyDeep: '#2a6fcb',
-  cyan: '#6cc7ff',
-  green: '#3aa876',
-  red: '#d34e5c',
-  orange: '#e59b3e',
-  purple: '#6b7dd8',
+  cyan: '#64d5ff',
+  green: '#2fb37f',
+  red: '#e06b7a',
+  orange: '#d9a04d',
+  purple: '#7e8fe0',
 };
 
 const theme: Theme = {

@@ -1,10 +1,8 @@
 /**
- * Smart diff color generator.
+ * Diff color generator tuned for Claude Code readability.
  *
- * Produces all 8 diff-highlight color properties with perceptually correct
- * contrast. Detects dark vs light base via relative luminance and scales
- * mix weights so diffs are always readable — no more invisible greens on
- * dark backgrounds or washed-out reds on light ones.
+ * Uses Claude-like dark/light baseline diff colors for consistent contrast
+ * across tool diffs, then applies only a subtle optional brand tint.
  */
 
 type Rgb = { r: number; g: number; b: number };
@@ -67,49 +65,61 @@ export interface DiffColors {
   diffRemovedWordDimmed: string;
 }
 
-// Weight presets tuned against the official Claude Code dark/light themes.
-//   bg     = diff line background wash
-//   bgDim  = dimmed variant of the above
-//   word   = word-level highlight (must be clearly legible)
-//   wordDim = dimmed word highlight
-const DARK_W = { bg: 0.35, bgDim: 0.2, word: 0.58, wordDim: 0.42 };
-const LIGHT_W = { bg: 0.18, bgDim: 0.1, word: 0.4, wordDim: 0.26 };
+const DARK_BASELINE: DiffColors = {
+  diffAdded: 'rgb(34,92,43)',
+  diffRemoved: 'rgb(122,41,54)',
+  diffAddedDimmed: 'rgb(71,88,74)',
+  diffRemovedDimmed: 'rgb(105,72,77)',
+  diffAddedWord: 'rgb(56,166,96)',
+  diffRemovedWord: 'rgb(179,89,107)',
+  diffAddedWordDimmed: 'rgb(46,107,58)',
+  diffRemovedWordDimmed: 'rgb(139,57,69)',
+};
+
+const LIGHT_BASELINE: DiffColors = {
+  diffAdded: 'rgb(105,219,124)',
+  diffRemoved: 'rgb(255,168,180)',
+  diffAddedDimmed: 'rgb(199,225,203)',
+  diffRemovedDimmed: 'rgb(253,210,216)',
+  diffAddedWord: 'rgb(47,157,68)',
+  diffRemovedWord: 'rgb(209,69,75)',
+  diffAddedWordDimmed: 'rgb(144,194,156)',
+  diffRemovedWordDimmed: 'rgb(232,165,173)',
+};
+
+const rgbStringToRgb = (value: string): Rgb | null => {
+  const match = value.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/i);
+  if (!match) return null;
+  return {
+    r: clamp(Number(match[1])),
+    g: clamp(Number(match[2])),
+    b: clamp(Number(match[3])),
+  };
+};
 
 export function buildDiffPalette(input: DiffPaletteInput): DiffColors {
-  const base = hexToRgb(input.base);
-  let added = hexToRgb(input.added);
-  let removed = hexToRgb(input.removed);
+  const baseLum = luminance(hexToRgb(input.base));
+  const baseline = baseLum < 0.35 ? DARK_BASELINE : LIGHT_BASELINE;
 
-  // Optional brand tinting — blend 15% of the accent into the diff accents
-  // so ZAI diffs feel golden, Kimi diffs feel aurora-ish, etc.
-  if (input.tint) {
-    const t = hexToRgb(input.tint);
-    added = mix(added, t, 0.12);
-    removed = mix(removed, t, 0.12);
-  }
+  if (!input.tint) return baseline;
+  const tint = hexToRgb(input.tint);
 
-  const lum = luminance(base);
-
-  // Smoothly interpolate between dark and light weights.
-  // Luminance 0.03 (deep dark) → full dark weights
-  // Luminance 0.25 (light bg)  → full light weights
-  const t = Math.max(0, Math.min(1, (lum - 0.03) / 0.22));
-  const lerp = (d: number, l: number) => d + (l - d) * t;
-  const w = {
-    bg: lerp(DARK_W.bg, LIGHT_W.bg),
-    bgDim: lerp(DARK_W.bgDim, LIGHT_W.bgDim),
-    word: lerp(DARK_W.word, LIGHT_W.word),
-    wordDim: lerp(DARK_W.wordDim, LIGHT_W.wordDim),
+  // Keep tint extremely subtle to preserve baseline readability.
+  const tintWeight = baseLum < 0.35 ? 0.05 : 0.03;
+  const applyTint = (value: string) => {
+    const parsed = rgbStringToRgb(value);
+    if (!parsed) return value;
+    return rgbStr(mix(parsed, tint, tintWeight));
   };
 
   return {
-    diffAdded: rgbStr(mix(base, added, w.bg)),
-    diffRemoved: rgbStr(mix(base, removed, w.bg)),
-    diffAddedDimmed: rgbStr(mix(base, added, w.bgDim)),
-    diffRemovedDimmed: rgbStr(mix(base, removed, w.bgDim)),
-    diffAddedWord: rgbStr(mix(base, added, w.word)),
-    diffRemovedWord: rgbStr(mix(base, removed, w.word)),
-    diffAddedWordDimmed: rgbStr(mix(base, added, w.wordDim)),
-    diffRemovedWordDimmed: rgbStr(mix(base, removed, w.wordDim)),
+    diffAdded: applyTint(baseline.diffAdded),
+    diffRemoved: applyTint(baseline.diffRemoved),
+    diffAddedDimmed: applyTint(baseline.diffAddedDimmed),
+    diffRemovedDimmed: applyTint(baseline.diffRemovedDimmed),
+    diffAddedWord: applyTint(baseline.diffAddedWord),
+    diffRemovedWord: applyTint(baseline.diffRemovedWord),
+    diffAddedWordDimmed: applyTint(baseline.diffAddedWordDimmed),
+    diffRemovedWordDimmed: applyTint(baseline.diffRemovedWordDimmed),
   };
 }

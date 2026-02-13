@@ -38,14 +38,14 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
   },
   openrouter: {
     key: 'openrouter',
-    label: 'OpenRouter Teal',
-    description: 'Light UI with teal/cyan accents',
+    label: 'OpenRouter Navy',
+    description: 'Dark navy UI with routing blue accents.',
     buildTweakccConfig: buildOpenRouterTweakccConfig,
   },
   ccrouter: {
     key: 'ccrouter',
     label: 'CCRouter Sky',
-    description: 'Airy sky-blue accents for Claude Code Router.',
+    description: 'Dark sky-blue palette for Claude Code Router.',
     buildTweakccConfig: buildCCRouterTweakccConfig,
   },
   ollama: {

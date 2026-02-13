@@ -45,22 +45,22 @@ const lighten = (hex: string, weight: number) => mix(hex, '#ffffff', weight);
 // Ollama brand colors: #caad8d (sorrel brown), black, white
 // Theme: warm earthy llama tones with sandstone accents
 const palette = {
-  base: '#faf7f4',
-  surface: '#fcfaf8',
-  panel: '#f0ebe4',
-  border: '#d9cfc2',
-  borderStrong: '#caad8d',
-  text: '#2d2520',
-  textMuted: '#4a3f36',
-  textDim: '#6b5d52',
+  base: '#15110d',
+  surface: '#1f1711',
+  panel: '#281e16',
+  border: '#4a3828',
+  borderStrong: '#6d5138',
+  text: '#f2e8dc',
+  textMuted: '#d5c3ad',
+  textDim: '#a88f76',
   llama: '#caad8d', // Brand primary - sorrel brown
   llamaBright: '#dcc4a8',
-  llamaDeep: '#a08060',
-  sand: '#c4a77d',
-  green: '#2f9b6d',
-  red: '#d04b5a',
-  orange: '#c49a6c',
-  blue: '#6b8caa',
+  llamaDeep: '#8d6e52',
+  sand: '#b9966e',
+  green: '#2fb37f',
+  red: '#e06b7a',
+  orange: '#c98a4d',
+  blue: '#6e8fae',
 };
 
 const theme: Theme = {
