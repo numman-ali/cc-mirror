@@ -54,23 +54,23 @@ test('E2E: Colored ASCII art content verification', async (t) => {
       ? {
           zai: /\\u001b\[38;5;220m/, // Gold
           minimax: /\\u001b\[38;5;203m/, // Coral/salmon red
-          kimi: /\\u001b\[38;5;120m/, // Spring green
+          kimi: /\\u001b\[38;5;81m/, // Neon cyan
           openrouter: /\\u001b\[38;5;60m/, // Navy
           ccrouter: /\\u001b\[38;5;39m/, // Sky blue
           gatewayz: /\\u001b\[38;5;141m/, // Violet
           vercel: /\\u001b\[38;5;250m/, // Light gray
-          nanogpt: /\\u001b\[38;5;81m/, // Neon cyan
+          nanogpt: /\\u001b\[38;5;120m/, // Spring green
           ollama: /\\u001b\[38;5;180m/, // Tan/sorrel
         }
       : {
           zai: /\x1b\[38;5;220m/, // Gold
           minimax: /\x1b\[38;5;203m/, // Coral/salmon red
-          kimi: /\x1b\[38;5;120m/, // Spring green
+          kimi: /\x1b\[38;5;81m/, // Neon cyan
           openrouter: /\x1b\[38;5;60m/, // Navy
           ccrouter: /\x1b\[38;5;39m/, // Sky blue
           gatewayz: /\x1b\[38;5;141m/, // Violet
           vercel: /\x1b\[38;5;250m/, // Light gray
-          nanogpt: /\x1b\[38;5;81m/, // Neon cyan
+          nanogpt: /\x1b\[38;5;120m/, // Spring green
           ollama: /\x1b\[38;5;180m/, // Tan/sorrel
         };
     /* eslint-enable no-control-regex */
@@ -87,8 +87,8 @@ test('E2E: Colored ASCII art content verification', async (t) => {
       minimax: ['MiniMax', 'AGI for All'],
       kimi: ['K I M I   C O D E', 'kimi-for-coding', 'K2.5'],
       openrouter: ['One API', 'Any Model', '██'],
-      ccrouter: ['CC ROUTER', 'Claude Code', 'Any Model'],
-      gatewayz: ['GATEWAY Z', 'AI Gateway', '██'],
+      ccrouter: ['Any Model', 'Claude Code', '██'],
+      gatewayz: ['AI Gateway', '██'],
       vercel: ['AI Gateway', '▲', '██'],
       nanogpt: ['All Models', 'No Subscription', '██'],
       ollama: ['Run Models Locally', '██'],

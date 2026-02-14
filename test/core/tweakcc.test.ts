@@ -76,7 +76,7 @@ test('ensureTweakccConfig creates openrouter config', () => {
     assert.equal(result, true);
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     assert.equal(config.settings.themes[0]?.id, 'dark');
-    assert.equal(config.settings.themes[0]?.name, 'OpenRouter Navy');
+    assert.equal(config.settings.themes[0]?.name, 'OpenRouter Chrome');
   } finally {
     cleanup(tweakDir);
   }

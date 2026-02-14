@@ -66,8 +66,7 @@ PROVIDERS
   vercel        Vercel AI Gateway
   ollama        Local + cloud models via Ollama
   nanogpt       NanoGPT
-  ccrouter      Local LLMs via Claude Code Router
-  mirror        Pure Claude (recommended)
+  ccrouter      Local LLMs via CC Router
   gatewayz      GatewayZ AI Gateway
 
 EXAMPLES

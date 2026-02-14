@@ -32,20 +32,20 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
   },
   kimi: {
     key: 'kimi',
-    label: 'Kimi Aurora',
-    description: 'Aurora green + cyan accents for Kimi Code (kimi-for-coding).',
+    label: 'Kimi Teal',
+    description: 'Teal/cyan palette for Kimi Code (kimi-for-coding).',
     buildTweakccConfig: buildKimiTweakccConfig,
   },
   openrouter: {
     key: 'openrouter',
-    label: 'OpenRouter Navy',
-    description: 'Dark navy UI with routing blue accents.',
+    label: 'OpenRouter Chrome',
+    description: 'Silver/chrome palette with electric blue accents.',
     buildTweakccConfig: buildOpenRouterTweakccConfig,
   },
   ccrouter: {
     key: 'ccrouter',
     label: 'CCRouter Sky',
-    description: 'Dark sky-blue palette for Claude Code Router.',
+    description: 'Dark sky-blue palette for CC Router.',
     buildTweakccConfig: buildCCRouterTweakccConfig,
   },
   ollama: {
@@ -68,8 +68,8 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
   },
   nanogpt: {
     key: 'nanogpt',
-    label: 'NanoGPT Teal',
-    description: 'Dark teal/cyan palette matching the NanoGPT crystal brand.',
+    label: 'NanoGPT Aurora',
+    description: 'Aurora green + cyan accents for NanoGPT.',
     buildTweakccConfig: buildNanoGPTTweakccConfig,
   },
   mirror: {

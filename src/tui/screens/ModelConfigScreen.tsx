@@ -82,10 +82,15 @@ function getPlaceholder(providerKey: string | undefined, model: 'opus' | 'sonnet
       sonnet: 'anthropic/claude-3-5-sonnet-20241022',
       haiku: 'anthropic/claude-3-haiku-20240307',
     },
+    nanogpt: {
+      opus: 'moonshotai/kimi-k2.5',
+      sonnet: 'moonshotai/kimi-k2.5',
+      haiku: 'moonshotai/kimi-k2.5',
+    },
     ollama: {
-      opus: 'glm-4.7:cloud',
+      opus: 'qwen3-coder',
       sonnet: 'qwen3-coder',
-      haiku: 'gpt-oss:20b',
+      haiku: 'qwen3-coder',
     },
     ccrouter: {
       opus: 'deepseek,deepseek-reasoner',
@@ -208,6 +213,7 @@ export const ModelConfigScreen: React.FC<ModelConfigScreenProps> = ({
       {(providerKey === 'openrouter' ||
         providerKey === 'gatewayz' ||
         providerKey === 'vercel' ||
+        providerKey === 'nanogpt' ||
         providerKey === 'ollama') && (
         <Box flexDirection="column" marginBottom={1}>
           {providerKey === 'openrouter' && (
@@ -226,13 +232,22 @@ export const ModelConfigScreen: React.FC<ModelConfigScreenProps> = ({
               </Box>
             </>
           )}
+          {providerKey === 'nanogpt' && (
+            <>
+              <Text color={colors.textMuted}>Browse NanoGPT models:</Text>
+              <Box marginLeft={2}>
+                <Text color={colors.primaryBright}>https://nano-gpt.com/models/text</Text>
+              </Box>
+              <Text color={colors.textDim}>Use provider/model format (e.g. moonshotai/kimi-k2.5, openai/gpt-5.2).</Text>
+            </>
+          )}
           {providerKey === 'ollama' && (
             <>
               <Text color={colors.textMuted}>Use model IDs from `ollama list` (local) or cloud model IDs.</Text>
               <Text color={colors.textDim}>Tip: `ollama cp source target` creates friendly aliases.</Text>
             </>
           )}
-          {providerKey !== 'openrouter' && providerKey !== 'ollama' && (
+          {providerKey !== 'openrouter' && providerKey !== 'ollama' && providerKey !== 'nanogpt' && (
             <Text color={colors.textMuted}>
               Use your gateway model identifiers (some providers use provider/model format).
             </Text>

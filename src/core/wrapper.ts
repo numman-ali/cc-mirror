@@ -19,16 +19,16 @@ const C = {
   mmSecondary: '\x1b[38;5;209m', // Light coral/orange
   mmAccent: '\x1b[38;5;208m', // Orange
   mmDim: '\x1b[38;5;167m', // Muted coral/dark red
-  // Kimi: Aurora green/cyan gradient
-  kmPrimary: '\x1b[38;5;120m', // Spring green
-  kmSecondary: '\x1b[38;5;51m', // Bright cyan
-  kmAccent: '\x1b[38;5;154m', // Lime green
-  kmDim: '\x1b[38;5;66m', // Muted teal
-  // OpenRouter: Navy/Indigo gradient (brand: #284968, #6467f2)
-  orPrimary: '\x1b[38;5;60m', // Navy
-  orSecondary: '\x1b[38;5;68m', // Slate blue
-  orAccent: '\x1b[38;5;99m', // Indigo/cornflower
-  orDim: '\x1b[38;5;24m', // Deep navy
+  // Kimi: Teal/cyan gradient
+  kmPrimary: '\x1b[38;5;81m', // Neon cyan
+  kmSecondary: '\x1b[38;5;75m', // Soft cyan
+  kmAccent: '\x1b[38;5;69m', // Deep cyan
+  kmDim: '\x1b[38;5;67m', // Muted blue
+  // OpenRouter: Silver/Chrome gradient (ported from Mirror)
+  orPrimary: '\x1b[38;5;252m', // Silver/light gray
+  orSecondary: '\x1b[38;5;250m', // Platinum
+  orAccent: '\x1b[38;5;45m', // Electric cyan
+  orDim: '\x1b[38;5;243m', // Muted silver
   // CCRouter: Sky blue gradient
   ccrPrimary: '\x1b[38;5;39m', // Sky blue
   ccrSecondary: '\x1b[38;5;45m', // Bright cyan
@@ -49,11 +49,11 @@ const C = {
   vcSecondary: '\x1b[38;5;250m', // Light gray
   vcAccent: '\x1b[38;5;33m', // Vercel blue
   vcDim: '\x1b[38;5;240m', // Dark gray
-  // NanoGPT: Neon blue gradient
-  ngPrimary: '\x1b[38;5;81m', // Neon cyan
-  ngSecondary: '\x1b[38;5;75m', // Soft cyan
-  ngAccent: '\x1b[38;5;69m', // Deep cyan
-  ngDim: '\x1b[38;5;67m', // Muted blue
+  // NanoGPT: Aurora green/cyan gradient
+  ngPrimary: '\x1b[38;5;120m', // Spring green
+  ngSecondary: '\x1b[38;5;51m', // Bright cyan
+  ngAccent: '\x1b[38;5;154m', // Lime green
+  ngDim: '\x1b[38;5;66m', // Muted teal
   // Ollama: Tan/Brown gradient (brand: #caad8d)
   olPrimary: '\x1b[38;5;180m', // Tan/sorrel
   olSecondary: '\x1b[38;5;223m', // Light tan
@@ -113,7 +113,7 @@ const SPLASH_ART: SplashArt = {
     `${C.kmSecondary}       kimi-for-coding ${C.kmDim}━${C.kmSecondary} K2.5${C.reset}`,
     '',
   ],
-  // OpenRouter: Stacked block letters
+  // OpenRouter: Stacked block letters (silver/chrome)
   openrouter: [
     '',
     `${C.orPrimary}     ██████╗ ██████╗ ███████╗███╗   ██╗${C.reset}`,
@@ -129,23 +129,28 @@ const SPLASH_ART: SplashArt = {
     `${C.orAccent}    ██║  ██║╚██████╔╝╚██████╔╝   ██║   ███████╗██║  ██║${C.reset}`,
     `${C.orAccent}    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝╚═╝  ╚═╝${C.reset}`,
     '',
-    `${C.orDim}    ━━━━━━━━━━━━━${C.orPrimary}◆${C.orDim}━━━━━━━━━━━━━${C.reset}`,
-    `${C.orSecondary}      One API ${C.orDim}━${C.orSecondary} Any Model${C.reset}`,
+    `${C.orDim}    ━━━━━━━━━━━━━━━━━━${C.orPrimary}◇${C.orDim}━━━━━━━━━━━━━━━━━━${C.reset}`,
+    `${C.orSecondary}         One API ${C.orDim}━${C.orSecondary} Any Model${C.reset}`,
     '',
   ],
-  // CCRouter: Converging arrows funnel
+  // CCRouter: Stacked block letters
   ccrouter: [
     '',
-    `${C.ccrSecondary}    ◈ GPT${C.ccrDim}━━━━━━━━━━╮${C.reset}`,
-    `${C.ccrSecondary}    ◈ Claude${C.ccrDim}━━━━━━━┤${C.reset}`,
-    `${C.ccrSecondary}    ◈ Gemini${C.ccrDim}━━━━━━━┤    ${C.ccrPrimary}╔════════════╗${C.reset}`,
-    `${C.ccrSecondary}    ◈ Llama${C.ccrDim}━━━━━━━━┼━━━━${C.ccrPrimary}║${C.ccrAccent}  CC ROUTER ${C.ccrPrimary}║${C.ccrDim}━━━━▶ ${C.ccrAccent}Claude Code${C.reset}`,
-    `${C.ccrSecondary}    ◈ Mistral${C.ccrDim}━━━━━━┤    ${C.ccrPrimary}╚════════════╝${C.reset}`,
-    `${C.ccrSecondary}    ◈ Qwen${C.ccrDim}━━━━━━━━━┤${C.reset}`,
-    `${C.ccrSecondary}    ◈ DeepSeek${C.ccrDim}━━━━━╯${C.reset}`,
+    `${C.ccrPrimary}     ██████╗ ██████╗${C.reset}`,
+    `${C.ccrPrimary}    ██╔════╝██╔════╝${C.reset}`,
+    `${C.ccrSecondary}    ██║     ██║${C.reset}`,
+    `${C.ccrSecondary}    ██║     ██║${C.reset}`,
+    `${C.ccrAccent}    ╚██████╗╚██████╗${C.reset}`,
+    `${C.ccrAccent}     ╚═════╝ ╚═════╝${C.reset}`,
+    `${C.ccrPrimary}    ██████╗  ██████╗ ██╗   ██╗████████╗███████╗██████╗${C.reset}`,
+    `${C.ccrPrimary}    ██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔════╝██╔══██╗${C.reset}`,
+    `${C.ccrSecondary}    ██████╔╝██║   ██║██║   ██║   ██║   █████╗  ██████╔╝${C.reset}`,
+    `${C.ccrSecondary}    ██╔══██╗██║   ██║██║   ██║   ██║   ██╔══╝  ██╔══██╗${C.reset}`,
+    `${C.ccrAccent}    ██║  ██║╚██████╔╝╚██████╔╝   ██║   ███████╗██║  ██║${C.reset}`,
+    `${C.ccrAccent}    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝╚═╝  ╚═╝${C.reset}`,
     '',
-    `${C.ccrDim}    ━━━━━━━━━━━━━━${C.ccrPrimary}◆${C.ccrDim}━━━━━━━━━━━━━━${C.reset}`,
-    `${C.ccrSecondary}       Any Model → Claude Code${C.reset}`,
+    `${C.ccrDim}    ━━━━━━━━━━━━━━━━━━${C.ccrPrimary}◆${C.ccrDim}━━━━━━━━━━━━━━━━━━${C.reset}`,
+    `${C.ccrSecondary}       Any Model ${C.ccrDim}━${C.ccrSecondary} Claude Code${C.reset}`,
     '',
   ],
   // Mirror: Infinity mirror nested boxes
@@ -165,16 +170,8 @@ const SPLASH_ART: SplashArt = {
     `${C.mirSecondary}         Pure Reflection${C.reset}`,
     '',
   ],
-  // GatewayZ: Wormhole + block letters
+  // GatewayZ: Block letters
   gatewayz: [
-    '',
-    `${C.gwDim}    ○━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━○${C.reset}`,
-    `${C.gwDim}     ╲${C.gwSecondary}░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░${C.gwDim}╱${C.reset}`,
-    `${C.gwDim}      ╲${C.gwPrimary}▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓${C.gwDim}╱${C.reset}`,
-    `${C.gwDim}       ╲${C.gwAccent}   ◈ ━━━━━━━━━━━━━━ GATEWAY Z ━━━━━━━━━━━━━━ ◈   ${C.gwDim}╱${C.reset}`,
-    `${C.gwDim}      ╱${C.gwPrimary}▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓${C.gwDim}╲${C.reset}`,
-    `${C.gwDim}     ╱${C.gwSecondary}░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░${C.gwDim}╲${C.reset}`,
-    `${C.gwDim}    ○━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━○${C.reset}`,
     '',
     `${C.gwPrimary}     ██████╗  █████╗ ████████╗███████╗██╗    ██╗ █████╗ ██╗   ██╗${C.gwAccent}███████╗${C.reset}`,
     `${C.gwPrimary}    ██╔════╝ ██╔══██╗╚══██╔══╝██╔════╝██║    ██║██╔══██╗╚██╗ ██╔╝${C.gwAccent}╚══███╔╝${C.reset}`,
@@ -187,16 +184,10 @@ const SPLASH_ART: SplashArt = {
     `${C.gwSecondary}                    AI Gateway${C.reset}`,
     '',
   ],
-  // Vercel: Edge network + block letters
+  // Vercel: Triangle logo + block letters
   vercel: [
     '',
-    `${C.vcDim}       ◈ SFO${C.vcDim}━━━╮${C.reset}`,
-    `${C.vcDim}       ◈ IAD${C.vcDim}━━━┤${C.reset}`,
-    `${C.vcDim}       ◈ LHR${C.vcDim}━━━┼━━━${C.vcPrimary}╔══════════╗${C.reset}`,
-    `${C.vcSecondary}       ◈ SIN${C.vcDim}━━━┼━━━${C.vcPrimary}║   ${C.vcAccent}▲${C.vcPrimary}      ║${C.vcDim}━━━▶ ${C.vcAccent}Edge${C.reset}`,
-    `${C.vcDim}       ◈ SYD${C.vcDim}━━━┼━━━${C.vcPrimary}╚══════════╝${C.reset}`,
-    `${C.vcDim}       ◈ NRT${C.vcDim}━━━┤${C.reset}`,
-    `${C.vcDim}       ◈ FRA${C.vcDim}━━━╯${C.reset}`,
+    `${C.vcAccent}                    ▲${C.reset}`,
     '',
     `${C.vcPrimary}    ██╗   ██╗███████╗██████╗  ██████╗███████╗██╗${C.reset}`,
     `${C.vcPrimary}    ██║   ██║██╔════╝██╔══██╗██╔════╝██╔════╝██║${C.reset}`,

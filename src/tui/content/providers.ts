@@ -120,7 +120,7 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
   },
 
   ccrouter: {
-    headline: 'Claude Code Router — Local Model Gateway',
+    headline: 'CC Router — Local Model Gateway',
     tagline: 'Your models, your rules',
     features: [
       'Route to local LLMs (Ollama, LM Studio) or cloud APIs',
@@ -142,28 +142,27 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
   },
   ollama: {
     headline: 'Ollama — Local + Cloud Models',
-    tagline: 'Warm, local-first models',
+    tagline: 'Run models locally with Anthropic-compatible API',
     features: [
       'Run local models with the Ollama runtime',
-      'Cloud models available via ollama.com',
-      'Alias models for clean mappings',
-      'Ember-themed interface',
+      'Anthropic-compatible API — works natively with Claude Code',
+      'Recommended: qwen3-coder, glm-4.7, gpt-oss:20b',
+      'Default: qwen3-coder for all tiers (configurable)',
     ],
     bestFor: 'Local-first workstations and hybrid local/cloud setups',
     models: {
-      opus: 'glm-4.7:cloud',
+      opus: 'qwen3-coder',
       sonnet: 'qwen3-coder',
-      haiku: 'gpt-oss:20b',
+      haiku: 'qwen3-coder',
     },
     requiresMapping: true,
     hasPromptPack: false,
     setupLinks: {
       subscribe: 'https://ollama.com',
       apiKey: 'https://ollama.com',
-      docs: 'https://docs.ollama.com/api/anthropic-compatibility',
+      docs: 'https://docs.ollama.com/integrations/claude-code',
     },
-    setupNote:
-      'Local: set key to "ollama" (values ignored). Cloud: set base URL to https://ollama.com and use your API key.',
+    setupNote: 'Local: set key to "ollama". Requires 64k+ context. Quick start: ollama launch claude.',
   },
   gatewayz: {
     headline: 'GatewayZ — AI Gateway',
@@ -204,18 +203,24 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     setupNote: 'Set ANTHROPIC_AUTH_TOKEN and keep ANTHROPIC_API_KEY empty.',
   },
   nanogpt: {
-    headline: 'NanoGPT',
-    tagline: 'Lean gateway, fast setup',
-    features: ['Claude Code endpoint support', 'Simple API key auth', 'Neon-themed interface'],
-    bestFor: 'Simple Claude Code usage with minimal setup',
-    requiresMapping: false,
+    headline: 'NanoGPT — 400+ Models, No Subscription',
+    tagline: 'Pay-as-you-go access to every major model',
+    features: [
+      '400+ models including Claude, GPT, Gemini, Kimi, and more',
+      'Pay-as-you-go pricing — no monthly subscription',
+      'Simple API key auth with unified billing',
+      'Default: moonshotai/kimi-k2.5 (configurable)',
+    ],
+    bestFor: 'Flexible model access with pay-as-you-go pricing',
+    requiresMapping: true,
     hasPromptPack: false,
     setupLinks: {
       subscribe: 'https://nano-gpt.com',
-      apiKey: 'https://nano-gpt.com',
-      docs: 'https://docs.nano-gpt.com/docs/anthropic-compatibility',
+      apiKey: 'https://nano-gpt.com/api',
+      docs: 'https://docs.nano-gpt.com/integrations/claude-code',
     },
-    setupNote: 'Use the NanoGPT base URL and API key to authenticate.',
+    setupNote:
+      'Create an account, grab your API key, then set model aliases. Browse models at nano-gpt.com/models/text.',
   },
   mirror: {
     headline: 'The Fastest Path to Claude Code',

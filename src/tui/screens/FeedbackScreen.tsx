@@ -45,7 +45,7 @@ export const FeedbackScreen: React.FC<FeedbackScreenProps> = ({ onBack }) => {
           Provider PRs Welcome:
         </Text>
         <Box flexDirection="column" marginLeft={2} marginTop={1}>
-          <Text color={colors.textDim}>Want to improve OpenRouter or Claude Code Router support?</Text>
+          <Text color={colors.textDim}>Want to improve OpenRouter or CC Router support?</Text>
           <Text color={colors.textDim}>PRs for better model mappings, transformers, and docs are appreciated.</Text>
         </Box>
       </Box>

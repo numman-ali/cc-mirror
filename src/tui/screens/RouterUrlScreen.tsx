@@ -1,5 +1,5 @@
 /**
- * RouterUrlScreen - Configure the Claude Code Router URL
+ * RouterUrlScreen - Configure the CC Router URL
  */
 
 import React from 'react';
@@ -25,7 +25,7 @@ export const RouterUrlScreen: React.FC<RouterUrlScreenProps> = ({ value, onChang
   return (
     <ScreenLayout
       title="Router URL"
-      subtitle="Where is Claude Code Router running?"
+      subtitle="Where is CC Router running?"
       borderColor={colors.borderGold}
       icon="star"
       hints={[keyHints.continue, keyHints.back]}
@@ -35,7 +35,7 @@ export const RouterUrlScreen: React.FC<RouterUrlScreenProps> = ({ value, onChang
         <Box marginBottom={1}>
           <Text color={colors.gold}>{icons.star} </Text>
           <Text color={colors.text} bold>
-            Claude Code Router
+            CC Router
           </Text>
         </Box>
         <Box marginLeft={2} flexDirection="column">

@@ -71,6 +71,7 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     authMode: 'none', // No auth handling - user authenticates via normal Claude flow
     credentialOptional: true, // No credentials required at create time
     noPromptPack: true, // Skip prompt pack (pure Claude experience)
+    experimental: true, // Hidden — theming ported to OpenRouter
   },
   zai: {
     key: 'zai',
@@ -140,13 +141,13 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
   },
   ccrouter: {
     key: 'ccrouter',
-    label: 'Claude Code Router',
-    description: 'Local LLMs via Claude Code Router',
+    label: 'CC Router',
+    description: 'Local LLMs via CC Router',
     baseUrl: 'http://127.0.0.1:3456',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
       CC_MIRROR_SPLASH: 1,
-      CC_MIRROR_PROVIDER_LABEL: 'Claude Code Router',
+      CC_MIRROR_PROVIDER_LABEL: 'CC Router',
       CC_MIRROR_SPLASH_STYLE: 'ccrouter',
     },
     apiKeyLabel: 'Router URL',
@@ -164,6 +165,9 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
       ANTHROPIC_AUTH_TOKEN: 'ollama',
       ANTHROPIC_API_KEY: 'ollama',
+      ANTHROPIC_DEFAULT_SONNET_MODEL: 'qwen3-coder',
+      ANTHROPIC_DEFAULT_OPUS_MODEL: 'qwen3-coder',
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'qwen3-coder',
       CC_MIRROR_SPLASH: 1,
       CC_MIRROR_PROVIDER_LABEL: 'Ollama',
       CC_MIRROR_SPLASH_STYLE: 'ollama',
@@ -208,16 +212,20 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
   nanogpt: {
     key: 'nanogpt',
     label: 'NanoGPT',
-    description: 'NanoGPT endpoint',
+    description: '400+ models via NanoGPT gateway',
     baseUrl: 'https://nano-gpt.com/api',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      ANTHROPIC_DEFAULT_SONNET_MODEL: 'moonshotai/kimi-k2.5',
+      ANTHROPIC_DEFAULT_OPUS_MODEL: 'moonshotai/kimi-k2.5',
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'moonshotai/kimi-k2.5',
       CC_MIRROR_SPLASH: 1,
       CC_MIRROR_PROVIDER_LABEL: 'NanoGPT',
       CC_MIRROR_SPLASH_STYLE: 'nanogpt',
     },
     apiKeyLabel: 'NanoGPT API key',
     authMode: 'authToken',
+    requiresModelMapping: true,
   },
   custom: {
     key: 'custom',

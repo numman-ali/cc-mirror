@@ -25,7 +25,7 @@ export const PROVIDERS = [
     apiKey: 'test-kimi-key',
     expectedThemeId: 'dark',
     expectedSplashStyle: 'kimi',
-    colorCode: '\\x1b[38;5;120m', // Spring green
+    colorCode: '\\x1b[38;5;81m', // Neon cyan
   },
   {
     key: 'openrouter',
@@ -33,11 +33,11 @@ export const PROVIDERS = [
     apiKey: 'test-openrouter-key',
     expectedThemeId: 'dark',
     expectedSplashStyle: 'openrouter',
-    colorCode: '\\x1b[38;5;60m', // Navy
+    colorCode: '\\x1b[38;5;252m', // Silver/Chrome
   },
   {
     key: 'ccrouter',
-    name: 'Claude Code Router',
+    name: 'CC Router',
     apiKey: '', // Optional for ccrouter
     expectedThemeId: 'dark',
     expectedSplashStyle: 'ccrouter',
@@ -73,6 +73,6 @@ export const PROVIDERS = [
     apiKey: 'test-nanogpt-key',
     expectedThemeId: 'dark',
     expectedSplashStyle: 'nanogpt',
-    colorCode: '\\x1b[38;5;81m', // Neon cyan
+    colorCode: '\\x1b[38;5;120m', // Spring green
   },
 ];
