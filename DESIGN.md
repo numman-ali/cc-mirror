@@ -13,10 +13,11 @@
   .-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-.
   |          ~/.cc-mirror/<variant>        |
   '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-'
-   |-- npm/              # npm install root (cli.js lives here)
+   |-- native/           # native Claude Code binary
+   |   '-- claude        # (or claude.exe on Windows)
    |-- config/           # CLAUDE_CONFIG_DIR
-   |   |-- settings.json # env overrides
-   |   '-- .claude.json  # API-key approvals + MCP server seeds
+   |   |-- settings.json # env overrides (API keys, model mappings, tool denies)
+   |   '-- .claude.json  # API-key approvals + onboarding + MCP server seeds
    |-- tweakcc/          # tweakcc config/backup
    |   |-- config.json   # brand preset + theme config
    |   '-- system-prompts/ # prompt fragment overlays (prompt packs)
@@ -43,16 +44,17 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 - **Quick setup**:
   - provider template
   - API key
+  - model overrides (optional)
   - variant name (optional)
-  - npm install + tweakcc
+  - native install + tweakcc
 - **Create wizard** (advanced):
   - provider template
   - brand preset (optional)
   - variant name
   - base URL
   - API key
+  - model overrides
   - root + bin dirs
-  - npm package (version pinned)
   - tweakcc toggle
   - provider prompt pack toggle
   - dev-browser skill install toggle
@@ -66,7 +68,7 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 
 ## Updating Binaries
 
-- `cc-mirror update` rebuilds the `npm/` + `tweakcc/` directories (preserving config, tasks, skills, approvals), then re-runs `npm install` and reapplies tweakcc for a clean upgrade.
+- `cc-mirror update` rebuilds the `native/` + `tweakcc/` directories (preserving config, tasks, skills, approvals), then re-downloads the native binary and reapplies tweakcc for a clean upgrade.
 
 ## Maintenance Checklist
 
@@ -76,7 +78,7 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 - Adjust API keys/base URL: edit `~/.cc-mirror/<variant>/config/settings.json`
 - Launch tweakcc UI for a variant: `cc-mirror tweak <name>`
 - Opt out of prompt packs: `--no-prompt-pack`
-- Select prompt pack mode: `--prompt-pack-mode minimal|maximal`
+- Select prompt pack mode: `--prompt-pack-mode minimal`
 - Opt out of skill install: `--no-skill-install`
 
 ## Provider Extensibility
@@ -99,11 +101,11 @@ skips the OAuth login screen in interactive mode.
 
 Brand presets stamp the user label for the chat banner from `CLAUDE_CODE_USER_LABEL` (fallback: OS username).
 
-`ANTHROPIC_AUTH_TOKEN` is stripped from variant settings and wrappers; variants are API-key only to avoid auth conflicts.
+Auth token providers (OpenRouter, Vercel, Ollama, NanoGPT, GatewayZ) use `ANTHROPIC_AUTH_TOKEN`. Some also set `ANTHROPIC_API_KEY` when the provider accepts either header.
 
 MiniMax variants seed a default MCP server entry in `~/.cc-mirror/<variant>/config/.claude.json` so the coding-plan MCP is ready once you add your API key.
 
-Z.ai variants add a deny list for known server-side MCP tools in `~/.cc-mirror/<variant>/config/settings.json`, pushing the model toward `zai-cli`.
+Z.ai and MiniMax variants add deny lists for known server-side MCP tools in `~/.cc-mirror/<variant>/config/settings.json` under `permissions.deny`, pushing the model toward provider-native tools (e.g., `zai-cli` for Z.ai, MiniMax MCP for MiniMax).
 
 Prompt packs (provider overlays) are injected into tweakcc prompt fragments after tweakcc runs, then re-applied so the patched binary includes provider guidance.
 
@@ -114,7 +116,7 @@ dev-browser is installed into `~/.cc-mirror/<variant>/config/skills/dev-browser`
 Brand presets are optional tweakcc configurations written into `~/.cc-mirror/<variant>/tweakcc/config.json`.
 Presets are provider-aware (e.g., `zai` auto-selects the Z.ai Carbon skin, `minimax` selects MiniMax Pulse) but can be overridden via `--brand`.
 
-## Install (npm-only)
+## Install (Native Binary)
 
-cc-mirror always installs `@anthropic-ai/claude-code@2.0.76` into `~/.cc-mirror/<variant>/npm` and runs its `cli.js`.
-Use `--npm-package` to override the package name; the version stays pinned.
+cc-mirror downloads the native Claude Code binary into `~/.cc-mirror/<variant>/native/claude` (or `claude.exe` on Windows).
+By default, variants track the `latest` channel. Use `--claude-version stable` to track stable, or pin a specific version with `--claude-version 2.1.37`.

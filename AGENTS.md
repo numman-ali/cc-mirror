@@ -105,12 +105,13 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 
 ### Provider Auth Modes
 
-| Provider             | Auth Mode  | Key Variable                |
-| -------------------- | ---------- | --------------------------- |
-| zai, minimax, custom | API Key    | `ANTHROPIC_API_KEY`         |
-| openrouter           | Auth Token | `ANTHROPIC_AUTH_TOKEN`      |
-| ccrouter             | Optional   | placeholder token           |
-| mirror               | None       | user authenticates normally |
+| Provider                              | Auth Mode  | Key Variable                                 |
+| ------------------------------------- | ---------- | -------------------------------------------- |
+| zai, minimax, kimi, custom            | API Key    | `ANTHROPIC_API_KEY`                          |
+| openrouter, vercel, nanogpt, gatewayz | Auth Token | `ANTHROPIC_AUTH_TOKEN`                       |
+| ollama                                | Auth Token | `ANTHROPIC_AUTH_TOKEN` + `ANTHROPIC_API_KEY` |
+| ccrouter                              | Optional   | placeholder token                            |
+| mirror                                | None       | user authenticates normally                  |
 
 ### Model Mapping (env vars)
 
@@ -121,7 +122,7 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 
 ## Provider Blocked Tools
 
-Providers can block tools via TweakCC toolsets. Defined in `src/brands/*.ts`.
+Providers block tools via `settings.json` `permissions.deny` entries (written during variant creation/update). Tool lists are defined in `src/brands/*.ts`.
 
 **zai blocked tools:**
 

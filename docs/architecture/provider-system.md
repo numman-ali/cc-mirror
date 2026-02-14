@@ -24,9 +24,10 @@ Each provider is a `ProviderTemplate` in `src/providers/index.ts`:
 - `baseUrl`: default `ANTHROPIC_BASE_URL` (empty means "use Claude Code defaults")
 - `env`: default per-variant environment values (models, splash, timeouts, etc.)
 - `authMode`:
-  - `apiKey`: cc-mirror writes `ANTHROPIC_API_KEY`
-  - `authToken`: cc-mirror writes `ANTHROPIC_AUTH_TOKEN` (and optionally also sets `ANTHROPIC_API_KEY`)
-  - `none`: cc-mirror does not set auth or base URL (user authenticates normally)
+  - `apiKey`: cc-mirror writes `ANTHROPIC_API_KEY` (zai, minimax, kimi)
+  - `authToken`: cc-mirror writes `ANTHROPIC_AUTH_TOKEN` (openrouter, vercel, ollama, nanogpt, gatewayz). Some providers also set `ANTHROPIC_API_KEY` via `authTokenAlsoSetsApiKey`.
+  - `none`: cc-mirror does not set auth or base URL (mirror — user authenticates normally)
+  - CC Router uses `authToken` with `credentialOptional: true` (optional placeholder token)
 - `requiresModelMapping`: if true, CLI/TUI requires Opus/Sonnet/Haiku mapping (OpenRouter-style gateways)
 - `credentialOptional`: if true, UI can skip API key entry (example: `mirror`)
 - `experimental`: hides the provider from the default list
@@ -67,10 +68,14 @@ Users can edit these later using:
 
 ## Adding A New Provider (Checklist)
 
-1. Add provider definition to `src/providers/index.ts`
-2. Add brand preset to `src/brands/<provider>.ts` (or reuse an existing brand)
-3. Add wrapper splash style and ASCII art (if desired): `src/core/wrapper.ts`
-4. Add docs + help entries (README tables, `src/cli/help.ts`, `docs/README.md` provider list)
-5. Update tests:
+1. Add provider definition to `src/providers/index.ts` (set `authMode`, `requiresModelMapping`, etc.)
+2. Add brand preset to `src/brands/<provider>.ts` (theme colors, thinking verbs, tool denies)
+3. Register brand in `src/brands/index.ts`
+4. Add wrapper splash style and ASCII art: `src/core/wrapper.ts` + `scripts/preview-splash.mjs`
+5. Add TUI education content: `src/tui/content/providers.ts`
+6. Add docs + help entries (README tables, `src/cli/help.ts`, `docs/README.md` provider list)
+7. Update tests:
    - Provider matrix: `test/provider-matrix.test.ts`
-   - E2E creation coverage: `test/e2e/creation.test.ts`
+   - E2E creation: `test/e2e/creation.test.ts`
+   - E2E providers list: `test/e2e/providers.ts`
+   - E2E ASCII art: `test/e2e/ascii-art.test.ts`

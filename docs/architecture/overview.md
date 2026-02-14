@@ -72,13 +72,13 @@ src/
     ├── index.ts           # Brand registry
     ├── zai.ts             # Gold theme
     ├── minimax.ts         # Coral theme
-    ├── kimi.ts            # Aurora theme
-    ├── openrouter.ts      # Teal theme
+    ├── kimi.ts            # Teal theme
+    ├── openrouter.ts      # Chrome theme
     ├── ccrouter.ts        # Sky theme
     ├── ollama.ts          # Ember theme
     ├── gatewayz.ts        # Violet theme
     ├── vercel.ts          # Monochrome theme
-    ├── nanogpt.ts         # Neon theme
+    ├── nanogpt.ts         # Aurora theme
     └── mirror.ts          # Silver/chrome theme
 ```
 
@@ -214,19 +214,21 @@ interface ProviderTemplate {
 ### Provider Comparison
 
 ```
-┌───────────────┬────────────────────────────────────────────────────────────┐
-│               │                    Provider Types                          │
-│               ├────────────┬────────────┬────────────┬────────────────────┤
-│   Feature     │ Proxy      │ Router     │ Direct     │ Description        │
-│               │ (zai,      │ (ccrouter) │ (mirror)   │                    │
-│               │ minimax,   │            │            │                    │
-│               │ openrouter)│            │            │                    │
-├───────────────┼────────────┼────────────┼────────────┼────────────────────┤
-│ BASE_URL      │ ✓ Set      │ ✓ Set      │ ✗ Not set  │ API endpoint       │
-│ API_KEY       │ ✓ Set      │ Optional   │ ✗ Not set  │ Auth credential    │
-│ Model mapping │ Auto/Req   │ Handled    │ ✗ Not set  │ Sonnet/Opus/Haiku  │
-│ Prompt pack   │ Optional   │ ✗          │ ✗          │ System overlays    │
-└───────────────┴────────────┴────────────┴────────────┴────────────────────┘
+┌───────────────┬─────────────────────────────────────────────────────────────────────┐
+│               │                         Provider Types                               │
+│               ├────────────┬─────────────┬────────────┬────────────┬────────────────┤
+│   Feature     │ API Key    │ Auth Token  │ Router     │ Direct     │ Description    │
+│               │ (zai,      │ (openrouter,│ (ccrouter) │ (mirror)   │                │
+│               │  minimax,  │  vercel,    │            │            │                │
+│               │  kimi)     │  ollama,    │            │            │                │
+│               │            │  nanogpt,   │            │            │                │
+│               │            │  gatewayz)  │            │            │                │
+├───────────────┼────────────┼─────────────┼────────────┼────────────┼────────────────┤
+│ BASE_URL      │ ✓ Set      │ ✓ Set       │ ✓ Set      │ ✗ Not set  │ API endpoint   │
+│ Auth          │ API_KEY    │ AUTH_TOKEN   │ Optional   │ ✗ Not set  │ Credential     │
+│ Model mapping │ Auto       │ Auto/Req    │ Handled    │ ✗ Not set  │ Sonnet/Opus    │
+│ Prompt pack   │ Optional   │ ✗           │ ✗          │ ✗          │ System overlays│
+└───────────────┴────────────┴─────────────┴────────────┴────────────┴────────────────┘
 ```
 
 ---

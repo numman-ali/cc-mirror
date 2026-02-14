@@ -171,7 +171,7 @@ npx cc-mirror quick --provider ollama --api-key "ollama" \
 # NanoGPT
 npx cc-mirror quick --provider nanogpt --api-key "$NANOGPT_API_KEY"
 
-# Claude Code Router (local LLMs)
+# CC Router (local LLMs)
 npx cc-mirror quick --provider ccrouter
 
 # GatewayZ
@@ -228,15 +228,14 @@ Each provider includes a custom color theme via [tweakcc](https://github.com/Pie
 
 | Brand          | Style                            |
 | -------------- | -------------------------------- |
-| **kimi**       | Aurora green + cyan accents      |
+| **kimi**       | Teal/cyan gradient               |
 | **minimax**    | Coral/red/orange spectrum        |
 | **zai**        | Dark carbon with gold accents    |
-| **openrouter** | Teal/cyan gradient               |
+| **openrouter** | Silver/chrome with electric blue |
 | **vercel**     | Monochrome with green accents    |
-| **ollama**     | Warm ember/orange palette        |
-| **nanogpt**    | Neon blue + pink accents         |
+| **ollama**     | Warm sandstone with earthy tones |
+| **nanogpt**    | Aurora green + cyan accents      |
 | **ccrouter**   | Sky blue accents                 |
-| **mirror**     | Silver/chrome with electric blue |
 | **gatewayz**   | Violet gradients                 |
 
 ---
