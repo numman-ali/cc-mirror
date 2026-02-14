@@ -22,6 +22,8 @@ export interface ProviderTemplate {
   requiresEmptyApiKey?: boolean;
   /** Keep ANTHROPIC_API_KEY alongside auth token (e.g., Ollama compatibility) */
   authTokenAlsoSetsApiKey?: boolean;
+  /** Default variant/CLI name when --name is omitted (avoids shadowing real CLIs) */
+  defaultVariantName?: string;
 }
 
 export interface ModelOverrides {
@@ -156,6 +158,7 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     key: 'ollama',
     label: 'Ollama',
     description: 'Local + cloud models via Ollama',
+    defaultVariantName: 'ccollama',
     baseUrl: 'http://localhost:11434',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
@@ -189,6 +192,7 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     key: 'vercel',
     label: 'Vercel AI Gateway',
     description: 'Vercel AI Gateway',
+    defaultVariantName: 'ccvercel',
     baseUrl: 'https://ai-gateway.vercel.sh',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,

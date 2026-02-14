@@ -542,7 +542,7 @@ export const App: React.FC<AppProps> = ({
             value === 'zai' ? resolveZaiApiKey() : { value: '', detectedFrom: null, skipPrompt: false };
           const prefillModels = value === 'zai' || value === 'minimax';
           setProviderKey(value);
-          setName(value === 'mirror' ? 'mclaude' : value);
+          setName(selected?.defaultVariantName || (value === 'mirror' ? 'mclaude' : value));
           setBaseUrl(selected?.baseUrl || '');
           setApiKey(keyDefaults.value);
           setApiKeyDetectedFrom(keyDefaults.detectedFrom);
@@ -652,7 +652,7 @@ export const App: React.FC<AppProps> = ({
               setProgressLines([]);
               setScreen('create-running');
             }}
-            placeholder={providerKey || 'my-variant'}
+            placeholder={name || providerKey || 'my-variant'}
             hint="Press Enter to continue"
           />
         </Box>
@@ -673,7 +673,7 @@ export const App: React.FC<AppProps> = ({
             value === 'zai' ? resolveZaiApiKey() : { value: '', detectedFrom: null, skipPrompt: false };
           const prefillModels = value === 'zai' || value === 'minimax';
           setProviderKey(value);
-          setName(value === 'mirror' ? 'mclaude' : value);
+          setName(selected?.defaultVariantName || (value === 'mirror' ? 'mclaude' : value));
           setBaseUrl(selected?.baseUrl || '');
           setApiKey(keyDefaults.value);
           setApiKeyDetectedFrom(keyDefaults.detectedFrom);
@@ -749,7 +749,7 @@ export const App: React.FC<AppProps> = ({
             value={name}
             onChange={setName}
             onSubmit={() => setScreen(nextScreen)}
-            placeholder={providerKey || 'my-variant'}
+            placeholder={name || providerKey || 'my-variant'}
             hint="Press Enter to continue"
           />
         </Box>

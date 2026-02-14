@@ -65,7 +65,7 @@ const palette = {
 
 const theme: Theme = {
   name: 'Vercel Mono',
-  id: 'vercel-mono',
+  id: 'dark',
   colors: {
     autoAccept: rgb(palette.green),
     bashBorder: rgb(palette.ink),
@@ -90,7 +90,7 @@ const theme: Theme = {
     error: rgb(palette.red),
     warning: rgb(palette.orange),
     warningShimmer: lighten(palette.orange, 0.28),
-    ...buildDiffPalette({ base: palette.base, added: palette.green, removed: palette.red, tint: palette.blue }),
+    ...buildDiffPalette(),
     red_FOR_SUBAGENTS_ONLY: rgb(palette.red),
     blue_FOR_SUBAGENTS_ONLY: rgb(palette.blue),
     green_FOR_SUBAGENTS_ONLY: rgb(palette.green),
@@ -116,9 +116,9 @@ const theme: Theme = {
     rainbow_violet_shimmer: lighten(palette.purple, 0.35),
     clawd_body: rgb(palette.ink),
     clawd_background: rgb(palette.base),
-    userMessageBackground: rgb(palette.panel),
-    bashMessageBackgroundColor: rgb(palette.surface),
-    memoryBackgroundColor: mix(palette.panel, palette.inkSoft, 0.1),
+    userMessageBackground: mix('#383838', palette.ink, 0.12),
+    bashMessageBackgroundColor: mix('#404040', palette.ink, 0.08),
+    memoryBackgroundColor: mix('#383838', palette.blue, 0.1),
     rate_limit_fill: rgb(palette.ink),
     rate_limit_empty: rgb(palette.borderStrong),
   },
@@ -131,7 +131,7 @@ export const buildVercelTweakccConfig = (): TweakccConfig => ({
   changesApplied: false,
   hidePiebaldAnnouncement: true,
   settings: {
-    themes: [theme, ...DEFAULT_THEMES],
+    themes: [theme, ...DEFAULT_THEMES.filter((t) => t.id !== theme.id)],
     thinkingVerbs: {
       format: '{}... ',
       verbs: [

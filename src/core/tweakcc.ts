@@ -50,9 +50,12 @@ export const ensureTweakccConfig = (tweakDir: string, brandKey?: string | null):
       if (brandKey === 'minimax' && existingThemes.length > 0) {
         const filtered = existingThemes.filter(
           (theme) =>
+            theme?.id !== 'minimax-pulse' &&
             theme?.id !== 'minimax-ember' &&
             theme?.id !== 'minimax-glass' &&
             theme?.id !== 'minimax-blade' &&
+            theme?.id !== 'minimax-nebula' &&
+            theme?.name !== 'MiniMax Pulse' &&
             theme?.name !== 'MiniMax Ember' &&
             theme?.name !== 'MiniMax Glass' &&
             theme?.name !== 'MiniMax Blade'

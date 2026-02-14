@@ -68,7 +68,7 @@ const tint = (hex: string, weight: number) => mix(palette.base, hex, weight);
 
 const theme: Theme = {
   name: 'Kimi Aurora',
-  id: 'kimi-aurora',
+  id: 'dark',
   colors: {
     autoAccept: rgb(palette.green),
     bashBorder: rgb(palette.aurora),
@@ -93,7 +93,7 @@ const theme: Theme = {
     error: rgb(palette.red),
     warning: rgb(palette.yellow),
     warningShimmer: lighten(palette.yellow, 0.25),
-    ...buildDiffPalette({ base: palette.base, added: palette.green, removed: palette.red, tint: palette.aurora }),
+    ...buildDiffPalette(),
     red_FOR_SUBAGENTS_ONLY: rgb(palette.red),
     blue_FOR_SUBAGENTS_ONLY: rgb(palette.cyan),
     green_FOR_SUBAGENTS_ONLY: rgb(palette.green),
@@ -119,9 +119,9 @@ const theme: Theme = {
     rainbow_violet_shimmer: lighten(palette.auroraSoft, 0.2),
     clawd_body: rgb(palette.aurora),
     clawd_background: rgb(palette.base),
-    userMessageBackground: rgb(palette.panel),
-    bashMessageBackgroundColor: rgb(palette.surface),
-    memoryBackgroundColor: tint(palette.panel, 0.2),
+    userMessageBackground: mix('#383838', palette.aurora, 0.12),
+    bashMessageBackgroundColor: mix('#404040', palette.aurora, 0.08),
+    memoryBackgroundColor: mix('#383838', palette.cyan, 0.1),
     rate_limit_fill: rgb(palette.aurora),
     rate_limit_empty: rgb(palette.borderStrong),
   },
@@ -134,7 +134,7 @@ export const buildKimiTweakccConfig = (): TweakccConfig => ({
   changesApplied: false,
   hidePiebaldAnnouncement: true,
   settings: {
-    themes: [theme, ...DEFAULT_THEMES],
+    themes: [theme, ...DEFAULT_THEMES.filter((t) => t.id !== theme.id)],
     thinkingVerbs: {
       format: '{}... ',
       verbs: [

@@ -7,7 +7,7 @@ export const PROVIDERS = [
     key: 'zai',
     name: 'Zai Cloud',
     apiKey: 'test-zai-key',
-    expectedThemeId: 'zai-carbon',
+    expectedThemeId: 'dark',
     expectedSplashStyle: 'zai',
     colorCode: '\\x1b[38;5;220m', // Gold
   },
@@ -15,15 +15,15 @@ export const PROVIDERS = [
     key: 'minimax',
     name: 'MiniMax Cloud',
     apiKey: 'test-minimax-key',
-    expectedThemeId: 'minimax-pulse',
+    expectedThemeId: 'dark',
     expectedSplashStyle: 'minimax',
-    colorCode: '\\x1b[38;5;203m', // Coral/salmon red
+    colorCode: '\\x1b[38;5;135m', // Electric violet
   },
   {
     key: 'kimi',
     name: 'Kimi Code',
     apiKey: 'test-kimi-key',
-    expectedThemeId: 'kimi-aurora',
+    expectedThemeId: 'dark',
     expectedSplashStyle: 'kimi',
     colorCode: '\\x1b[38;5;120m', // Spring green
   },
@@ -31,7 +31,7 @@ export const PROVIDERS = [
     key: 'openrouter',
     name: 'OpenRouter',
     apiKey: 'test-openrouter-key',
-    expectedThemeId: 'openrouter-navy',
+    expectedThemeId: 'dark',
     expectedSplashStyle: 'openrouter',
     colorCode: '\\x1b[38;5;60m', // Navy
   },
@@ -39,7 +39,7 @@ export const PROVIDERS = [
     key: 'ccrouter',
     name: 'Claude Code Router',
     apiKey: '', // Optional for ccrouter
-    expectedThemeId: 'ccrouter-sky',
+    expectedThemeId: 'dark',
     expectedSplashStyle: 'ccrouter',
     colorCode: '\\x1b[38;5;39m', // Sky blue
   },
@@ -47,7 +47,7 @@ export const PROVIDERS = [
     key: 'ollama',
     name: 'Ollama',
     apiKey: 'ollama',
-    expectedThemeId: 'ollama-llama',
+    expectedThemeId: 'dark',
     expectedSplashStyle: 'ollama',
     colorCode: '\\x1b[38;5;180m', // Tan/sorrel
   },
@@ -55,7 +55,7 @@ export const PROVIDERS = [
     key: 'gatewayz',
     name: 'GatewayZ',
     apiKey: 'test-gatewayz-key',
-    expectedThemeId: 'gatewayz-violet',
+    expectedThemeId: 'dark',
     expectedSplashStyle: 'gatewayz',
     colorCode: '\\x1b[38;5;141m', // Violet
   },
@@ -63,7 +63,7 @@ export const PROVIDERS = [
     key: 'vercel',
     name: 'Vercel AI Gateway',
     apiKey: 'test-vercel-key',
-    expectedThemeId: 'vercel-mono',
+    expectedThemeId: 'dark',
     expectedSplashStyle: 'vercel',
     colorCode: '\\x1b[38;5;250m', // Light gray
   },
@@ -71,7 +71,7 @@ export const PROVIDERS = [
     key: 'nanogpt',
     name: 'NanoGPT',
     apiKey: 'test-nanogpt-key',
-    expectedThemeId: 'nanogpt-teal',
+    expectedThemeId: 'dark',
     expectedSplashStyle: 'nanogpt',
     colorCode: '\\x1b[38;5;81m', // Neon cyan
   },

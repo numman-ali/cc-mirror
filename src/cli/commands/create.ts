@@ -55,7 +55,7 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
     throw new Error(`Unknown provider: ${providerKey}`);
   }
 
-  const name = (opts.name as string) || providerKey;
+  const name = (opts.name as string) || provider.defaultVariantName || providerKey;
   const baseUrl = (opts['base-url'] as string) || provider.baseUrl;
   const envZaiKey = providerKey === 'zai' ? process.env.Z_AI_API_KEY : undefined;
   const envAnthropicKey = providerKey === 'zai' ? process.env.ANTHROPIC_API_KEY : undefined;

@@ -26,8 +26,8 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
   },
   minimax: {
     key: 'minimax',
-    label: 'MiniMax Pulse',
-    description: 'Vibrant spectrum accents (red/orange/pink/violet)',
+    label: 'MiniMax Nebula',
+    description: 'Electric violet + neon cyberpunk palette',
     buildTweakccConfig: buildMinimaxTweakccConfig,
   },
   kimi: {

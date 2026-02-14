@@ -43,7 +43,8 @@ test('ensureTweakccConfig creates config file when it does not exist', () => {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     assert.ok(config.settings);
     assert.ok(config.settings.themes);
-    assert.equal(config.settings.themes[0]?.id, 'zai-carbon');
+    assert.equal(config.settings.themes[0]?.id, 'dark');
+    assert.equal(config.settings.themes[0]?.name, 'Z.ai Carbon');
   } finally {
     cleanup(tweakDir);
   }
@@ -58,7 +59,8 @@ test('ensureTweakccConfig creates minimax config', () => {
 
     assert.equal(result, true);
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    assert.equal(config.settings.themes[0]?.id, 'minimax-pulse');
+    assert.equal(config.settings.themes[0]?.id, 'dark');
+    assert.equal(config.settings.themes[0]?.name, 'MiniMax Nebula');
   } finally {
     cleanup(tweakDir);
   }
@@ -73,7 +75,8 @@ test('ensureTweakccConfig creates openrouter config', () => {
 
     assert.equal(result, true);
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    assert.equal(config.settings.themes[0]?.id, 'openrouter-navy');
+    assert.equal(config.settings.themes[0]?.id, 'dark');
+    assert.equal(config.settings.themes[0]?.name, 'OpenRouter Navy');
   } finally {
     cleanup(tweakDir);
   }
@@ -88,7 +91,8 @@ test('ensureTweakccConfig creates ccrouter config', () => {
 
     assert.equal(result, true);
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    assert.equal(config.settings.themes[0]?.id, 'ccrouter-sky');
+    assert.equal(config.settings.themes[0]?.id, 'dark');
+    assert.equal(config.settings.themes[0]?.name, 'CCRouter Sky');
   } finally {
     cleanup(tweakDir);
   }
@@ -130,7 +134,8 @@ test('ensureTweakccConfig updates config when themes differ', () => {
     assert.equal(result, true);
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     // Brand theme should be first
-    assert.equal(config.settings.themes[0]?.id, 'zai-carbon');
+    assert.equal(config.settings.themes[0]?.id, 'dark');
+    assert.equal(config.settings.themes[0]?.name, 'Z.ai Carbon');
     // Custom theme should still be present
     assert.ok(config.settings.themes.some((t: { id?: string }) => t.id === 'custom-theme'));
   } finally {
@@ -179,11 +184,12 @@ test('ensureTweakccConfig removes legacy minimax themes', () => {
     assert.equal(result, true);
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     // Legacy themes should be removed
+    assert.ok(!config.settings.themes.some((t: { id?: string }) => t.id === 'minimax-pulse'));
     assert.ok(!config.settings.themes.some((t: { id?: string }) => t.id === 'minimax-ember'));
     assert.ok(!config.settings.themes.some((t: { id?: string }) => t.id === 'minimax-glass'));
     assert.ok(!config.settings.themes.some((t: { id?: string }) => t.id === 'minimax-blade'));
-    // Primary theme should still be present
-    assert.ok(config.settings.themes.some((t: { id?: string }) => t.id === 'minimax-pulse'));
+    // Current brand theme should be present (now uses 'dark' id)
+    assert.ok(config.settings.themes.some((t: { name?: string }) => t.name === 'MiniMax Nebula'));
   } finally {
     cleanup(tweakDir);
   }
@@ -199,7 +205,7 @@ test('ensureTweakccConfig updates userMessageDisplay when not set', () => {
       configPath,
       JSON.stringify({
         settings: {
-          themes: [{ id: 'zai-carbon' }],
+          themes: [{ id: 'dark', name: 'Z.ai Carbon' }],
         },
       })
     );

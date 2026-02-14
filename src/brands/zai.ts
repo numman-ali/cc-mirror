@@ -43,16 +43,16 @@ const mix = (hexA: string, hexB: string, weight: number) => {
 const lighten = (hex: string, weight: number) => mix(hex, '#ffffff', weight);
 
 const palette = {
-  base: '#1b1d1f',
-  surface: '#25272b',
-  panel: '#282a30',
-  border: '#353842',
-  borderStrong: '#484a58',
-  text: '#e8e8e8',
-  textMuted: '#c3c4cc',
-  textDim: '#8d8e99',
+  base: '#191b1e',
+  surface: '#222529',
+  panel: '#292d33',
+  border: '#3e4350',
+  borderStrong: '#545a6a',
+  text: '#eff0f3',
+  textMuted: '#cdd0d8',
+  textDim: '#9a9daa',
   gold: '#ffd373',
-  goldSoft: '#ffdc8f',
+  goldSoft: '#ffe4a8',
   goldDeep: '#b2892e',
   blue: '#0080ff',
   blueSoft: '#66b3ff',
@@ -65,7 +65,7 @@ const palette = {
 
 const theme: Theme = {
   name: 'Z.ai Carbon',
-  id: 'zai-carbon',
+  id: 'dark',
   colors: {
     autoAccept: rgb(palette.green),
     bashBorder: rgb(palette.gold),
@@ -90,7 +90,7 @@ const theme: Theme = {
     error: rgb(palette.red),
     warning: rgb(palette.orange),
     warningShimmer: rgb(palette.goldSoft),
-    ...buildDiffPalette({ base: palette.base, added: palette.green, removed: palette.red, tint: palette.gold }),
+    ...buildDiffPalette(),
     red_FOR_SUBAGENTS_ONLY: rgb(palette.red),
     blue_FOR_SUBAGENTS_ONLY: rgb(palette.blueDeep),
     green_FOR_SUBAGENTS_ONLY: rgb(palette.green),
@@ -116,9 +116,9 @@ const theme: Theme = {
     rainbow_violet_shimmer: lighten(palette.purple, 0.35),
     clawd_body: rgb(palette.gold),
     clawd_background: rgb(palette.base),
-    userMessageBackground: rgb(palette.panel),
-    bashMessageBackgroundColor: rgb(palette.surface),
-    memoryBackgroundColor: rgb(palette.panel),
+    userMessageBackground: mix('#383838', palette.gold, 0.12),
+    bashMessageBackgroundColor: mix('#404040', palette.gold, 0.08),
+    memoryBackgroundColor: mix('#383838', palette.blue, 0.1),
     rate_limit_fill: rgb(palette.gold),
     rate_limit_empty: rgb(palette.borderStrong),
   },
@@ -131,7 +131,7 @@ export const buildZaiTweakccConfig = (): TweakccConfig => ({
   changesApplied: false,
   hidePiebaldAnnouncement: true,
   settings: {
-    themes: [theme, ...DEFAULT_THEMES],
+    themes: [theme, ...DEFAULT_THEMES.filter((t) => t.id !== theme.id)],
     thinkingVerbs: {
       format: '{}... ',
       verbs: [

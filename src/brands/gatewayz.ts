@@ -63,7 +63,7 @@ const palette = {
 
 const theme: Theme = {
   name: 'GatewayZ Violet',
-  id: 'gatewayz-violet',
+  id: 'dark',
   colors: {
     autoAccept: rgb(palette.green),
     bashBorder: rgb(palette.violet),
@@ -88,7 +88,7 @@ const theme: Theme = {
     error: rgb(palette.red),
     warning: rgb(palette.orange),
     warningShimmer: lighten(palette.orange, 0.28),
-    ...buildDiffPalette({ base: palette.base, added: palette.green, removed: palette.red, tint: palette.violet }),
+    ...buildDiffPalette(),
     red_FOR_SUBAGENTS_ONLY: rgb(palette.red),
     blue_FOR_SUBAGENTS_ONLY: rgb(palette.blue),
     green_FOR_SUBAGENTS_ONLY: rgb(palette.green),
@@ -114,9 +114,9 @@ const theme: Theme = {
     rainbow_violet_shimmer: lighten(palette.violet, 0.35),
     clawd_body: rgb(palette.violetDeep),
     clawd_background: rgb(palette.base),
-    userMessageBackground: rgb(palette.panel),
-    bashMessageBackgroundColor: rgb(palette.surface),
-    memoryBackgroundColor: mix(palette.panel, palette.violetBright, 0.12),
+    userMessageBackground: mix('#383838', palette.violet, 0.12),
+    bashMessageBackgroundColor: mix('#404040', palette.violet, 0.08),
+    memoryBackgroundColor: mix('#383838', palette.blue, 0.1),
     rate_limit_fill: rgb(palette.violet),
     rate_limit_empty: rgb(palette.borderStrong),
   },
@@ -129,7 +129,7 @@ export const buildGatewayzTweakccConfig = (): TweakccConfig => ({
   changesApplied: false,
   hidePiebaldAnnouncement: true,
   settings: {
-    themes: [theme, ...DEFAULT_THEMES],
+    themes: [theme, ...DEFAULT_THEMES.filter((t) => t.id !== theme.id)],
     thinkingVerbs: {
       format: '{}... ',
       verbs: [
