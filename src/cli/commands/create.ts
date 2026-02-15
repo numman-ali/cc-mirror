@@ -37,6 +37,19 @@ interface CreateParams {
   hasZaiEnv: boolean;
 }
 
+export const resolveCreateVariantName = (
+  explicitName: string | undefined,
+  positionalName: string | undefined,
+  providerKey: string,
+  providerDefaultName: string | undefined
+): string => {
+  const flagName = (explicitName ?? '').trim();
+  if (flagName) return flagName;
+  const positional = (positionalName ?? '').trim();
+  if (positional) return positional;
+  return providerDefaultName || providerKey;
+};
+
 /**
  * Prepare common parameters for create command
  */
@@ -55,7 +68,12 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
     throw new Error(`Unknown provider: ${providerKey}`);
   }
 
-  const name = (opts.name as string) || provider.defaultVariantName || providerKey;
+  const name = resolveCreateVariantName(
+    opts.name as string | undefined,
+    opts._?.[0],
+    providerKey,
+    provider.defaultVariantName
+  );
   const baseUrl = (opts['base-url'] as string) || provider.baseUrl;
   const envZaiKey = providerKey === 'zai' ? process.env.Z_AI_API_KEY : undefined;
   const envAnthropicKey = providerKey === 'zai' ? process.env.ANTHROPIC_API_KEY : undefined;
