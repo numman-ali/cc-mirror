@@ -63,6 +63,13 @@ test('parseArgs handles key value arguments', () => {
   assert.equal(result.name, 'my-variant');
 });
 
+test('parseArgs handles --prefix and --allow-collision flags', () => {
+  const result = parseArgs(['--provider', 'kimi', '--prefix', 'cc', '--allow-collision']);
+  assert.equal(result.provider, 'kimi');
+  assert.equal(result.prefix, 'cc');
+  assert.equal(result['allow-collision'], true);
+});
+
 test('parseArgs handles boolean flags with trailing value', () => {
   // Parser treats consecutive flags as key-value pairs when no = is used
   // This tests that the parser correctly handles the case where a flag

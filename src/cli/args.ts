@@ -11,6 +11,8 @@ export interface ParsedArgs {
   ['prompt-pack-mode']?: string;
   ['no-skill-install']?: boolean;
   ['skill-update']?: boolean;
+  prefix?: string;
+  ['allow-collision']?: boolean;
   ['shell-env']?: boolean;
   ['no-shell-env']?: boolean;
   ['tweakcc-stdio']?: string;

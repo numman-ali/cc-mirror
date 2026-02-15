@@ -34,6 +34,7 @@ COMMANDS
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
+  --prefix <value>             Prefix default variant name when --name is omitted
   --provider <name>            Provider: kimi | minimax | zai | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz
   --api-key <key>              Provider API key
   --auth-token <token>         Alias for --api-key (auth-token providers)
@@ -52,6 +53,7 @@ OPTIONS (advanced)
   --bin-dir <path>             Wrapper install dir (default: ${DEFAULT_BIN_DIR})
   --no-tweak                   Skip tweakcc theming
   --no-prompt-pack             Skip provider prompt pack
+  --allow-collision            Allow wrapper command name collisions (unsafe)
   --shell-env                  Write env vars to shell profile
   --verbose                    Show full tweakcc output during update
   --json                       Machine-readable output (list/doctor)

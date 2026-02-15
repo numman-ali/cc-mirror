@@ -35,7 +35,41 @@ interface CreateParams {
   requiresCredential: boolean;
   shouldPromptApiKey: boolean;
   hasZaiEnv: boolean;
+  allowCollision: boolean;
 }
+
+const buildDefaultName = (provider: ProviderTemplate, providerKey: string, opts: ParsedArgs): string => {
+  const explicitName = typeof opts.name === 'string' ? opts.name.trim() : '';
+  if (explicitName) return explicitName;
+  const prefix = typeof opts.prefix === 'string' ? opts.prefix.trim() : '';
+  if (prefix) return `${prefix}${providerKey}`;
+  return provider.defaultVariantName || providerKey;
+};
+
+const assertNoCommandCollision = (
+  name: string,
+  binDir: string,
+  provider: ProviderTemplate,
+  providerKey: string,
+  allowCollision: boolean
+): void => {
+  const collision = core.detectCommandCollision(name, binDir);
+  if (!collision.hasCollision || allowCollision) return;
+
+  const suggested = provider.defaultVariantName || `cc${providerKey}`;
+  const reasons: string[] = [];
+  if (collision.wrapperExists) {
+    reasons.push(`wrapper already exists at ${collision.wrapperPath}`);
+  }
+  if (collision.pathConflicts && collision.resolvedCommandPath) {
+    reasons.push(`'${name}' already resolves to ${collision.resolvedCommandPath}`);
+  }
+
+  throw new Error(
+    `Command name collision for "${name}": ${reasons.join('; ')}. ` +
+      `Use --name <unique-name> (suggested: "${suggested}") or --allow-collision to bypass.`
+  );
+};
 
 /**
  * Prepare common parameters for create command
@@ -55,7 +89,7 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
     throw new Error(`Unknown provider: ${providerKey}`);
   }
 
-  const name = (opts.name as string) || provider.defaultVariantName || providerKey;
+  const name = buildDefaultName(provider, providerKey, opts);
   const baseUrl = (opts['base-url'] as string) || provider.baseUrl;
   const envZaiKey = providerKey === 'zai' ? process.env.Z_AI_API_KEY : undefined;
   const envAnthropicKey = providerKey === 'zai' ? process.env.ANTHROPIC_API_KEY : undefined;
@@ -79,6 +113,7 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
   // Don't prompt for API key if credential is optional (mirror, ccrouter)
   const shouldPromptApiKey =
     !provider.credentialOptional && !opts.yes && !hasCredentialFlag && (providerKey === 'zai' ? !hasZaiEnv : !apiKey);
+  const allowCollision = Boolean(opts['allow-collision']);
 
   return {
     provider,
@@ -94,6 +129,7 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
     requiresCredential,
     shouldPromptApiKey,
     hasZaiEnv,
+    allowCollision,
   };
 }
 
@@ -147,6 +183,7 @@ async function handleQuickMode(opts: ParsedArgs, params: CreateParams): Promise<
     skillInstall,
     shellEnv,
     skillUpdate,
+    allowCollision: params.allowCollision,
     modelOverrides: resolvedModelOverrides,
     tweakccStdio: 'pipe',
   });
@@ -210,6 +247,8 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
     }
   }
 
+  assertNoCommandCollision(nextName, nextBin, params.provider, params.providerKey, params.allowCollision);
+
   const result = await core.createVariantAsync({
     name: nextName,
     providerKey: params.providerKey,
@@ -225,6 +264,7 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
     skillInstall,
     shellEnv,
     skillUpdate,
+    allowCollision: params.allowCollision,
     modelOverrides: resolvedModelOverrides,
     tweakccStdio: 'pipe',
   });
@@ -270,6 +310,7 @@ async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams):
     skillInstall,
     shellEnv,
     skillUpdate,
+    allowCollision: params.allowCollision,
     modelOverrides: resolvedModelOverrides,
     tweakccStdio: 'pipe',
   });
@@ -289,6 +330,10 @@ async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams):
  */
 export async function runCreateCommand({ opts, quickMode }: CreateCommandOptions): Promise<void> {
   const params = await prepareCreateParams(opts);
+
+  if (quickMode || opts.yes) {
+    assertNoCommandCollision(params.name, params.binDir, params.provider, params.providerKey, params.allowCollision);
+  }
 
   if (quickMode) {
     await handleQuickMode(opts, params);
