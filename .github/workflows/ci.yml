@@ -25,6 +25,25 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run bundle
+      - name: Windows E2E smoke (dist + tweakcc)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $rootDir = Join-Path $env:RUNNER_TEMP 'cc-mirror-e2e-root'
+          $binDir = Join-Path $env:RUNNER_TEMP 'cc-mirror-e2e-bin'
+
+          New-Item -ItemType Directory -Force -Path $rootDir | Out-Null
+          New-Item -ItemType Directory -Force -Path $binDir | Out-Null
+
+          # Repro of issue #7 comment: build, run bundled CLI, create variant in quick mode.
+          node dist/cc-mirror.mjs quick --yes --provider minimax --name win-e2e --api-key dummy --root "$rootDir" --bin-dir "$binDir"
+
+          # Sanity checks: list/doctor should see the variant and wrapper should execute.
+          node dist/cc-mirror.mjs list --root "$rootDir" --bin-dir "$binDir" --json | Out-File -FilePath list.json -Encoding utf8
+          node -e "const fs=require('fs');const data=JSON.parse(fs.readFileSync('list.json','utf8'));if(!data.some(v=>v.name==='win-e2e')){console.error('Expected win-e2e in list output');process.exit(1)}"
+          node dist/cc-mirror.mjs doctor --root "$rootDir" --bin-dir "$binDir" --json
+          & (Join-Path "$binDir" 'win-e2e.cmd') --version
 
   lint:
     name: Lint

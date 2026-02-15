@@ -5,6 +5,7 @@
 import { ensureDir } from '../../fs.js';
 import { expandTilde, getWrapperPath } from '../../paths.js';
 import { writeWrapper } from '../../wrapper.js';
+import { ensureWindowsUserPath } from '../../windows-path.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
 
 export class WrapperUpdateStep implements UpdateStep {
@@ -32,6 +33,12 @@ export class WrapperUpdateStep implements UpdateStep {
       const wrapperPath = getWrapperPath(resolvedBin, name);
       writeWrapper(wrapperPath, meta.configDir, meta.binaryPath, 'native');
       meta.binDir = resolvedBin;
+      const pathResult = ensureWindowsUserPath(resolvedBin);
+      if (pathResult.status === 'updated') {
+        ctx.state.notes.push(pathResult.message);
+      } else if (pathResult.status === 'failed') {
+        ctx.state.notes.push(`Windows PATH update failed: ${pathResult.message}`);
+      }
     }
   }
 }

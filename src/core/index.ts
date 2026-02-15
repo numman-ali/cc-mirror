@@ -70,7 +70,10 @@ export const doctor = (rootDir: string, binDir: string): DoctorReportItem[] => {
   });
 };
 
-export const listVariants = (rootDir: string): VariantEntry[] => listVariantsImpl(rootDir);
+export const listVariants = (rootDir: string): VariantEntry[] => {
+  const resolvedRoot = expandTilde(rootDir || DEFAULT_ROOT) ?? rootDir;
+  return listVariantsImpl(resolvedRoot);
+};
 
 export const tweakVariant = (rootDir: string, name: string): void => {
   const resolvedRoot = expandTilde(rootDir || DEFAULT_ROOT) ?? rootDir;

@@ -202,15 +202,6 @@ const padRight = (s, targetWidth) => {
   return w >= targetWidth ? s : s + ' '.repeat(targetWidth - w);
 };
 
-/** Center a colored string within a target visible width */
-const centerPad = (s, targetWidth) => {
-  const w = visibleWidth(s);
-  if (w >= targetWidth) return s;
-  const leftPad = Math.floor((targetWidth - w) / 2);
-  const rightPad = targetWidth - w - leftPad;
-  return ' '.repeat(leftPad) + s + ' '.repeat(rightPad);
-};
-
 // ── Grid layout ─────────────────────────────────────────
 
 // Row 1: Tall two-stack letters bookend shorter Vercel

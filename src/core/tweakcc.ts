@@ -4,10 +4,20 @@ import path from 'node:path';
 import { buildBrandConfig } from '../brands/index.js';
 import type { MiscConfig, TweakccSettings } from '../brands/types.js';
 import { TWEAKCC_VERSION } from './constants.js';
-import { commandExists } from './paths.js';
+import { commandExists, isWindows } from './paths.js';
 import type { TweakResult } from './types.js';
 
 export type TweakccResult = TweakResult;
+
+export const getNpxCommand = (): string => (isWindows ? 'npx.cmd' : 'npx');
+
+const buildNpxInvocation = (args: string[]): { cmd: string; args: string[] } => {
+  const npxCmd = getNpxCommand();
+  if (isWindows) {
+    return { cmd: 'cmd.exe', args: ['/d', '/s', '/c', npxCmd, ...args] };
+  }
+  return { cmd: npxCmd, args };
+};
 
 export const ensureTweakccConfig = (tweakDir: string, brandKey?: string | null): boolean => {
   if (!brandKey) return false;
@@ -141,17 +151,19 @@ export const runTweakcc = (
   binaryPath: string,
   stdio: 'inherit' | 'pipe' = 'inherit'
 ): TweakccResult => {
+  const npxCmd = getNpxCommand();
+  const invocation = buildNpxInvocation([`tweakcc@${TWEAKCC_VERSION}`, '--apply']);
   const env = {
     ...process.env,
     TWEAKCC_CONFIG_DIR: tweakDir,
     TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
   } as NodeJS.ProcessEnv;
 
-  if (!commandExists('npx')) {
+  if (!commandExists(npxCmd)) {
     return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
   }
 
-  const result = spawnSync('npx', [`tweakcc@${TWEAKCC_VERSION}`, '--apply'], { stdio: 'pipe', env, encoding: 'utf8' });
+  const result = spawnSync(invocation.cmd, invocation.args, { stdio: 'pipe', env, encoding: 'utf8' });
   if (stdio === 'inherit') {
     if (result.stdout) process.stdout.write(result.stdout);
     if (result.stderr) process.stderr.write(result.stderr);
@@ -160,17 +172,19 @@ export const runTweakcc = (
 };
 
 export const launchTweakccUi = (tweakDir: string, binaryPath: string): TweakccResult => {
+  const npxCmd = getNpxCommand();
+  const invocation = buildNpxInvocation([`tweakcc@${TWEAKCC_VERSION}`]);
   const env = {
     ...process.env,
     TWEAKCC_CONFIG_DIR: tweakDir,
     TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
   } as NodeJS.ProcessEnv;
 
-  if (!commandExists('npx')) {
+  if (!commandExists(npxCmd)) {
     return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
   }
 
-  return spawnSync('npx', [`tweakcc@${TWEAKCC_VERSION}`], { stdio: 'inherit', env, encoding: 'utf8' });
+  return spawnSync(invocation.cmd, invocation.args, { stdio: 'inherit', env, encoding: 'utf8' });
 };
 
 // Async version for TUI progress updates
@@ -206,15 +220,17 @@ export const runTweakccAsync = async (
   binaryPath: string,
   stdio: 'inherit' | 'pipe' = 'inherit'
 ): Promise<TweakccResult> => {
+  const npxCmd = getNpxCommand();
+  const invocation = buildNpxInvocation([`tweakcc@${TWEAKCC_VERSION}`, '--apply']);
   const env = {
     ...process.env,
     TWEAKCC_CONFIG_DIR: tweakDir,
     TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
   } as NodeJS.ProcessEnv;
 
-  if (!commandExists('npx')) {
+  if (!commandExists(npxCmd)) {
     return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
   }
 
-  return spawnTweakccAsync('npx', [`tweakcc@${TWEAKCC_VERSION}`, '--apply'], env, stdio);
+  return spawnTweakccAsync(invocation.cmd, invocation.args, env, stdio);
 };
