@@ -17,7 +17,7 @@ export const assertValidVariantName = (name: string): void => {
 export const expandTilde = (input?: string): string | undefined => {
   if (!input) return input;
   if (input === '~') return os.homedir();
-  if (input.startsWith('~/')) return path.join(os.homedir(), input.slice(2));
+  if (input.startsWith('~/') || input.startsWith('~\\')) return path.join(os.homedir(), input.slice(2));
   return input;
 };
 
