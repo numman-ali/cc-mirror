@@ -10,12 +10,13 @@
   <a href="https://twitter.com/nummanali"><img src="https://img.shields.io/twitter/follow/nummanali?style=social" alt="Twitter Follow"></a>
 </p>
 
-<h2 align="center">Claude Code, Unshackled</h2>
+<h2 align="center">Run Any Model in Claude Code</h2>
 
 <p align="center">
-  Pre-configured Claude Code variants with custom providers,<br>
-  prompt packs, and battle-tested enhancements.<br><br>
-  <strong>One command. Instant power-up.</strong>
+  Claude Code is one of the best coding harnesses out there.<br>
+  CC-MIRROR lets you run <strong>Kimi, Z.ai, MiniMax, OpenRouter</strong> and more<br>
+  through it — with isolated configs, custom themes, and prompt packs.<br><br>
+  <strong>Pick your models. Mix and match. One command each.</strong>
 </p>
 
 ---
@@ -23,14 +24,34 @@
 ## Quick Start
 
 ```bash
-# Fastest path to a configured Claude Code variant
-npx cc-mirror quick --provider mirror --name mclaude
-
-# Run it
-mclaude
+npx cc-mirror
 ```
 
-That's it. You now have a Claude Code variant ready to run.
+The interactive wizard walks you through provider selection, API keys, and model mapping. You'll have a ready-to-run variant in under a minute.
+
+<p align="center">
+  <img src="./assets/cc-mirror-home.png" alt="CC-MIRROR Home Screen" width="600">
+</p>
+
+### Prefer the command line?
+
+```bash
+# Kimi Code
+npx cc-mirror quick --provider kimi --api-key "$KIMI_API_KEY"
+
+# Z.ai (GLM-5 / 4.7 / 4.5-Air)
+npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
+
+# MiniMax (M2.5)
+npx cc-mirror quick --provider minimax --api-key "$MINIMAX_API_KEY"
+
+# Then just run it
+kimi
+zai
+minimax
+```
+
+Each variant becomes its own CLI command — completely isolated from your main Claude Code install.
 
 ### Claude Code Version (Stable/Latest/Pin)
 
@@ -38,13 +59,13 @@ By default, CC-MIRROR installs the **latest** Claude Code native release. You ca
 
 ```bash
 # Track upstream stable channel
-npx cc-mirror quick --provider mirror --name mclaude --claude-version stable
+npx cc-mirror quick --provider kimi --api-key "$KIMI_API_KEY" --claude-version stable
 
 # Track upstream latest channel
-npx cc-mirror update mclaude --claude-version latest
+npx cc-mirror update kimi --claude-version latest
 
 # Pin a specific version
-npx cc-mirror update mclaude --claude-version 2.1.37
+npx cc-mirror update kimi --claude-version 2.1.37
 ```
 
 Notes:
@@ -52,37 +73,27 @@ Notes:
 - `stable` and `latest` are upstream channels. `stable` may lag behind `latest` (that is normal).
 - cc-mirror resolves the channel to a concrete version during install/update and stores it in `variant.json`.
 
-<p align="center">
-  <img src="./assets/cc-mirror-home.png" alt="CC-MIRROR Home Screen" width="600">
-</p>
-
-### Or use the interactive wizard
-
-```bash
-npx cc-mirror
-```
-
 ---
 
 ## What is CC-MIRROR?
 
-CC-MIRROR is an **opinionated Claude Code distribution**. We did the hacking — you get the superpowers.
+CC-MIRROR turns Claude Code into a **universal coding harness**. Use the agent framework you already know — tool calls, MCP servers, slash commands — with the model of your choice.
 
 At its core, CC-MIRROR:
 
 1. **Clones** Claude Code into isolated instances
 2. **Configures** provider endpoints, model mapping, and env defaults
-3. **Applies** prompt packs and tweakcc themes
+3. **Applies** prompt packs and tweakcc themes tuned per provider
 4. **Installs** optional skills (dev-browser, opt-in)
 5. **Packages** everything into a single command
 
-Each variant is completely isolated — its own config, sessions, MCP servers, and credentials. Your main Claude Code installation stays untouched.
+Each variant is completely isolated — its own config, sessions, MCP servers, and credentials. Your main Claude Code installation stays untouched. Run them side by side, compare models, switch freely.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  ~/.cc-mirror/                                                          │
 │                                                                         │
-│  ├── mclaude/                        ← Mirror Claude                     │
+│  ├── kimi/                           ← Kimi Code (kimi-for-coding)      │
 │  │   ├── native/                     Claude Code installation           │
 │  │   ├── config/                     API keys, sessions, MCP servers    │
 │  │   ├── tweakcc/                    Theme customization                │
@@ -90,9 +101,9 @@ Each variant is completely isolated — its own config, sessions, MCP servers, a
 │  │                                                                      │
 │  ├── zai/                            ← Z.ai variant (GLM models)        │
 │  ├── minimax/                        ← MiniMax variant (M2.5)           │
-│  └── kimi/                           ← Kimi Code variant (kimi-for-coding) │
+│  └── myrouter/                       ← OpenRouter (pick any model)      │
 │                                                                         │
-│  Wrappers: <bin-dir>/mclaude, <bin-dir>/zai, ...                        │
+│  Wrappers: <bin-dir>/kimi, <bin-dir>/zai, <bin-dir>/minimax, ...        │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -104,33 +115,76 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 
 ## Providers
 
-### Mirror Claude (Recommended)
+### Featured Providers
 
-The purest path to vanilla Claude Code. No proxy, no model changes — just clean isolation.
+These providers offer dedicated coding models with first-class support in CC-MIRROR:
+
+| Provider    | Models              | What You Get                                                    |
+| ----------- | ------------------- | --------------------------------------------------------------- |
+| **Kimi**    | kimi-for-coding     | Long-context coding with Kimi K2.5 — built for large codebases |
+| **Z.ai**    | GLM-5, 4.7, 4.5-Air | Heavy reasoning with GLM models, bundled search and vision tools |
+| **MiniMax** | MiniMax-M2.5        | Unified model across all tiers, integrated web search MCP       |
+
+```bash
+npx cc-mirror quick --provider kimi --api-key "$KIMI_API_KEY"
+npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
+npx cc-mirror quick --provider minimax --api-key "$MINIMAX_API_KEY"
+```
+
+### Gateway & Routing Providers
+
+Want total model freedom? These providers let you pick from hundreds of models and swap between them:
+
+| Provider       | Models                 | Auth       | Best For                       |
+| -------------- | ---------------------- | ---------- | ------------------------------ |
+| **OpenRouter** | 100+ models            | Auth Token | Model flexibility, pay-per-use |
+| **Vercel**     | Multi-provider gateway | Auth Token | Vercel AI Gateway              |
+| **NanoGPT**    | 400+ models            | Auth Token | Simple gateway setup           |
+| **GatewayZ**   | Multi-provider gateway | Auth Token | Centralized routing            |
+
+```bash
+# OpenRouter — pick any model
+npx cc-mirror quick --provider openrouter --api-key "$OPENROUTER_API_KEY" \
+  --model-sonnet "anthropic/claude-sonnet-4-20250514"
+
+# Vercel AI Gateway
+npx cc-mirror quick --provider vercel --api-key "$VERCEL_AI_GATEWAY_KEY" \
+  --model-sonnet "anthropic/claude-3-5-sonnet-20241022"
+
+# NanoGPT
+npx cc-mirror quick --provider nanogpt --api-key "$NANOGPT_API_KEY"
+
+# GatewayZ
+npx cc-mirror quick --provider gatewayz --api-key "$GATEWAYZ_API_KEY" \
+  --model-sonnet "claude-3-5-sonnet-20241022"
+```
+
+### Local & Self-Hosted
+
+Run models on your own hardware:
+
+| Provider     | Models               | Auth     | Best For                      |
+| ------------ | -------------------- | -------- | ----------------------------- |
+| **Ollama**   | Local + cloud models | Auth Token | Local-first + hybrid setups |
+| **CCRouter** | Ollama, DeepSeek, etc. | Optional | Local-first development     |
+
+```bash
+# Ollama
+npx cc-mirror quick --provider ollama --api-key "ollama" \
+  --model-sonnet "qwen3-coder" --model-opus "qwen3-coder" --model-haiku "qwen3-coder"
+
+# CC Router (local LLMs)
+npx cc-mirror quick --provider ccrouter
+```
+
+### Mirror Claude
+
+Want a clean, isolated copy of vanilla Claude Code? The `mirror` provider gives you exactly that — no proxy, no model changes, just a separate config directory. Useful for testing or running multiple Claude Code instances side by side.
 
 ```bash
 npx cc-mirror quick --provider mirror --name mclaude
+mclaude
 ```
-
-- **Direct Anthropic API** — No proxy, authenticate normally (OAuth or API key)
-- **Isolated config** — Experiment without affecting your main setup
-- **Provider presets** — Clean defaults without hidden patches
-
-### Alternative Providers
-
-Want to use different models? CC-MIRROR supports multiple providers:
-
-| Provider       | Models                 | Auth       | Best For                        |
-| -------------- | ---------------------- | ---------- | ------------------------------- |
-| **Kimi**       | kimi-for-coding        | API Key    | Long-context coding (Kimi Code) |
-| **MiniMax**    | MiniMax-M2.5           | API Key    | Unified model experience        |
-| **Z.ai**       | GLM-5, 4.7, 4.5-Air    | API Key    | Heavy coding with GLM reasoning |
-| **OpenRouter** | 100+ models            | Auth Token | Model flexibility, pay-per-use  |
-| **Vercel**     | Multi-provider gateway | Auth Token | Vercel AI Gateway               |
-| **Ollama**     | Local + cloud models   | Auth Token | Local-first + hybrid setups     |
-| **NanoGPT**    | Claude Code endpoint   | Auth Token | Simple endpoint setup           |
-| **CCRouter**   | Ollama, DeepSeek, etc. | Optional   | Local-first development         |
-| **GatewayZ**   | Multi-provider gateway | Auth Token | Centralized routing             |
 
 ### Provider Setup Links
 
@@ -145,39 +199,6 @@ Want to use different models? CC-MIRROR supports multiple providers:
 | **NanoGPT**    | https://nano-gpt.com                                          | https://nano-gpt.com                                             | https://docs.nano-gpt.com/docs/anthropic-compatibility           |
 | **CCRouter**   | https://github.com/musistudio/claude-code-router#installation | https://github.com/musistudio/claude-code-router#2-configuration | https://github.com/musistudio/claude-code-router#2-configuration |
 | **GatewayZ**   | https://gatewayz.ai                                           | https://gatewayz.ai                                              | https://docs.gatewayz.ai/docs/anthropic-compatibility            |
-
-```bash
-# Kimi Code (kimi-for-coding)
-npx cc-mirror quick --provider kimi --api-key "$KIMI_API_KEY"
-
-# MiniMax (MiniMax-M2.5)
-npx cc-mirror quick --provider minimax --api-key "$MINIMAX_API_KEY"
-
-# Z.ai (GLM-5/4.7/4.5-Air)
-npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
-
-# OpenRouter (100+ models)
-npx cc-mirror quick --provider openrouter --api-key "$OPENROUTER_API_KEY" \
-  --model-sonnet "anthropic/claude-sonnet-4-20250514"
-
-# Vercel AI Gateway
-npx cc-mirror quick --provider vercel --api-key "$VERCEL_AI_GATEWAY_KEY" \
-  --model-sonnet "anthropic/claude-3-5-sonnet-20241022"
-
-# Ollama
-npx cc-mirror quick --provider ollama --api-key "ollama" \
-  --model-sonnet "qwen3-coder" --model-opus "qwen3-coder" --model-haiku "qwen3-coder"
-
-# NanoGPT
-npx cc-mirror quick --provider nanogpt --api-key "$NANOGPT_API_KEY"
-
-# CC Router (local LLMs)
-npx cc-mirror quick --provider ccrouter
-
-# GatewayZ
-npx cc-mirror quick --provider gatewayz --api-key "$GATEWAYZ_API_KEY" \
-  --model-sonnet "claude-3-5-sonnet-20241022"
-```
 
 ---
 
@@ -196,10 +217,9 @@ npx cc-mirror doctor              # Health check all variants
 npx cc-mirror tweak <name>        # Launch tweakcc customization
 
 # Launch your variant
-mclaude                           # Run Mirror Claude
+kimi                              # Run Kimi Code variant
 zai                               # Run Z.ai variant
 minimax                           # Run MiniMax variant
-kimi                              # Run Kimi Code variant
 ```
 
 ---
