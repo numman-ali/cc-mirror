@@ -8,7 +8,7 @@
 import path from 'node:path';
 import { getProvider, type ProviderTemplate } from '../../providers/index.js';
 import { DEFAULT_BIN_DIR, DEFAULT_CLAUDE_VERSION, DEFAULT_ROOT } from '../constants.js';
-import { assertValidVariantName, expandTilde, getWrapperPath } from '../paths.js';
+import { assertValidVariantName, detectCommandCollision, expandTilde, getWrapperPath } from '../paths.js';
 import type { CreateVariantParams, CreateVariantResult } from '../types.js';
 import type { BuildContext, BuildPaths, BuildPreferences, BuildState, BuildStep, ReportFn } from './types.js';
 
@@ -82,6 +82,23 @@ export class VariantBuilder {
     const tweakDir = path.join(variantDir, 'tweakcc');
     const wrapperPath = getWrapperPath(resolvedBin, params.name);
     const nativeDir = path.join(variantDir, 'native');
+
+    if (!params.allowCollision) {
+      const collision = detectCommandCollision(params.name, resolvedBin);
+      if (collision.hasCollision) {
+        const reasons: string[] = [];
+        if (collision.wrapperExists) {
+          reasons.push(`wrapper already exists at ${collision.wrapperPath}`);
+        }
+        if (collision.pathConflicts && collision.resolvedCommandPath) {
+          reasons.push(`'${params.name}' already resolves to ${collision.resolvedCommandPath}`);
+        }
+        throw new Error(
+          `Command name collision for "${params.name}": ${reasons.join('; ')}. ` +
+            'Use a unique variant name or set allowCollision to true.'
+        );
+      }
+    }
 
     const paths: BuildPaths = {
       resolvedRoot,

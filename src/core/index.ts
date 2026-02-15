@@ -18,6 +18,7 @@ import type {
 
 export { DEFAULT_ROOT, DEFAULT_BIN_DIR, DEFAULT_CLAUDE_VERSION, DEFAULT_CLAUDE_NATIVE_CACHE_DIR };
 export { expandTilde } from './paths.js';
+export { detectCommandCollision } from './paths.js';
 
 export const createVariant = (params: CreateVariantParams): CreateVariantResult => {
   return new VariantBuilder(false).build(params);

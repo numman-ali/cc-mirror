@@ -61,6 +61,8 @@ export interface CreateVariantParams {
   shellEnv?: boolean;
   skillUpdate?: boolean;
   tweakccStdio?: 'pipe' | 'inherit';
+  /** Allow wrapper command name collisions (unsafe). */
+  allowCollision?: boolean;
   /** Callback for progress updates during installation */
   onProgress?: ProgressCallback;
 }
