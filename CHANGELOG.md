@@ -2,6 +2,20 @@
 
 This repository tracks changes primarily through Git history.
 
+## v2.0.1
+
+### Fixes
+
+- **Windows tweakcc execution** — Invoke `tweakcc` via `cmd.exe` + `npx.cmd` so variant creation/update works reliably when `npx` isn’t directly executable.
+- **Windows PATH + tilde handling** — Better `~` expansion (supports `~\\`) and `list` now expands tilde before reading variants.
+- **Docs** — Fixed Windows PATH examples (avoid double-escaped backslashes).
+
+### CI / Dev
+
+- **CI** — Added a Windows end-to-end smoke test on every PR (bundle + quick create + list/doctor + wrapper).
+- **Tests** — Added regression coverage for Windows tweakcc execution and tilde expansion.
+- **Lint** — Fixed a macOS CI failure caused by an unused variable in `scripts/preview-splash-grid.mjs`.
+
 ## v2.0.0
 
 ### Breaking Changes
