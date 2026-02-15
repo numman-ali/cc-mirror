@@ -28,7 +28,7 @@
     "llm"
   ],
   "bin": {
-    "cc-mirror": "./dist/cc-mirror.mjs"
+    "cc-mirror": "dist/cc-mirror.mjs"
   },
   "files": [
     "dist"
