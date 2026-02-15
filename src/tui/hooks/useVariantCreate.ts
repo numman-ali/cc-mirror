@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import path from 'node:path';
 import type { CoreModule } from '../app.js';
 import type { CreateVariantParams, CompletionResult, ModelOverrides } from './types.js';
+import { detectCommandCollision } from '../../core/paths.js';
 
 export interface UseVariantCreateOptions {
   screen: string;
@@ -91,6 +92,22 @@ export function useVariantCreate(options: UseVariantCreateOptions): void {
 
     const runCreate = async () => {
       try {
+        const collision = detectCommandCollision(params.name, params.binDir);
+        if (collision.hasCollision) {
+          const suggested = params.provider?.defaultVariantName || `cc${params.providerKey}`;
+          const reasons: string[] = [];
+          if (collision.wrapperExists) {
+            reasons.push(`wrapper exists at ${collision.wrapperPath}`);
+          }
+          if (collision.pathConflicts && collision.resolvedCommandPath) {
+            reasons.push(`'${params.name}' resolves to ${collision.resolvedCommandPath}`);
+          }
+          throw new Error(
+            `Command name collision for "${params.name}": ${reasons.join('; ')}. ` +
+              `Choose another name (suggested: "${suggested}").`
+          );
+        }
+
         setProgressLines(() => []);
         const createParams = {
           name: params.name,
