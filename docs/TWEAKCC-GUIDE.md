@@ -35,7 +35,9 @@ tweakcc can patch either:
   - `TWEAKCC_CC_INSTALLATION_PATH=...` (cc-mirror uses the native `~/.cc-mirror/<variant>/native/claude` binary)
 - cc-mirror applies tweakcc after create/update, unless `--no-tweak`.
   - To re-apply patches without reinstalling Claude Code, run: `npx cc-mirror apply <variant>`
-- cc-mirror pins the tweakcc CLI version it runs (see `src/core/constants.ts`), so updates are reproducible. (You can still manually run a different version via `npx tweakcc@latest` if you need a hotfix for a brand-new Claude Code release.)
+- cc-mirror pins the tweakcc CLI version it runs (see `src/core/constants.ts`) so normal behavior stays reproducible.
+- If the pinned tweakcc version cannot extract a newer Claude Code native binary, cc-mirror automatically retries with `tweakcc@latest` before failing.
+- You can still manually run a different version via `npx tweakcc@latest` if you need to inspect or hotfix a brand-new Claude Code release yourself.
 
 ### Tool restrictions (no toolsets)
 
@@ -63,7 +65,7 @@ npx cc-mirror tweak <variant>
 VARIANT=<variant>
 TWEAKCC_CONFIG_DIR="$HOME/.cc-mirror/$VARIANT/tweakcc" \
 TWEAKCC_CC_INSTALLATION_PATH="$HOME/.cc-mirror/$VARIANT/native/claude" \
-npx tweakcc@4.0.1
+npx tweakcc@4.0.11
 ```
 
 ### Apply specific optional patches
@@ -72,10 +74,10 @@ npx tweakcc@4.0.1
 VARIANT=<variant>
 TWEAKCC_CONFIG_DIR="$HOME/.cc-mirror/$VARIANT/tweakcc" \
 TWEAKCC_CC_INSTALLATION_PATH="$HOME/.cc-mirror/$VARIANT/native/claude" \
-npx tweakcc@4.0.1 --apply --patches "<patch-a>,<patch-b>"
+npx tweakcc@4.0.11 --apply --patches "<patch-a>,<patch-b>"
 ```
 
-Patch names depend on your tweakcc version. Run `npx tweakcc@4.0.1 --help` (or open the tweakcc UI patch list) to confirm available patch IDs.
+Patch names depend on your tweakcc version. Run `npx tweakcc@4.0.11 --help` (or open the tweakcc UI patch list) to confirm available patch IDs.
 
 ## Recommended implementation patterns
 

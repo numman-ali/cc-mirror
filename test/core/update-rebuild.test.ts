@@ -63,7 +63,7 @@ const createContext = (rootDir: string, binDir: string, opts: UpdateContext['opt
   return ctx;
 };
 
-test('RebuildUpdateStep resets claude/tweakcc but preserves config', () => {
+test('RebuildUpdateStep resets tweakcc artifacts but keeps working native install + wrapper in place', () => {
   const rootDir = makeTempDir('update-rebuild-');
   const binDir = makeTempDir('update-bin-');
 
@@ -89,7 +89,8 @@ test('RebuildUpdateStep resets claude/tweakcc but preserves config', () => {
 
     new RebuildUpdateStep().execute(ctx);
 
-    assert.equal(fs.existsSync(paths.nativeDir), false, 'native dir should be removed');
+    assert.ok(fs.existsSync(paths.nativeDir), 'native dir should remain until replacement install succeeds');
+    assert.ok(fs.existsSync(path.join(paths.nativeDir, 'marker.txt')), 'existing native files should remain');
     assert.ok(fs.existsSync(meta.tweakDir), 'tweakcc dir should be recreated');
     assert.ok(fs.existsSync(path.join(meta.tweakDir, 'config.json')), 'tweakcc config should be preserved');
     assert.equal(
@@ -97,9 +98,12 @@ test('RebuildUpdateStep resets claude/tweakcc but preserves config', () => {
       false,
       'old tweakcc prompt files should be removed'
     );
-    assert.equal(fs.existsSync(wrapperPath), false, 'wrapper should be removed');
+    assert.ok(fs.existsSync(wrapperPath), 'wrapper should remain until the new one is written');
     if (isWindows) {
-      assert.equal(fs.existsSync(getWrapperScriptPath(binDir, ctx.name)), false, 'wrapper script should be removed');
+      assert.ok(
+        fs.existsSync(getWrapperScriptPath(binDir, ctx.name)),
+        'wrapper script should remain until the new one is written'
+      );
     }
   } finally {
     cleanup(rootDir);

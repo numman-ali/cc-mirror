@@ -3,7 +3,7 @@
  */
 
 import { applyPromptPack } from '../../prompt-pack.js';
-import { runTweakcc, runTweakccAsync } from '../../tweakcc.js';
+import { getTweakccFallbackNote, runTweakcc, runTweakccAsync } from '../../tweakcc.js';
 import { formatTweakccFailure } from '../../errors.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
@@ -19,6 +19,10 @@ export class TweakccStep implements BuildStep {
 
     ctx.report('Running tweakcc patches...');
     state.tweakResult = runTweakcc(paths.tweakDir, state.binaryPath, prefs.commandStdio);
+    const fallbackNote = getTweakccFallbackNote(state.tweakResult);
+    if (fallbackNote && !state.notes.includes(fallbackNote)) {
+      state.notes.push(fallbackNote);
+    }
 
     if (state.tweakResult.status !== 0) {
       const output = `${state.tweakResult.stderr ?? ''}\n${state.tweakResult.stdout ?? ''}`.trim();
@@ -41,6 +45,10 @@ export class TweakccStep implements BuildStep {
       ctx.report('Re-applying tweakcc...');
       const reapply = runTweakcc(paths.tweakDir, state.binaryPath, prefs.commandStdio);
       state.tweakResult = reapply;
+      const reapplyFallbackNote = getTweakccFallbackNote(reapply);
+      if (reapplyFallbackNote && !state.notes.includes(reapplyFallbackNote)) {
+        state.notes.push(reapplyFallbackNote);
+      }
 
       if (reapply.status !== 0) {
         const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();
@@ -58,6 +66,10 @@ export class TweakccStep implements BuildStep {
 
     await ctx.report('Running tweakcc patches...');
     state.tweakResult = await runTweakccAsync(paths.tweakDir, state.binaryPath, prefs.commandStdio);
+    const fallbackNote = getTweakccFallbackNote(state.tweakResult);
+    if (fallbackNote && !state.notes.includes(fallbackNote)) {
+      state.notes.push(fallbackNote);
+    }
 
     if (state.tweakResult.status !== 0) {
       const output = `${state.tweakResult.stderr ?? ''}\n${state.tweakResult.stdout ?? ''}`.trim();
@@ -80,6 +92,10 @@ export class TweakccStep implements BuildStep {
       await ctx.report('Re-applying tweakcc...');
       const reapply = await runTweakccAsync(paths.tweakDir, state.binaryPath, prefs.commandStdio);
       state.tweakResult = reapply;
+      const reapplyFallbackNote = getTweakccFallbackNote(reapply);
+      if (reapplyFallbackNote && !state.notes.includes(reapplyFallbackNote)) {
+        state.notes.push(reapplyFallbackNote);
+      }
 
       if (reapply.status !== 0) {
         const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();

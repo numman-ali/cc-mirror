@@ -1,13 +1,14 @@
 /**
  * RebuildUpdateStep - Resets variant install dirs for a clean update
  *
- * Keeps config (settings, approvals, skills) but rebuilds claude/tweakcc + wrapper.
+ * Keeps config (settings, approvals, skills) and preserves the currently working
+ * native binary + wrapper until the new update succeeds. tweakcc artifacts are
+ * still reset so prompt files are regenerated cleanly for the new Claude build.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { ensureDir } from '../../fs.js';
-import { expandTilde, getWrapperPath, getWrapperScriptPath, isWindows } from '../../paths.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
 
 export class RebuildUpdateStep implements UpdateStep {
@@ -44,22 +45,8 @@ export class RebuildUpdateStep implements UpdateStep {
       fs.rmSync(legacyNpmDir, { recursive: true, force: true });
     }
 
-    if (fs.existsSync(paths.nativeDir)) {
-      fs.rmSync(paths.nativeDir, { recursive: true, force: true });
-    }
-
     if (shouldResetTweakcc && fs.existsSync(meta.tweakDir)) {
       fs.rmSync(meta.tweakDir, { recursive: true, force: true });
-    }
-
-    const resolvedBin = opts.binDir ? (expandTilde(opts.binDir) ?? opts.binDir) : meta.binDir;
-    if (resolvedBin) {
-      const wrapperPath = getWrapperPath(resolvedBin, ctx.name);
-      fs.rmSync(wrapperPath, { force: true });
-      if (isWindows) {
-        const scriptPath = getWrapperScriptPath(resolvedBin, ctx.name);
-        fs.rmSync(scriptPath, { force: true });
-      }
     }
 
     if (shouldResetTweakcc && state.savedTweakccConfig) {

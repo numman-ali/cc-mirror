@@ -5,7 +5,7 @@
 import { resolveBrandKey } from '../../../brands/index.js';
 import { ensureDir } from '../../fs.js';
 import { applyPromptPack } from '../../prompt-pack.js';
-import { ensureTweakccConfig, runTweakcc, runTweakccAsync } from '../../tweakcc.js';
+import { ensureTweakccConfig, getTweakccFallbackNote, runTweakcc, runTweakccAsync } from '../../tweakcc.js';
 import { formatTweakccFailure } from '../../errors.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
 
@@ -43,6 +43,10 @@ export class TweakccUpdateStep implements UpdateStep {
       : runTweakcc(meta.tweakDir, meta.binaryPath, prefs.commandStdio);
 
     state.tweakResult = tweakResult;
+    const fallbackNote = getTweakccFallbackNote(tweakResult);
+    if (fallbackNote && !state.notes.includes(fallbackNote)) {
+      state.notes.push(fallbackNote);
+    }
 
     if (tweakResult.status !== 0) {
       const output = `${tweakResult.stderr ?? ''}\n${tweakResult.stdout ?? ''}`.trim();
@@ -78,6 +82,10 @@ export class TweakccUpdateStep implements UpdateStep {
         : runTweakcc(meta.tweakDir, meta.binaryPath, prefs.commandStdio);
 
       state.tweakResult = reapply;
+      const reapplyFallbackNote = getTweakccFallbackNote(reapply);
+      if (reapplyFallbackNote && !state.notes.includes(reapplyFallbackNote)) {
+        state.notes.push(reapplyFallbackNote);
+      }
 
       if (reapply.status !== 0) {
         const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();
