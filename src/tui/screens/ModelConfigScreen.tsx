@@ -67,6 +67,11 @@ function getPlaceholder(providerKey: string | undefined, model: 'opus' | 'sonnet
       sonnet: 'MiniMax-M2.5',
       haiku: 'MiniMax-M2.5',
     },
+    deepseek: {
+      opus: 'deepseek-reasoner',
+      sonnet: 'deepseek-chat',
+      haiku: 'deepseek-chat',
+    },
     openrouter: {
       opus: 'anthropic/claude-3-opus',
       sonnet: 'anthropic/claude-3.5-sonnet',
