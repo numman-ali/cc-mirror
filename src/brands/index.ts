@@ -9,6 +9,7 @@ import { buildOllamaTweakccConfig } from './ollama.js';
 import { buildGatewayzTweakccConfig } from './gatewayz.js';
 import { buildVercelTweakccConfig } from './vercel.js';
 import { buildNanoGPTTweakccConfig } from './nanogpt.js';
+import { buildDeepSeekTweakccConfig } from './deepseek.js';
 
 export interface BrandPreset {
   key: string;
@@ -29,6 +30,12 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
     label: 'MiniMax Nebula',
     description: 'Electric violet + neon cyberpunk palette',
     buildTweakccConfig: buildMinimaxTweakccConfig,
+  },
+  deepseek: {
+    key: 'deepseek',
+    label: 'DeepSeek Abyss',
+    description: 'Deep ocean blue palette with teal accents',
+    buildTweakccConfig: buildDeepSeekTweakccConfig,
   },
   kimi: {
     key: 'kimi',
