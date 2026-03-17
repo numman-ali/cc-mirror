@@ -59,6 +59,11 @@ const C = {
   olSecondary: '\x1b[38;5;223m', // Light tan
   olAccent: '\x1b[38;5;137m', // Deep brown
   olDim: '\x1b[38;5;101m', // Muted brown
+  // Alibaba: Purple/Dark Blue/Aqua gradient (brand: #a371f7, #1f6feb, #2dd4bf)
+  alPrimary: '\x1b[38;5;141m', // Purple
+  alSecondary: '\x1b[38;5;33m', // Dark blue
+  alAccent: '\x1b[38;5;50m', // Aqua
+  alDim: '\x1b[38;5;97m', // Muted purple
   // Default: White/Gray
   defPrimary: '\x1b[38;5;255m', // White
   defDim: '\x1b[38;5;245m', // Gray
@@ -228,6 +233,24 @@ const SPLASH_ART: SplashArt = {
     `${C.olSecondary}              Run Models Locally${C.reset}`,
     '',
   ],
+  // Alibaba: Cloud + block letters
+  alibaba: [
+    '',
+    `${C.alDim}    ◈━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━◈${C.reset}`,
+    `${C.alSecondary}      A L I B A B A   C L O U D${C.reset}`,
+    `${C.alDim}    ◈━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━◈${C.reset}`,
+    '',
+    `${C.alPrimary}    ██████╗  ██████╗  █████╗ ██╗  ██╗███████╗██████╗ ${C.alAccent}███████╗███████╗${C.reset}`,
+    `${C.alPrimary}   ██╔════╝ ██╔═══██╗██╔══██╗╚██╗██╔╝██╔════╝██╔══██╗${C.alAccent}╚══███╔╝╚══███╔╝${C.reset}`,
+    `${C.alSecondary}   ██║  ███╗██║   ██║███████║ ╚███╔╝ █████╗  ██████╔╝${C.alAccent}  ███╔╝   ███╔╝${C.reset}`,
+    `${C.alSecondary}   ██║   ██║██║   ██║██╔══██║ ██╔██╗ ██╔══╝  ██╔══██╗${C.alAccent} ███╔╝   ███╔╝${C.reset}`,
+    `${C.alAccent}   ╚██████╔╝╚██████╔╝██║  ██║██╔╝ ██╗███████╗██║  ██║${C.alAccent}███████╗███████╗${C.reset}`,
+    `${C.alAccent}    ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝${C.alAccent}╚══════╝╚══════╝${C.reset}`,
+    '',
+    `${C.alDim}    ━━━━━━━━━━━━━━━━━━━━━━━${C.alPrimary}◆${C.alDim}━━━━━━━━━━━━━━━━━━━━━━━${C.reset}`,
+    `${C.alSecondary}           Coding Plan ${C.alDim}━${C.alSecondary} DashScope${C.reset}`,
+    '',
+  ],
   default: [
     '',
     `${C.defPrimary}    ██████╗ ██████╗   ${C.defDim}━━  M I R R O R${C.reset}`,
@@ -244,6 +267,7 @@ const KNOWN_SPLASH_STYLES = [
   'zai',
   'minimax',
   'kimi',
+  'alibaba',
   'openrouter',
   'ccrouter',
   'mirror',
@@ -487,6 +511,12 @@ export const writeWrapper = (
     "        cat <<'CCMOL'",
     ...SPLASH_ART.ollama,
     'CCMOL',
+    '        __cc_show_label="0"',
+    '        ;;',
+    '      alibaba)',
+    "        cat <<'CCMAL'",
+    ...SPLASH_ART.alibaba,
+    'CCMAL',
     '        __cc_show_label="0"',
     '        ;;',
     '      *)',

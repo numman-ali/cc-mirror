@@ -9,6 +9,7 @@ import { buildOllamaTweakccConfig } from './ollama.js';
 import { buildGatewayzTweakccConfig } from './gatewayz.js';
 import { buildVercelTweakccConfig } from './vercel.js';
 import { buildNanoGPTTweakccConfig } from './nanogpt.js';
+import { buildAlibabaTweakccConfig } from './alibaba.js';
 
 export interface BrandPreset {
   key: string;
@@ -77,6 +78,12 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
     label: 'Mirror Claude',
     description: 'Reflective silver/chrome theme for pure Claude Code experience.',
     buildTweakccConfig: buildMirrorTweakccConfig,
+  },
+  alibaba: {
+    key: 'alibaba',
+    label: 'Alibaba Aurora',
+    description: 'Purple, dark blue, and aqua palette for Alibaba Cloud Coding Plan.',
+    buildTweakccConfig: buildAlibabaTweakccConfig,
   },
 };
 
