@@ -19,6 +19,7 @@ FOCUS
 QUICK START
   npx cc-mirror quick --provider mirror    # Fastest path to Claude
   npx cc-mirror quick --provider zai       # Z.ai with GLM models
+  npx cc-mirror quick --provider alibaba   # Alibaba Cloud Coding Plan
   npx cc-mirror quick --provider ollama    # Ollama local + cloud models
   npx cc-mirror                            # Interactive TUI
 
@@ -34,10 +35,10 @@ COMMANDS
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)
-  --provider <name>            Provider: kimi | minimax | zai | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz
+  --provider <name>            Provider: kimi | minimax | zai | alibaba | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz
   --api-key <key>              Provider API key
   --auth-token <token>         Alias for --api-key (auth-token providers)
-  --brand <preset>             Theme: auto | none | kimi | minimax | zai | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz
+  --brand <preset>             Theme: auto | none | kimi | minimax | zai | alibaba | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz
   --tui / --no-tui             Force TUI on/off
 
 OPTIONS (advanced)
@@ -62,6 +63,7 @@ PROVIDERS
   kimi          kimi-for-coding via Kimi Code
   minimax       MiniMax via MiniMax Cloud
   zai           GLM-5/4.7/4.5-Air via Z.ai Coding Plan
+  alibaba       Alibaba Cloud Coding Plan (DashScope)
   openrouter    100+ models via OpenRouter
   vercel        Vercel AI Gateway
   ollama        Local + cloud models via Ollama
@@ -72,6 +74,7 @@ PROVIDERS
 EXAMPLES
   npx cc-mirror quick --provider mirror --name mclaude
   npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
+  npx cc-mirror quick --provider alibaba --api-key "$ALIBABA_API_KEY"
   npx cc-mirror apply mclaude
   npx cc-mirror update mclaude --claude-version latest
   npx cc-mirror doctor
