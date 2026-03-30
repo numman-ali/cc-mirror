@@ -63,9 +63,9 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     ],
     bestFor: 'Streamlined experience with one powerful model',
     models: {
-      opus: 'MiniMax-M2.5',
-      sonnet: 'MiniMax-M2.5',
-      haiku: 'MiniMax-M2.5',
+      opus: 'MiniMax-M2.7',
+      sonnet: 'MiniMax-M2.7',
+      haiku: 'MiniMax-M2.7',
     },
     requiresMapping: false,
     hasPromptPack: true,
