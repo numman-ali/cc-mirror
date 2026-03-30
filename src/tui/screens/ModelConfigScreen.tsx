@@ -63,9 +63,9 @@ function getPlaceholder(providerKey: string | undefined, model: 'opus' | 'sonnet
       haiku: 'glm-4.5-air',
     },
     minimax: {
-      opus: 'MiniMax-M2.5',
-      sonnet: 'MiniMax-M2.5',
-      haiku: 'MiniMax-M2.5',
+      opus: 'MiniMax-M2.7',
+      sonnet: 'MiniMax-M2.7',
+      haiku: 'MiniMax-M2.7',
     },
     openrouter: {
       opus: 'anthropic/claude-3-opus',
