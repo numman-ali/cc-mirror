@@ -21,7 +21,7 @@ export class FinalizeUpdateStep implements UpdateStep {
   }
 
   private finalize(ctx: UpdateContext): void {
-    const { meta, paths, prefs } = ctx;
+    const { meta, paths, prefs, state } = ctx;
 
     meta.updatedAt = new Date().toISOString();
     meta.promptPack = prefs.promptPackPreference;
@@ -52,6 +52,9 @@ export class FinalizeUpdateStep implements UpdateStep {
       nativeVersion: meta.nativeVersion,
       nativeVersionSource: meta.nativeVersionSource,
       nativePlatform: meta.nativePlatform,
+      // Reflect this update's outcome. Drop the flag on successful re-tweak;
+      // set it when the update rolled back.
+      tweakRolledBack: state.tweakRolledBack ? true : undefined,
     };
 
     ctx.meta = sanitized;

@@ -18,7 +18,7 @@ export class InstallNativeUpdateStep implements UpdateStep {
   async executeAsync(ctx: UpdateContext): Promise<void> {
     if (ctx.opts.settingsOnly) return;
 
-    const { meta, paths, prefs } = ctx;
+    const { meta, paths, prefs, state } = ctx;
     await ctx.report(`Installing Claude Code (native) ${prefs.resolvedClaudeVersion}...`);
 
     ensureDir(paths.nativeDir);
@@ -41,5 +41,10 @@ export class InstallNativeUpdateStep implements UpdateStep {
     }
     meta.nativePlatform = install.platform;
     meta.claudeOrig = `native:${install.resolvedVersion}`;
+
+    // Thread resolved version + platform to downstream steps (TweakccUpdateStep
+    // needs them to locate the pristine binary in cache for rollback).
+    state.nativeResolvedVersion = install.resolvedVersion;
+    state.nativePlatform = install.platform;
   }
 }

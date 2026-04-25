@@ -26,6 +26,12 @@ export interface VariantMeta {
    */
   nativeVersionSource?: 'default' | 'pinned';
   nativePlatform?: string;
+  /**
+   * True if tweakcc patch failed (or corrupted the binary) on the last
+   * create/update and we restored the pristine binary from cache. The
+   * variant is functionally equivalent to one created with --no-tweak.
+   */
+  tweakRolledBack?: boolean;
 }
 
 export interface VariantEntry {

@@ -21,7 +21,7 @@ const assertValidClaudeVersion = (value: string) => {
   }
 };
 
-const resolveNativePlatformKey = (): string => {
+export const resolveNativePlatformKey = (): string => {
   const os = process.platform;
   const arch = process.arch;
 
@@ -251,4 +251,54 @@ export const installNativeClaudeAsync = async (params: {
   }
 
   return { binaryPath, resolvedVersion, platform };
+};
+
+export interface RestorePristineResult {
+  restored: boolean;
+  cachePath?: string;
+  reason?: 'cache-missing' | 'copy-failed';
+  error?: Error;
+}
+
+/**
+ * Copy the cached pristine native binary back to the variant. Used when a
+ * downstream step (e.g. tweakcc) corrupts the binary and we need to roll
+ * forward by reverting to the SHA256-verified pristine copy already in cache.
+ *
+ * Cache layout matches installNativeClaudeAsync exactly:
+ *   <cacheDir>/<resolvedVersion>/<platform>/claude   (or claude.exe on Windows)
+ */
+export const restorePristineBinary = (params: {
+  binaryPath: string;
+  cacheDir: string;
+  resolvedVersion: string;
+  platform: string;
+}): RestorePristineResult => {
+  const cacheRoot = params.cacheDir?.trim();
+  if (!cacheRoot || !params.resolvedVersion || !params.platform) {
+    return { restored: false, reason: 'cache-missing' };
+  }
+  const cachePath = resolveNativeClaudePath(path.join(cacheRoot, params.resolvedVersion, params.platform));
+  if (!fs.existsSync(cachePath)) {
+    return { restored: false, cachePath, reason: 'cache-missing' };
+  }
+  try {
+    fs.rmSync(params.binaryPath, { force: true });
+    fs.copyFileSync(cachePath, params.binaryPath);
+    if (process.platform !== 'win32') {
+      try {
+        fs.chmodSync(params.binaryPath, 0o755);
+      } catch {
+        // ignore chmod failure (e.g. exotic filesystems); copy already succeeded.
+      }
+    }
+    return { restored: true, cachePath };
+  } catch (err) {
+    return {
+      restored: false,
+      cachePath,
+      reason: 'copy-failed',
+      error: err instanceof Error ? err : new Error(String(err)),
+    };
+  }
 };

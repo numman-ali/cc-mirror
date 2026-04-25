@@ -55,6 +55,91 @@ export const getTweakccFallbackNote = (result: TweakccResult | null | undefined)
   return `Pinned tweakcc@${fallbackFrom} could not read this Claude Code binary; automatically retried with tweakcc@${used}.`;
 };
 
+export interface SmokeTestResult {
+  ok: boolean;
+  status: number | null;
+  signal: NodeJS.Signals | null;
+  stderr: string;
+  stdout: string;
+  timedOut: boolean;
+  error?: string;
+}
+
+const SMOKE_TIMEOUT_MS = 5000;
+
+/**
+ * Spawn `<binaryPath> --version` and confirm it exits 0 within timeoutMs.
+ *
+ * Used post-tweakcc to detect a corrupted Bun standalone binary before we
+ * write the wrapper. The Bun 1.3.13 darwin regression manifests as a
+ * non-zero exit with a CJS-wrapper assertion on stderr; this catches it.
+ */
+export const smokeTestBinary = (binaryPath: string, timeoutMs: number = SMOKE_TIMEOUT_MS): SmokeTestResult => {
+  let result;
+  try {
+    result = spawnSync(binaryPath, ['--version'], {
+      timeout: timeoutMs,
+      stdio: 'pipe',
+      encoding: 'utf8',
+      windowsHide: true,
+    });
+  } catch (err) {
+    return {
+      ok: false,
+      status: null,
+      signal: null,
+      stderr: '',
+      stdout: '',
+      timedOut: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
+  }
+
+  // Node sets signal=SIGTERM on timeout; also surfaces err on `error`.
+  const timedOut = Boolean(result.error && (result.error as NodeJS.ErrnoException).code === 'ETIMEDOUT');
+  const signal = (result.signal ?? null) as NodeJS.Signals | null;
+  const status = result.status ?? null;
+
+  return {
+    ok: status === 0 && !timedOut && !signal && !result.error,
+    status,
+    signal,
+    stderr: result.stderr ?? '',
+    stdout: result.stdout ?? '',
+    timedOut,
+    error: result.error?.message,
+  };
+};
+
+export type TweakccPatchFailure =
+  | { kind: 'tweakcc-failed'; output: string; tweakccSpec?: string }
+  | { kind: 'smoke-failed'; smoke: SmokeTestResult; tweakccSpec?: string };
+
+const tail3 = (text: string): string =>
+  text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .slice(-3)
+    .join(' | ');
+
+export const formatRollbackNote = (fail: TweakccPatchFailure): string => {
+  if (fail.kind === 'smoke-failed') {
+    const reason = fail.smoke.timedOut
+      ? 'binary hung'
+      : fail.smoke.signal
+        ? `killed by ${fail.smoke.signal}`
+        : fail.smoke.error
+          ? `spawn error: ${fail.smoke.error}`
+          : `exit ${fail.smoke.status}`;
+    const detail = tail3(fail.smoke.stderr);
+    const suffix = detail ? `: ${detail}` : '';
+    return `tweakcc patch corrupted the binary (${reason}${suffix}); restored pristine. Brand theme + prompt overlays disabled.`;
+  }
+  const detail = tail3(fail.output);
+  return `tweakcc failed (${detail || 'no output'}); restored pristine. Brand theme + prompt overlays disabled.`;
+};
+
 export const ensureTweakccConfig = (tweakDir: string, brandKey?: string | null): boolean => {
   if (!brandKey) return false;
   const configPath = path.join(tweakDir, 'config.json');

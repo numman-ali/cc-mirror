@@ -53,6 +53,8 @@ export interface BuildState {
   env?: ProviderEnv;
   resolvedApiKey?: string;
   meta?: VariantMeta;
+  /** Set by TweakccStep when patch failed and pristine was restored. */
+  tweakRolledBack?: boolean;
 }
 
 /**
@@ -138,6 +140,12 @@ export interface UpdateState {
   tweakResult: TweakResult | null;
   brandKey: string | null;
   savedTweakccConfig?: string;
+  /** Set by TweakccUpdateStep when patch failed and pristine was restored. */
+  tweakRolledBack?: boolean;
+  /** Resolved Claude Code version (e.g. "2.1.119") populated by InstallNativeUpdateStep. */
+  nativeResolvedVersion?: string;
+  /** Platform key (e.g. "darwin-arm64") populated by InstallNativeUpdateStep. */
+  nativePlatform?: string;
 }
 
 /**

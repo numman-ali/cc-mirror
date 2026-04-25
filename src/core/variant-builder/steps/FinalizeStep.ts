@@ -44,6 +44,9 @@ export class FinalizeStep implements BuildStep {
     meta.nativeVersion = prefs.resolvedClaudeVersion;
     meta.nativeVersionSource = meta.nativeVersion === DEFAULT_CLAUDE_VERSION ? 'default' : 'pinned';
     meta.nativePlatform = state.nativePlatform;
+    if (state.tweakRolledBack) {
+      meta.tweakRolledBack = true;
+    }
 
     writeJson(path.join(paths.variantDir, 'variant.json'), meta);
 
