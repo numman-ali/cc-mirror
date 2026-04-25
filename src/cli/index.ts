@@ -13,6 +13,7 @@ import {
   runUpdateCommand,
   runApplyCommand,
   runCreateCommand,
+  runUnpackCommand,
 } from './commands/index.js';
 
 const main = async () => {
@@ -72,6 +73,10 @@ const main = async () => {
 
     case 'tweak':
       runTweakCommand({ opts });
+      break;
+
+    case 'unpack':
+      runUnpackCommand({ opts });
       break;
 
     case 'create':

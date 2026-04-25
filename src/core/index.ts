@@ -7,9 +7,11 @@ import { ensureTweakccConfig, launchTweakccUi } from './tweakcc.js';
 import { formatTweakccFailure } from './errors.js';
 import { listVariants as listVariantsImpl, loadVariantMeta } from './variants.js';
 import { VariantBuilder, VariantUpdater } from './variant-builder/index.js';
+import { parseBunBinary } from './bun-extract.js';
 import type {
   CreateVariantParams,
   CreateVariantResult,
+  DoctorBunInfo,
   DoctorReportItem,
   UpdateVariantOptions,
   UpdateVariantResult,
@@ -52,6 +54,29 @@ export const removeVariant = (rootDir: string, name: string) => {
   fs.rmSync(variantDir, { recursive: true, force: true });
 };
 
+// Skip Bun parsing for binaries above this size to keep `doctor` snappy.
+// Real Claude Code builds are well under this; anything larger is suspicious.
+const DOCTOR_BUN_PARSE_MAX_BYTES = 500 * 1024 * 1024;
+
+const inspectBunBinary = (binaryPath: string): DoctorBunInfo | undefined => {
+  try {
+    const stat = fs.statSync(binaryPath);
+    if (stat.size > DOCTOR_BUN_PARSE_MAX_BYTES) return undefined;
+    const buf = fs.readFileSync(binaryPath);
+    const info = parseBunBinary(buf);
+    return {
+      platform: info.platform,
+      moduleSize: info.moduleSize,
+      moduleCount: info.modules.length,
+      entryPath: info.modules[info.entryPointId]?.name,
+      bunVersionHint: info.bunVersionHint,
+      hasCodeSignature: info.hasCodeSignature,
+    };
+  } catch (err) {
+    return { platform: 'elf', moduleSize: 0, moduleCount: 0, error: (err as Error).message };
+  }
+};
+
 export const doctor = (rootDir: string, binDir: string): DoctorReportItem[] => {
   const resolvedRoot = expandTilde(rootDir || DEFAULT_ROOT) ?? rootDir;
   const resolvedBin = expandTilde(binDir || DEFAULT_BIN_DIR) ?? binDir;
@@ -60,12 +85,14 @@ export const doctor = (rootDir: string, binDir: string): DoctorReportItem[] => {
     const wrapperPath = getWrapperPath(resolvedBin, name);
     const wrapperOk = fs.existsSync(wrapperPath);
     const scriptOk = !isWindows || fs.existsSync(getWrapperScriptPath(resolvedBin, name));
-    const ok = Boolean(meta && fs.existsSync(meta.binaryPath) && wrapperOk && scriptOk);
+    const binaryExists = Boolean(meta && fs.existsSync(meta.binaryPath));
+    const ok = Boolean(meta && binaryExists && wrapperOk && scriptOk);
     return {
       name,
       ok,
       binaryPath: meta?.binaryPath,
       wrapperPath,
+      bunInfo: binaryExists && meta ? inspectBunBinary(meta.binaryPath) : undefined,
     };
   });
 };

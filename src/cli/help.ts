@@ -31,6 +31,7 @@ COMMANDS
   remove <name>                Remove a variant
   doctor                       Health check all variants
   tweak <name>                 Launch tweakcc customization
+  unpack <name|path>           Extract embedded JS modules from a Claude Code binary
 
 OPTIONS (create/quick)
   --name <name>                Variant name (becomes CLI command)

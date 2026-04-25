@@ -11,5 +11,19 @@ export const printDoctor = (report: DoctorReportItem[]) => {
       console.log(`  binary: ${item.binaryPath ?? 'missing'}`);
       console.log(`  wrapper: ${item.wrapperPath}`);
     }
+    if (item.bunInfo) {
+      const b = item.bunInfo;
+      if (b.error) {
+        console.log(`  bun: parse failed - ${b.error}`);
+      } else {
+        const parts = [
+          b.platform,
+          `${b.moduleCount} modules`,
+          b.entryPath ? `entry=${b.entryPath}` : null,
+          b.bunVersionHint,
+        ].filter(Boolean);
+        console.log(`  bun: ${parts.join(', ')}`);
+      }
+    }
   }
 };

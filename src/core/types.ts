@@ -90,11 +90,22 @@ export interface UpdateVariantOptions {
   onProgress?: ProgressCallback;
 }
 
+export interface DoctorBunInfo {
+  platform: 'macho' | 'elf' | 'pe';
+  moduleSize: number;
+  moduleCount: number;
+  entryPath?: string;
+  bunVersionHint?: string;
+  hasCodeSignature?: boolean;
+  error?: string;
+}
+
 export interface DoctorReportItem {
   name: string;
   ok: boolean;
   binaryPath?: string;
   wrapperPath: string;
+  bunInfo?: DoctorBunInfo;
 }
 
 export interface CreateVariantResult {
