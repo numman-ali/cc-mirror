@@ -106,6 +106,7 @@ export class VariantUpdater {
       resolvedBin: opts.binDir ? (expandTilde(opts.binDir) ?? opts.binDir) : meta.binDir,
       variantDir,
       nativeDir: meta.nativeDir || path.join(variantDir, 'native'),
+      unpackedDir: meta.unpackedDir || path.join(variantDir, 'unpacked'),
     };
 
     const prefs: UpdatePreferences = {

@@ -24,14 +24,20 @@ export class WrapperUpdateStep implements UpdateStep {
   }
 
   private writeWrapper(ctx: UpdateContext): void {
-    const { name, opts, meta } = ctx;
+    const { name, opts, meta, state } = ctx;
 
     const resolvedBin = opts.binDir ? (expandTilde(opts.binDir) ?? opts.binDir) : meta.binDir;
 
     if (resolvedBin) {
       ensureDir(resolvedBin);
       const wrapperPath = getWrapperPath(resolvedBin, name);
-      writeWrapper(wrapperPath, meta.configDir, meta.binaryPath, 'native');
+      // Prefer the freshly-resolved runtime from this update; fall back to the
+      // persisted choice in variant.json (so settings-only updates keep the
+      // previously chosen runtime).
+      const runtime = state.wrapperRuntime ?? meta.wrapperRuntime ?? 'native';
+      const target =
+        runtime === 'node' ? (state.nodeEntryPath ?? meta.nodeEntryPath ?? meta.binaryPath) : meta.binaryPath;
+      writeWrapper(wrapperPath, meta.configDir, target, runtime);
       meta.binDir = resolvedBin;
       const pathResult = ensureWindowsUserPath(resolvedBin);
       if (pathResult.status === 'updated') {

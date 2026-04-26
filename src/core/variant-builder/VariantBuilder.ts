@@ -82,6 +82,7 @@ export class VariantBuilder {
     const tweakDir = path.join(variantDir, 'tweakcc');
     const wrapperPath = getWrapperPath(resolvedBin, params.name);
     const nativeDir = path.join(variantDir, 'native');
+    const unpackedDir = path.join(variantDir, 'unpacked');
 
     const paths: BuildPaths = {
       resolvedRoot,
@@ -91,6 +92,7 @@ export class VariantBuilder {
       tweakDir,
       wrapperPath,
       nativeDir,
+      unpackedDir,
     };
 
     const resolvedClaudeVersion = normalizeClaudeVersion(params.claudeVersion);

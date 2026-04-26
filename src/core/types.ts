@@ -33,6 +33,20 @@ export interface VariantMeta {
    * Field name kept for variant.json compatibility across upgrades.
    */
   tweakRolledBack?: boolean;
+  /**
+   * Runtime the wrapper script invokes. `'native'` (default) runs the
+   * Bun-compiled binary at binaryPath; `'node'` runs `node nodeEntryPath`,
+   * used on macOS when the binary patcher had to fall back to the
+   * unpack-and-run-via-node path. Persisted so update preserves the choice.
+   */
+  wrapperRuntime?: 'native' | 'node';
+  /**
+   * Path of the patched JS entry module produced by the unpack-and-run-via-node
+   * path. Set only when wrapperRuntime === 'node'.
+   */
+  nodeEntryPath?: string;
+  /** Directory holding the unpacked JS modules + node_modules (set with nodeEntryPath). */
+  unpackedDir?: string;
 }
 
 export interface VariantEntry {

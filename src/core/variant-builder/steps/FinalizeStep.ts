@@ -47,6 +47,13 @@ export class FinalizeStep implements BuildStep {
     if (state.tweakRolledBack) {
       meta.tweakRolledBack = true;
     }
+    if (state.wrapperRuntime) {
+      meta.wrapperRuntime = state.wrapperRuntime;
+    }
+    if (state.nodeEntryPath) {
+      meta.nodeEntryPath = state.nodeEntryPath;
+      meta.unpackedDir = paths.unpackedDir;
+    }
 
     writeJson(path.join(paths.variantDir, 'variant.json'), meta);
 

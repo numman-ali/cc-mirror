@@ -31,6 +31,13 @@ export class FinalizeUpdateStep implements UpdateStep {
     // Remove deprecated promptPackMode if present
     delete meta.promptPackMode;
 
+    // The wrapper-runtime fields persist whatever this update resolved. If the
+    // update didn't run the binary patcher (settingsOnly), keep the existing
+    // values from variant.json so the wrapper stays on the same runtime.
+    const resolvedRuntime = state.wrapperRuntime ?? meta.wrapperRuntime;
+    const resolvedNodeEntry = state.nodeEntryPath ?? meta.nodeEntryPath;
+    const resolvedUnpackedDir = state.wrapperRuntime === 'node' ? paths.unpackedDir : (meta.unpackedDir ?? undefined);
+
     // Existing variants may carry legacy metadata fields from older cc-mirror versions.
     // Write a normalized variant.json so the file reflects our current native-only schema.
     const sanitized: VariantMeta = {
@@ -55,6 +62,9 @@ export class FinalizeUpdateStep implements UpdateStep {
       // Reflect this update's outcome. Drop the flag on successful re-tweak;
       // set it when the update rolled back.
       tweakRolledBack: state.tweakRolledBack ? true : undefined,
+      wrapperRuntime: resolvedRuntime,
+      nodeEntryPath: resolvedNodeEntry,
+      unpackedDir: resolvedUnpackedDir,
     };
 
     ctx.meta = sanitized;

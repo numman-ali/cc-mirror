@@ -12,15 +12,21 @@ import { resolveBrandKey } from '../../../brands/index.js';
 import { ensureOnboardingState } from '../../claude-config.js';
 import { DEFAULT_CLAUDE_NATIVE_CACHE_DIR } from '../../constants.js';
 import { ensureDir } from '../../fs.js';
-import { restorePristineBinary } from '../../install.js';
+import { resolveNativeClaudePath, restorePristineBinary } from '../../install.js';
 import { resolveOverlays } from '../../prompt-pack/overlays.js';
 import type { OverlayMap, PromptPackKey } from '../../prompt-pack/types.js';
 import { applyPatches as defaultApplyPatches, type PatchResult } from '../../binary-patcher/index.js';
+import {
+  UnpackAndPatchError,
+  unpackAndPatch as defaultUnpackAndPatch,
+  type UnpackAndPatchResult,
+} from '../../binary-patcher/unpack-and-patch.js';
 import { ensureTweakccConfig, formatRollbackNote, smokeTestBinary, type TweakccPatchFailure } from '../../tweakcc.js';
 import type { TweakccConfig } from '../../../brands/types.js';
 import type { TweakResult } from '../../types.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
 import fs from 'node:fs';
+import path from 'node:path';
 
 const isPromptPackKey = (value: string): value is PromptPackKey => value === 'zai' || value === 'minimax';
 
@@ -92,6 +98,7 @@ const resolveOverlaysFor = (providerKey: string, enabled: boolean): OverlayMap |
 
 export interface BinaryPatcherUpdateStepDeps {
   applyPatches?: typeof defaultApplyPatches;
+  unpackAndPatch?: typeof defaultUnpackAndPatch;
 }
 
 export class BinaryPatcherUpdateStep implements UpdateStep {
@@ -143,9 +150,7 @@ export class BinaryPatcherUpdateStep implements UpdateStep {
     }
 
     if (result.skippedReason === 'macho-grow-not-supported') {
-      state.notes.push(
-        'Mach-O patch skipped: theme + prompt patches would grow the binary. Brand theme + prompt overlays disabled on macOS until segment shifting is implemented.'
-      );
+      this.runMacosUnpackFallback(ctx, config, overlays, mode);
       return;
     }
 
@@ -163,6 +168,68 @@ export class BinaryPatcherUpdateStep implements UpdateStep {
     }
     if (result.codesignSkipped) {
       state.notes.push('Binary is unsigned (codesign not available); first launch may show a Gatekeeper prompt.');
+    }
+  }
+
+  /**
+   * Mirror of BinaryPatcherStep.runMacosUnpackFallback for the update path.
+   * On success, sets state.wrapperRuntime + state.nodeEntryPath so
+   * WrapperUpdateStep rewrites the wrapper to invoke `node <entry>`.
+   */
+  private runMacosUnpackFallback(
+    ctx: UpdateContext,
+    config: TweakccConfig,
+    overlays: OverlayMap | null,
+    mode: 'sync' | 'async'
+  ): void {
+    const { paths, state } = ctx;
+
+    if (!state.nativeResolvedVersion || !state.nativePlatform) {
+      state.notes.push(
+        'Mach-O patch skipped: theme + prompt patches would grow the binary, and no pristine cache version is recorded for the unpack-and-run-via-node fallback.'
+      );
+      return;
+    }
+
+    const cachePath = resolveNativeClaudePath(
+      path.join(DEFAULT_CLAUDE_NATIVE_CACHE_DIR, state.nativeResolvedVersion, state.nativePlatform)
+    );
+    if (!fs.existsSync(cachePath)) {
+      state.notes.push(
+        `Mach-O patch skipped: theme + prompt patches would grow the binary, and the pristine cache copy is missing at ${cachePath} (cannot fall back to the unpack-and-run-via-node path).`
+      );
+      return;
+    }
+
+    if (mode === 'sync') {
+      ctx.report('Mach-O patch would grow binary; unpacking and patching JS for the node runtime...');
+    }
+
+    const unpack = this.deps.unpackAndPatch ?? defaultUnpackAndPatch;
+    let unpackResult: UnpackAndPatchResult;
+    try {
+      unpackResult = unpack({
+        pristineBinaryPath: cachePath,
+        unpackedDir: paths.unpackedDir,
+        config,
+        overlays,
+      });
+    } catch (err) {
+      const detail = err instanceof UnpackAndPatchError ? err.message : (err as Error).message;
+      if (mode === 'sync') {
+        ctx.report('Unpack-and-patch failed; restoring pristine binary...');
+      }
+      performRollback(ctx, { kind: 'tweakcc-failed', output: detail });
+      return;
+    }
+
+    state.wrapperRuntime = 'node';
+    state.nodeEntryPath = unpackResult.entryPath;
+    state.notes.push(
+      'macOS variant: running unpacked JS via node (Mach-O segment shifting not implemented). Brand theme + prompt overlays applied to the extracted cli.js.'
+    );
+    if (unpackResult.patch.promptMissing.length > 0) {
+      state.notes.push(`Prompt overlay anchor not found for: ${unpackResult.patch.promptMissing.join(', ')}`);
     }
   }
 }

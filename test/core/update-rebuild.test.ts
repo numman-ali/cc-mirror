@@ -41,6 +41,7 @@ const createContext = (rootDir: string, binDir: string, opts: UpdateContext['opt
       resolvedBin: binDir,
       variantDir,
       nativeDir,
+      unpackedDir: `${variantDir}/unpacked`,
     },
     prefs: {
       resolvedClaudeVersion: 'stable',

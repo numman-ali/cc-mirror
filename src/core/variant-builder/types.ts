@@ -7,6 +7,7 @@
 
 import type { ProviderTemplate, ProviderEnv } from '../../providers/index.js';
 import type { CreateVariantParams, TweakResult, UpdateVariantOptions, VariantMeta } from '../types.js';
+import type { WrapperRuntime } from '../wrapper.js';
 
 /**
  * Progress reporter - can be sync or async
@@ -24,6 +25,8 @@ export interface BuildPaths {
   tweakDir: string;
   wrapperPath: string;
   nativeDir: string;
+  /** Target dir for the macOS unpack-and-run-via-node path. */
+  unpackedDir: string;
 }
 
 /**
@@ -55,6 +58,17 @@ export interface BuildState {
   meta?: VariantMeta;
   /** Set by TweakccStep when patch failed and pristine was restored. */
   tweakRolledBack?: boolean;
+  /**
+   * Runtime the wrapper script should invoke. `'native'` means exec the
+   * Bun-compiled binary at state.binaryPath; `'node'` means exec
+   * `node state.nodeEntryPath` (used on macOS when the binary patcher had to
+   * fall back to unpack-and-run-via-node because patches would have grown
+   * the Mach-O __BUN section). Persisted into VariantMeta so the update
+   * flow stays on the same runtime.
+   */
+  wrapperRuntime?: WrapperRuntime;
+  /** Absolute entry-module path for the `node` runtime. */
+  nodeEntryPath?: string;
 }
 
 /**
@@ -117,6 +131,8 @@ export interface UpdatePaths {
   resolvedBin: string | undefined;
   variantDir: string;
   nativeDir: string;
+  /** Target dir for the macOS unpack-and-run-via-node path. */
+  unpackedDir: string;
 }
 
 /**
@@ -146,6 +162,10 @@ export interface UpdateState {
   nativeResolvedVersion?: string;
   /** Platform key (e.g. "darwin-arm64") populated by InstallNativeUpdateStep. */
   nativePlatform?: string;
+  /** Runtime the wrapper should invoke after this update completes. */
+  wrapperRuntime?: WrapperRuntime;
+  /** Absolute entry-module path for the `node` runtime. */
+  nodeEntryPath?: string;
 }
 
 /**
