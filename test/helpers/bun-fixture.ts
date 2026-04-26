@@ -163,10 +163,27 @@ const buildElfBinary = (opts: FixtureOptions): { buf: Buffer; expected: { dataSt
 const buildMachoBinary = (
   opts: FixtureOptions
 ): { buf: Buffer; expected: { dataStart: number; sectionOffset: number } } => {
-  // Stub Mach-O 64 header: just the magic + a synthetic section_64 header located in first 8 KB.
-  // We avoid full Mach-O conformance; the extractor only needs the sectname/segname pattern.
+  // Synthetic Mach-O 64 header: magic + ncmds/sizeofcmds populated only when
+  // we add load commands, plus a synthetic section_64 header located in the
+  // first 8 KB. The extractor's read-only path only needs the sectname/segname
+  // pattern, but the resize path's formal load-command walker needs the
+  // mach_header_64 counts to be honest.
   const header = Buffer.alloc(4096);
   header.writeUInt32LE(0xfeedfacf, 0); // MH_MAGIC_64
+
+  // Place LC_CODE_SIGNATURE (cmd=0x1d, cmdsize=16, dataoff=0, datasize=0)
+  // immediately after the 32-byte mach_header_64 so the formal walker finds it
+  // via ncmds/sizeofcmds. The existing heuristic scanner also finds it because
+  // it sweeps the whole header region every 4 bytes.
+  const MACH_HEADER_64_SIZE = 32;
+  const LC_CODE_SIGNATURE = 0x1d;
+  if (opts.withCodeSignature) {
+    header.writeUInt32LE(1, 16); // ncmds
+    header.writeUInt32LE(16, 20); // sizeofcmds
+    header.writeUInt32LE(LC_CODE_SIGNATURE, MACH_HEADER_64_SIZE);
+    header.writeUInt32LE(16, MACH_HEADER_64_SIZE + 4); // cmdsize
+    // dataoff/datasize at +8/+12 stay zero - we don't emit a real signature blob.
+  }
 
   // Place a section_64 header at offset 256.
   const sectionHeaderOff = 256;
@@ -184,13 +201,6 @@ const buildMachoBinary = (
   // size at +40 (u64 LE), offset at +48 (u32 LE)
   header.writeBigUInt64LE(BigInt(sectionDataLen), sectionHeaderOff + 40);
   header.writeUInt32LE(sectionOffset, sectionHeaderOff + 48);
-
-  // Optional LC_CODE_SIGNATURE marker (cmd=0x1d, cmdsize=16) somewhere in the load-command region.
-  if (opts.withCodeSignature) {
-    const lcOff = 1024;
-    header.writeUInt32LE(0x1d, lcOff);
-    header.writeUInt32LE(16, lcOff + 4);
-  }
 
   // Section payload: 8-byte u64 size header, then rawBytes, offsets, trailer.
   const sectionSizeHeader = Buffer.alloc(8);

@@ -6,7 +6,9 @@
  * bytecode caches) without relying on tweakcc / node-lief.
  *
  * Same-size in-place module replacement is supported via replaceModule.
- * Resizing replacements is intentionally out of scope.
+ * Resizing the entry-point module is owned by src/core/binary-patcher
+ * (replaceEntryJs), which uses parseBunBinary's output and the constants
+ * exported from this file to rewrite the module table and platform headers.
  */
 
 import fs from 'node:fs';
