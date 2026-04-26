@@ -5,7 +5,7 @@
  *
  * Layout (per platform):
  *   macOS  - __BUN section in a Mach-O segment, 8-byte u64 size header at section start.
- *   Linux  - data appended to ELF binary, no section header.
+ *   Linux  - .bun ELF PROGBITS section, 8-byte u64 size header at section start.
  *   Windows- .bun PE section, no 8-byte size header.
  *
  * All platforms end with [Offsets struct (32 bytes)][trailer "\n---- Bun! ----\n"].
@@ -16,7 +16,7 @@ export const TRAILER = Buffer.from('\n---- Bun! ----\n');
 /** Size of the Offsets struct that precedes the trailer. */
 export const OFFSETS_SIZE = 32;
 
-/** Mach-O section header has an 8-byte u64 LE size prefix; PE/ELF don't. */
+/** Mach-O and ELF each prefix their Bun section payload with an 8-byte u64 LE size; PE doesn't. */
 export const MACHO_SECTION_HEADER_SIZE = 8;
 
 /**
