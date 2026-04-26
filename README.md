@@ -72,7 +72,7 @@ At its core, CC-MIRROR:
 
 1. **Clones** Claude Code into isolated instances
 2. **Configures** provider endpoints, model mapping, and env defaults
-3. **Applies** prompt packs and tweakcc themes
+3. **Applies** brand themes and provider prompt overlays via the in-repo binary patcher
 4. **Installs** optional skills (dev-browser, opt-in)
 5. **Packages** everything into a single command
 
@@ -85,7 +85,7 @@ Each variant is completely isolated — its own config, sessions, MCP servers, a
 │  ├── mclaude/                        ← Mirror Claude                     │
 │  │   ├── native/                     Claude Code installation           │
 │  │   ├── config/                     API keys, sessions, MCP servers    │
-│  │   ├── tweakcc/                    Theme customization                │
+│  │   ├── tweakcc/                    Brand theme + overlay config       │
 │  │   └── variant.json                Metadata                           │
 │  │                                                                      │
 │  ├── zai/                            ← Z.ai variant (GLM models)        │
@@ -190,10 +190,9 @@ npx cc-mirror quick [options]     # Fast setup with defaults
 npx cc-mirror create [options]    # Full configuration wizard
 npx cc-mirror list                # List all variants
 npx cc-mirror update [name]       # Update one or all variants
-npx cc-mirror apply <name>        # Re-apply tweakcc patches (no reinstall)
+npx cc-mirror apply <name>        # Re-apply theme + prompt patches (no reinstall)
 npx cc-mirror remove <name>       # Delete a variant
 npx cc-mirror doctor              # Health check all variants
-npx cc-mirror tweak <name>        # Launch tweakcc customization
 
 # Launch your variant
 mclaude                           # Run Mirror Claude
@@ -215,16 +214,20 @@ kimi                              # Run Kimi Code variant
 --model-opus <name>      Map to opus model
 --model-haiku <name>     Map to haiku model
 --brand <preset>         Theme: auto | kimi | minimax | zai | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz
---no-tweak               Skip tweakcc theme
+--no-tweak               Skip brand theme + prompt overlay patches
 --no-prompt-pack         Skip provider prompt pack
---verbose               Show full tweakcc output during update
+--verbose               Show full patcher output during update
 ```
 
 ---
 
 ## Brand Themes
 
-Each provider includes a custom color theme via [tweakcc](https://github.com/Piebald-AI/tweakcc):
+Each provider includes a custom color theme applied by cc-mirror's in-repo
+binary patcher (anchor patterns adapted from [tweakcc](https://github.com/Piebald-AI/tweakcc)
+under MIT — see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). On macOS,
+themes are currently disabled (Mach-O segment shifting not yet implemented);
+linux and Windows variants get the full theme.
 
 | Brand          | Style                            |
 | -------------- | -------------------------------- |
@@ -252,7 +255,7 @@ Each provider includes a custom color theme via [tweakcc](https://github.com/Pie
 
 ## Related Projects
 
-- [tweakcc](https://github.com/Piebald-AI/tweakcc) — Theme and customize Claude Code
+- [tweakcc](https://github.com/Piebald-AI/tweakcc) — Theme and customize Claude Code (cc-mirror's binary-patcher anchors are adapted from this project under MIT)
 - [Claude Code Router](https://github.com/musistudio/claude-code-router) — Route Claude Code to any LLM
 - [n-skills](https://github.com/numman-ali/n-skills) — Universal skills for AI agents
 
@@ -262,7 +265,7 @@ Each provider includes a custom color theme via [tweakcc](https://github.com/Pie
 
 Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup.
 
-**Want to add a provider?** Check the [Provider Guide](docs/TWEAKCC-GUIDE.md).
+**Want to add a provider?** Read [AGENTS.md](AGENTS.md) for the codebase layout and the per-provider extension points.
 
 ---
 

@@ -26,12 +26,20 @@ src/
 │   │   ├── providers/     # Per-provider overlays (zai.ts, minimax.ts)
 │   │   ├── overlays.ts    # Overlay resolution
 │   │   └── targets.ts     # Target file mapping
-│   └── *.ts               # Utils (paths, fs, tweakcc, skills, etc.)
+│   ├── binary-patcher/    # In-repo Bun-binary patcher (replaces tweakcc CLI)
+│   │   ├── index.ts       # applyPatches orchestrator
+│   │   ├── theme.ts       # Theme color anchor + rewrite (ported from tweakcc, MIT)
+│   │   ├── prompts.ts     # Per-OverlayKey tail-anchor splice for prompt overlays
+│   │   ├── replace-entry.ts  # Resize-capable entry-module replacement
+│   │   ├── repack.ts      # Cross-platform container rewrite dispatcher
+│   │   ├── {macho,elf,pe}-resize.ts  # Per-platform header rewrites
+│   │   └── codesign.ts    # macOS ad-hoc signing helper
+│   └── *.ts               # Utils (paths, fs, install, skills, etc.)
 ├── providers/              # Provider templates
 │   └── index.ts           # Provider definitions and defaults
-├── brands/                 # TweakCC brand presets
+├── brands/                 # Brand theme presets (one per provider)
 │   ├── index.ts           # Brand resolution
-│   ├── types.ts           # TweakCC config types
+│   ├── types.ts           # Theme config types (legacy "TweakccConfig" name kept)
 │   ├── zai.ts             # Z.ai theme + blocked tools
 │   ├── minimax.ts         # MiniMax theme + blocked tools
 │   └── *.ts               # Other brand configs
@@ -42,10 +50,11 @@ test/                       # Node test runner tests
 ├── unit/                  # Unit tests
 └── helpers/               # Test utilities
 
-repos/                      # Upstream reference copies (vendor data, history)
+repos/                      # Upstream reference copies (vendored, gitignored)
 ├── anthropic-claude-code-*/       # Claude Code versions for comparison/reference
 ├── claude-code-system-prompts/    # System prompt changelog and sources
-└── tweakcc/                       # TweakCC repo (prompt patching tool)
+└── tweakcc/                       # tweakcc CLI (reference for binary-patcher anchors)
+                                   # Refresh via scripts/vendor-tweakcc.sh
 
 notes/                      # Research notes and deep dive documentation
 ├── CLI-VERSIONS.md               # Version comparison notes
@@ -85,8 +94,9 @@ npm run render:tui-svg  # Regenerate docs/cc-mirror-tree.svg
 │   ├── settings.json       # Env overrides (API keys, base URLs, model defaults)
 │   ├── .claude.json        # API-key approvals + onboarding/theme + MCP servers
 ├── tweakcc/
-│   ├── config.json         # Brand preset + theme list + toolsets
-│   └── system-prompts/     # Prompt-pack overlays (after tweakcc apply)
+│   └── config.json         # Brand preset + theme list (read by the patcher
+│                           # via ensureTweakccConfig; directory name kept for
+│                           # back-compat with existing variants)
 ├── native/
 │   └── claude              # Native Claude Code binary (or claude.exe on Windows)
 └── variant.json            # Metadata
@@ -148,8 +158,10 @@ export const MINIMAX_BLOCKED_TOOLS = [
 
 - Only `minimal` mode supported (maximal deprecated)
 - Per-provider overlays in `src/core/prompt-pack/providers/`
-- Applied to `tweakcc/system-prompts/` via TweakCC
-- Overlays are sanitized to strip backticks (tweakcc template literal issue)
+- Applied directly to the bundled cli.js by `src/core/binary-patcher/prompts.ts`
+  (per-OverlayKey tail-anchor splice; see `prompts.ts` for the anchor table)
+- Overlay text is escaped for the detected string delimiter (template literal
+  vs single/double quote) at splice time
 
 ## Common Development Tasks
 
@@ -172,7 +184,7 @@ cat ~/.cc-mirror/<variant>/config/settings.json
 cat ~/.cc-mirror/<variant>/config/.claude.json
 cat ~/.cc-mirror/<variant>/variant.json
 
-# TweakCC config
+# Brand/theme config (read by the in-repo patcher)
 cat ~/.cc-mirror/<variant>/tweakcc/config.json
 
 # Wrapper script
@@ -190,15 +202,15 @@ npx cc-mirror doctor
 - **Upstream CLI references**: `repos/anthropic-claude-code-*/cli.js` (multiple versions for comparison)
 - **System prompt sources**: `repos/claude-code-system-prompts/` (includes CHANGELOG.md)
 - **Research notes**: `notes/` (deep dives, version analysis, design decisions)
-- **Applied prompts**: `~/.cc-mirror/<variant>/tweakcc/system-prompts/`
 - **Debug logs**: `~/.cc-mirror/<variant>/config/debug/*.txt`
 
 ### CLI Feature Gates
 
 ```bash
-# Native installs don't have cli.js on disk. Use tweakcc to unpack first:
-npx tweakcc unpack /tmp/claude-code.js ~/.cc-mirror/<variant>/native/claude
-rg "tengu_prompt_suggestion|promptSuggestionEnabled" /tmp/claude-code.js
+# Native installs don't have cli.js on disk. Use cc-mirror unpack to extract
+# the bundled JS modules from the Bun standalone binary:
+npx cc-mirror unpack ~/.cc-mirror/<variant>/native/claude --out /tmp/claude-unpacked
+rg "tengu_prompt_suggestion|promptSuggestionEnabled" /tmp/claude-unpacked/
 
 # Check cached gates
 cat ~/.cc-mirror/<variant>/config/.claude.json | jq '.statsig'
@@ -248,7 +260,10 @@ Key test files:
 ## Architecture Notes
 
 - **Step-based builds**: Each step is isolated, can be sync or async
-- **Build order**: PrepareDirectories → InstallNative → WriteConfig → BrandTheme → Tweakcc → Wrapper → ShellEnv → SkillInstall → Finalize
+- **Build order**: PrepareDirectories → InstallNative → WriteConfig → BrandTheme → BinaryPatcher → Wrapper → ShellEnv → SkillInstall → Finalize
+- **Binary patcher**: in-repo theme + prompt overlay applier. Replaces the
+  earlier `npx tweakcc` shell-out. See `src/core/binary-patcher/index.ts`
+  (`applyPatches`) and `THIRD_PARTY_NOTICES.md` for upstream attribution.
 
 ## Documentation
 

@@ -116,7 +116,7 @@ src/
 │   │                             │                                         │ │
 │   │   4. BrandThemeStep         Write tweakcc/config.json                 │ │
 │   │                             │                                         │ │
-│   │   5. TweakccStep            Apply customization via tweakcc           │ │
+│   │   5. BinaryPatcherStep      In-repo theme + prompt overlay patcher    │ │
 │   │                             │                                         │ │
 │   │   6. WrapperStep            Create <bin-dir>/<name>                   │ │
 │   │                             │                                         │ │
@@ -149,7 +149,7 @@ npx cc-mirror update <name>
 │   1. RebuildUpdateStep       Reset claude/tweakcc dirs (keep config)      │
 │   2. InstallNativeUpdateStep Download + verify native CC (unless settingsOnly) │
 │   3. ModelOverridesStep      Update model mappings                        │
-│   4. TweakccUpdateStep       Re-apply theme                               │
+│   4. BinaryPatcherUpdateStep Re-apply theme + prompt overlays             │
 │   5. WrapperUpdateStep       Regenerate wrapper script                    │
 │   6. ConfigUpdateStep        Update settings.json                         │
 │   7. ShellEnvUpdateStep      Update shell env integration                 │
@@ -175,10 +175,8 @@ npx cc-mirror update <name>
 │  │   ├── settings.json              Env vars (API keys, base URLs)          │
 │  │   ├── .claude.json               MCP servers, approvals, onboarding      │
 │  │                                                                          │
-│  ├── tweakcc/                        tweakcc configuration                  │
-│  │   ├── config.json                Theme and UI customization              │
-│  │   ├── cli.js.backup              tweakcc-managed backup                  │
-│  │   └── system-prompts/            Prompt pack overlays                    │
+│  ├── tweakcc/                        Brand theme + UI customization config │
+│  │   └── config.json                Read by the in-repo binary patcher     │
 │  │                                                                          │
 │  └── variant.json                    Variant metadata                       │
 │                                                                             │
