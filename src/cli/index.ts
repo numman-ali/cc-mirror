@@ -9,7 +9,6 @@ import {
   runListCommand,
   runDoctorCommand,
   runRemoveCommand,
-  runTweakCommand,
   runUpdateCommand,
   runApplyCommand,
   runCreateCommand,
@@ -69,10 +68,6 @@ const main = async () => {
 
     case 'remove':
       runRemoveCommand({ opts });
-      break;
-
-    case 'tweak':
-      runTweakCommand({ opts });
       break;
 
     case 'unpack':

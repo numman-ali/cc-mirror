@@ -16,7 +16,7 @@ import fs from 'node:fs';
 import type { TweakccConfig } from '../../brands/types.js';
 import type { OverlayMap } from '../prompt-pack/types.js';
 
-import { parseBunBinary } from '../bun-extract.js';
+import { parseBunBinary, replaceModule } from '../bun-extract.js';
 import { ThemeAnchorNotFound, applyTheme } from './theme.js';
 import { applyPrompts } from './prompts.js';
 import { replaceEntryJs } from './replace-entry.js';
@@ -29,7 +29,7 @@ export interface PatchInputs {
   overlays?: OverlayMap | null;
 }
 
-export type PatchFailureReason = 'anchor-not-found' | 'resize-bound-exceeded' | 'codesign-failed' | 'io-error';
+export type PatchFailureReason = 'anchor-not-found' | 'resize-bound-exceeded' | 'io-error';
 
 export type PatchResult =
   | {
@@ -39,6 +39,13 @@ export type PatchResult =
       missingPromptKeys: string[];
       /** When true on macOS, the binary is unsigned because codesign wasn't available. */
       codesignSkipped: boolean;
+      /**
+       * Set when the patch was deliberately skipped without modifying the
+       * binary. Currently only fires on Mach-O when the patched JS would grow
+       * past the original entry-module size (Mach-O segment shifting is not
+       * implemented; see CLAUDE.local.md Phase 2 follow-ups).
+       */
+      skippedReason?: 'macho-grow-not-supported';
     }
   | {
       ok: false;
@@ -46,7 +53,7 @@ export type PatchResult =
       detail: string;
     };
 
-export const applyPatches = async ({ binaryPath, config, overlays }: PatchInputs): Promise<PatchResult> => {
+export const applyPatches = ({ binaryPath, config, overlays }: PatchInputs): PatchResult => {
   let buf: Buffer;
   try {
     buf = fs.readFileSync(binaryPath);
@@ -87,50 +94,80 @@ export const applyPatches = async ({ binaryPath, config, overlays }: PatchInputs
     missingPromptKeys = promptResult.missing;
   }
 
-  // Repack with resize support.
-  let repacked: { buf: Buffer; signatureStripped: boolean };
-  try {
-    const result = replaceEntryJs(buf, info, Buffer.from(newJs, 'utf8'));
-    repacked = { buf: result.buf, signatureStripped: result.signatureStripped };
-  } catch (err) {
-    if (err instanceof PeNotLastSectionError) {
-      return { ok: false, reason: 'resize-bound-exceeded', detail: err.message };
+  // Mach-O resize is intentionally restricted: changing __BUN's size shifts
+  // every downstream segment (__DATA, __LINKEDIT, codesig blob), and that
+  // bookkeeping is out of scope for this patcher. Workaround: keep the entry
+  // module the SAME size by padding shrinks with trailing whitespace, and
+  // SKIP the patch (binary stays pristine + functional, no theme) when we'd
+  // grow. The skip is reported via skippedReason so the build step can
+  // surface a note instead of triggering a rollback. ELF and PE resize fine.
+  let bytesChanged = 0;
+  let writeBuf: Buffer | null = null;
+  let skippedReason: 'macho-grow-not-supported' | undefined;
+  if (info.platform === 'macho') {
+    const delta = newJs.length - oldEntryLen;
+    if (delta > 0) {
+      skippedReason = 'macho-grow-not-supported';
+    } else {
+      if (delta < 0) {
+        newJs = newJs + ' '.repeat(-delta);
+      }
+      try {
+        const sized = replaceModule(buf, info, entry.name, Buffer.from(newJs, 'utf8'));
+        writeBuf = sized.buf;
+      } catch (err) {
+        return { ok: false, reason: 'io-error', detail: `replaceModule: ${(err as Error).message}` };
+      }
     }
-    return { ok: false, reason: 'io-error', detail: `replaceEntryJs: ${(err as Error).message}` };
+  } else {
+    try {
+      const result = replaceEntryJs(buf, info, Buffer.from(newJs, 'utf8'));
+      writeBuf = result.buf;
+      bytesChanged = result.delta;
+    } catch (err) {
+      if (err instanceof PeNotLastSectionError) {
+        return { ok: false, reason: 'resize-bound-exceeded', detail: err.message };
+      }
+      return { ok: false, reason: 'io-error', detail: `replaceEntryJs: ${(err as Error).message}` };
+    }
   }
 
-  try {
-    fs.writeFileSync(binaryPath, repacked.buf);
-    if (process.platform !== 'win32') {
-      fs.chmodSync(binaryPath, 0o755);
-    }
-  } catch (err) {
-    return { ok: false, reason: 'io-error', detail: `write ${binaryPath}: ${(err as Error).message}` };
-  }
-
-  // Re-sign on macOS only when we actually stripped a signature - otherwise
-  // codesign --force would create an ad-hoc signature where Apple's was, which
-  // is fine but unnecessary. Returning codesign-failed lets the caller decide
-  // (typically: rollback). codesign-missing is a soft warning that surfaces
-  // via codesignSkipped.
   let resigned = false;
   let codesignSkipped = false;
-  if (info.platform === 'macho' && repacked.signatureStripped) {
-    const sign = tryAdhocSign(binaryPath);
-    if (sign.signed) {
-      resigned = true;
-    } else if (sign.reason === 'failed') {
-      return { ok: false, reason: 'codesign-failed', detail: sign.detail ?? 'codesign failed' };
-    } else {
-      codesignSkipped = true;
+
+  if (writeBuf) {
+    try {
+      fs.writeFileSync(binaryPath, writeBuf);
+      if (process.platform !== 'win32') {
+        fs.chmodSync(binaryPath, 0o755);
+      }
+    } catch (err) {
+      return { ok: false, reason: 'io-error', detail: `write ${binaryPath}: ${(err as Error).message}` };
+    }
+
+    // Re-sign on macOS whenever the original had a signature - any byte change
+    // invalidates Apple's hash, so codesign --force --sign - replaces it with
+    // an ad-hoc one. AMFI on Apple Silicon kills binaries whose signature
+    // doesn't verify, so re-signing is mandatory for the patched binary to
+    // launch. Both failure modes (no codesign in PATH, or codesign rejected)
+    // downgrade to a soft codesignSkipped warning; smokeTestBinary in the
+    // build step catches anything that genuinely can't launch.
+    if (info.platform === 'macho' && info.hasCodeSignature) {
+      const sign = tryAdhocSign(binaryPath);
+      if (sign.signed) {
+        resigned = true;
+      } else {
+        codesignSkipped = true;
+      }
     }
   }
 
   return {
     ok: true,
-    bytesChanged: repacked.buf.length - buf.length,
+    bytesChanged,
     resigned,
     missingPromptKeys,
     codesignSkipped,
+    skippedReason,
   };
 };

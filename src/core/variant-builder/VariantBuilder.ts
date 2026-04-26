@@ -17,7 +17,7 @@ import { PrepareDirectoriesStep } from './steps/PrepareDirectoriesStep.js';
 import { InstallNativeStep } from './steps/InstallNativeStep.js';
 import { WriteConfigStep } from './steps/WriteConfigStep.js';
 import { BrandThemeStep } from './steps/BrandThemeStep.js';
-import { TweakccStep } from './steps/TweakccStep.js';
+import { BinaryPatcherStep } from './steps/BinaryPatcherStep.js';
 import { WrapperStep } from './steps/WrapperStep.js';
 import { ShellEnvStep } from './steps/ShellEnvStep.js';
 import { SkillInstallStep } from './steps/SkillInstallStep.js';
@@ -55,7 +55,7 @@ export class VariantBuilder {
       new InstallNativeStep(),
       new WriteConfigStep(),
       new BrandThemeStep(), // Creates tweakcc/config.json
-      new TweakccStep(),
+      new BinaryPatcherStep(),
       new WrapperStep(),
       new ShellEnvStep(),
       new SkillInstallStep(),

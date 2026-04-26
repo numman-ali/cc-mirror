@@ -1,59 +1,18 @@
+/**
+ * Helpers shared between Phase 1 (TweakccStep, removed) and Phase 2
+ * (BinaryPatcherStep): brand config writer, post-patch smoke test, rollback
+ * note formatter, failure type. The npx-tweakcc shell-out path is gone.
+ *
+ * Note: file is named tweakcc.ts for historical reasons. ensureTweakccConfig
+ * still writes a tweakcc-style config.json that the in-repo binary patcher
+ * reads as TweakccConfig - the schema lives in src/brands/types.ts.
+ */
+
 import fs from 'node:fs';
-import { spawn, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { buildBrandConfig } from '../brands/index.js';
 import type { MiscConfig, TweakccSettings } from '../brands/types.js';
-import { TWEAKCC_VERSION } from './constants.js';
-import { isTweakccNativeExtractionFailure } from './errors.js';
-import { commandExists, isWindows } from './paths.js';
-import type { TweakResult } from './types.js';
-
-export type TweakccResult = TweakResult;
-const TWEAKCC_LATEST_SPEC = 'latest';
-
-export const getNpxCommand = (): string => (isWindows ? 'npx.cmd' : 'npx');
-
-const buildNpxInvocation = (args: string[]): { cmd: string; args: string[] } => {
-  const npxCmd = getNpxCommand();
-  if (isWindows) {
-    return { cmd: 'cmd.exe', args: ['/d', '/s', '/c', npxCmd, ...args] };
-  }
-  return { cmd: npxCmd, args };
-};
-
-const buildTweakccInvocation = (versionSpec: string, args: string[]) =>
-  buildNpxInvocation([`tweakcc@${versionSpec}`, ...args]);
-
-const getCombinedOutput = (result: { stderr?: string; stdout?: string }) =>
-  `${result.stderr ?? ''}\n${result.stdout ?? ''}`.trim();
-
-const withTweakccMetadata = (
-  result: TweakccResult,
-  tweakccSpec: string,
-  fallbackFromTweakccSpec?: string
-): TweakccResult => ({
-  ...result,
-  tweakccSpec,
-  fallbackFromTweakccSpec,
-});
-
-const shouldRetryWithLatest = (result: TweakccResult, tweakccSpec: string) =>
-  tweakccSpec !== TWEAKCC_LATEST_SPEC &&
-  result.status !== 0 &&
-  isTweakccNativeExtractionFailure(getCombinedOutput(result));
-
-const writeFallbackNotice = (fromSpec: string, toSpec: string) => {
-  process.stderr.write(
-    `cc-mirror: tweakcc@${fromSpec} could not read this Claude Code binary; retrying with tweakcc@${toSpec}.\n`
-  );
-};
-
-export const getTweakccFallbackNote = (result: TweakccResult | null | undefined): string | null => {
-  const fallbackFrom = result?.fallbackFromTweakccSpec?.trim();
-  const used = result?.tweakccSpec?.trim();
-  if (!fallbackFrom || !used || fallbackFrom === used) return null;
-  return `Pinned tweakcc@${fallbackFrom} could not read this Claude Code binary; automatically retried with tweakcc@${used}.`;
-};
 
 export interface SmokeTestResult {
   ok: boolean;
@@ -70,9 +29,9 @@ const SMOKE_TIMEOUT_MS = 5000;
 /**
  * Spawn `<binaryPath> --version` and confirm it exits 0 within timeoutMs.
  *
- * Used post-tweakcc to detect a corrupted Bun standalone binary before we
- * write the wrapper. The Bun 1.3.13 darwin regression manifests as a
- * non-zero exit with a CJS-wrapper assertion on stderr; this catches it.
+ * Used post-patch to detect a corrupted Bun standalone binary before we
+ * write the wrapper. Catches Bun-version regressions (e.g., 1.3.13 darwin
+ * CJS-wrapper assertion) and unsigned-binary AMFI kills on macOS.
  */
 export const smokeTestBinary = (binaryPath: string, timeoutMs: number = SMOKE_TIMEOUT_MS): SmokeTestResult => {
   let result;
@@ -95,7 +54,6 @@ export const smokeTestBinary = (binaryPath: string, timeoutMs: number = SMOKE_TI
     };
   }
 
-  // Node sets signal=SIGTERM on timeout; also surfaces err on `error`.
   const timedOut = Boolean(result.error && (result.error as NodeJS.ErrnoException).code === 'ETIMEDOUT');
   const signal = (result.signal ?? null) as NodeJS.Signals | null;
   const status = result.status ?? null;
@@ -265,136 +223,4 @@ export const ensureTweakccConfig = (tweakDir: string, brandKey?: string | null):
 
   fs.writeFileSync(configPath, JSON.stringify(brandConfig, null, 2));
   return true;
-};
-
-export const runTweakcc = (
-  tweakDir: string,
-  binaryPath: string,
-  stdio: 'inherit' | 'pipe' = 'inherit'
-): TweakccResult => {
-  const npxCmd = getNpxCommand();
-  const env = {
-    ...process.env,
-    TWEAKCC_CONFIG_DIR: tweakDir,
-    TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
-  } as NodeJS.ProcessEnv;
-
-  if (!commandExists(npxCmd)) {
-    return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
-  }
-
-  const runVersion = (versionSpec: string) => {
-    const invocation = buildTweakccInvocation(versionSpec, ['--apply']);
-    const result = spawnSync(invocation.cmd, invocation.args, { stdio: 'pipe', env, encoding: 'utf8' });
-    if (stdio === 'inherit') {
-      if (result.stdout) process.stdout.write(result.stdout);
-      if (result.stderr) process.stderr.write(result.stderr);
-    }
-    return withTweakccMetadata(result as TweakccResult, versionSpec);
-  };
-
-  const primary = runVersion(TWEAKCC_VERSION);
-  if (!shouldRetryWithLatest(primary, TWEAKCC_VERSION)) {
-    return primary;
-  }
-
-  if (stdio === 'inherit') {
-    writeFallbackNotice(TWEAKCC_VERSION, TWEAKCC_LATEST_SPEC);
-  }
-
-  const fallback = runVersion(TWEAKCC_LATEST_SPEC);
-  return withTweakccMetadata(fallback, TWEAKCC_LATEST_SPEC, TWEAKCC_VERSION);
-};
-
-export const launchTweakccUi = (tweakDir: string, binaryPath: string): TweakccResult => {
-  const npxCmd = getNpxCommand();
-  const env = {
-    ...process.env,
-    TWEAKCC_CONFIG_DIR: tweakDir,
-    TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
-  } as NodeJS.ProcessEnv;
-
-  if (!commandExists(npxCmd)) {
-    return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
-  }
-
-  const runVersion = (versionSpec: string) => {
-    const invocation = buildTweakccInvocation(versionSpec, []);
-    return withTweakccMetadata(
-      spawnSync(invocation.cmd, invocation.args, { stdio: 'inherit', env, encoding: 'utf8' }) as TweakccResult,
-      versionSpec
-    );
-  };
-
-  const primary = runVersion(TWEAKCC_VERSION);
-  if (!shouldRetryWithLatest(primary, TWEAKCC_VERSION)) {
-    return primary;
-  }
-
-  writeFallbackNotice(TWEAKCC_VERSION, TWEAKCC_LATEST_SPEC);
-  const fallback = runVersion(TWEAKCC_LATEST_SPEC);
-  return withTweakccMetadata(fallback, TWEAKCC_LATEST_SPEC, TWEAKCC_VERSION);
-};
-
-// Async version for TUI progress updates
-const spawnTweakccAsync = (
-  cmd: string,
-  args: string[],
-  env: NodeJS.ProcessEnv,
-  stdio: 'inherit' | 'pipe'
-): Promise<TweakccResult> => {
-  return new Promise((resolve) => {
-    const child = spawn(cmd, args, { stdio: 'pipe', env });
-    let stdout = '';
-    let stderr = '';
-    child.stdout?.on('data', (d) => {
-      stdout += d.toString();
-      if (stdio === 'inherit') process.stdout.write(d);
-    });
-    child.stderr?.on('data', (d) => {
-      stderr += d.toString();
-      if (stdio === 'inherit') process.stderr.write(d);
-    });
-    child.on('close', (status) => {
-      resolve({ status, stdout, stderr } as TweakccResult);
-    });
-    child.on('error', (err) => {
-      resolve({ status: 1, stdout: '', stderr: err.message } as TweakccResult);
-    });
-  });
-};
-
-export const runTweakccAsync = async (
-  tweakDir: string,
-  binaryPath: string,
-  stdio: 'inherit' | 'pipe' = 'inherit'
-): Promise<TweakccResult> => {
-  const npxCmd = getNpxCommand();
-  const env = {
-    ...process.env,
-    TWEAKCC_CONFIG_DIR: tweakDir,
-    TWEAKCC_CC_INSTALLATION_PATH: binaryPath,
-  } as NodeJS.ProcessEnv;
-
-  if (!commandExists(npxCmd)) {
-    return { status: 1, stderr: 'npx not found', stdout: '' } as TweakccResult;
-  }
-
-  const runVersion = async (versionSpec: string) => {
-    const invocation = buildTweakccInvocation(versionSpec, ['--apply']);
-    const result = await spawnTweakccAsync(invocation.cmd, invocation.args, env, stdio);
-    return withTweakccMetadata(result, versionSpec);
-  };
-
-  const primary = await runVersion(TWEAKCC_VERSION);
-  if (!shouldRetryWithLatest(primary, TWEAKCC_VERSION)) {
-    return primary;
-  }
-
-  if (stdio === 'inherit') {
-    writeFallbackNotice(TWEAKCC_VERSION, TWEAKCC_LATEST_SPEC);
-  }
-
-  const fallback = await runVersion(TWEAKCC_LATEST_SPEC);
-  return withTweakccMetadata(fallback, TWEAKCC_LATEST_SPEC, TWEAKCC_VERSION);
 };

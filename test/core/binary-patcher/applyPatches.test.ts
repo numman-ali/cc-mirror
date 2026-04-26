@@ -17,11 +17,9 @@ const themes: Theme[] = [
 
 const buildEntryJs = (): string =>
   [
-    // Theme fixtures: obj < objArr < switch ordering matches the patcher's empirical assumption.
     'function getNames(){return{"dark":"Dark mode","light":"Light mode"}}',
     'const themeOptions=[{label:"Dark mode",value:"dark"},{label:"Light mode",value:"light"}];',
     'function pickTheme(A){switch(A){case"light":return LX9;case"dark":return CX9;default:return CX9}}',
-    // Prompt fixture (template literal, with a tail anchor we have a spec for).
     'let WEBFETCH=`Fetches and processes URLs.\n\n  - For GitHub URLs, prefer using the gh CLI via Bash instead (e.g., gh pr view, gh issue view, gh api).`;',
   ].join('\n');
 
@@ -100,10 +98,11 @@ const readEntryJs = (binaryPath: string): string => {
   return buf.subarray(info.dataStart + entry.contOff, info.dataStart + entry.contOff + entry.contLen).toString('utf8');
 };
 
-for (const platform of ['elf', 'macho', 'pe'] as const) {
-  test(`applyPatches end-to-end on ${platform}: theme + prompts both applied`, async () => {
+// ELF and PE support resize, so the patches actually land.
+for (const platform of ['elf', 'pe'] as const) {
+  test(`applyPatches end-to-end on ${platform}: theme + prompts both applied`, () => {
     const binaryPath = writeFixture(platform, buildEntryJs());
-    const result = await applyPatches({
+    const result = applyPatches({
       binaryPath,
       config: buildConfig(),
       overlays: { webfetch: 'Use zai-cli read instead.' },
@@ -112,9 +111,8 @@ for (const platform of ['elf', 'macho', 'pe'] as const) {
     assert.equal(result.ok, true);
     if (!result.ok) return;
     assert.deepEqual(result.missingPromptKeys, []);
-    // resigned only on macOS-with-codesign and only when LC_CODE_SIGNATURE was stripped;
-    // our fixture has no signature, so resigned should be false on every platform.
     assert.equal(result.resigned, false);
+    assert.equal(result.skippedReason, undefined);
 
     const newJs = readEntryJs(binaryPath);
     assert.match(newJs, /case"zai-gold":return\{"bashBorder":"#daa"\}/);
@@ -126,10 +124,10 @@ for (const platform of ['elf', 'macho', 'pe'] as const) {
     fs.rmSync(path.dirname(binaryPath), { recursive: true, force: true });
   });
 
-  test(`applyPatches on ${platform} returns anchor-not-found when theme switch is gone`, async () => {
+  test(`applyPatches on ${platform} returns anchor-not-found when theme switch is gone`, () => {
     const broken = buildEntryJs().replace(/function pickTheme[^}]+\}\}/, '/* removed */');
     const binaryPath = writeFixture(platform, broken);
-    const result = await applyPatches({
+    const result = applyPatches({
       binaryPath,
       config: buildConfig(),
       overlays: null,
@@ -141,9 +139,41 @@ for (const platform of ['elf', 'macho', 'pe'] as const) {
   });
 }
 
-test('applyPatches records prompt keys whose anchor is missing without aborting', async () => {
+// Mach-O has its own contract: same-size only, so any growing patch (theme
+// rewrite always grows because the original switch references identifiers and
+// our rewrite inlines colors) is skipped without modifying the binary.
+test('applyPatches end-to-end on macho: skips when patches would grow the entry JS', () => {
+  const binaryPath = writeFixture('macho', buildEntryJs());
+  const originalBytes = fs.readFileSync(binaryPath).length;
+  const result = applyPatches({
+    binaryPath,
+    config: buildConfig(),
+    overlays: { webfetch: 'Use zai-cli read instead.' },
+  });
+  assert.equal(result.ok, true);
+  if (!result.ok) return;
+  assert.equal(result.skippedReason, 'macho-grow-not-supported');
+  assert.equal(fs.readFileSync(binaryPath).length, originalBytes, 'binary should be unchanged');
+  fs.rmSync(path.dirname(binaryPath), { recursive: true, force: true });
+});
+
+test('applyPatches on macho returns anchor-not-found when theme switch is gone (no skip)', () => {
+  const broken = buildEntryJs().replace(/function pickTheme[^}]+\}\}/, '/* removed */');
+  const binaryPath = writeFixture('macho', broken);
+  const result = applyPatches({
+    binaryPath,
+    config: buildConfig(),
+    overlays: null,
+  });
+  assert.equal(result.ok, false);
+  if (result.ok) return;
+  assert.equal(result.reason, 'anchor-not-found');
+  fs.rmSync(path.dirname(binaryPath), { recursive: true, force: true });
+});
+
+test('applyPatches records prompt keys whose anchor is missing without aborting', () => {
   const binaryPath = writeFixture('elf', buildEntryJs());
-  const result = await applyPatches({
+  const result = applyPatches({
     binaryPath,
     config: buildConfig(),
     // 'main' has no anchor in cc-mirror; should be in missingPromptKeys.
@@ -155,8 +185,8 @@ test('applyPatches records prompt keys whose anchor is missing without aborting'
   fs.rmSync(path.dirname(binaryPath), { recursive: true, force: true });
 });
 
-test('applyPatches returns io-error when binary path is unreadable', async () => {
-  const result = await applyPatches({
+test('applyPatches returns io-error when binary path is unreadable', () => {
+  const result = applyPatches({
     binaryPath: '/nonexistent/path/to/claude/binary',
     config: buildConfig(),
     overlays: null,

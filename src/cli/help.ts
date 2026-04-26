@@ -27,10 +27,9 @@ COMMANDS
   create [options]             Full configuration wizard
   list                         List all variants
   update [name]                Update Claude Code (default: latest)
-  apply <name>                 Re-apply tweakcc patches (no reinstall)
+  apply <name>                 Re-apply theme + prompt patches (no reinstall)
   remove <name>                Remove a variant
   doctor                       Health check all variants
-  tweak <name>                 Launch tweakcc customization
   unpack <name|path>           Extract embedded JS modules from a Claude Code binary
 
 OPTIONS (create/quick)
@@ -51,10 +50,10 @@ OPTIONS (advanced)
   --model-haiku <name>         Default Haiku model
   --root <path>                Variants root (default: ${DEFAULT_ROOT})
   --bin-dir <path>             Wrapper install dir (default: ${DEFAULT_BIN_DIR})
-  --no-tweak                   Skip tweakcc theming
+  --no-tweak                   Skip brand theme + prompt overlay patches
   --no-prompt-pack             Skip provider prompt pack
   --shell-env                  Write env vars to shell profile
-  --verbose                    Show full tweakcc output during update
+  --verbose                    Show full patcher output during update
   --json                       Machine-readable output (list/doctor)
   --full                       Verbose output (list)
   --live                       Live provider probe (doctor)

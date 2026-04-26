@@ -6,7 +6,7 @@ export { PrepareDirectoriesStep } from './PrepareDirectoriesStep.js';
 export { InstallNativeStep } from './InstallNativeStep.js';
 export { WriteConfigStep } from './WriteConfigStep.js';
 export { BrandThemeStep } from './BrandThemeStep.js';
-export { TweakccStep } from './TweakccStep.js';
+export { BinaryPatcherStep } from './BinaryPatcherStep.js';
 export { WrapperStep } from './WrapperStep.js';
 export { ShellEnvStep } from './ShellEnvStep.js';
 export { SkillInstallStep } from './SkillInstallStep.js';

@@ -1,11 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { DEFAULT_BIN_DIR, DEFAULT_CLAUDE_VERSION, DEFAULT_CLAUDE_NATIVE_CACHE_DIR, DEFAULT_ROOT } from './constants.js';
-import { ensureDir } from './fs.js';
 import { expandTilde, getWrapperPath, getWrapperScriptPath, isWindows } from './paths.js';
-import { ensureTweakccConfig, launchTweakccUi } from './tweakcc.js';
-import { formatTweakccFailure } from './errors.js';
-import { listVariants as listVariantsImpl, loadVariantMeta } from './variants.js';
+import { listVariants as listVariantsImpl } from './variants.js';
 import { VariantBuilder, VariantUpdater } from './variant-builder/index.js';
 import { parseBunBinary } from './bun-extract.js';
 import type {
@@ -100,19 +97,4 @@ export const doctor = (rootDir: string, binDir: string): DoctorReportItem[] => {
 export const listVariants = (rootDir: string): VariantEntry[] => {
   const resolvedRoot = expandTilde(rootDir || DEFAULT_ROOT) ?? rootDir;
   return listVariantsImpl(resolvedRoot);
-};
-
-export const tweakVariant = (rootDir: string, name: string): void => {
-  const resolvedRoot = expandTilde(rootDir || DEFAULT_ROOT) ?? rootDir;
-  const variantDir = path.join(resolvedRoot, name);
-  const meta = loadVariantMeta(variantDir);
-  if (!meta) throw new Error(`Variant not found: ${name}`);
-  ensureDir(meta.tweakDir);
-  const brandKey = meta.brand ?? null;
-  ensureTweakccConfig(meta.tweakDir, brandKey);
-  const result = launchTweakccUi(meta.tweakDir, meta.binaryPath);
-  if (result.status && result.status !== 0) {
-    const output = `${result.stderr ?? ''}\n${result.stdout ?? ''}`.trim();
-    throw new Error(formatTweakccFailure(output));
-  }
 };

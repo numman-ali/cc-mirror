@@ -19,7 +19,9 @@ import {
 import type { BunBinaryInfo } from '../bun-extract.js';
 
 const LC_CODE_SIGNATURE = 0x1d;
+const LC_SEGMENT_64 = 0x19;
 const MACH_HEADER_64_SIZE = 32;
+const LINKEDIT_SEGNAME = '__LINKEDIT';
 
 export interface MachoRepackInputs {
   buf: Buffer;
@@ -45,6 +47,17 @@ interface CodeSigLocation {
   cmdsize: number;
   /** dataoff: file offset where the signature blob starts. */
   dataoff: number;
+  /** datasize: byte length of the signature blob. */
+  datasize: number;
+}
+
+interface LinkeditSegment {
+  /** Offset of the LC_SEGMENT_64 load command within the buffer. */
+  lcOffset: number;
+  /** Current filesize (file bytes claimed by this segment). */
+  filesize: bigint;
+  /** Current vmsize (virtual memory bytes claimed by this segment). */
+  vmsize: bigint;
 }
 
 const isMacho64 = (buf: Buffer): boolean => {
@@ -102,7 +115,50 @@ const findCodeSignatureLc = (buf: Buffer): CodeSigLocation | null => {
     if (cmdsize < 8 || cursor + cmdsize > end) return null;
     if (cmd === LC_CODE_SIGNATURE && cmdsize === 16) {
       const dataoff = buf.readUInt32LE(cursor + 8);
-      return { lcOffset: cursor, cmdsize, dataoff };
+      const datasize = buf.readUInt32LE(cursor + 12);
+      return { lcOffset: cursor, cmdsize, dataoff, datasize };
+    }
+    cursor += cmdsize;
+  }
+  return null;
+};
+
+/**
+ * Find the LC_SEGMENT_64 load command for __LINKEDIT, where the code signature
+ * blob lives. Returning the lcOffset + filesize/vmsize lets stripCodeSignature
+ * shrink the segment by the signature size so codesign can re-sign cleanly.
+ *
+ * LC_SEGMENT_64 layout: cmd(4) cmdsize(4) segname[16] vmaddr(8) vmsize(8)
+ *                       fileoff(8) filesize(8) maxprot(4) initprot(4)
+ *                       nsects(4) flags(4) = 72 bytes header
+ */
+const findLinkeditSegment = (buf: Buffer): LinkeditSegment | null => {
+  if (buf.length < MACH_HEADER_64_SIZE) return null;
+  const ncmds = buf.readUInt32LE(16);
+  const sizeofcmds = buf.readUInt32LE(20);
+  if (sizeofcmds === 0 || ncmds === 0) return null;
+
+  let cursor = MACH_HEADER_64_SIZE;
+  const end = MACH_HEADER_64_SIZE + sizeofcmds;
+  if (end > buf.length) return null;
+
+  for (let i = 0; i < ncmds; i += 1) {
+    if (cursor + 8 > end) return null;
+    const cmd = buf.readUInt32LE(cursor);
+    const cmdsize = buf.readUInt32LE(cursor + 4);
+    if (cmdsize < 8 || cursor + cmdsize > end) return null;
+    if (cmd === LC_SEGMENT_64 && cmdsize >= 72) {
+      const segname = buf
+        .subarray(cursor + 8, cursor + 24)
+        .toString('utf8')
+        .replace(/\0+$/, '');
+      if (segname === LINKEDIT_SEGNAME) {
+        return {
+          lcOffset: cursor,
+          vmsize: buf.readBigUInt64LE(cursor + 32),
+          filesize: buf.readBigUInt64LE(cursor + 48),
+        };
+      }
     }
     cursor += cmdsize;
   }
@@ -165,10 +221,21 @@ export const repackMacho = ({ buf, info, newRawBytes, newOffsetsStruct }: MachoR
   // Layout: [mach_header + load_commands ...][section_64 payload at info.sectionOffset]
   const preSection = Buffer.from(buf.subarray(0, info.sectionOffset));
 
-  // Strip LC_CODE_SIGNATURE if present, before computing new section payload.
+  // Strip LC_CODE_SIGNATURE if present. The signature blob sits at the tail of
+  // __LINKEDIT, so we must also reduce that segment's filesize/vmsize by the
+  // signature size - otherwise codesign rejects the patched binary with
+  // "main executable failed strict validation" (LINKEDIT extends past EOF).
   let signatureStripped = false;
   const codeSig = findCodeSignatureLc(preSection);
   if (codeSig) {
+    const linkedit = findLinkeditSegment(preSection);
+    if (linkedit) {
+      const sigSize = BigInt(codeSig.datasize);
+      const newFilesize = linkedit.filesize > sigSize ? linkedit.filesize - sigSize : 0n;
+      const newVmsize = linkedit.vmsize > sigSize ? linkedit.vmsize - sigSize : 0n;
+      preSection.writeBigUInt64LE(newFilesize, linkedit.lcOffset + 48);
+      preSection.writeBigUInt64LE(newVmsize, linkedit.lcOffset + 32);
+    }
     stripCodeSignature(preSection, codeSig);
     signatureStripped = true;
   }

@@ -4,7 +4,7 @@
 
 export { InstallNativeUpdateStep } from './InstallNativeUpdateStep.js';
 export { ModelOverridesStep } from './ModelOverridesStep.js';
-export { TweakccUpdateStep } from './TweakccUpdateStep.js';
+export { BinaryPatcherUpdateStep } from './BinaryPatcherUpdateStep.js';
 export { WrapperUpdateStep } from './WrapperUpdateStep.js';
 export { ConfigUpdateStep } from './ConfigUpdateStep.js';
 export { ShellEnvUpdateStep } from './ShellEnvUpdateStep.js';

@@ -1,17 +1,16 @@
 /**
- * Tests for the tweakcc safety net: smoke test, pristine restore, rollback note.
+ * Tests for the safety net helpers shared by Phase 1 (TweakccStep) and Phase 2
+ * (BinaryPatcherStep): smoke test, pristine restore, rollback note formatter.
  *
- * Covers helpers in src/core/tweakcc.ts and src/core/install.ts. The full
- * TweakccStep integration is exercised in
- * test/core/create-with-tweakcc-stub.test.ts (stubbed npx + real binary
- * download); we deliberately avoid network here.
+ * The full BinaryPatcherStep integration is exercised in
+ * test/core/binary-patcher/integration.test.ts (real binary download); we
+ * deliberately avoid network here.
  */
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import * as core from '../../src/core/index.js';
 import { restorePristineBinary } from '../../src/core/install.js';
 import { formatRollbackNote, smokeTestBinary, type SmokeTestResult } from '../../src/core/tweakcc.js';
 import { cleanup, makeTempDir, writeExecutable } from '../helpers/index.js';
@@ -198,67 +197,4 @@ test('formatRollbackNote: tweakcc-failed with output', () => {
 test('formatRollbackNote: tweakcc-failed with empty output', () => {
   const note = formatRollbackNote({ kind: 'tweakcc-failed', output: '' });
   assert.match(note, /tweakcc failed \(no output\)/);
-});
-
-// --- Integration: createVariantAsync rollback when tweakcc stub fails ---
-//
-// Validates the full flow end-to-end: stubbed npx exits non-zero, TweakccStep
-// rolls back to the pristine cached binary, theme resets to 'dark', notes
-// surface the rollback, and meta.tweakRolledBack lands in variant.json. We
-// piggyback on the same network-fetch pattern as create-with-tweakcc-stub.
-
-test('createVariantAsync: tweakcc failure rolls back to pristine and continues', { skip: isWindows }, async () => {
-  const rootDir = makeTempDir();
-  const binDir = makeTempDir();
-  const stubBin = makeTempDir();
-  const prevPath = process.env.PATH;
-
-  try {
-    const stubNpx = path.join(stubBin, 'npx');
-    // Exit non-zero with stderr that does NOT match isTweakccNativeExtractionFailure
-    // so runTweakcc does not retry with @latest (keeps the test fast).
-    fs.writeFileSync(stubNpx, '#!/usr/bin/env bash\necho "stub tweakcc: synthetic failure" >&2\nexit 7\n', {
-      encoding: 'utf8',
-      mode: 0o755,
-    });
-    process.env.PATH = `${stubBin}${path.delimiter}${prevPath || ''}`;
-
-    const result = await core.createVariantAsync({
-      name: 'tweakcc-rollback',
-      providerKey: 'minimax',
-      apiKey: '',
-      claudeVersion: 'stable',
-      rootDir,
-      binDir,
-      noTweak: false,
-      promptPack: false,
-      skillInstall: false,
-      tweakccStdio: 'pipe',
-    });
-
-    // Rollback signaled in meta + notes; tweakResult preserved for debug.
-    assert.equal(result.meta.tweakRolledBack, true, 'expected tweakRolledBack in meta');
-    assert.ok(result.notes && result.notes.some((n) => /restored pristine/.test(n)), 'expected rollback note');
-    assert.equal(result.tweakResult?.status, 7, 'tweakResult should preserve original exit code');
-
-    // variant.json on disk should reflect the flag.
-    const variantJson = JSON.parse(fs.readFileSync(path.join(rootDir, 'tweakcc-rollback', 'variant.json'), 'utf8'));
-    assert.equal(variantJson.tweakRolledBack, true);
-
-    // .claude.json themeId reset to 'dark' (built-in) since brand themes need a
-    // patched binary that we don't have post-rollback.
-    const claudeJson = JSON.parse(
-      fs.readFileSync(path.join(rootDir, 'tweakcc-rollback', 'config', '.claude.json'), 'utf8')
-    );
-    assert.equal(claudeJson.theme, 'dark');
-
-    // Wrapper still exists so the variant is usable.
-    const wrapperPath = path.join(binDir, 'tweakcc-rollback');
-    assert.ok(fs.existsSync(wrapperPath), `wrapper not written at ${wrapperPath}`);
-  } finally {
-    process.env.PATH = prevPath;
-    cleanup(rootDir);
-    cleanup(binDir);
-    cleanup(stubBin);
-  }
 });

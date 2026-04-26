@@ -17,7 +17,7 @@ import type { ReportFn, UpdateContext, UpdatePaths, UpdatePreferences, UpdateSta
 import { RebuildUpdateStep } from './update-steps/RebuildUpdateStep.js';
 import { InstallNativeUpdateStep } from './update-steps/InstallNativeUpdateStep.js';
 import { ModelOverridesStep } from './update-steps/ModelOverridesStep.js';
-import { TweakccUpdateStep } from './update-steps/TweakccUpdateStep.js';
+import { BinaryPatcherUpdateStep } from './update-steps/BinaryPatcherUpdateStep.js';
 import { WrapperUpdateStep } from './update-steps/WrapperUpdateStep.js';
 import { ConfigUpdateStep } from './update-steps/ConfigUpdateStep.js';
 import { ShellEnvUpdateStep } from './update-steps/ShellEnvUpdateStep.js';
@@ -75,7 +75,7 @@ export class VariantUpdater {
       new RebuildUpdateStep(),
       new InstallNativeUpdateStep(),
       new ModelOverridesStep(),
-      new TweakccUpdateStep(),
+      new BinaryPatcherUpdateStep(),
       new WrapperUpdateStep(),
       new ConfigUpdateStep(),
       new ShellEnvUpdateStep(),

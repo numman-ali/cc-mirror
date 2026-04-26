@@ -108,7 +108,6 @@ export interface CoreModule {
       onProgress?: (step: string) => void;
     }
   ) => UpdateVariantResult;
-  tweakVariant: (rootDir: string, name: string) => void;
   removeVariant: (rootDir: string, name: string) => void;
   doctor: (rootDir: string, binDir: string) => DoctorReportItem[];
   createVariantAsync?: (params: {

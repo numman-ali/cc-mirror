@@ -7,7 +7,6 @@
 export interface MockCoreCalls {
   create: Array<{ name: string; providerKey: string; noTweak?: boolean }>;
   update: Array<{ root: string; name: string }>;
-  tweak: Array<{ root: string; name: string }>;
   remove: Array<{ root: string; name: string }>;
   doctor: Array<{ root: string; bin: string }>;
 }
@@ -16,7 +15,6 @@ export const makeCore = () => {
   const calls: MockCoreCalls = {
     create: [],
     update: [],
-    tweak: [],
     remove: [],
     doctor: [],
   };
@@ -87,9 +85,6 @@ export const makeCore = () => {
       calls.update.push({ root, name });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return { meta: { name } as any, tweakResult: null };
-    },
-    tweakVariant: (root: string, name: string) => {
-      calls.tweak.push({ root, name });
     },
     removeVariant: (root: string, name: string) => {
       calls.remove.push({ root, name });
