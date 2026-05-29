@@ -1,13 +1,14 @@
 /**
  * Mirror Claude Brand Preset
  *
- * A reflective, silver/chrome aesthetic for pure Claude Code experience.
+ * A reflective, silver/chrome aesthetic for the mirror experience.
  * Theme concept: polished mirror surface with electric accents.
  */
 
 import type { TweakccConfig, Theme } from './types.js';
 import { DEFAULT_THEMES } from './defaultThemes.js';
 import { buildBrandMiscConfig } from './miscDefaults.js';
+import { buildBrandSettingsDefaults } from './settingsDefaults.js';
 import { buildDiffPalette } from './diffPalette.js';
 import { formatUserMessage, getUserLabel } from './userLabel.js';
 
@@ -189,7 +190,7 @@ export const buildMirrorTweakccConfig = (): TweakccConfig => ({
     inputBox: {
       removeBorder: true,
     },
-    misc: buildBrandMiscConfig(),
-    claudeMdAltNames: null,
+    misc: buildBrandMiscConfig({ enableModelCustomizations: false }),
+    ...buildBrandSettingsDefaults(),
   },
 });

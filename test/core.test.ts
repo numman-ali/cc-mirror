@@ -40,10 +40,12 @@ test('core create/update/remove/doctor flows', async () => {
   assert.equal(configJson.env.ANTHROPIC_BASE_URL, 'http://localhost:4000/anthropic');
   assert.equal(configJson.env.FOO, 'bar');
   assert.equal(configJson.env.ANTHROPIC_API_KEY, '<API_KEY>');
+  assert.equal(configJson.env.DISABLE_UPDATES, '1');
   assert.equal(configJson.env.DISABLE_AUTOUPDATER, '1');
-  assert.equal(configJson.env.DISABLE_AUTO_MIGRATE_TO_NATIVE, '1');
   assert.equal(configJson.env.DISABLE_INSTALLATION_CHECKS, '1');
-  assert.equal(configJson.env.CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION, '1');
+  assert.equal(configJson.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC, '1');
+  assert.equal(configJson.env.DISABLE_AUTO_MIGRATE_TO_NATIVE, undefined);
+  assert.equal(configJson.env.CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION, undefined);
 
   const metaBefore = JSON.parse(readFile(variantMetaPath)) as { updatedAt?: string };
   await new Promise((resolve) => setTimeout(resolve, 10));

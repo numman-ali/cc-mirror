@@ -3,6 +3,7 @@
  */
 
 import { ensureZaiShellEnv } from '../../shell-env.js';
+import { getProviderCapability } from '../../../providers/index.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
 export class ShellEnvStep implements BuildStep {
@@ -13,7 +14,8 @@ export class ShellEnvStep implements BuildStep {
   }
 
   async executeAsync(ctx: BuildContext): Promise<void> {
-    if (ctx.prefs.shellEnvEnabled && ctx.params.providerKey === 'zai') {
+    const profile = getProviderCapability(ctx.params.providerKey);
+    if (ctx.prefs.shellEnvEnabled && profile?.features.shellEnv.exports.includes('Z_AI_API_KEY')) {
       await ctx.report('Configuring shell environment...');
     }
     this.setupShellEnv(ctx);
@@ -22,7 +24,10 @@ export class ShellEnvStep implements BuildStep {
   private setupShellEnv(ctx: BuildContext): void {
     const { params, paths, prefs, state } = ctx;
 
-    if (prefs.shellEnvEnabled && params.providerKey === 'zai') {
+    const profile = getProviderCapability(params.providerKey);
+    const managesZaiKey = profile?.features.shellEnv.exports.includes('Z_AI_API_KEY') ?? false;
+
+    if (prefs.shellEnvEnabled && managesZaiKey) {
       ctx.report('Configuring shell environment...');
       const shellResult = ensureZaiShellEnv({
         apiKey: state.resolvedApiKey ?? null,
@@ -37,7 +42,7 @@ export class ShellEnvStep implements BuildStep {
       } else if (shellResult.message) {
         state.notes.push(`Z_AI_API_KEY: ${shellResult.message}`);
       }
-    } else if (params.providerKey === 'zai') {
+    } else if (managesZaiKey) {
       state.notes.push('Z_AI_API_KEY not written to shell profile. Set it manually in your shell rc file.');
     }
   }

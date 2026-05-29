@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import path from 'node:path';
 import type { CoreModule } from '../app.js';
 import type { CreateVariantParams, CompletionResult, ModelOverrides } from './types.js';
+import { describePromptPack, describeShellEnv, getTuiProviderCapabilities } from '../providerCapabilities.js';
 
 export interface UseVariantCreateOptions {
   screen: string;
@@ -31,26 +32,19 @@ export function buildCreateSummary(params: {
   notes?: string[];
 }): string[] {
   const { providerLabel, install, usePromptPack, installSkill, modelOverrides, providerKey, shellEnv, notes } = params;
-
-  // Build prompt pack description with provider-specific routing info
-  const getPromptPackDescription = (): string => {
-    if (!usePromptPack) return 'off';
-    if (providerKey === 'zai') return 'on (zai-cli routing)';
-    if (providerKey === 'minimax') return 'on (MCP routing)';
-    return 'on';
-  };
+  const capabilities = getTuiProviderCapabilities(providerKey);
 
   return [
     `Provider: ${providerLabel}`,
     install,
-    `Prompt pack: ${getPromptPackDescription()}`,
+    `Prompt pack: ${describePromptPack(usePromptPack, capabilities)}`,
     `dev-browser skill: ${installSkill ? 'on' : 'off'}`,
     ...(modelOverrides.sonnet || modelOverrides.opus || modelOverrides.haiku
       ? [
-          `Models: sonnet=${modelOverrides.sonnet || '-'}, opus=${modelOverrides.opus || '-'}, haiku=${modelOverrides.haiku || '-'}`,
+          `Models: balanced=${modelOverrides.sonnet || '-'}, primary=${modelOverrides.opus || '-'}, fast=${modelOverrides.haiku || '-'}`,
         ]
       : []),
-    ...(providerKey === 'zai' ? [`Shell env: ${shellEnv ? 'write Z_AI_API_KEY' : 'manual'}`] : []),
+    ...(capabilities.shellEnv.configurable ? [`Shell env: ${describeShellEnv(shellEnv, capabilities)}`] : []),
     ...(notes || []),
   ];
 }

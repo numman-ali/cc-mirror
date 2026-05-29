@@ -1,5 +1,5 @@
 /**
- * InstallNativeUpdateStep - Installs Claude Code via native binary download
+ * InstallNativeUpdateStep - Installs the native runtime binary
  */
 
 import { DEFAULT_CLAUDE_NATIVE_CACHE_DIR, DEFAULT_CLAUDE_VERSION } from '../../constants.js';
@@ -19,7 +19,7 @@ export class InstallNativeUpdateStep implements UpdateStep {
     if (ctx.opts.settingsOnly) return;
 
     const { meta, paths, prefs } = ctx;
-    await ctx.report(`Installing Claude Code (native) ${prefs.resolvedClaudeVersion}...`);
+    await ctx.report(`Installing native runtime ${prefs.resolvedClaudeVersion}...`);
 
     ensureDir(paths.nativeDir);
 

@@ -5,7 +5,7 @@
 import { spawnSync } from 'node:child_process';
 import * as core from '../../core/index.js';
 import { isWindows } from '../../core/paths.js';
-import { printDoctor } from '../doctor.js';
+import { collectDoctorSecretValues, enrichDoctorReport, printDoctor, sanitizeDoctorText } from '../doctor.js';
 import type { ParsedArgs } from '../args.js';
 
 export interface DoctorCommandOptions {
@@ -39,18 +39,19 @@ export function runDoctorCommand({ opts }: DoctorCommandOptions): void {
 
   const report = core.doctor(rootDir, binDir);
   const filtered = target ? report.filter((item) => item.name === target) : report;
+  const variants = core.listVariants(rootDir);
+  const enriched = enrichDoctorReport(filtered, rootDir, { variants });
 
   if (!live) {
     if (json) {
-      console.log(JSON.stringify(filtered, null, 2));
+      console.log(JSON.stringify(enriched, null, 2));
     } else {
-      printDoctor(filtered);
+      printDoctor(enriched);
     }
     return;
   }
 
   // Enrich with provider info so we can skip interactive-only variants by default.
-  const variants = core.listVariants(rootDir);
   const providerByName = new Map<string, string>();
   for (const entry of variants) {
     if (entry.meta?.provider) providerByName.set(entry.name, entry.meta.provider);
@@ -71,7 +72,7 @@ export function runDoctorCommand({ opts }: DoctorCommandOptions): void {
     return spawnSync(wrapperPath, args, { env, encoding: 'utf8', timeout: timeoutMs });
   };
 
-  const results: LiveDoctorResult[] = filtered.map((item) => {
+  const results: LiveDoctorResult[] = enriched.map((item) => {
     const provider = providerByName.get(item.name);
     const base: LiveDoctorResult = { ...item };
 
@@ -92,6 +93,7 @@ export function runDoctorCommand({ opts }: DoctorCommandOptions): void {
     const duration = Date.now() - started;
     const timedOut = Boolean((child.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT');
     const liveOk = child.status === 0 && !timedOut;
+    const secrets = collectDoctorSecretValues(rootDir, item.name);
 
     return {
       ...base,
@@ -99,8 +101,8 @@ export function runDoctorCommand({ opts }: DoctorCommandOptions): void {
       liveExitCode: child.status,
       liveTimedOut: timedOut,
       liveDurationMs: duration,
-      liveStdout: (child.stdout ?? '').toString().trim() || undefined,
-      liveStderr: (child.stderr ?? '').toString().trim() || undefined,
+      liveStdout: sanitizeDoctorText((child.stdout ?? '').toString().trim(), secrets) || undefined,
+      liveStderr: sanitizeDoctorText((child.stderr ?? '').toString().trim(), secrets) || undefined,
     };
   });
 

@@ -7,7 +7,14 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { listProviders, getProvider, buildEnv, PROVIDER_DISPLAY_ORDER } from '../src/providers/index.js';
+import {
+  listProviders,
+  getProvider,
+  buildEnv,
+  getProviderCapability,
+  PROVIDER_DISPLAY_ORDER,
+  resolveStartupModelSetting,
+} from '../src/providers/index.js';
 
 test('Provider Feature Matrix', async (t) => {
   const providers = listProviders(true); // Include experimental
@@ -103,52 +110,84 @@ test('Provider Feature Matrix', async (t) => {
     const zai = getProvider('zai');
     assert.ok(zai, 'zai provider should exist');
     assert.equal(zai.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'glm-4.5-air', 'zai should default haiku to glm-4.5-air');
-    assert.equal(zai.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'glm-4.7', 'zai should default sonnet to glm-4.7');
-    assert.equal(zai.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'glm-5', 'zai should default opus to glm-5');
+    assert.equal(zai.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'glm-5-turbo', 'zai should default sonnet to glm-5-turbo');
+    assert.equal(zai.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'glm-5.1', 'zai should default opus to glm-5.1');
   });
 
   await t.test('kimi provider has default models', () => {
     const kimi = getProvider('kimi');
     assert.ok(kimi, 'kimi provider should exist');
-    assert.ok(kimi.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'kimi should have haiku model');
-    assert.ok(kimi.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'kimi should have sonnet model');
-    assert.ok(kimi.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'kimi should have opus model');
+    assert.equal(kimi.baseUrl, 'https://api.moonshot.ai/anthropic');
+    assert.equal(kimi.authMode, 'authToken');
+    assert.equal(kimi.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'kimi-k2.6');
+    assert.equal(kimi.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'kimi-k2.6');
+    assert.equal(kimi.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'kimi-k2.6');
+    assert.equal(kimi.env.CLAUDE_CODE_SUBAGENT_MODEL, 'kimi-k2.6');
   });
 
   await t.test('minimax provider has model settings', () => {
     const minimax = getProvider('minimax');
     assert.ok(minimax, 'minimax provider should exist');
-    assert.ok(minimax.env.ANTHROPIC_MODEL, 'minimax should have ANTHROPIC_MODEL');
-    assert.ok(minimax.env.ANTHROPIC_SMALL_FAST_MODEL, 'minimax should have ANTHROPIC_SMALL_FAST_MODEL');
+    assert.equal(minimax.authMode, 'authToken', 'minimax should use auth token mode');
+    assert.equal(minimax.env.ANTHROPIC_MODEL, undefined, 'minimax startup model should be stored in settings.model');
+    assert.equal(
+      minimax.env.ANTHROPIC_SMALL_FAST_MODEL,
+      'MiniMax-M2.7',
+      'minimax should default small-fast model to M2.7'
+    );
+    const minimaxProfile = getProviderCapability('minimax');
+    assert.ok(minimaxProfile, 'minimax capability profile should exist');
+    assert.equal(resolveStartupModelSetting(minimaxProfile), 'MiniMax-M2.7');
   });
 
-  await t.test('buildEnv derives startup/default models from alias mapping', () => {
+  await t.test('buildEnv derives alias models without forcing startup env', () => {
     const zaiEnv = buildEnv({ providerKey: 'zai', apiKey: 'test-key' });
-    assert.equal(
-      zaiEnv.ANTHROPIC_MODEL,
-      zaiEnv.ANTHROPIC_DEFAULT_OPUS_MODEL,
-      'ANTHROPIC_MODEL should follow the Opus alias by default'
-    );
+    assert.equal(zaiEnv.ANTHROPIC_MODEL, undefined, 'startup model should be stored in settings.model');
+    assert.equal(zaiEnv.ANTHROPIC_DEFAULT_OPUS_MODEL_NAME, 'GLM-5.1');
+    assert.equal(zaiEnv.ANTHROPIC_CUSTOM_MODEL_OPTION_NAME, 'GLM-5.1');
+    assert.equal(zaiEnv.DISABLE_TELEMETRY, '1');
+    assert.equal(zaiEnv.ENABLE_TOOL_SEARCH, 'false');
     assert.equal(
       zaiEnv.ANTHROPIC_SMALL_FAST_MODEL,
       zaiEnv.ANTHROPIC_DEFAULT_HAIKU_MODEL,
       'ANTHROPIC_SMALL_FAST_MODEL should follow the Haiku alias by default'
     );
+    const zaiProfile = getProviderCapability('zai');
+    assert.ok(zaiProfile, 'zai capability profile should exist');
+    assert.equal(resolveStartupModelSetting(zaiProfile), 'glm-5.1');
   });
 
-  await t.test('buildEnv preserves explicit default/small-fast model overrides', () => {
+  await t.test('buildEnv preserves explicit alias/small-fast model overrides', () => {
+    const modelOverrides = {
+      opus: 'glm-5',
+      haiku: 'glm-4.5-air',
+      defaultModel: 'glm-4.7',
+      smallFast: 'glm-5-air',
+    };
     const env = buildEnv({
       providerKey: 'zai',
       apiKey: 'test-key',
-      modelOverrides: {
-        opus: 'glm-5',
-        haiku: 'glm-4.5-air',
-        defaultModel: 'glm-4.7',
-        smallFast: 'glm-5-air',
-      },
+      modelOverrides,
     });
 
-    assert.equal(env.ANTHROPIC_MODEL, 'glm-4.7', 'explicit default model override should be preserved');
+    assert.equal(env.ANTHROPIC_MODEL, undefined, 'explicit default model override should be stored in settings.model');
+    const zaiProfile = getProviderCapability('zai');
+    assert.ok(zaiProfile, 'zai capability profile should exist');
+    assert.equal(resolveStartupModelSetting(zaiProfile, modelOverrides), 'glm-4.7');
     assert.equal(env.ANTHROPIC_SMALL_FAST_MODEL, 'glm-5-air', 'explicit small-fast override should be preserved');
+  });
+
+  await t.test('nanogpt provider uses current endpoint and non-Anthropic defaults', () => {
+    const nanogpt = getProvider('nanogpt');
+    assert.ok(nanogpt, 'nanogpt provider should exist');
+    assert.equal(nanogpt.baseUrl, 'https://nano-gpt.com/api/v1');
+
+    const env = buildEnv({ providerKey: 'nanogpt', apiKey: 'test-key' });
+    assert.equal(env.ANTHROPIC_BASE_URL, 'https://nano-gpt.com/api/v1');
+    assert.equal(env.API_TIMEOUT_MS, '600000');
+    assert.equal(env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'openai/gpt-5.2');
+    assert.equal(env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'openai/gpt-5.2');
+    assert.equal(env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'google/gemini-3-flash-preview');
+    assert.equal(env.ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME, 'Gemini 3 Flash');
   });
 });

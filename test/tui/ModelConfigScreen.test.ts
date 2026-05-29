@@ -31,9 +31,9 @@ test('ModelConfigScreen renders all three model fields', async () => {
   await tick();
   const output = app.lastFrame() ?? '';
 
-  assert.ok(output.includes('Opus'), 'Should show Opus field');
-  assert.ok(output.includes('Sonnet'), 'Should show Sonnet field');
-  assert.ok(output.includes('Haiku'), 'Should show Haiku field');
+  assert.ok(output.includes('Primary'), 'Should show Primary field');
+  assert.ok(output.includes('Balanced'), 'Should show Balanced field');
+  assert.ok(output.includes('Fast'), 'Should show Fast field');
 
   app.unmount();
 });
@@ -179,9 +179,9 @@ test('ModelConfigScreen shows placeholder for provider', async () => {
   await tick();
   const output = app.lastFrame() ?? '';
 
-  // OpenRouter placeholders should mention anthropic
+  // OpenRouter placeholders should stay provider-neutral.
   assert.ok(
-    output.includes('anthropic') || output.includes('placeholder'),
+    output.includes('provider/primary-coding-model') || output.includes('provider/balanced-coding-model'),
     'Should show provider-specific placeholder'
   );
 

@@ -11,7 +11,7 @@ export const BRAND_MISC_DEFAULTS: MiscConfig = {
   increaseFileReadLimit: true,
   suppressLineNumbers: true,
   suppressRateLimitOptions: false,
-  mcpConnectionNonBlocking: false,
+  mcpConnectionNonBlocking: true,
   mcpServerBatchSize: null,
   statuslineThrottleMs: null,
   statuslineUseFixedInterval: false,
@@ -24,6 +24,13 @@ export const BRAND_MISC_DEFAULTS: MiscConfig = {
   allowBypassPermissionsInSudo: false,
   suppressNativeInstallerWarning: true,
   filterScrollEscapeSequences: false,
+  enableWorktreeMode: true,
+  allowCustomAgentModels: true,
+  enableContextLimitOverride: false,
+  enableModelCustomizations: false,
+  enableVoiceMode: false,
+  enableVoiceConciseOutput: true,
+  enableChannelsMode: false,
 };
 
 export const buildBrandMiscConfig = (overrides: Partial<MiscConfig> = {}): MiscConfig => ({

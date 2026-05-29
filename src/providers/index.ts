@@ -1,4 +1,43 @@
-export const DEFAULT_TIMEOUT_MS = '3000000';
+import {
+  buildCapabilityEnv,
+  DEFAULT_PROVIDER_TIMEOUT_MS,
+  getProviderCapability,
+  KIMI_DEFAULT_MODEL,
+  MINIMAX_DEFAULT_MODEL,
+  NANOGPT_DEFAULT_MODELS,
+  OLLAMA_DEFAULT_MODEL,
+  PROVIDER_CAPABILITIES,
+  resolveModelAliases,
+  ZAI_DEFAULT_MODELS,
+} from './capabilities.js';
+
+export {
+  buildCapabilityEnv,
+  buildManagedClaudeSettings,
+  buildCapabilityMetadata,
+  getProviderCapability,
+  MINIMAX_DEFAULT_MODEL,
+  MINIMAX_DENY_TOOLS,
+  MINIMAX_MCP_SERVER,
+  MINIMAX_STALE_MODELS,
+  NANOGPT_DEFAULT_MODELS,
+  NANOGPT_DEFAULT_MODEL,
+  OLLAMA_DEFAULT_MODEL,
+  PROVIDER_CAPABILITIES,
+  getManagedSettingsEnvKeys,
+  resolveModelAliases,
+  resolveAvailableModelsSetting,
+  resolveStartupModelSetting,
+  type ManagedClaudeSettings,
+  type ProviderCapabilityProfile,
+  type ProviderClass,
+  type ManagedMcpServer,
+  ZAI_DEFAULT_MODELS,
+  ZAI_DENY_TOOLS,
+  ZAI_STALE_MODELS,
+} from './capabilities.js';
+
+export const DEFAULT_TIMEOUT_MS = DEFAULT_PROVIDER_TIMEOUT_MS;
 
 export type ProviderEnv = Record<string, string | number>;
 
@@ -35,7 +74,33 @@ export interface ModelOverrides {
   subagentModel?: string;
 }
 
-const CCROUTER_AUTH_FALLBACK = 'ccrouter-proxy';
+export const buildZaiModelEnv = (): ProviderEnv => ({
+  ANTHROPIC_DEFAULT_HAIKU_MODEL: ZAI_DEFAULT_MODELS.haiku,
+  ANTHROPIC_DEFAULT_SONNET_MODEL: ZAI_DEFAULT_MODELS.sonnet,
+  ANTHROPIC_DEFAULT_OPUS_MODEL: ZAI_DEFAULT_MODELS.opus,
+  ANTHROPIC_SMALL_FAST_MODEL: ZAI_DEFAULT_MODELS.haiku,
+});
+
+export const buildKimiModelEnv = (): ProviderEnv => ({
+  ANTHROPIC_DEFAULT_HAIKU_MODEL: KIMI_DEFAULT_MODEL,
+  ANTHROPIC_DEFAULT_SONNET_MODEL: KIMI_DEFAULT_MODEL,
+  ANTHROPIC_DEFAULT_OPUS_MODEL: KIMI_DEFAULT_MODEL,
+  ANTHROPIC_SMALL_FAST_MODEL: KIMI_DEFAULT_MODEL,
+});
+
+export const buildMinimaxModelEnv = (): ProviderEnv => ({
+  ANTHROPIC_SMALL_FAST_MODEL: MINIMAX_DEFAULT_MODEL,
+  ANTHROPIC_DEFAULT_SONNET_MODEL: MINIMAX_DEFAULT_MODEL,
+  ANTHROPIC_DEFAULT_OPUS_MODEL: MINIMAX_DEFAULT_MODEL,
+  ANTHROPIC_DEFAULT_HAIKU_MODEL: MINIMAX_DEFAULT_MODEL,
+});
+
+export const buildNanoGptModelEnv = (): ProviderEnv => ({
+  ANTHROPIC_SMALL_FAST_MODEL: NANOGPT_DEFAULT_MODELS.haiku,
+  ANTHROPIC_DEFAULT_SONNET_MODEL: NANOGPT_DEFAULT_MODELS.sonnet,
+  ANTHROPIC_DEFAULT_OPUS_MODEL: NANOGPT_DEFAULT_MODELS.opus,
+  ANTHROPIC_DEFAULT_HAIKU_MODEL: NANOGPT_DEFAULT_MODELS.haiku,
+});
 
 // Canonical provider display order for CLI/TUI and docs-facing flows.
 // Any provider not listed here is appended after these entries.
@@ -58,71 +123,69 @@ const PROVIDER_DISPLAY_ORDER_INDEX = new Map<string, number>(PROVIDER_DISPLAY_OR
 const PROVIDERS: Record<string, ProviderTemplate> = {
   mirror: {
     key: 'mirror',
-    label: 'Mirror Claude',
-    description: 'Pure Claude with isolated config and clean defaults',
-    baseUrl: '', // Empty = use Claude Code defaults (no ANTHROPIC_BASE_URL override)
+    label: 'Mirror',
+    description: 'Isolated first-party runtime with clean defaults',
+    baseUrl: '',
     env: {
-      // Only cosmetic settings - no auth or model overrides
       CC_MIRROR_SPLASH: 1,
-      CC_MIRROR_PROVIDER_LABEL: 'Mirror Claude',
+      CC_MIRROR_PROVIDER_LABEL: 'Mirror',
       CC_MIRROR_SPLASH_STYLE: 'mirror',
     },
-    apiKeyLabel: '', // Empty = skip API key prompt
-    authMode: 'none', // No auth handling - user authenticates via normal Claude flow
-    credentialOptional: true, // No credentials required at create time
-    noPromptPack: true, // Skip prompt pack (pure Claude experience)
-    experimental: true, // Hidden — theming ported to OpenRouter
+    apiKeyLabel: '',
+    authMode: 'none',
+    credentialOptional: true,
+    noPromptPack: true,
+    experimental: true,
   },
   zai: {
     key: 'zai',
     label: 'Zai Cloud',
-    description: 'GLM-5/4.7/4.5-Air via Z.ai Coding Plan',
+    description: 'GLM-5.1/5-Turbo/4.5-Air via Z.ai Coding Plan',
     baseUrl: 'https://api.z.ai/api/anthropic',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
-      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'glm-4.5-air',
-      ANTHROPIC_DEFAULT_SONNET_MODEL: 'glm-4.7',
-      ANTHROPIC_DEFAULT_OPUS_MODEL: 'glm-5',
+      ...buildZaiModelEnv(),
       CC_MIRROR_SPLASH: 1,
       CC_MIRROR_PROVIDER_LABEL: 'Zai Cloud',
       CC_MIRROR_SPLASH_STYLE: 'zai',
     },
     apiKeyLabel: 'Zai API key',
+    authMode: 'authToken',
+    requiresEmptyApiKey: true,
   },
   minimax: {
     key: 'minimax',
     label: 'MiniMax Cloud',
-    description: 'MiniMax via MiniMax Cloud',
+    description: 'MiniMax-M2.7 via MiniMax Token Plan',
     baseUrl: 'https://api.minimax.io/anthropic',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: 1,
-      ANTHROPIC_MODEL: 'MiniMax-M2.5',
-      ANTHROPIC_SMALL_FAST_MODEL: 'MiniMax-M2.5',
-      ANTHROPIC_DEFAULT_SONNET_MODEL: 'MiniMax-M2.5',
-      ANTHROPIC_DEFAULT_OPUS_MODEL: 'MiniMax-M2.5',
-      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'MiniMax-M2.5',
+      ...buildMinimaxModelEnv(),
       CC_MIRROR_SPLASH: 1,
       CC_MIRROR_PROVIDER_LABEL: 'MiniMax Cloud',
       CC_MIRROR_SPLASH_STYLE: 'minimax',
     },
     apiKeyLabel: 'MiniMax API key',
+    authMode: 'authToken',
+    requiresEmptyApiKey: true,
   },
   kimi: {
     key: 'kimi',
     label: 'Kimi Code',
-    description: 'kimi-for-coding via Kimi Code (K2.5)',
-    baseUrl: 'https://api.kimi.com/coding/',
+    description: 'Kimi K2.6 via Moonshot',
+    baseUrl: 'https://api.moonshot.ai/anthropic',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
-      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'kimi-for-coding',
-      ANTHROPIC_DEFAULT_SONNET_MODEL: 'kimi-for-coding',
-      ANTHROPIC_DEFAULT_OPUS_MODEL: 'kimi-for-coding',
+      ...buildKimiModelEnv(),
+      CLAUDE_CODE_SUBAGENT_MODEL: KIMI_DEFAULT_MODEL,
       CC_MIRROR_SPLASH: 1,
       CC_MIRROR_PROVIDER_LABEL: 'Kimi Code',
       CC_MIRROR_SPLASH_STYLE: 'kimi',
     },
     apiKeyLabel: 'Kimi API key',
+    authMode: 'authToken',
+    requiresEmptyApiKey: true,
   },
   openrouter: {
     key: 'openrouter',
@@ -163,11 +226,12 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     baseUrl: 'http://localhost:11434',
     env: {
       API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
+      ANTHROPIC_SMALL_FAST_MODEL: OLLAMA_DEFAULT_MODEL,
       ANTHROPIC_AUTH_TOKEN: 'ollama',
       ANTHROPIC_API_KEY: 'ollama',
-      ANTHROPIC_DEFAULT_SONNET_MODEL: 'qwen3-coder',
-      ANTHROPIC_DEFAULT_OPUS_MODEL: 'qwen3-coder',
-      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'qwen3-coder',
+      ANTHROPIC_DEFAULT_SONNET_MODEL: OLLAMA_DEFAULT_MODEL,
+      ANTHROPIC_DEFAULT_OPUS_MODEL: OLLAMA_DEFAULT_MODEL,
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: OLLAMA_DEFAULT_MODEL,
       CC_MIRROR_SPLASH: 1,
       CC_MIRROR_PROVIDER_LABEL: 'Ollama',
       CC_MIRROR_SPLASH_STYLE: 'ollama',
@@ -213,12 +277,10 @@ const PROVIDERS: Record<string, ProviderTemplate> = {
     key: 'nanogpt',
     label: 'NanoGPT',
     description: '400+ models via NanoGPT gateway',
-    baseUrl: 'https://nano-gpt.com/api',
+    baseUrl: 'https://nano-gpt.com/api/v1',
     env: {
-      API_TIMEOUT_MS: DEFAULT_TIMEOUT_MS,
-      ANTHROPIC_DEFAULT_SONNET_MODEL: 'moonshotai/kimi-k2.5',
-      ANTHROPIC_DEFAULT_OPUS_MODEL: 'moonshotai/kimi-k2.5',
-      ANTHROPIC_DEFAULT_HAIKU_MODEL: 'moonshotai/kimi-k2.5',
+      API_TIMEOUT_MS: '600000',
+      ...buildNanoGptModelEnv(),
       CC_MIRROR_SPLASH: 1,
       CC_MIRROR_PROVIDER_LABEL: 'NanoGPT',
       CC_MIRROR_SPLASH_STYLE: 'nanogpt',
@@ -274,7 +336,6 @@ const applyModelOverrides = (env: ProviderEnv, overrides?: ModelOverrides) => {
     ['ANTHROPIC_DEFAULT_OPUS_MODEL', overrides.opus],
     ['ANTHROPIC_DEFAULT_HAIKU_MODEL', overrides.haiku],
     ['ANTHROPIC_SMALL_FAST_MODEL', overrides.smallFast],
-    ['ANTHROPIC_MODEL', overrides.defaultModel],
     ['CLAUDE_CODE_SUBAGENT_MODEL', overrides.subagentModel],
   ];
   for (const [key, value] of entries) {
@@ -292,23 +353,9 @@ const getEnvModelValue = (env: ProviderEnv, key: string): string => {
   return '';
 };
 
-const syncCompatibilityModelDefaults = (
-  env: ProviderEnv,
-  opts: {
-    skipDefaultModelSync?: boolean;
-    skipSmallFastSync?: boolean;
-  } = {}
-) => {
-  // Keep startup/default model aligned with Opus alias unless explicitly overridden.
-  if (!opts.skipDefaultModelSync) {
-    const opus = getEnvModelValue(env, 'ANTHROPIC_DEFAULT_OPUS_MODEL');
-    if (opus) {
-      env.ANTHROPIC_MODEL = opus;
-    }
-  }
-
+const syncCompatibilityModelDefaults = (env: ProviderEnv, skipSmallFastSync = false) => {
   // Keep legacy small-fast setting aligned with Haiku alias unless explicitly overridden.
-  if (!opts.skipSmallFastSync) {
+  if (!skipSmallFastSync) {
     const haiku = getEnvModelValue(env, 'ANTHROPIC_DEFAULT_HAIKU_MODEL');
     if (haiku) {
       env.ANTHROPIC_SMALL_FAST_MODEL = haiku;
@@ -321,91 +368,31 @@ export const buildEnv = ({ providerKey, baseUrl, apiKey, extraEnv, modelOverride
   if (!provider) {
     throw new Error(`Unknown provider: ${providerKey}`);
   }
-
-  const env: ProviderEnv = { ...provider.env };
-  const authMode = provider.authMode ?? 'apiKey';
-
-  // For 'none' authMode, only apply cosmetic env vars - no auth or base URL
-  if (authMode === 'none') {
-    // Still allow extraEnv for user customization
-    if (Array.isArray(extraEnv)) {
-      for (const entry of extraEnv) {
-        const idx = entry.indexOf('=');
-        if (idx === -1) continue;
-        const key = entry.slice(0, idx).trim();
-        const value = entry.slice(idx + 1).trim();
-        if (!key) continue;
-        env[key] = value;
-      }
-    }
-    return env;
+  const profile = getProviderCapability(providerKey);
+  if (!profile) {
+    throw new Error(`Unknown provider capability profile: ${providerKey}`);
   }
 
-  if (!Object.hasOwn(env, 'DISABLE_AUTOUPDATER')) {
-    env.DISABLE_AUTOUPDATER = '1';
-  }
-  if (!Object.hasOwn(env, 'DISABLE_AUTO_MIGRATE_TO_NATIVE')) {
-    env.DISABLE_AUTO_MIGRATE_TO_NATIVE = '1';
-  }
-  if (!Object.hasOwn(env, 'CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION')) {
-    env.CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION = '1';
-  }
-  if (baseUrl) env.ANTHROPIC_BASE_URL = baseUrl;
-  if (authMode === 'authToken') {
-    const trimmed = normalizeModelValue(apiKey);
-    if (trimmed) {
-      env.ANTHROPIC_AUTH_TOKEN = trimmed;
-      if (provider.authTokenAlsoSetsApiKey) {
-        env.ANTHROPIC_API_KEY = trimmed;
-      }
-    } else if (providerKey === 'ccrouter') {
-      env.ANTHROPIC_AUTH_TOKEN = CCROUTER_AUTH_FALLBACK;
-      if (provider.authTokenAlsoSetsApiKey) {
-        env.ANTHROPIC_API_KEY = CCROUTER_AUTH_FALLBACK;
-      }
-    }
-    if (!provider.authTokenAlsoSetsApiKey && Object.hasOwn(env, 'ANTHROPIC_API_KEY')) {
-      delete env.ANTHROPIC_API_KEY;
-    }
-  } else if (apiKey) {
-    env.ANTHROPIC_API_KEY = apiKey;
-    env.CC_MIRROR_UNSET_AUTH_TOKEN = '1';
-    if (providerKey === 'zai') {
-      env.Z_AI_API_KEY = apiKey;
-    }
-  } else if (authMode === 'apiKey') {
-    env.CC_MIRROR_UNSET_AUTH_TOKEN = '1';
-  }
-
-  applyModelOverrides(env, modelOverrides);
-  syncCompatibilityModelDefaults(env, {
-    skipDefaultModelSync: normalizeModelValue(modelOverrides?.defaultModel).length > 0,
-    skipSmallFastSync: normalizeModelValue(modelOverrides?.smallFast).length > 0,
+  const env = buildCapabilityEnv({
+    profile,
+    baseEnv: provider.env,
+    baseUrl,
+    apiKey,
+    extraEnv,
+    modelOverrides,
   });
 
-  if (Array.isArray(extraEnv)) {
-    for (const entry of extraEnv) {
-      const idx = entry.indexOf('=');
-      if (idx === -1) continue;
-      const key = entry.slice(0, idx).trim();
-      const value = entry.slice(idx + 1).trim();
-      if (!key) continue;
-      env[key] = value;
-    }
-  }
-
-  if (authMode === 'authToken') {
-    if (provider.requiresEmptyApiKey) {
-      env.ANTHROPIC_API_KEY = '';
-    } else if (!provider.authTokenAlsoSetsApiKey && Object.hasOwn(env, 'ANTHROPIC_API_KEY')) {
-      delete env.ANTHROPIC_API_KEY;
-    }
-  }
-  if (authMode !== 'authToken' && Object.hasOwn(env, 'ANTHROPIC_AUTH_TOKEN')) {
-    delete env.ANTHROPIC_AUTH_TOKEN;
-  }
+  // Keep older public helpers behaving as before when callers use them directly.
+  applyModelOverrides(env, modelOverrides);
+  syncCompatibilityModelDefaults(env, normalizeModelValue(modelOverrides?.smallFast).length > 0);
 
   return env;
 };
+
+export const providerRequiresModelMapping = (providerKey: string): boolean =>
+  getProviderCapability(providerKey)?.models.policy === 'required';
+
+export const getProviderModelDefaults = (providerKey: string): Partial<Record<'opus' | 'sonnet' | 'haiku', string>> =>
+  resolveModelAliases(getProviderCapability(providerKey) ?? PROVIDER_CAPABILITIES.custom);
 
 export const PROVIDER_TEMPLATES = PROVIDERS;

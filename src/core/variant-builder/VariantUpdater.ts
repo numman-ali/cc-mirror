@@ -6,7 +6,7 @@
  */
 
 import path from 'node:path';
-import { getProvider } from '../../providers/index.js';
+import { getProviderCapability } from '../../providers/index.js';
 import { DEFAULT_CLAUDE_VERSION, DEFAULT_ROOT } from '../constants.js';
 import { expandTilde } from '../paths.js';
 import { loadVariantMeta } from '../variants.js';
@@ -49,16 +49,14 @@ const resolveClaudeVersionForUpdate = (
 };
 
 const shouldEnablePromptPack = (providerKey: string) => {
-  // Check if provider has noPromptPack set (e.g., mirror provider)
-  const provider = getProvider(providerKey);
-  if (provider?.noPromptPack) return false;
-  // Only auto-enable for providers with prompt pack support
-  return providerKey === 'zai' || providerKey === 'minimax';
+  return getProviderCapability(providerKey)?.features.promptPack.defaultEnabled ?? false;
 };
 
-const shouldInstallSkills = (_providerKey: string) => false;
+const shouldInstallSkills = (providerKey: string) =>
+  getProviderCapability(providerKey)?.features.browserSkill.defaultEnabled ?? false;
 
-const shouldEnableShellEnv = (providerKey: string) => providerKey === 'zai';
+const shouldEnableShellEnv = (providerKey: string) =>
+  getProviderCapability(providerKey)?.features.shellEnv.defaultEnabled ?? false;
 
 // Helper to yield to event loop (for async mode)
 const yieldToEventLoop = () => new Promise<void>((resolve) => setImmediate(resolve));

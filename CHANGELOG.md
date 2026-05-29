@@ -2,6 +2,21 @@
 
 This repository tracks changes primarily through Git history.
 
+## v2.2.0
+
+### Highlights
+
+- **Provider-native defaults** — Added capability profiles so create/update/doctor/TUI use one source of truth for provider auth, endpoints, models, privacy flags, MCP servers, and managed settings.
+- **Latest provider models** — Updated Kimi to `kimi-k2.6`, MiniMax to `MiniMax-M2.7`, and Z.ai to GLM-5.1/5-Turbo/4.5-Air defaults.
+- **Managed updates** — `cc-mirror update` now refreshes cc-mirror-owned defaults to the latest profile while preserving credentials and custom env.
+- **Cleaner variant UI** — Suppresses upstream launch promos, startup version branding, update/install checks, nonessential traffic, and stale model picker entries for managed variants.
+- **TweakCC hardening** — Validates patched native output, retries with latest TweakCC where appropriate, removes brittle patch defaults, and restores a working runtime when patching fails.
+- **Kimi launch fix** — Removes stale auth-token unsetting during update and defaults Kimi to Moonshot's Anthropic-compatible endpoint.
+- **Doctor upgrades** — Adds provider capability drift checks for auth, model mappings, MCP servers, permissions, managed env, and shell profile wiring without leaking secrets.
+- **Security hardening** — Safely parses config JSON with prototype-key stripping and size limits across core config readers, doctor, TUI, and wrapper-generated env loaders.
+- **MCP docs** — Clarifies variant-scoped MCP setup, `--scope user`, project `.mcp.json`, and how cc-mirror preserves user-added servers.
+- **Contribution policy** — Moves the project to issue-first external contributions and restricts new pull request creation to collaborators.
+
 ## v2.0.1
 
 ### Fixes

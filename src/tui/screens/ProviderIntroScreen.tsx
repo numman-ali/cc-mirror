@@ -7,10 +7,12 @@ import { Box, Text, useInput } from 'ink';
 import { ScreenLayout } from '../components/ui/ScreenLayout.js';
 import { colors, keyHints } from '../components/ui/theme.js';
 import { getProviderEducation } from '../content/providers.js';
+import { getTuiProviderCapabilities, type TuiProviderCapabilities } from '../providerCapabilities.js';
 
 export interface ProviderIntroScreenProps {
   providerKey: string;
   providerLabel: string;
+  capabilities?: TuiProviderCapabilities;
   isQuickSetup?: boolean;
   onContinue: () => void;
   onBack: () => void;
@@ -19,11 +21,13 @@ export interface ProviderIntroScreenProps {
 export const ProviderIntroScreen: React.FC<ProviderIntroScreenProps> = ({
   providerKey,
   providerLabel,
+  capabilities,
   isQuickSetup = false,
   onContinue,
   onBack,
 }) => {
   const education = getProviderEducation(providerKey);
+  const flowCapabilities = capabilities ?? getTuiProviderCapabilities(providerKey);
 
   useInput((input, key) => {
     if (key.escape) {
@@ -37,53 +41,39 @@ export const ProviderIntroScreen: React.FC<ProviderIntroScreenProps> = ({
   const buildSteps = (): string[] => {
     const steps: string[] = [];
 
-    // CCRouter is special - no API key, no models (configured in ~/.claude-code-router/config.json)
-    if (providerKey === 'ccrouter') {
-      steps.push('Configure router URL (default: localhost:3456)');
-      if (!isQuickSetup) {
-        steps.push('Choose a visual theme');
-        steps.push('Optional: dev-browser skill');
-      }
-      steps.push('Name your variant');
-      steps.push('Create!');
-      return steps;
-    }
-
-    // Mirror is special - no API key at setup, uses normal Claude auth
-    if (providerKey === 'mirror') {
-      if (!isQuickSetup) {
-        steps.push('Choose a visual theme');
-        steps.push('Optional: dev-browser skill');
-      }
-      steps.push('Name your variant');
-      steps.push('Create your variant');
-      steps.push('Authenticate via Claude Code (OAuth or API key)');
-      return steps;
-    }
-
-    // Standard providers
-    steps.push('Enter your API key');
-
-    // Model mapping (if required)
-    if (education?.requiresMapping) {
-      steps.push('Configure model aliases');
-    }
-
-    // Quick vs full flow differences
     if (!isQuickSetup) {
       steps.push('Choose a visual theme');
+    }
 
-      // Prompt pack (zai/minimax only)
-      if (education?.hasPromptPack) {
-        steps.push('Enable/disable prompt pack');
-      }
+    if (flowCapabilities.endpoint.kind === 'router-url') {
+      steps.push('Configure router URL (default: localhost:3456)');
+    } else if (
+      !isQuickSetup &&
+      flowCapabilities.endpoint.configurable &&
+      flowCapabilities.endpoint.kind === 'base-url'
+    ) {
+      steps.push('Confirm provider base URL');
+    }
 
+    if (flowCapabilities.credential.required) {
+      steps.push('Enter provider credential');
+    }
+
+    if (flowCapabilities.models.showInSetup) {
+      steps.push(flowCapabilities.models.required ? 'Configure required model slots' : 'Review model slots');
+    }
+
+    if (!isQuickSetup) {
       steps.push('Optional: dev-browser skill');
       steps.push('Optional: custom env vars');
     }
 
-    // Final step
+    steps.push('Name your variant');
+    steps.push('Review capabilities and settings');
     steps.push('Create your variant');
+    if (flowCapabilities.endpoint.kind === 'none' && !flowCapabilities.credential.required) {
+      steps.push('Authenticate on first run');
+    }
 
     return steps;
   };
@@ -116,6 +106,30 @@ export const ProviderIntroScreen: React.FC<ProviderIntroScreenProps> = ({
               <Text color={colors.textDim}>{index + 1}.</Text> {step}
             </Text>
           ))}
+        </Box>
+      </Box>
+
+      <Box flexDirection="column" marginTop={1}>
+        <Text color={colors.textMuted} bold>
+          Capabilities:
+        </Text>
+        <Box flexDirection="column" marginLeft={2} marginTop={1}>
+          <Text color={colors.text}>
+            <Text color={colors.success}>+</Text> Credential:{' '}
+            {flowCapabilities.credential.required ? 'provider credential' : 'not required'}
+          </Text>
+          <Text color={colors.text}>
+            <Text color={colors.success}>+</Text> Endpoint:{' '}
+            {flowCapabilities.endpoint.kind === 'none' ? 'runtime default' : flowCapabilities.endpoint.kind}
+          </Text>
+          <Text color={colors.text}>
+            <Text color={colors.success}>+</Text> Models:{' '}
+            {flowCapabilities.models.required
+              ? 'required slots'
+              : flowCapabilities.models.showInSetup
+                ? 'defaults reviewed'
+                : 'provider defaults'}
+          </Text>
         </Box>
       </Box>
 
@@ -158,7 +172,7 @@ export const ProviderIntroScreen: React.FC<ProviderIntroScreenProps> = ({
 
       {/* Continue prompt */}
       <Box marginTop={2}>
-        <Text color={colors.primaryBright}>Press Enter to continue →</Text>
+        <Text color={colors.primaryBright}>Press Enter to continue</Text>
       </Box>
     </ScreenLayout>
   );

@@ -54,19 +54,65 @@ test('E2E: Create variants for all providers', async (t) => {
       // Verify settings.json was created with correct provider config
       const configPath = path.join(variantDir, 'config', 'settings.json');
       assert.ok(fs.existsSync(configPath), `${provider.name} settings.json should exist`);
-      const config = JSON.parse(readFile(configPath)) as { env: Record<string, string> };
+      const config = JSON.parse(readFile(configPath)) as {
+        env: Record<string, string | number | undefined>;
+        companyAnnouncements?: string[];
+        spinnerTipsEnabled?: boolean;
+        feedbackSurveyRate?: number;
+        includeCoAuthoredBy?: boolean;
+        attribution?: { commit?: string; pr?: string };
+      };
       assert.ok(config.env, `${provider.name} should have env section`);
+      assert.deepEqual(config.companyAnnouncements, [], `${provider.name} should disable startup announcements`);
+      assert.equal(config.spinnerTipsEnabled, false, `${provider.name} should disable upstream spinner tips`);
+      assert.equal(config.feedbackSurveyRate, 0, `${provider.name} should disable feedback surveys`);
+      assert.equal(config.includeCoAuthoredBy, false, `${provider.name} should disable native attribution byline`);
+      assert.deepEqual(
+        config.attribution,
+        { commit: '', pr: '' },
+        `${provider.name} should clear native attribution text`
+      );
+      assert.equal(config.env.DISABLE_UPDATES, '1', `${provider.name} should disable upstream updates`);
+      assert.equal(config.env.DISABLE_AUTOUPDATER, '1', `${provider.name} should disable upstream auto-updater`);
+      assert.equal(
+        config.env.DISABLE_INSTALLATION_CHECKS,
+        '1',
+        `${provider.name} should suppress upstream install checks`
+      );
+      assert.equal(
+        config.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC,
+        '1',
+        `${provider.name} should disable nonessential upstream traffic`
+      );
 
       // Verify tweakcc config has correct theme
       const tweakConfigPath = path.join(variantDir, 'tweakcc', 'config.json');
       assert.ok(fs.existsSync(tweakConfigPath), `${provider.name} tweakcc config should exist`);
       const tweakConfig = JSON.parse(readFile(tweakConfigPath)) as {
-        settings?: { themes?: { id?: string }[] };
+        hidePiebaldAnnouncement?: boolean;
+        settings?: {
+          misc?: {
+            hideStartupBanner?: boolean;
+            hideStartupClawd?: boolean;
+          };
+          themes?: { id?: string }[];
+        };
       };
       assert.equal(
         tweakConfig.settings?.themes?.[0]?.id,
         provider.expectedThemeId,
         `${provider.name} should have correct theme ID`
+      );
+      assert.equal(tweakConfig.hidePiebaldAnnouncement, true, `${provider.name} should hide tweakcc branding`);
+      assert.equal(
+        tweakConfig.settings?.misc?.hideStartupBanner,
+        true,
+        `${provider.name} should hide Claude startup banner`
+      );
+      assert.equal(
+        tweakConfig.settings?.misc?.hideStartupClawd,
+        true,
+        `${provider.name} should hide Claude startup art`
       );
     }
   });

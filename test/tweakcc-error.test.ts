@@ -18,6 +18,14 @@ test('formatTweakccFailure maps tweakcc v4 native extraction errors', () => {
   assertNativeHint(msg);
 });
 
+test('formatTweakccFailure maps patched binary validation failures', () => {
+  const msg = formatTweakccFailure(
+    'cc-mirror validation failed: patched Claude Code binary failed --version: TypeError: Expected CommonJS module to have a function wrapper'
+  );
+  assert.ok(msg.toLowerCase().includes('failed to start'));
+  assert.ok(msg.toLowerCase().includes('--no-tweak'));
+});
+
 test('isTweakccNativeExtractionFailure detects native extraction failures', () => {
   assert.equal(isTweakccNativeExtractionFailure('Error: Could not extract JS from native binary: /tmp/claude'), true);
   assert.equal(isTweakccNativeExtractionFailure('Error: Failed to extract claude.js from native installation'), true);

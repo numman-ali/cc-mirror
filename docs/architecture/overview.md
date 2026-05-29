@@ -218,9 +218,11 @@ interface ProviderTemplate {
 │               │                         Provider Types                               │
 │               ├────────────┬─────────────┬────────────┬────────────┬────────────────┤
 │   Feature     │ API Key    │ Auth Token  │ Router     │ Direct     │ Description    │
-│               │ (zai,      │ (openrouter,│ (ccrouter) │ (mirror)   │                │
-│               │  minimax,  │  vercel,    │            │            │                │
-│               │  kimi)     │  ollama,    │            │            │                │
+│               │ (kimi)     │ (zai,       │ (ccrouter) │ (mirror)   │                │
+│               │            │  minimax,   │            │            │                │
+│               │            │  openrouter,│            │            │                │
+│               │            │  vercel,    │            │            │                │
+│               │            │  ollama,    │            │            │                │
 │               │            │  nanogpt,   │            │            │                │
 │               │            │  gatewayz)  │            │            │                │
 ├───────────────┼────────────┼─────────────┼────────────┼────────────┼────────────────┤

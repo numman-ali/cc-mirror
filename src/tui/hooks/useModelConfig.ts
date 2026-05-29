@@ -57,7 +57,7 @@ export function useModelConfig(options: UseModelConfigOptions): void {
         const opts = {
           tweakccStdio: 'pipe' as const,
           binDir,
-          settingsOnly: true, // Skip Claude Code reinstall, just update settings.json
+          settingsOnly: true,
           noTweak: true, // Don't re-run tweakcc patches
           modelOverrides: {
             opus: modelOpus.trim() || undefined,
@@ -78,9 +78,9 @@ export function useModelConfig(options: UseModelConfigOptions): void {
         const completion: CompletionResult = {
           doneLines: [`Updated model mapping for ${selectedVariant.name}`],
           summary: [
-            `Opus: ${modelOpus.trim() || '(not set)'}`,
-            `Sonnet: ${modelSonnet.trim() || '(not set)'}`,
-            `Haiku: ${modelHaiku.trim() || '(not set)'}`,
+            `Primary: ${modelOpus.trim() || '(not set)'}`,
+            `Balanced: ${modelSonnet.trim() || '(not set)'}`,
+            `Fast: ${modelHaiku.trim() || '(not set)'}`,
           ],
           nextSteps: [`Run: ${selectedVariant.name}`, 'Models are saved in settings.json'],
           help: ['Use "Update" to refresh binary while keeping models'],

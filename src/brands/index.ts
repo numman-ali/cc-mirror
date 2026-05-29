@@ -33,7 +33,7 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
   kimi: {
     key: 'kimi',
     label: 'Kimi Teal',
-    description: 'Teal/cyan palette for Kimi Code (kimi-for-coding).',
+    description: 'Teal/cyan palette for Kimi Code.',
     buildTweakccConfig: buildKimiTweakccConfig,
   },
   openrouter: {
@@ -74,8 +74,8 @@ const BRAND_PRESETS: Record<string, BrandPreset> = {
   },
   mirror: {
     key: 'mirror',
-    label: 'Mirror Claude',
-    description: 'Reflective silver/chrome theme for pure Claude Code experience.',
+    label: 'Mirror',
+    description: 'Reflective silver/chrome theme for the mirror experience.',
     buildTweakccConfig: buildMirrorTweakccConfig,
   },
 };

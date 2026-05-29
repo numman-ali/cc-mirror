@@ -2,7 +2,7 @@
  * Model override utilities for CLI
  */
 
-import { getProvider } from '../../providers/index.js';
+import { providerRequiresModelMapping } from '../../providers/index.js';
 import type { ModelOverrides } from '../../providers/index.js';
 import type { ParsedArgs } from '../args.js';
 import { requirePrompt } from './requirePrompt.js';
@@ -51,8 +51,7 @@ export async function ensureModelMapping(
   opts: ParsedArgs,
   overrides: ModelOverrides
 ): Promise<ModelOverrides> {
-  const provider = getProvider(providerKey);
-  if (!provider?.requiresModelMapping) return overrides;
+  if (!providerRequiresModelMapping(providerKey)) return overrides;
   const missing = {
     sonnet: (overrides.sonnet ?? '').trim().length === 0,
     opus: (overrides.opus ?? '').trim().length === 0,
@@ -60,13 +59,13 @@ export async function ensureModelMapping(
   };
   if (opts.yes && (missing.sonnet || missing.opus || missing.haiku)) {
     throw new Error(
-      'This provider requires --model-sonnet/--model-opus/--model-haiku (OpenRouter, GatewayZ, Vercel AI Gateway, Ollama).'
+      'This provider requires --model-sonnet/--model-opus/--model-haiku for Balanced/Primary/Fast slots.'
     );
   }
   if (!opts.yes) {
-    if (missing.sonnet) overrides.sonnet = await requirePrompt('Default Sonnet model', overrides.sonnet);
-    if (missing.opus) overrides.opus = await requirePrompt('Default Opus model', overrides.opus);
-    if (missing.haiku) overrides.haiku = await requirePrompt('Default Haiku model', overrides.haiku);
+    if (missing.sonnet) overrides.sonnet = await requirePrompt('Balanced model slot', overrides.sonnet);
+    if (missing.opus) overrides.opus = await requirePrompt('Primary model slot', overrides.opus);
+    if (missing.haiku) overrides.haiku = await requirePrompt('Fast model slot', overrides.haiku);
   }
   return overrides;
 }

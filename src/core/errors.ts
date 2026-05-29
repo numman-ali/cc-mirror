@@ -7,8 +7,14 @@ export const isTweakccNativeExtractionFailure = (text: string) => {
   );
 };
 
+export const isBunCommonJsWrapperFailure = (text: string) =>
+  text.toLowerCase().includes('expected commonjs module to have a function wrapper');
+
 const extractErrorHint = (text: string) => {
   const normalized = text.toLowerCase();
+  if (normalized.includes('cc-mirror validation failed') || isBunCommonJsWrapperFailure(text)) {
+    return 'tweakcc produced a patched Claude Code binary that failed to start. cc-mirror restored the pristine binary. Re-run with --no-tweak to skip theming, or update cc-mirror/tweakcc to a version that supports this Claude Code release.';
+  }
   if (isTweakccNativeExtractionFailure(text)) {
     return 'tweakcc could not extract JS from the native Claude Code binary. This usually means the pinned tweakcc/native extractor (often node-lief) cannot read this Claude Code release yet. Re-run with --no-tweak to skip theming, or update cc-mirror/tweakcc to a version that supports this binary.';
   }

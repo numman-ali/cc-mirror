@@ -11,6 +11,7 @@ import * as providers from '../../src/providers/index.js';
 import { tick, send, KEYS, makeCore } from '../helpers/index.js';
 
 delete process.env.Z_AI_API_KEY;
+delete process.env.ANTHROPIC_AUTH_TOKEN;
 delete process.env.ANTHROPIC_API_KEY;
 
 test('App ESC from home goes to exit', async () => {
@@ -62,7 +63,7 @@ test('App ESC from quick-provider goes to home', async () => {
   app.unmount();
 });
 
-test('App ESC from quick-api-key goes back to quick-provider', async () => {
+test('App ESC from quick intro goes back to quick-provider', async () => {
   const { core } = makeCore();
   const app = render(
     React.createElement(App, {
@@ -83,7 +84,7 @@ test('App ESC from quick-api-key goes back to quick-provider', async () => {
   await send(app.stdin, KEYS.enter);
   await tick();
 
-  // Should be on API key screen, press ESC
+  // Should be on provider intro screen, press ESC
   await send(app.stdin, KEYS.escape);
   await tick();
 

@@ -70,6 +70,35 @@ export interface MiscConfig {
   allowBypassPermissionsInSudo: boolean | null;
   suppressNativeInstallerWarning: boolean;
   filterScrollEscapeSequences: boolean;
+  enableWorktreeMode: boolean;
+  allowCustomAgentModels: boolean;
+  enableContextLimitOverride: boolean;
+  enableModelCustomizations: boolean;
+  enableVoiceMode: boolean;
+  enableVoiceConciseOutput: boolean;
+  enableChannelsMode: boolean;
+}
+
+export interface Toolset {
+  name: string;
+  allowedTools: string[] | '*';
+}
+
+export interface SubagentModelsConfig {
+  plan: string | null;
+  explore: string | null;
+  generalPurpose: string | null;
+}
+
+export interface InputPatternHighlighter {
+  name: string;
+  regex: string;
+  regexFlags: string;
+  format: string;
+  styling: string[];
+  foregroundColor: string | null;
+  backgroundColor: string | null;
+  enabled: boolean;
 }
 
 export interface TweakccSettings {
@@ -79,14 +108,28 @@ export interface TweakccSettings {
   userMessageDisplay: UserMessageDisplayConfig;
   inputBox: InputBoxConfig;
   misc: MiscConfig;
+  toolsets: Toolset[];
+  defaultToolset: string | null;
+  planModeToolset: string | null;
+  subagentModels: SubagentModelsConfig;
+  inputPatternHighlighters: InputPatternHighlighter[];
+  inputPatternHighlightersTestText: string;
   claudeMdAltNames: string[] | null;
+}
+
+export interface TweakccRemoteConfig {
+  sourceUrl: string;
+  dateFetched: string;
+  settings: Partial<TweakccSettings>;
 }
 
 export interface TweakccConfig {
   ccVersion: string;
-  ccInstallationPath: string | null;
+  ccInstallationDir?: string | null;
+  ccInstallationPath?: string | null;
   lastModified: string;
   changesApplied: boolean;
   settings: TweakccSettings;
   hidePiebaldAnnouncement?: boolean;
+  remoteConfig?: TweakccRemoteConfig;
 }

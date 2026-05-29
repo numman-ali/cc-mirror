@@ -6,7 +6,7 @@
  */
 
 import path from 'node:path';
-import { getProvider, type ProviderTemplate } from '../../providers/index.js';
+import { getProvider, getProviderCapability } from '../../providers/index.js';
 import { DEFAULT_BIN_DIR, DEFAULT_CLAUDE_VERSION, DEFAULT_ROOT } from '../constants.js';
 import { assertValidVariantName, expandTilde, getWrapperPath } from '../paths.js';
 import type { CreateVariantParams, CreateVariantResult } from '../types.js';
@@ -29,15 +29,14 @@ const normalizeClaudeVersion = (value?: string) => {
   return trimmed.length > 0 ? trimmed : DEFAULT_CLAUDE_VERSION;
 };
 
-const shouldEnablePromptPack = (providerKey: string, provider?: ProviderTemplate) => {
-  // Providers with noPromptPack: true skip prompt pack overlays
-  if (provider?.noPromptPack) return false;
-  return providerKey === 'zai' || providerKey === 'minimax';
-};
+const shouldEnablePromptPack = (providerKey: string) =>
+  getProviderCapability(providerKey)?.features.promptPack.defaultEnabled ?? false;
 
-const shouldInstallSkills = (_providerKey: string) => false;
+const shouldInstallSkills = (providerKey: string) =>
+  getProviderCapability(providerKey)?.features.browserSkill.defaultEnabled ?? false;
 
-const shouldEnableShellEnv = (providerKey: string) => providerKey === 'zai';
+const shouldEnableShellEnv = (providerKey: string) =>
+  getProviderCapability(providerKey)?.features.shellEnv.defaultEnabled ?? false;
 
 // Helper to yield to event loop (for async mode)
 const yieldToEventLoop = () => new Promise<void>((resolve) => setImmediate(resolve));
@@ -94,7 +93,7 @@ export class VariantBuilder {
     };
 
     const resolvedClaudeVersion = normalizeClaudeVersion(params.claudeVersion);
-    const promptPackPreference = params.promptPack ?? shouldEnablePromptPack(params.providerKey, provider);
+    const promptPackPreference = params.promptPack ?? shouldEnablePromptPack(params.providerKey);
     const promptPackEnabled = !params.noTweak && promptPackPreference;
     const skillInstallEnabled = params.skillInstall ?? shouldInstallSkills(params.providerKey);
     const shellEnvEnabled = params.shellEnv ?? shouldEnableShellEnv(params.providerKey);

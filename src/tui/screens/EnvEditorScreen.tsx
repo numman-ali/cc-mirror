@@ -64,7 +64,7 @@ export const EnvEditorScreen: React.FC<EnvEditorScreenProps> = ({ envEntries, on
         <Text color={colors.textMuted}>
           These environment variables will be auto-injected when running your variant.
         </Text>
-        <Text color={colors.textDim}>Docs: https://code.claude.com/docs/en/settings#environment-variables</Text>
+        <Text color={colors.textDim}>Edit only values you intentionally want to own.</Text>
       </Box>
 
       <Box marginBottom={1}>

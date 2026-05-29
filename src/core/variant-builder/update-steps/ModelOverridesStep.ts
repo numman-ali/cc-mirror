@@ -2,7 +2,8 @@
  * ModelOverridesStep - Applies model override settings
  */
 
-import { ensureSettingsEnvOverrides } from '../../claude-config.js';
+import { ensureSettingsEnvOverrides, ensureSettingsModel } from '../../claude-config.js';
+import { getProviderCapability, resolveStartupModelSetting } from '../../../providers/index.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
 
 export class ModelOverridesStep implements UpdateStep {
@@ -23,10 +24,9 @@ export class ModelOverridesStep implements UpdateStep {
       return;
     }
 
-    const normalizedOpus = opts.modelOverrides.opus?.trim();
     const normalizedHaiku = opts.modelOverrides.haiku?.trim();
-    const normalizedDefaultModel = opts.modelOverrides.defaultModel?.trim();
     const normalizedSmallFast = opts.modelOverrides.smallFast?.trim();
+    const profile = getProviderCapability(meta.provider);
 
     const envOverridesUpdated = ensureSettingsEnvOverrides(meta.configDir, {
       ...(opts.modelOverrides.sonnet ? { ANTHROPIC_DEFAULT_SONNET_MODEL: opts.modelOverrides.sonnet } : {}),
@@ -37,15 +37,13 @@ export class ModelOverridesStep implements UpdateStep {
         : normalizedHaiku
           ? { ANTHROPIC_SMALL_FAST_MODEL: normalizedHaiku }
           : {}),
-      ...(normalizedDefaultModel
-        ? { ANTHROPIC_MODEL: normalizedDefaultModel }
-        : normalizedOpus
-          ? { ANTHROPIC_MODEL: normalizedOpus }
-          : {}),
       ...(opts.modelOverrides.subagentModel ? { CLAUDE_CODE_SUBAGENT_MODEL: opts.modelOverrides.subagentModel } : {}),
     });
+    const modelUpdated = profile
+      ? ensureSettingsModel(meta.configDir, resolveStartupModelSetting(profile, opts.modelOverrides))
+      : false;
 
-    if (envOverridesUpdated) {
+    if (envOverridesUpdated || modelUpdated) {
       state.notes.push('Updated model mapping in settings.json.');
     }
   }

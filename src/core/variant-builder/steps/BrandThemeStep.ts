@@ -3,14 +3,9 @@
  */
 
 import { getBrandThemeId, resolveBrandKey } from '../../../brands/index.js';
-import {
-  ensureMinimaxMcpServer,
-  ensureOnboardingState,
-  ensureSettingsPermissionsDeny,
-  MINIMAX_DENY_TOOLS,
-  ZAI_DENY_TOOLS,
-} from '../../claude-config.js';
+import { ensureManagedMcpServers, ensureOnboardingState, ensureSettingsPermissionsDeny } from '../../claude-config.js';
 import { ensureTweakccConfig } from '../../tweakcc.js';
+import { getProviderCapability } from '../../../providers/index.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
 export class BrandThemeStep implements BuildStep {
@@ -25,22 +20,26 @@ export class BrandThemeStep implements BuildStep {
     await ctx.report('Setting up brand theme...');
     this.setupBrand(ctx);
 
-    if (ctx.params.providerKey === 'minimax') {
-      await ctx.report('Configuring MiniMax MCP server...');
+    const profile = getProviderCapability(ctx.params.providerKey);
+    if (profile?.claudeConfig.mcpServers.length) {
+      await ctx.report(`Configuring ${profile.key} MCP servers...`);
     }
   }
 
   private setupBrand(ctx: BuildContext): void {
     const { params, paths, prefs, state } = ctx;
+    const profile = getProviderCapability(params.providerKey);
+    if (!profile) {
+      throw new Error(`Unknown provider capability profile: ${params.providerKey}`);
+    }
 
     const brandKey = resolveBrandKey(params.providerKey, params.brand);
     prefs.brandKey = brandKey;
 
-    ensureTweakccConfig(paths.tweakDir, brandKey);
+    ensureTweakccConfig(paths.tweakDir, brandKey, params.providerKey);
 
     const brandThemeId = !params.noTweak && brandKey ? getBrandThemeId(brandKey) : null;
-    // Mirror provider: skip onboarding flag so users see login screen
-    const skipOnboardingFlag = params.providerKey === 'mirror';
+    const skipOnboardingFlag = profile.claudeConfig.onboarding === 'skip';
     const onboarding = ensureOnboardingState(paths.configDir, {
       themeId: brandThemeId ?? 'dark',
       forceTheme: Boolean(brandThemeId),
@@ -57,22 +56,21 @@ export class BrandThemeStep implements BuildStep {
       state.notes.push('Login screen enabled (authenticate when you run the variant).');
     }
 
-    // Provider-specific MCP configuration
-    if (params.providerKey === 'minimax') {
-      ctx.report('Configuring MiniMax MCP server...');
-      ensureMinimaxMcpServer(paths.configDir, state.resolvedApiKey);
-
-      const denied = ensureSettingsPermissionsDeny(paths.configDir, MINIMAX_DENY_TOOLS);
-      if (denied) {
-        state.notes.push('Blocked WebSearch in settings.json.');
+    if (profile.claudeConfig.mcpServers.length > 0) {
+      ctx.report(`Configuring ${profile.key} MCP servers...`);
+      const mcpUpdated = ensureManagedMcpServers(
+        paths.configDir,
+        profile.claudeConfig.mcpServers,
+        state.resolvedApiKey
+      );
+      if (mcpUpdated) {
+        state.notes.push(`Configured ${profile.key} MCP servers.`);
       }
     }
 
-    if (params.providerKey === 'zai') {
-      const denied = ensureSettingsPermissionsDeny(paths.configDir, ZAI_DENY_TOOLS);
-      if (denied) {
-        state.notes.push('Blocked Z.ai injected tools (MCP + WebSearch/WebFetch) in settings.json.');
-      }
+    const denied = ensureSettingsPermissionsDeny(paths.configDir, profile.tools.deny);
+    if (denied) {
+      state.notes.push(`Applied ${profile.key} required tool deny rules.`);
     }
 
     // Add note if prompt pack is skipped

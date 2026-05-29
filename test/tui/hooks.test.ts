@@ -98,7 +98,6 @@ function makeTestMeta(
     name: string;
     provider: string;
     promptPack: boolean;
-    promptPackMode: 'minimal' | 'maximal';
     skillInstall: boolean;
     shellEnv: boolean;
   }>
@@ -120,7 +119,6 @@ test('buildUpdateSummary includes provider info', () => {
     makeTestMeta({
       provider: 'zai',
       promptPack: true,
-      promptPackMode: 'maximal',
       skillInstall: true,
       shellEnv: true,
     }),

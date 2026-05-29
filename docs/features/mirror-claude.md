@@ -12,9 +12,9 @@ Mirror Claude is a **pure Claude Code variant** with advanced features enabled. 
 │   ┌─────────────────────────────────────────────────────────────────────┐  │
 │   │                    PROXY PROVIDERS                                  │  │
 │   │                                                                     │  │
-│   │   Z.ai ──────────▶ GLM API ────────▶ GLM-5/4.7/4.5-Air            │  │
-│   │   MiniMax ────────▶ MiniMax API ───▶ MiniMax-M2.5                  │  │
-│   │   Kimi ───────────▶ Kimi API ──────▶ kimi-for-coding (K2.5)       │  │
+│   │   Z.ai ──────────▶ GLM API ────────▶ GLM-5.1/5-Turbo/4.5-Air     │  │
+│   │   MiniMax ────────▶ MiniMax API ───▶ MiniMax-M2.7                  │  │
+│   │   Kimi ───────────▶ Kimi API ──────▶ kimi-k2.6                    │  │
 │   │                                                                     │  │
 │   └─────────────────────────────────────────────────────────────────────┘  │
 │                                                                            │
@@ -78,8 +78,8 @@ No API key required at setup. When you run `mclaude`, authenticate via:
 │                                                                                         │
 │   Feature            │ zai/minimax │ kimi     │ openrouter │ ollama   │ mirror          │
 │   ───────────────────┼────────────┼──────────┼────────────┼──────────┼─────────────────│
-│   Model              │ GLM / M2.5 │ K2.5     │ You choose │ Local    │ Claude (native) │
-│   Auth Mode          │ API Key    │ API Key  │ Auth Token │ Auth Tok │ OAuth or Key    │
+│   Model              │ GLM / M2.7 │ K2.6     │ You choose │ Local    │ Claude (native) │
+│   Auth Mode          │ Auth Token │ Auth Tok │ Auth Token │ Auth Tok │ OAuth or Key    │
 │   ANTHROPIC_BASE_URL │ ✓ Set      │ ✓ Set    │ ✓ Set      │ ✓ Set    │ ✗ Not set       │
 │   Model Mappings     │ ✓ Auto     │ ✓ Auto   │ ✓ Required │ Required │ ✗ Not set       │
 │   Prompt Pack        │ ✓ Minimal  │ ✗        │ ✗          │ ✗        │ ✗ Pure          │

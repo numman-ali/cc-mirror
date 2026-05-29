@@ -15,13 +15,13 @@ const WRAPPER_HINT = getWrapperPath(DEFAULT_BIN_DIR, '<name>');
 export const EDUCATION = {
   whatIsCcMirror: {
     title: 'What is CC-MIRROR?',
-    brief: 'Create isolated Claude Code variants with custom providers.',
+    brief: 'Create isolated coding variants with custom providers.',
     detailed: [
-      'CC-MIRROR creates isolated Claude Code installations that connect to',
+      'CC-MIRROR creates isolated coding runtime installations that connect to',
       'different AI providers. Each variant has its own configuration, theme,',
-      'and settings—completely independent from your main Claude Code.',
+      'and settings, completely independent from your main setup.',
       '',
-      'Think of it as having multiple Claude Code "accounts", each pointing',
+      'Think of it as having multiple provider-native workspaces, each pointing',
       'to a different AI backend: Z.ai, MiniMax, OpenRouter, Ollama, GatewayZ, Vercel, NanoGPT, or your own.',
     ],
   },
@@ -30,7 +30,7 @@ export const EDUCATION = {
     title: 'Why Variants?',
     brief: 'Keep different AI providers separate and organized.',
     points: [
-      'Run Z.ai GLM-5/4.7 and MiniMax side-by-side',
+      'Run Z.ai GLM-5.1/5-Turbo and MiniMax side-by-side',
       'Experiment with OpenRouter without affecting your main setup',
       'Keep work projects separate from personal experimentation',
       'Try new models without risk—just create a new variant',
@@ -49,8 +49,8 @@ export const EDUCATION = {
       },
       {
         step: 2,
-        title: 'Installs Claude Code',
-        detail: 'Downloads and verifies native Claude Code binary',
+        title: 'Installs runtime',
+        detail: 'Downloads and verifies the native binary',
       },
       {
         step: 3,
@@ -66,17 +66,17 @@ export const EDUCATION = {
   },
 
   modelAliases: {
-    title: 'What are Model Aliases?',
-    brief: 'Claude Code uses 3 internal model tiers.',
+    title: 'What are Model Slots?',
+    brief: 'Each variant uses three model slots.',
     explanation: [
-      'Claude Code internally uses three model aliases:',
+      'The runtime uses three configurable model slots:',
       '',
-      '  Opus   → Complex reasoning, architecture, long tasks',
-      '  Sonnet → Default for most coding tasks',
-      '  Haiku  → Quick tasks, subagents, fast iteration',
+      '  Primary  -> Complex reasoning, architecture, long tasks',
+      '  Balanced -> Default for most coding tasks',
+      '  Fast     -> Quick tasks, subagents, fast iteration',
       '',
       'When using providers like OpenRouter or LiteLLM, you map',
-      'these aliases to actual model names (e.g., claude-3-opus).',
+      'these slots to actual provider model names.',
     ],
   },
 
@@ -86,9 +86,9 @@ export const EDUCATION = {
     details: [
       'Every variant gets its own:',
       '',
-      '  • CLAUDE_CONFIG_DIR  → settings, MCP servers, OAuth',
+      '  • Config dir         → settings, MCP servers, credentials',
       '  • TWEAKCC_CONFIG_DIR → theme customizations',
-      '  • native binary      → Claude Code executable',
+      '  • native binary      → isolated executable',
       '  • API credentials    → stored in settings.json',
       '',
       'Running `zai` vs `minimax` uses completely different',
@@ -103,6 +103,6 @@ export const EDUCATION = {
 export const QUICK_TIPS = {
   apiKey: 'Your API key is stored locally in the variant config. Never sent anywhere except your chosen provider.',
   modelMapping: "Not sure which models? Check your provider's documentation for available model names.",
-  promptPack: 'Prompt packs add provider-specific guidance to help Claude Code work better with your AI.',
+  promptPack: 'Prompt packs add provider-specific guidance to help the runtime work better with your AI.',
   skillInstall: 'The dev-browser skill adds browser automation capabilities to your variant.',
 };

@@ -46,7 +46,6 @@ export interface CreateVariantParams {
   rootDir: string;
   binDir: string;
   usePromptPack: boolean;
-  promptPackMode: 'minimal' | 'maximal';
   installSkill: boolean;
   shellEnv: boolean;
   skillUpdate: boolean;

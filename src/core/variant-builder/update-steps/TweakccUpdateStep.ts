@@ -5,12 +5,21 @@
 import { resolveBrandKey } from '../../../brands/index.js';
 import { ensureDir } from '../../fs.js';
 import { applyPromptPack } from '../../prompt-pack.js';
-import { ensureTweakccConfig, getTweakccFallbackNote, runTweakcc, runTweakccAsync } from '../../tweakcc.js';
+import { ensureTweakccConfig, getTweakccResultNotes, runTweakcc, runTweakccAsync } from '../../tweakcc.js';
+import { getManagedTweakccPatchIds } from '../../tweakcc-profile.js';
 import { formatTweakccFailure } from '../../errors.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
 
 export class TweakccUpdateStep implements UpdateStep {
   name = 'Tweakcc';
+
+  private addTweakccNotes(ctx: UpdateContext): void {
+    for (const note of getTweakccResultNotes(ctx.state.tweakResult)) {
+      if (!ctx.state.notes.includes(note)) {
+        ctx.state.notes.push(note);
+      }
+    }
+  }
 
   execute(ctx: UpdateContext): void {
     if (ctx.opts.noTweak) return;
@@ -35,18 +44,19 @@ export class TweakccUpdateStep implements UpdateStep {
       meta.brand = state.brandKey ?? undefined;
     }
 
-    ensureTweakccConfig(meta.tweakDir, state.brandKey);
+    ensureTweakccConfig(meta.tweakDir, state.brandKey, { providerKey: meta.provider });
+    const patchIds = getManagedTweakccPatchIds(state.brandKey, {
+      providerKey: meta.provider,
+      promptPackEnabled: prefs.promptPackEnabled,
+    });
 
     // Run tweakcc
     const tweakResult = isAsync
-      ? await runTweakccAsync(meta.tweakDir, meta.binaryPath, prefs.commandStdio)
-      : runTweakcc(meta.tweakDir, meta.binaryPath, prefs.commandStdio);
+      ? await runTweakccAsync(meta.tweakDir, meta.binaryPath, prefs.commandStdio, patchIds)
+      : runTweakcc(meta.tweakDir, meta.binaryPath, prefs.commandStdio, patchIds);
 
     state.tweakResult = tweakResult;
-    const fallbackNote = getTweakccFallbackNote(tweakResult);
-    if (fallbackNote && !state.notes.includes(fallbackNote)) {
-      state.notes.push(fallbackNote);
-    }
+    this.addTweakccNotes(ctx);
 
     if (tweakResult.status !== 0) {
       const output = `${tweakResult.stderr ?? ''}\n${tweakResult.stdout ?? ''}`.trim();
@@ -78,14 +88,11 @@ export class TweakccUpdateStep implements UpdateStep {
       }
 
       const reapply = isAsync
-        ? await runTweakccAsync(meta.tweakDir, meta.binaryPath, prefs.commandStdio)
-        : runTweakcc(meta.tweakDir, meta.binaryPath, prefs.commandStdio);
+        ? await runTweakccAsync(meta.tweakDir, meta.binaryPath, prefs.commandStdio, patchIds)
+        : runTweakcc(meta.tweakDir, meta.binaryPath, prefs.commandStdio, patchIds);
 
       state.tweakResult = reapply;
-      const reapplyFallbackNote = getTweakccFallbackNote(reapply);
-      if (reapplyFallbackNote && !state.notes.includes(reapplyFallbackNote)) {
-        state.notes.push(reapplyFallbackNote);
-      }
+      this.addTweakccNotes(ctx);
 
       if (reapply.status !== 0) {
         const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();

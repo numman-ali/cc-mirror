@@ -11,6 +11,7 @@ import * as providers from '../../src/providers/index.js';
 import { tick, send, waitFor, KEYS, makeCore } from '../helpers/index.js';
 
 delete process.env.Z_AI_API_KEY;
+delete process.env.ANTHROPIC_AUTH_TOKEN;
 delete process.env.ANTHROPIC_API_KEY;
 
 const isSelectedProvider = (frame: string, label: string) =>
@@ -56,11 +57,11 @@ test('Quick setup flow completes successfully', async () => {
   await send(app.stdin, KEYS.enter);
   await tick();
 
-  // Accept default models (prefilled)
+  // Enter variant name (just press enter for default)
   await send(app.stdin, KEYS.enter);
   await tick();
 
-  // Enter variant name (just press enter for default)
+  // Confirm quick review
   await send(app.stdin, KEYS.enter);
 
   // Wait for creation

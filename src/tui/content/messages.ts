@@ -43,7 +43,7 @@ export const getRandomWelcome = (): string => {
  */
 export const PROGRESS_MESSAGES = {
   initializing: ['Warming up the engines...', 'Preparing the workspace...', 'Getting things ready...'],
-  installing: ['Installing Claude Code...', 'Fetching the good stuff...', 'Downloading intelligence...'],
+  installing: ['Installing runtime...', 'Fetching the good stuff...', 'Downloading intelligence...'],
   configuring: ['Configuring your variant...', 'Setting up the environment...', 'Tweaking the knobs...'],
   finishing: ['Polishing the finish...', 'Almost there...', 'Final touches...'],
 };

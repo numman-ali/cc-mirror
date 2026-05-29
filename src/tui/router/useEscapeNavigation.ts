@@ -6,10 +6,16 @@
 import { useInput } from 'ink';
 import type { Screen } from '../state/types.js';
 import type { ProviderTemplate } from '../../providers/index.js';
+import {
+  getTuiProviderCapabilities,
+  shouldPromptForCredential,
+  shouldShowModelSetup,
+} from '../providerCapabilities.js';
 
 export interface UseEscapeNavigationOptions {
   screen: Screen;
   provider: ProviderTemplate | null;
+  apiKeyDetectedFrom?: string | null;
   setScreen: (screen: Screen) => void;
 }
 
@@ -18,11 +24,11 @@ export interface UseEscapeNavigationOptions {
  * Provides context-aware back navigation
  */
 export function useEscapeNavigation(options: UseEscapeNavigationOptions): void {
-  const { screen, provider, setScreen } = options;
+  const { screen, provider, apiKeyDetectedFrom, setScreen } = options;
 
   useInput((input, key) => {
     if (key.escape) {
-      navigateBack(screen, provider, setScreen);
+      navigateBack(screen, provider, apiKeyDetectedFrom, setScreen);
     }
   });
 }
@@ -30,7 +36,14 @@ export function useEscapeNavigation(options: UseEscapeNavigationOptions): void {
 /**
  * Navigate back based on current screen
  */
-function navigateBack(screen: Screen, provider: ProviderTemplate | null, setScreen: (screen: Screen) => void): void {
+function navigateBack(
+  screen: Screen,
+  provider: ProviderTemplate | null,
+  apiKeyDetectedFrom: string | null | undefined,
+  setScreen: (screen: Screen) => void
+): void {
+  const capabilities = getTuiProviderCapabilities(provider?.key || 'custom', provider);
+
   switch (screen) {
     case 'home':
       setScreen('exit');
@@ -38,34 +51,53 @@ function navigateBack(screen: Screen, provider: ProviderTemplate | null, setScre
 
     // Quick setup flow - back steps
     case 'quick-api-key':
+      setScreen('quick-intro');
+      break;
+    case 'quick-intro':
       setScreen('quick-provider');
       break;
-    case 'quick-model-opus':
-      setScreen('quick-api-key');
+    case 'quick-ccrouter-url':
+      setScreen('quick-intro');
       break;
-    case 'quick-model-sonnet':
-      setScreen('quick-model-opus');
-      break;
-    case 'quick-model-haiku':
-      setScreen('quick-model-sonnet');
+    case 'quick-models':
+      setScreen(shouldPromptForCredential(capabilities, apiKeyDetectedFrom) ? 'quick-api-key' : 'quick-intro');
       break;
     case 'quick-name':
-      // Context-aware: go back to model-haiku if provider requires models
-      setScreen(provider?.requiresModelMapping ? 'quick-model-haiku' : 'quick-api-key');
+      if (capabilities.endpoint.kind === 'router-url') {
+        setScreen('quick-ccrouter-url');
+      } else if (shouldShowModelSetup(capabilities)) {
+        setScreen('quick-models');
+      } else {
+        setScreen(shouldPromptForCredential(capabilities, apiKeyDetectedFrom) ? 'quick-api-key' : 'quick-intro');
+      }
+      break;
+    case 'quick-review':
+      setScreen('quick-name');
       break;
     case 'quick-provider':
       setScreen('home');
       break;
 
-    // Create flow - model screens
-    case 'create-model-opus':
+    case 'create-intro':
+      setScreen('create-provider');
+      break;
+    case 'create-brand':
+      setScreen('create-intro');
+      break;
+    case 'create-name':
+      setScreen('create-brand');
+      break;
+    case 'create-ccrouter-url':
+      setScreen('create-name');
+      break;
+    case 'create-base-url':
+      setScreen('create-name');
+      break;
+    case 'create-api-key':
+      setScreen('create-base-url');
+      break;
+    case 'create-models':
       setScreen('create-api-key');
-      break;
-    case 'create-model-sonnet':
-      setScreen('create-model-opus');
-      break;
-    case 'create-model-haiku':
-      setScreen('create-model-sonnet');
       break;
 
     // Settings - back to home
@@ -75,14 +107,9 @@ function navigateBack(screen: Screen, provider: ProviderTemplate | null, setScre
       break;
 
     // Model configuration screens - back through flow
-    case 'manage-models-opus':
+    case 'manage-models':
+    case 'manage-models-saving':
       setScreen('manage-actions');
-      break;
-    case 'manage-models-sonnet':
-      setScreen('manage-models-opus');
-      break;
-    case 'manage-models-haiku':
-      setScreen('manage-models-sonnet');
       break;
     case 'manage-models-done':
       setScreen('manage-actions');
@@ -98,6 +125,10 @@ function navigateBack(screen: Screen, provider: ProviderTemplate | null, setScre
 
     // Doctor screen - home
     case 'doctor':
+      setScreen('home');
+      break;
+    case 'about':
+    case 'feedback':
       setScreen('home');
       break;
 

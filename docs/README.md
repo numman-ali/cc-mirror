@@ -9,7 +9,7 @@
 │   │ ╰───╮│ ╰───╯    │ ╰╯╭╯ ╰──╯ ╭─╯│ ╭─╮ │  │ ╭─╮ │  │ ╰───╯ ││ ╭─╮ │       │
 │   ╰─────╯╰─────╯    ╰───╯╰──────╯  ╰─╯ ╰─╯  ╰─╯ ╰─╯  ╰───────╯╰─╯ ╰─╯       │
 │                                                                              │
-│   Create multiple isolated Claude Code variants with custom providers        │
+│   Create multiple isolated coding variants with custom providers             │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -25,9 +25,9 @@
 
 ### 🤖 Features
 
-| Document                                   | Description                          |
-| ------------------------------------------ | ------------------------------------ |
-| [Mirror Claude](features/mirror-claude.md) | Pure Claude Code with clean defaults |
+| Document                            | Description                          |
+| ----------------------------------- | ------------------------------------ |
+| [Mirror](features/mirror-claude.md) | Isolated runtime with clean defaults |
 
 ### 🏗️ Architecture
 
@@ -50,7 +50,7 @@ docs/
 ├── README.md                 ← You are here
 ├── TWEAKCC-GUIDE.md           # 🔧 tweakcc integration notes
 ├── features/
-│   └── mirror-claude.md       # 🪞 Pure Claude Code variant
+│   └── mirror-claude.md       # Mirror variant
 └── architecture/
     └── overview.md            # 🏗️ System architecture
 ```
@@ -60,7 +60,7 @@ docs/
 ## 💡 Quick Links
 
 - **New to cc-mirror?** Start with the [Quick Start](../README.md#quick-start)
-- **Pure Claude experience?** Try [Mirror Claude](features/mirror-claude.md)
+- **Clean isolated runtime?** Try [Mirror](features/mirror-claude.md)
 - **Adding a provider?** See [Provider System](architecture/provider-system.md)
 
 ---
@@ -71,15 +71,15 @@ docs/
 ┌──────────────┬────────────────────┬──────────────┬────────────┐
 │   Provider   │       Model        │  Auth Mode   │ Prompt Pack│
 ├──────────────┼────────────────────┼──────────────┼────────────┤
-│ kimi         │ kimi-for-coding    │ API Key      │ ✗          │
-│ minimax      │ MiniMax-M2.5       │ API Key      │ ✓ Full     │
-│ zai          │ GLM-5/4.7/4.5-Air  │ API Key      │ ✓ Full     │
+│ kimi         │ kimi-k2.6          │ Auth Token   │ ✗          │
+│ minimax      │ MiniMax-M2.7       │ Auth Token   │ ✓ Full     │
+│ zai          │ GLM-5.1/5-Turbo/4.5-Air │ Auth Token   │ ✓ Full     │
 │ openrouter   │ You choose         │ Auth Token   │ ✗          │
 │ vercel       │ Vercel gateway     │ Auth Token   │ ✗          │
 │ ollama       │ Local + cloud      │ Auth Token   │ ✗          │
-│ nanogpt      │ Anthropic compat   │ Auth Token   │ ✗          │
+│ nanogpt      │ GPT-5.2 / Gemini   │ Auth Token   │ ✗          │
 │ ccrouter     │ Local LLMs         │ Optional     │ ✗          │
-│ mirror       │ Claude (native)    │ OAuth/Key    │ ✗ Pure     │
+│ mirror       │ Runtime default    │ OAuth/Key    │ ✗ Pure     │
 │ gatewayz     │ GatewayZ gateway   │ Auth Token   │ ✗          │
 └──────────────┴────────────────────┴──────────────┴────────────┘
 ```
@@ -90,13 +90,13 @@ docs/
 
 | Provider     | Subscribe                                                     | Get Key/Token                                                    | Docs                                                             |
 | ------------ | ------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `kimi`       | https://www.kimi.com/code                                     | https://www.kimi.com/code/console                                | https://www.kimi.com/code/docs/en/more/third-party-agents.html   |
+| `kimi`       | https://www.kimi.com/code                                     | https://www.kimi.com/code/console                                | https://platform.kimi.ai/docs/guide/agent-support                |
 | `minimax`    | https://platform.minimax.io/subscribe/coding-plan             | https://platform.minimax.io/user-center/payment/coding-plan      | https://platform.minimax.io/docs                                 |
 | `zai`        | https://z.ai/subscribe                                        | https://z.ai/manage-apikey/apikey-list                           | https://z.ai/docs                                                |
 | `openrouter` | https://openrouter.ai/account                                 | https://openrouter.ai/keys                                       | https://openrouter.ai/docs                                       |
 | `vercel`     | https://vercel.com/ai                                         | https://vercel.com/account/tokens                                | https://vercel.com/docs/ai-gateway                               |
 | `ollama`     | https://ollama.com                                            | https://ollama.com                                               | https://docs.ollama.com/api/anthropic-compatibility              |
-| `nanogpt`    | https://nano-gpt.com                                          | https://nano-gpt.com                                             | https://docs.nano-gpt.com/docs/anthropic-compatibility           |
+| `nanogpt`    | https://nano-gpt.com                                          | https://nano-gpt.com                                             | https://docs.nano-gpt.com/integrations                           |
 | `ccrouter`   | https://github.com/musistudio/claude-code-router#installation | https://github.com/musistudio/claude-code-router#2-configuration | https://github.com/musistudio/claude-code-router#2-configuration |
 | `gatewayz`   | https://gatewayz.ai                                           | https://gatewayz.ai                                              | https://docs.gatewayz.ai/docs/anthropic-compatibility            |
 

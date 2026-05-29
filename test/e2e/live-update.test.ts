@@ -2,7 +2,7 @@
  * Live E2E test: create + update + headless run
  *
  * Run manually with:
- * CC_MIRROR_LIVE_E2E=1 ANTHROPIC_API_KEY=... npm test -- --test-name-pattern="Live E2E"
+ * CC_MIRROR_LIVE_E2E=1 ANTHROPIC_AUTH_TOKEN=... npm test -- --test-name-pattern="Live E2E"
  */
 
 import test from 'node:test';
@@ -12,7 +12,7 @@ import path from 'node:path';
 import * as core from '../../src/core/index.js';
 import { makeTempDir, cleanup } from '../helpers/index.js';
 
-const apiKey = process.env.ANTHROPIC_API_KEY || process.env.Z_AI_API_KEY;
+const apiKey = process.env.ANTHROPIC_AUTH_TOKEN || process.env.ANTHROPIC_API_KEY || process.env.Z_AI_API_KEY;
 const shouldRun = process.env.CC_MIRROR_LIVE_E2E === '1' && !!apiKey && process.platform !== 'win32';
 
 test('Live E2E: update keeps headless CLI working', { skip: !shouldRun, timeout: 120000 }, (t) => {

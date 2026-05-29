@@ -107,7 +107,8 @@ Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on W
 
 | Provider                              | Auth Mode  | Key Variable                                 |
 | ------------------------------------- | ---------- | -------------------------------------------- |
-| zai, minimax, kimi, custom            | API Key    | `ANTHROPIC_API_KEY`                          |
+| custom                                | API Key    | `ANTHROPIC_API_KEY`                          |
+| zai, minimax, kimi                    | Auth Token | `ANTHROPIC_AUTH_TOKEN`                       |
 | openrouter, vercel, nanogpt, gatewayz | Auth Token | `ANTHROPIC_AUTH_TOKEN`                       |
 | ollama                                | Auth Token | `ANTHROPIC_AUTH_TOKEN` + `ANTHROPIC_API_KEY` |
 | ccrouter                              | Optional   | placeholder token                            |

@@ -40,7 +40,7 @@ export const VariantActionsScreen: React.FC<VariantActionsScreenProps> = ({
   const actions: MenuItem[] = [
     { value: 'update', label: 'Update', description: 'Re-sync binary + patches' },
     ...(onConfigureModels
-      ? [{ value: 'models', label: 'Configure Models', description: 'Edit Opus/Sonnet/Haiku defaults' }]
+      ? [{ value: 'models', label: 'Configure Models', description: 'Edit Primary/Balanced/Fast slots' }]
       : []),
     { value: 'remove', label: 'Remove', description: 'Delete variant', icon: 'exit' as const },
     { value: 'back', label: 'Back', icon: 'back' as const },

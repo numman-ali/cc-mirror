@@ -3,26 +3,36 @@
  */
 
 import { applyPromptPack } from '../../prompt-pack.js';
-import { getTweakccFallbackNote, runTweakcc, runTweakccAsync } from '../../tweakcc.js';
+import { getTweakccResultNotes, runTweakcc, runTweakccAsync } from '../../tweakcc.js';
+import { getManagedTweakccPatchIds } from '../../tweakcc-profile.js';
 import { formatTweakccFailure } from '../../errors.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
 export class TweakccStep implements BuildStep {
   name = 'Tweakcc';
 
+  private addTweakccNotes(ctx: BuildContext): void {
+    for (const note of getTweakccResultNotes(ctx.state.tweakResult)) {
+      if (!ctx.state.notes.includes(note)) {
+        ctx.state.notes.push(note);
+      }
+    }
+  }
+
   execute(ctx: BuildContext): void {
     const { params, paths, prefs, state } = ctx;
+    const patchIds = getManagedTweakccPatchIds(prefs.brandKey, {
+      providerKey: params.providerKey,
+      promptPackEnabled: prefs.promptPackEnabled,
+    });
 
     if (params.noTweak) {
       return;
     }
 
     ctx.report('Running tweakcc patches...');
-    state.tweakResult = runTweakcc(paths.tweakDir, state.binaryPath, prefs.commandStdio);
-    const fallbackNote = getTweakccFallbackNote(state.tweakResult);
-    if (fallbackNote && !state.notes.includes(fallbackNote)) {
-      state.notes.push(fallbackNote);
-    }
+    state.tweakResult = runTweakcc(paths.tweakDir, state.binaryPath, prefs.commandStdio, patchIds);
+    this.addTweakccNotes(ctx);
 
     if (state.tweakResult.status !== 0) {
       const output = `${state.tweakResult.stderr ?? ''}\n${state.tweakResult.stdout ?? ''}`.trim();
@@ -43,12 +53,9 @@ export class TweakccStep implements BuildStep {
 
     if (shouldReapply) {
       ctx.report('Re-applying tweakcc...');
-      const reapply = runTweakcc(paths.tweakDir, state.binaryPath, prefs.commandStdio);
+      const reapply = runTweakcc(paths.tweakDir, state.binaryPath, prefs.commandStdio, patchIds);
       state.tweakResult = reapply;
-      const reapplyFallbackNote = getTweakccFallbackNote(reapply);
-      if (reapplyFallbackNote && !state.notes.includes(reapplyFallbackNote)) {
-        state.notes.push(reapplyFallbackNote);
-      }
+      this.addTweakccNotes(ctx);
 
       if (reapply.status !== 0) {
         const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();
@@ -59,17 +66,18 @@ export class TweakccStep implements BuildStep {
 
   async executeAsync(ctx: BuildContext): Promise<void> {
     const { params, paths, prefs, state } = ctx;
+    const patchIds = getManagedTweakccPatchIds(prefs.brandKey, {
+      providerKey: params.providerKey,
+      promptPackEnabled: prefs.promptPackEnabled,
+    });
 
     if (params.noTweak) {
       return;
     }
 
     await ctx.report('Running tweakcc patches...');
-    state.tweakResult = await runTweakccAsync(paths.tweakDir, state.binaryPath, prefs.commandStdio);
-    const fallbackNote = getTweakccFallbackNote(state.tweakResult);
-    if (fallbackNote && !state.notes.includes(fallbackNote)) {
-      state.notes.push(fallbackNote);
-    }
+    state.tweakResult = await runTweakccAsync(paths.tweakDir, state.binaryPath, prefs.commandStdio, patchIds);
+    this.addTweakccNotes(ctx);
 
     if (state.tweakResult.status !== 0) {
       const output = `${state.tweakResult.stderr ?? ''}\n${state.tweakResult.stdout ?? ''}`.trim();
@@ -90,12 +98,9 @@ export class TweakccStep implements BuildStep {
 
     if (shouldReapply) {
       await ctx.report('Re-applying tweakcc...');
-      const reapply = await runTweakccAsync(paths.tweakDir, state.binaryPath, prefs.commandStdio);
+      const reapply = await runTweakccAsync(paths.tweakDir, state.binaryPath, prefs.commandStdio, patchIds);
       state.tweakResult = reapply;
-      const reapplyFallbackNote = getTweakccFallbackNote(reapply);
-      if (reapplyFallbackNote && !state.notes.includes(reapplyFallbackNote)) {
-        state.notes.push(reapplyFallbackNote);
-      }
+      this.addTweakccNotes(ctx);
 
       if (reapply.status !== 0) {
         const output = `${reapply.stderr ?? ''}\n${reapply.stdout ?? ''}`.trim();

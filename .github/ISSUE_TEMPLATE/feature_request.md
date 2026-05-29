@@ -22,7 +22,6 @@ A clear and concise description of any alternative solutions or features you've 
 
 Add any other context or screenshots about the feature request here.
 
-## Would You Like to Contribute?
+## Reference Material
 
-- [ ] I'm interested in implementing this feature
-- [ ] I'd like guidance on how to implement this
+Links to provider docs, examples, branches, patches, or prior art that would help a maintainer-owned implementation.

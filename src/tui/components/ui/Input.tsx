@@ -189,7 +189,7 @@ export const MaskedInput: React.FC<MaskedInputProps> = ({ label, envVarName, val
   <Box flexDirection="column">
     <Text color={colors.textMuted}>{label}</Text>
     <Box marginTop={1}>
-      <Text color={colors.textMuted}>{envVarName}: </Text>
+      <Text color={colors.textMuted}>{envVarName.startsWith('Z_') ? `${envVarName}: ` : 'Provider credential: '}</Text>
     </Box>
     <Box marginTop={1}>
       <Text color={colors.primary}>{icons.pointer} </Text>

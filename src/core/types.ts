@@ -1,6 +1,7 @@
 import type { ProviderEnv } from '../providers/index.js';
 
 export interface VariantMeta {
+  schemaVersion?: 1 | 2;
   name: string;
   provider: string;
   baseUrl?: string;
@@ -26,6 +27,61 @@ export interface VariantMeta {
    */
   nativeVersionSource?: 'default' | 'pinned';
   nativePlatform?: string;
+  providerProfile?: {
+    key: string;
+    version: number;
+    fingerprint: string;
+  };
+  capabilities?: {
+    auth?: {
+      mode: string;
+      required: boolean;
+      envKeys: string[];
+    };
+    endpoint?: {
+      managed: boolean;
+      baseUrl?: string;
+    };
+    models?: {
+      policy: string;
+      aliases?: Record<string, string>;
+      display?: Record<string, { name: string; description?: string; supportedCapabilities?: string[] }>;
+      startup?: string;
+      smallFast?: string;
+    };
+    promptPack?: {
+      supported: boolean;
+      enabled: boolean;
+    };
+    shellEnv?: {
+      supported: boolean;
+      enabled: boolean;
+      exports: string[];
+    };
+    skills?: {
+      browser: boolean;
+    };
+    tools?: {
+      webMode: string;
+      denied: string[];
+    };
+    mcp?: {
+      servers: string[];
+    };
+    runtime?: {
+      updatePolicy: string;
+      nonessentialTraffic: string;
+    };
+    tweakcc?: {
+      enabled: boolean;
+      profile: string;
+    };
+  };
+  managed?: {
+    settingsEnvKeys: string[];
+    permissionsDeny: string[];
+    mcpServerIds: string[];
+  };
 }
 
 export interface VariantEntry {
@@ -52,6 +108,10 @@ export interface CreateVariantParams {
     defaultModel?: string;
     subagentModel?: string;
   };
+  runtimeProfile?: 'recommended' | 'privacy' | 'vanilla' | 'compat';
+  tweakccProfile?: 'recommended' | 'conservative' | 'experimental';
+  browserSkill?: boolean;
+  capabilitiesOnly?: boolean;
   rootDir?: string;
   binDir?: string;
   brand?: string;
@@ -86,6 +146,10 @@ export interface UpdateVariantOptions {
     defaultModel?: string;
     subagentModel?: string;
   };
+  runtimeProfile?: 'recommended' | 'privacy' | 'vanilla' | 'compat';
+  tweakccProfile?: 'recommended' | 'conservative' | 'experimental';
+  browserSkill?: boolean;
+  capabilitiesOnly?: boolean;
   /** Callback for progress updates during update */
   onProgress?: ProgressCallback;
 }
@@ -112,6 +176,21 @@ export interface UpdateVariantResult {
 
 export interface VariantConfig {
   env: ProviderEnv;
+  model?: string;
+  availableModels?: string[];
+  companyAnnouncements?: string[];
+  spinnerTipsEnabled?: boolean;
+  feedbackSurveyRate?: number;
+  includeCoAuthoredBy?: boolean;
+  attribution?: {
+    commit?: string;
+    pr?: string;
+  };
+  permissions?: {
+    allow?: string[];
+    ask?: string[];
+    deny?: string[];
+  };
 }
 
 export interface TweakResult {
@@ -120,4 +199,7 @@ export interface TweakResult {
   stdout?: string;
   tweakccSpec?: string;
   fallbackFromTweakccSpec?: string;
+  validationStatus?: 'passed' | 'failed' | 'skipped';
+  validationError?: string;
+  warnings?: string[];
 }

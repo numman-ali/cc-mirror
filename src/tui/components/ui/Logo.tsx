@@ -26,7 +26,7 @@ export const LogoBanner: React.FC = () => (
     </Text>
     <Text>
       <Text color={colors.logo1}>{'  ██║     ██║     '}</Text>
-      <Text color={colors.textMuted}>{'Claude Code, Unshackled'}</Text>
+      <Text color={colors.textMuted}>{'Provider-native coding variants'}</Text>
     </Text>
     <Text>
       <Text color={colors.logo1}>{'  ██║     ██║     '}</Text>

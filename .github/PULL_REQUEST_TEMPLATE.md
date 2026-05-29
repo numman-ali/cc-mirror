@@ -1,30 +1,21 @@
-## Description
+# Pull Request Policy
 
-Brief description of what this PR does.
+Thanks for wanting to improve cc-mirror.
 
-## Type of Change
+This repository is currently maintained as issues-first. External pull requests are not accepted or merged because provider compatibility, binary patching, and release safety need to be implemented directly by the maintainer.
 
-- [ ] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
+Please open an issue instead with:
 
-## Related Issues
+- the problem or provider you want supported
+- docs or API references
+- reproduction steps or expected behavior
+- any patch notes, branch links, or code you want considered as reference
 
-Fixes #(issue number)
+External PRs may be closed automatically, but the idea can still be tracked through an issue.
 
-## How Has This Been Tested?
+## Maintainer Checklist
 
-- [ ] Ran `npm run check` (typecheck + lint + test)
-- [ ] Tested the TUI flow manually
-- [ ] Tested CLI commands
-
-## Checklist
-
-- [ ] My code follows the project's style guidelines
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code where necessary
-- [ ] I have updated the documentation if needed
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix/feature works
-- [ ] New and existing tests pass locally
+- [ ] This change is maintainer-authored or pre-approved
+- [ ] Related issue or maintainer decision is linked
+- [ ] `npm run check` passes
+- [ ] User-facing docs or release notes are updated when needed

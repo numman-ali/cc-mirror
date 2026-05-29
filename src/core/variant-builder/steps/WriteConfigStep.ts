@@ -3,9 +3,14 @@
  */
 
 import path from 'node:path';
-import { buildEnv } from '../../../providers/index.js';
+import {
+  buildEnv,
+  buildManagedClaudeSettings,
+  getProviderCapability,
+  resolveStartupModelSetting,
+} from '../../../providers/index.js';
 import { writeJson } from '../../fs.js';
-import { ensureApiKeyApproval } from '../../claude-config.js';
+import { ensureApiKeyApproval, ensureClaudeConfigUiSuppressions } from '../../claude-config.js';
 import type { VariantConfig } from '../../types.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
@@ -22,9 +27,14 @@ export class WriteConfigStep implements BuildStep {
   }
 
   private writeConfig(ctx: BuildContext): void {
-    const { params, provider, paths, state } = ctx;
+    const { params, paths, state } = ctx;
 
     ctx.report('Writing configuration...');
+
+    const profile = getProviderCapability(params.providerKey);
+    if (!profile) {
+      throw new Error(`Unknown provider capability profile: ${params.providerKey}`);
+    }
 
     const env = buildEnv({
       providerKey: params.providerKey,
@@ -44,21 +54,39 @@ export class WriteConfigStep implements BuildStep {
       env.DISABLE_INSTALLATION_CHECKS = '1';
     }
 
-    const authMode = provider.authMode ?? 'apiKey';
+    const authMode = profile.auth.mode;
     if (authMode === 'apiKey' && !env.ANTHROPIC_API_KEY) {
       env.ANTHROPIC_API_KEY = '<API_KEY>';
     }
 
-    const config: VariantConfig = { env };
+    const startupModel = resolveStartupModelSetting(profile, params.modelOverrides);
+    const config: VariantConfig = {
+      ...buildManagedClaudeSettings(profile, params.modelOverrides),
+      env,
+      ...(startupModel ? { model: startupModel } : {}),
+      ...(profile.tools.deny.length > 0
+        ? {
+            permissions: {
+              deny: profile.tools.deny,
+            },
+          }
+        : {}),
+    };
     writeJson(path.join(paths.configDir, 'settings.json'), config);
 
     state.env = env;
-    state.resolvedApiKey = typeof env.ANTHROPIC_API_KEY === 'string' ? env.ANTHROPIC_API_KEY : undefined;
+    state.resolvedApiKey =
+      authMode === 'authToken' && typeof env.ANTHROPIC_AUTH_TOKEN === 'string'
+        ? env.ANTHROPIC_AUTH_TOKEN
+        : typeof env.ANTHROPIC_API_KEY === 'string'
+          ? env.ANTHROPIC_API_KEY
+          : undefined;
 
     ensureApiKeyApproval(paths.configDir, state.resolvedApiKey);
+    ensureClaudeConfigUiSuppressions(paths.configDir);
 
     // Add notes for auth issues
-    if (provider.authMode === 'authToken' && !env.ANTHROPIC_AUTH_TOKEN) {
+    if (authMode === 'authToken' && profile.auth.required && !env.ANTHROPIC_AUTH_TOKEN) {
       state.notes.push('ANTHROPIC_AUTH_TOKEN not set; provider auth may fail.');
     }
 

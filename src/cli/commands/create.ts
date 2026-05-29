@@ -2,7 +2,7 @@
  * Create command - creates a new variant
  */
 
-import { listProviders, getProvider, type ProviderTemplate } from '../../providers/index.js';
+import { listProviders, getProvider, getProviderCapability, type ProviderTemplate } from '../../providers/index.js';
 import { listBrandPresets } from '../../brands/index.js';
 import * as core from '../../core/index.js';
 import type { ParsedArgs } from '../args.js';
@@ -34,7 +34,6 @@ interface CreateParams {
   extraEnv: string[];
   requiresCredential: boolean;
   shouldPromptApiKey: boolean;
-  hasZaiEnv: boolean;
 }
 
 export const resolveCreateVariantName = (
@@ -67,6 +66,10 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
   if (!provider) {
     throw new Error(`Unknown provider: ${providerKey}`);
   }
+  const capability = getProviderCapability(providerKey);
+  if (!capability) {
+    throw new Error(`Unknown provider capability profile: ${providerKey}`);
+  }
 
   const name = resolveCreateVariantName(
     opts.name as string | undefined,
@@ -76,16 +79,27 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
   );
   const baseUrl = (opts['base-url'] as string) || provider.baseUrl;
   const envZaiKey = providerKey === 'zai' ? process.env.Z_AI_API_KEY : undefined;
+  const envAnthropicToken = providerKey === 'zai' ? process.env.ANTHROPIC_AUTH_TOKEN : undefined;
   const envAnthropicKey = providerKey === 'zai' ? process.env.ANTHROPIC_API_KEY : undefined;
   const apiKeyFlag = typeof opts['api-key'] === 'string' ? (opts['api-key'] as string) : '';
   const authTokenFlag = typeof opts['auth-token'] === 'string' ? (opts['auth-token'] as string) : '';
   const hasCredentialFlag = Boolean(apiKeyFlag || authTokenFlag);
-  const hasZaiEnv = Boolean(envZaiKey);
-  const apiKeyDetected = !hasCredentialFlag && hasZaiEnv;
-  const apiKey = apiKeyFlag || authTokenFlag || (providerKey === 'zai' ? envZaiKey || envAnthropicKey || '' : '');
+  const detectedZaiEnvName = envZaiKey
+    ? 'Z_AI_API_KEY'
+    : envAnthropicToken
+      ? 'ANTHROPIC_AUTH_TOKEN'
+      : envAnthropicKey
+        ? 'ANTHROPIC_API_KEY'
+        : null;
+  const hasZaiCredentialEnv = Boolean(detectedZaiEnvName);
+  const apiKeyDetected = !hasCredentialFlag && hasZaiCredentialEnv;
+  const apiKey =
+    apiKeyFlag ||
+    authTokenFlag ||
+    (providerKey === 'zai' ? envZaiKey || envAnthropicToken || envAnthropicKey || '' : '');
 
   if (apiKeyDetected && !opts.yes) {
-    console.log('Detected Z_AI_API_KEY in environment. Using it by default.');
+    console.log(`Detected ${detectedZaiEnvName} in environment. Using it by default.`);
   }
 
   const brand = (opts.brand as string) || 'auto';
@@ -93,10 +107,13 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
   const binDir = (opts['bin-dir'] as string) || core.DEFAULT_BIN_DIR;
   const claudeVersion = (opts['claude-version'] as string) || core.DEFAULT_CLAUDE_VERSION || 'latest';
   const extraEnv = buildExtraEnv(opts);
-  const requiresCredential = !provider.credentialOptional;
+  const requiresCredential = capability.auth.required;
   // Don't prompt for API key if credential is optional (mirror, ccrouter)
   const shouldPromptApiKey =
-    !provider.credentialOptional && !opts.yes && !hasCredentialFlag && (providerKey === 'zai' ? !hasZaiEnv : !apiKey);
+    capability.auth.required &&
+    !opts.yes &&
+    !hasCredentialFlag &&
+    (providerKey === 'zai' ? !hasZaiCredentialEnv : !apiKey);
 
   return {
     provider,
@@ -111,7 +128,6 @@ async function prepareCreateParams(opts: ParsedArgs): Promise<CreateParams> {
     extraEnv,
     requiresCredential,
     shouldPromptApiKey,
-    hasZaiEnv,
   };
 }
 
@@ -123,32 +139,23 @@ async function handleQuickMode(opts: ParsedArgs, params: CreateParams): Promise<
   const promptPack = opts['no-prompt-pack'] ? false : undefined;
   const skillInstall = opts['no-skill-install'] ? false : undefined;
   const skillUpdate = Boolean(opts['skill-update']);
-  let shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
+  const shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
   const modelOverrides = getModelOverridesFromArgs(opts);
 
   let apiKey = params.apiKey;
   if (params.shouldPromptApiKey) {
     apiKey = params.requiresCredential
-      ? await requirePrompt(provider.apiKeyLabel || 'ANTHROPIC_API_KEY', apiKey)
-      : await prompt(provider.apiKeyLabel || 'ANTHROPIC_API_KEY', apiKey);
+      ? await requirePrompt(provider.apiKeyLabel || 'Provider API key', apiKey)
+      : await prompt(provider.apiKeyLabel || 'Provider API key', apiKey);
   }
   if (params.requiresCredential && !apiKey) {
     if (opts.yes) {
       throw new Error('Provider API key required (use --api-key)');
     }
-    apiKey = await requirePrompt(provider.apiKeyLabel || 'ANTHROPIC_API_KEY', apiKey);
+    apiKey = await requirePrompt(provider.apiKeyLabel || 'Provider API key', apiKey);
   }
 
   const resolvedModelOverrides = await ensureModelMapping(params.providerKey, opts, { ...modelOverrides });
-
-  if (params.providerKey === 'zai' && shellEnv === undefined && !opts.yes) {
-    if (params.hasZaiEnv) {
-      shellEnv = false;
-    } else {
-      const answer = await prompt('Write Z_AI_API_KEY to your shell profile? (yes/no)', 'yes');
-      shellEnv = answer.trim().toLowerCase().startsWith('y');
-    }
-  }
 
   const result = await core.createVariantAsync({
     name: params.name,
@@ -187,20 +194,20 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
   const promptPack = opts['no-prompt-pack'] ? false : undefined;
   const skillInstall = opts['no-skill-install'] ? false : undefined;
   const skillUpdate = Boolean(opts['skill-update']);
-  let shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
+  const shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
   const modelOverrides = getModelOverridesFromArgs(opts);
 
   const nextName = await prompt('Variant name', params.name);
-  const nextBase = await prompt('ANTHROPIC_BASE_URL', params.baseUrl);
-  const nextClaudeVersion = await prompt('Claude Code version (stable/latest/x.y.z)', params.claudeVersion);
+  const nextBase = await prompt('Provider base URL', params.baseUrl);
+  const nextClaudeVersion = await prompt('Runtime version (stable/latest/x.y.z)', params.claudeVersion);
 
   let nextKey = params.shouldPromptApiKey
     ? params.requiresCredential
-      ? await requirePrompt(provider.apiKeyLabel || 'ANTHROPIC_API_KEY', params.apiKey)
-      : await prompt(provider.apiKeyLabel || 'ANTHROPIC_API_KEY', params.apiKey)
+      ? await requirePrompt(provider.apiKeyLabel || 'Provider API key', params.apiKey)
+      : await prompt(provider.apiKeyLabel || 'Provider API key', params.apiKey)
     : params.apiKey;
   if (params.requiresCredential && !nextKey) {
-    nextKey = await requirePrompt(provider.apiKeyLabel || 'ANTHROPIC_API_KEY', params.apiKey);
+    nextKey = await requirePrompt(provider.apiKeyLabel || 'Provider API key', params.apiKey);
   }
 
   const resolvedModelOverrides = await ensureModelMapping(params.providerKey, opts, { ...modelOverrides });
@@ -218,15 +225,6 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
     .split(',')
     .map((entry) => entry.trim())
     .filter(Boolean);
-
-  if (params.providerKey === 'zai' && shellEnv === undefined) {
-    if (params.hasZaiEnv) {
-      shellEnv = false;
-    } else {
-      const answer = await prompt('Write Z_AI_API_KEY to your shell profile? (yes/no)', 'yes');
-      shellEnv = answer.trim().toLowerCase().startsWith('y');
-    }
-  }
 
   const result = await core.createVariantAsync({
     name: nextName,

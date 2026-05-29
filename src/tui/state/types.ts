@@ -13,22 +13,22 @@ export type Screen =
   | 'exit'
   // Quick setup flow
   | 'quick-provider'
+  | 'quick-intro'
+  | 'quick-ccrouter-url'
   | 'quick-api-key'
-  | 'quick-model-opus'
-  | 'quick-model-sonnet'
-  | 'quick-model-haiku'
+  | 'quick-models'
   | 'quick-name'
+  | 'quick-review'
   // Advanced create flow
   | 'create-provider'
+  | 'create-intro'
   | 'create-brand'
   | 'create-name'
+  | 'create-ccrouter-url'
   | 'create-base-url'
   | 'create-api-key'
-  | 'create-model-opus'
-  | 'create-model-sonnet'
-  | 'create-model-haiku'
+  | 'create-models'
   | 'create-prompt-pack'
-  // 'create-prompt-pack-mode' removed - promptPackMode is deprecated
   | 'create-skill-install'
   | 'create-shell-env'
   | 'create-env-confirm'
@@ -43,9 +43,7 @@ export type Screen =
   | 'manage-update-done'
   | 'manage-remove'
   | 'manage-remove-done'
-  | 'manage-models-opus'
-  | 'manage-models-sonnet'
-  | 'manage-models-haiku'
+  | 'manage-models'
   | 'manage-models-saving'
   | 'manage-models-done'
   // Update all
@@ -55,7 +53,10 @@ export type Screen =
   | 'settings-root'
   | 'settings-bin'
   // Doctor
-  | 'doctor';
+  | 'doctor'
+  // Content
+  | 'about'
+  | 'feedback';
 
 /**
  * Selected variant with wrapper path
@@ -110,8 +111,8 @@ export interface AppState {
   binDir: string;
 
   // Feature flags
+  useTweak: boolean;
   usePromptPack: boolean;
-  promptPackMode: 'minimal' | 'maximal';
   installSkill: boolean;
   shellEnv: boolean;
   skillUpdate: boolean;
@@ -158,8 +159,8 @@ export interface AppActions {
   setBinDir: (dir: string) => void;
 
   // Feature flags
+  setUseTweak: (value: boolean) => void;
   setUsePromptPack: (value: boolean) => void;
-  setPromptPackMode: (mode: 'minimal' | 'maximal') => void;
   setInstallSkill: (value: boolean) => void;
   setShellEnv: (value: boolean) => void;
   setSkillUpdate: (value: boolean) => void;
@@ -198,7 +199,6 @@ export interface AppContextValue {
  */
 export interface ProviderDefaults {
   promptPack: boolean;
-  promptPackMode: 'minimal' | 'maximal';
   skillInstall: boolean;
   shellEnv: boolean;
 }

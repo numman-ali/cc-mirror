@@ -7,6 +7,7 @@ import { Readable } from 'node:stream';
 import type { ReadableStream as NodeReadableStream } from 'node:stream/web';
 import { finished } from 'node:stream/promises';
 import { commandExists } from './paths.js';
+import { safeJsonParse } from './fs.js';
 
 const CLAUDE_VERSION_PATTERN = /^(stable|latest|[0-9]+\.[0-9]+\.[0-9]+(?:-[^[:space:]]+)?)$/;
 
@@ -78,11 +79,11 @@ const fetchText = async (url: string): Promise<string> => {
 
 const fetchJson = async <T>(url: string): Promise<T> => {
   const text = await fetchText(url);
-  try {
-    return JSON.parse(text) as T;
-  } catch {
+  const parsed = safeJsonParse<T>(text);
+  if (!parsed) {
     throw new Error(`Failed to parse JSON from ${url}`);
   }
+  return parsed;
 };
 
 const downloadToFileWithSha256 = async (url: string, outPath: string): Promise<string> => {

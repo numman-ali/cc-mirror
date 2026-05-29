@@ -50,7 +50,7 @@ export const CREATOR_MESSAGE = 'Thanks for using CC-MIRROR!';
  * Random fun facts shown occasionally
  */
 export const FUN_FACTS = [
-  'CC-MIRROR was built with Claude Code itself.',
+  'CC-MIRROR was built with the same kind of coding agent it manages.',
   'The gold theme for Zai was inspired by sunrise.',
   'Each variant is completely isolated—they never talk to each other.',
   "You can run 'cc-mirror doctor' anytime to check your variants.",

@@ -6,6 +6,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import type { Screen, AppState, AppActions, CompletionData, SelectedVariant, ProviderDefaults } from './types.js';
 import type { DoctorReportItem, VariantEntry } from '../../core/types.js';
+import { getTuiProviderCapabilities, resolveCredentialDefaults } from '../providerCapabilities.js';
 
 /**
  * Default completion data
@@ -20,12 +21,11 @@ const defaultCompletion: CompletionData = {
  * Get provider defaults based on provider key
  */
 export function getProviderDefaults(key?: string | null): ProviderDefaults {
+  const capabilities = getTuiProviderCapabilities(key || 'custom');
   return {
-    promptPack: key === 'zai' || key === 'minimax',
-    // promptPackMode is deprecated - always use 'minimal'
-    promptPackMode: 'minimal',
-    skillInstall: false,
-    shellEnv: key === 'zai',
+    promptPack: capabilities.promptPack.defaultEnabled,
+    skillInstall: capabilities.skillInstall.defaultEnabled,
+    shellEnv: capabilities.shellEnv.defaultEnabled,
   };
 }
 
@@ -37,15 +37,7 @@ export function resolveZaiApiKey(): {
   detectedFrom: string | null;
   skipPrompt: boolean;
 } {
-  const zaiKey = process.env.Z_AI_API_KEY?.trim();
-  if (zaiKey) {
-    return { value: zaiKey, detectedFrom: 'Z_AI_API_KEY', skipPrompt: true };
-  }
-  const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
-  if (anthropicKey) {
-    return { value: anthropicKey, detectedFrom: 'ANTHROPIC_API_KEY', skipPrompt: false };
-  }
-  return { value: '', detectedFrom: null, skipPrompt: false };
+  return resolveCredentialDefaults(getTuiProviderCapabilities('zai'));
 }
 
 export interface UseAppStateOptions {
@@ -79,11 +71,8 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
   // Feature flags
   const [useTweak, setUseTweak] = useState(true);
   const [usePromptPack, setUsePromptPack] = useState(true);
-  // promptPackMode is deprecated - always 'minimal'
-  const promptPackMode = 'minimal' as const;
-  const setPromptPackMode = (_mode: 'minimal' | 'maximal') => {}; // no-op for backward compat
   const [installSkill, setInstallSkill] = useState(false);
-  const [shellEnv, setShellEnv] = useState(true);
+  const [shellEnv, setShellEnv] = useState(false);
   const [skillUpdate, setSkillUpdate] = useState(false);
 
   // Extra configuration
@@ -115,9 +104,8 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
     setExtraEnv([]);
     setUseTweak(true);
     setUsePromptPack(true);
-    // promptPackMode is deprecated - no need to reset
-    setInstallSkill(true);
-    setShellEnv(true);
+    setInstallSkill(false);
+    setShellEnv(false);
     setSkillUpdate(false);
     setCompletion(defaultCompletion);
   }, []);
@@ -132,30 +120,40 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
       case 'quick-api-key':
         setScreen('quick-provider');
         break;
-      case 'quick-model-opus':
+      case 'quick-intro':
+        setScreen('quick-provider');
+        break;
+      case 'quick-ccrouter-url':
+      case 'quick-models':
         setScreen('quick-api-key');
-        break;
-      case 'quick-model-sonnet':
-        setScreen('quick-model-opus');
-        break;
-      case 'quick-model-haiku':
-        setScreen('quick-model-sonnet');
         break;
       case 'quick-name':
-        // Need provider context - handled externally
-        setScreen('quick-api-key');
+        setScreen('quick-models');
+        break;
+      case 'quick-review':
+        setScreen('quick-name');
         break;
       case 'quick-provider':
         setScreen('home');
         break;
-      case 'create-model-opus':
+      case 'create-intro':
+        setScreen('create-provider');
+        break;
+      case 'create-brand':
+        setScreen('create-intro');
+        break;
+      case 'create-name':
+        setScreen('create-brand');
+        break;
+      case 'create-ccrouter-url':
+      case 'create-base-url':
+        setScreen('create-name');
+        break;
+      case 'create-api-key':
+        setScreen('create-base-url');
+        break;
+      case 'create-models':
         setScreen('create-api-key');
-        break;
-      case 'create-model-sonnet':
-        setScreen('create-model-opus');
-        break;
-      case 'create-model-haiku':
-        setScreen('create-model-sonnet');
         break;
       // Settings - back to home
       case 'settings-root':
@@ -163,14 +161,9 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
         setScreen('home');
         break;
       // Model configuration screens - back through flow
-      case 'manage-models-opus':
+      case 'manage-models':
+      case 'manage-models-saving':
         setScreen('manage-actions');
-        break;
-      case 'manage-models-sonnet':
-        setScreen('manage-models-opus');
-        break;
-      case 'manage-models-haiku':
-        setScreen('manage-models-sonnet');
         break;
       case 'manage-models-done':
         setScreen('manage-actions');
@@ -184,6 +177,10 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
         break;
       // Doctor screen - home
       case 'doctor':
+        setScreen('home');
+        break;
+      case 'about':
+      case 'feedback':
         setScreen('home');
         break;
       // Default: any screen starting with create, manage, or updateAll goes home
@@ -222,7 +219,6 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
       binDir,
       useTweak,
       usePromptPack,
-      promptPackMode,
       installSkill,
       shellEnv,
       skillUpdate,
@@ -249,7 +245,6 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
       binDir,
       useTweak,
       usePromptPack,
-      promptPackMode,
       installSkill,
       shellEnv,
       skillUpdate,
@@ -281,7 +276,6 @@ export function useCreateAppState(options: UseAppStateOptions): { state: AppStat
       setBinDir,
       setUseTweak,
       setUsePromptPack,
-      setPromptPackMode,
       setInstallSkill,
       setShellEnv,
       setSkillUpdate,

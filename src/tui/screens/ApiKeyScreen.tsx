@@ -112,9 +112,7 @@ export const ApiKeyScreen: React.FC<ApiKeyScreenProps> = ({
 
       {detectedFrom && (
         <Box marginBottom={1}>
-          <Text color={colors.success}>
-            {icons.check} Detected in environment: <Text bold>{detectedFrom}</Text>
-          </Text>
+          <Text color={colors.success}>{icons.check} Detected provider credential in environment.</Text>
         </Box>
       )}
 

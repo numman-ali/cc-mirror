@@ -9,6 +9,7 @@ import type { VariantMeta } from '../../core/types.js';
 import type { CoreModule } from '../app.js';
 import type { CompletionResult } from './types.js';
 import { buildHelpLines } from './useVariantCreate.js';
+import { describePromptPack, describeShellEnv, getTuiProviderCapabilities } from '../providerCapabilities.js';
 
 export interface SelectedVariant extends VariantMeta {
   wrapperPath: string;
@@ -29,22 +30,17 @@ export interface UseVariantUpdateOptions {
  * Build the summary lines for an updated variant
  */
 export function buildUpdateSummary(meta: VariantMeta, notes: string[] | undefined): string[] {
-  // Build prompt pack description with provider-specific routing info
-  const getPromptPackDescription = (): string => {
-    if (!meta.promptPack) return 'off';
-    if (meta.provider === 'zai') return 'on (zai-cli routing)';
-    if (meta.provider === 'minimax') return 'on (MCP routing)';
-    return 'on';
-  };
-
+  const capabilities = getTuiProviderCapabilities(meta.provider || 'custom');
   const installLine = `Install: native ${meta.nativeVersion || 'latest'} (${meta.claudeOrig.replace('native:', 'v')})`;
 
   return [
     `Provider: ${meta.provider}`,
     installLine,
-    `Prompt pack: ${getPromptPackDescription()}`,
+    `Prompt pack: ${describePromptPack(Boolean(meta.promptPack), capabilities)}`,
     `dev-browser skill: ${meta.skillInstall ? 'on' : 'off'}`,
-    ...(meta.provider === 'zai' ? [`Shell env: ${meta.shellEnv ? 'write Z_AI_API_KEY' : 'manual'}`] : []),
+    ...(capabilities.shellEnv.configurable
+      ? [`Shell env: ${describeShellEnv(Boolean(meta.shellEnv), capabilities)}`]
+      : []),
     ...(notes || []),
   ];
 }

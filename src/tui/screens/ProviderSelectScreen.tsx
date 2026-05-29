@@ -81,7 +81,7 @@ export const ProviderSelectScreen: React.FC<ProviderSelectScreenProps> = ({ prov
   return (
     <ScreenLayout
       title="Select Provider"
-      subtitle="Pick a provider preset for Claude Code"
+      subtitle="Pick a provider preset"
       hints={[keyHints.continue, showDetails ? '? Hide details' : '? Show details']}
     >
       <Box flexDirection="column" marginY={1}>

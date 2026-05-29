@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import * as fs from 'node:fs';
 import { Box, Text, useApp, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
+import { safeJsonParse } from '../core/fs.js';
 import { getWrapperPath } from '../core/paths.js';
 import type { BrandPreset } from '../brands/index.js';
 import * as defaultBrands from '../brands/index.js';
@@ -53,6 +54,15 @@ import { YesNoSelect } from './components/ui/YesNoSelect.js';
 import { Header } from './components/ui/Typography.js';
 import { TextField } from './components/ui/Input.js';
 import { colors } from './components/ui/theme.js';
+import {
+  describePromptPack,
+  describeShellEnv,
+  getTuiProviderCapabilities,
+  resolveCredentialDefaults,
+  shouldPromptForCredential,
+  shouldShowModelSetup,
+  type TuiProviderCapabilities,
+} from './providerCapabilities.js';
 
 export interface CoreModule {
   DEFAULT_ROOT: string;
@@ -79,7 +89,6 @@ export interface CoreModule {
     binDir?: string;
     noTweak?: boolean;
     promptPack?: boolean;
-    promptPackMode?: 'minimal' | 'maximal';
     skillInstall?: boolean;
     shellEnv?: boolean;
     skillUpdate?: boolean;
@@ -94,7 +103,6 @@ export interface CoreModule {
       binDir?: string;
       claudeVersion?: string;
       promptPack?: boolean;
-      promptPackMode?: 'minimal' | 'maximal';
       skillInstall?: boolean;
       shellEnv?: boolean;
       modelOverrides?: {
@@ -131,7 +139,6 @@ export interface CoreModule {
     binDir?: string;
     noTweak?: boolean;
     promptPack?: boolean;
-    promptPackMode?: 'minimal' | 'maximal';
     skillInstall?: boolean;
     shellEnv?: boolean;
     skillUpdate?: boolean;
@@ -146,7 +153,6 @@ export interface CoreModule {
       binDir?: string;
       claudeVersion?: string;
       promptPack?: boolean;
-      promptPackMode?: 'minimal' | 'maximal';
       skillInstall?: boolean;
       shellEnv?: boolean;
       modelOverrides?: {
@@ -193,6 +199,31 @@ export interface AppProps {
   initialBinDir?: string;
 }
 
+const buildCapabilityRows = (capabilities: TuiProviderCapabilities): Array<{ label: string; value: string }> => {
+  const endpointLabel =
+    capabilities.endpoint.kind === 'none'
+      ? 'Runtime default'
+      : capabilities.endpoint.kind === 'router-url'
+        ? 'Router URL'
+        : capabilities.endpoint.configurable
+          ? 'Configurable base URL'
+          : 'Provider default';
+  const modelLabel = capabilities.models.required
+    ? 'Required aliases'
+    : capabilities.models.showInSetup
+      ? 'Default aliases reviewed'
+      : 'Provider defaults';
+
+  return [
+    {
+      label: 'Credential',
+      value: capabilities.credential.required ? 'Provider credential' : 'Not required',
+    },
+    { label: 'Endpoint', value: endpointLabel },
+    { label: 'Models', value: modelLabel },
+  ];
+};
+
 export const App: React.FC<AppProps> = ({
   core = defaultCore,
   providers = defaultProviders,
@@ -217,10 +248,8 @@ export const App: React.FC<AppProps> = ({
   const [binDir, _setBinDir] = useState(initialBinDir || core.DEFAULT_BIN_DIR);
   const [claudeVersion, setClaudeVersion] = useState(core.DEFAULT_CLAUDE_VERSION || 'latest');
   const [usePromptPack, setUsePromptPack] = useState(true);
-  // promptPackMode is deprecated - always use 'minimal'
-  const promptPackMode = 'minimal' as const;
   const [installSkill, setInstallSkill] = useState(false);
-  const [shellEnv, setShellEnv] = useState(true);
+  const [shellEnv, setShellEnv] = useState(false);
   const [skillUpdate, setSkillUpdate] = useState(false);
   const [extraEnv, setExtraEnv] = useState<string[]>([]);
   const [progressLines, setProgressLines] = useState<string[]>([]);
@@ -237,6 +266,11 @@ export const App: React.FC<AppProps> = ({
   const providerList = useMemo(() => providers.listProviders(true), [providers]);
   const brandList = useMemo(() => brands.listBrandPresets(), [brands]);
   const provider = useMemo(() => (providerKey ? providers.getProvider(providerKey) : null), [providerKey, providers]);
+  const capabilities = useMemo(
+    () => (providerKey ? getTuiProviderCapabilities(providerKey, provider) : null),
+    [providerKey, provider]
+  );
+  const activeCapabilities = capabilities ?? getTuiProviderCapabilities(providerKey || 'zai', provider);
   const effectiveBaseUrl = useMemo(() => baseUrl || provider?.baseUrl || '', [baseUrl, provider]);
   const modelOverrides = useMemo(
     () => ({
@@ -247,32 +281,27 @@ export const App: React.FC<AppProps> = ({
     [modelSonnet, modelOpus, modelHaiku]
   );
 
-  const providerDefaults = (
-    key?: string | null
-  ): {
-    promptPack: boolean;
-    skillInstall: boolean;
-    shellEnv: boolean;
-  } => ({
-    promptPack: key === 'zai' || key === 'minimax',
-    skillInstall: key === 'zai' || key === 'minimax',
-    shellEnv: key === 'zai',
-  });
+  const applyProviderSelection = (value: string, nextScreen: string) => {
+    const selected = providers.getProvider(value);
+    const selectedCapabilities = getTuiProviderCapabilities(value, selected);
+    const keyDefaults = resolveCredentialDefaults(selectedCapabilities);
+    const modelDefaults = selectedCapabilities.models.defaults;
+    const prefillModels = selectedCapabilities.models.prefillDefaults;
 
-  const resolveZaiApiKey = (): {
-    value: string;
-    detectedFrom: string | null;
-    skipPrompt: boolean;
-  } => {
-    const zaiKey = process.env.Z_AI_API_KEY?.trim();
-    if (zaiKey) {
-      return { value: zaiKey, detectedFrom: 'Z_AI_API_KEY', skipPrompt: true };
-    }
-    const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
-    if (anthropicKey) {
-      return { value: anthropicKey, detectedFrom: 'ANTHROPIC_API_KEY', skipPrompt: false };
-    }
-    return { value: '', detectedFrom: null, skipPrompt: false };
+    setProviderKey(value);
+    setName(selectedCapabilities.defaultVariantName);
+    setBaseUrl(selected?.baseUrl || '');
+    setApiKey(keyDefaults.value);
+    setApiKeyDetectedFrom(keyDefaults.detectedFrom);
+    setModelOpus(prefillModels ? modelDefaults.opus || '' : '');
+    setModelSonnet(prefillModels ? modelDefaults.sonnet || '' : '');
+    setModelHaiku(prefillModels ? modelDefaults.haiku || '' : '');
+    setExtraEnv([]);
+    setBrandKey('auto');
+    setUsePromptPack(selectedCapabilities.promptPack.defaultEnabled);
+    setInstallSkill(selectedCapabilities.skillInstall.defaultEnabled);
+    setShellEnv(keyDefaults.skipPrompt ? false : selectedCapabilities.shellEnv.defaultEnabled);
+    setScreen(nextScreen);
   };
 
   useInput((input, key) => {
@@ -294,22 +323,23 @@ export const App: React.FC<AppProps> = ({
           break;
         case 'quick-models':
           setScreen(
-            (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional
-              ? 'quick-intro'
-              : 'quick-api-key'
+            shouldPromptForCredential(activeCapabilities, apiKeyDetectedFrom) ? 'quick-api-key' : 'quick-intro'
           );
           break;
         case 'quick-name':
-          if (providerKey === 'ccrouter') {
+          if (activeCapabilities.endpoint.kind === 'router-url') {
             setScreen('quick-ccrouter-url');
           } else {
-            const shouldConfigureModels =
-              Boolean(provider?.requiresModelMapping) || providerKey === 'zai' || providerKey === 'minimax';
-            const skipApiKey =
-              (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional;
+            const shouldConfigureModels = shouldShowModelSetup(activeCapabilities);
+            const shouldPromptCredential = shouldPromptForCredential(activeCapabilities, apiKeyDetectedFrom);
 
-            setScreen(shouldConfigureModels ? 'quick-models' : skipApiKey ? 'quick-intro' : 'quick-api-key');
+            setScreen(
+              shouldConfigureModels ? 'quick-models' : shouldPromptCredential ? 'quick-api-key' : 'quick-intro'
+            );
           }
+          break;
+        case 'quick-review':
+          setScreen('quick-name');
           break;
         case 'quick-provider':
           setScreen('home');
@@ -328,9 +358,7 @@ export const App: React.FC<AppProps> = ({
           // Some providers can skip API key entry (e.g., zai with detected Z_AI_API_KEY).
           // Going "back" from models should return to the actual previous screen.
           setScreen(
-            (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional
-              ? 'create-base-url'
-              : 'create-api-key'
+            shouldPromptForCredential(activeCapabilities, apiKeyDetectedFrom) ? 'create-api-key' : 'create-base-url'
           );
           break;
         // Model configuration screens - back through flow
@@ -399,7 +427,6 @@ export const App: React.FC<AppProps> = ({
       rootDir,
       binDir,
       usePromptPack,
-      promptPackMode,
       installSkill,
       shellEnv,
       skillUpdate,
@@ -417,7 +444,6 @@ export const App: React.FC<AppProps> = ({
       rootDir,
       binDir,
       usePromptPack,
-      promptPackMode,
       installSkill,
       shellEnv,
       skillUpdate,
@@ -484,8 +510,8 @@ export const App: React.FC<AppProps> = ({
     setClaudeVersion(core.DEFAULT_CLAUDE_VERSION || 'latest');
     setExtraEnv([]);
     setUsePromptPack(true);
-    setInstallSkill(true);
-    setShellEnv(true);
+    setInstallSkill(false);
+    setShellEnv(false);
     setSkillUpdate(false);
     setCompletionSummary([]);
     setCompletionNextSteps([]);
@@ -536,45 +562,25 @@ export const App: React.FC<AppProps> = ({
       <ProviderSelectScreen
         providers={providerList}
         onSelect={(value) => {
-          const selected = providers.getProvider(value);
-          const defaults = providerDefaults(value);
-          const keyDefaults =
-            value === 'zai' ? resolveZaiApiKey() : { value: '', detectedFrom: null, skipPrompt: false };
-          const prefillModels = value === 'zai' || value === 'minimax';
-          setProviderKey(value);
-          setName(selected?.defaultVariantName || (value === 'mirror' ? 'mclaude' : value));
-          setBaseUrl(selected?.baseUrl || '');
-          setApiKey(keyDefaults.value);
-          setApiKeyDetectedFrom(keyDefaults.detectedFrom);
-          setModelOpus(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_OPUS_MODEL ?? '').trim() : '');
-          setModelSonnet(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_SONNET_MODEL ?? '').trim() : '');
-          setModelHaiku(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_HAIKU_MODEL ?? '').trim() : '');
-          setExtraEnv([]);
-          setBrandKey('auto');
-          setUsePromptPack(defaults.promptPack);
-          setInstallSkill(defaults.skillInstall);
-          setShellEnv(keyDefaults.detectedFrom === 'Z_AI_API_KEY' ? false : defaults.shellEnv);
-          setScreen('quick-intro');
+          applyProviderSelection(value, 'quick-intro');
         }}
       />
     );
   }
 
   if (screen === 'quick-intro') {
-    const keyDefaults = providerKey === 'zai' ? resolveZaiApiKey() : { skipPrompt: false };
-    const shouldConfigureModels =
-      Boolean(provider?.requiresModelMapping) || providerKey === 'zai' || providerKey === 'minimax';
-    const skipApiKey = keyDefaults.skipPrompt || provider?.credentialOptional;
+    const shouldConfigureModels = shouldShowModelSetup(activeCapabilities);
+    const shouldPromptCredential = shouldPromptForCredential(activeCapabilities, apiKeyDetectedFrom);
     return (
       <ProviderIntroScreen
         providerKey={providerKey || 'zai'}
         providerLabel={provider?.label || providerKey || 'Provider'}
+        capabilities={activeCapabilities}
         isQuickSetup={true}
         onContinue={() => {
-          // CCRouter: go to URL config screen
-          if (providerKey === 'ccrouter') {
+          if (activeCapabilities.endpoint.kind === 'router-url') {
             setScreen('quick-ccrouter-url');
-          } else if (skipApiKey) {
+          } else if (!shouldPromptCredential) {
             setScreen(shouldConfigureModels ? 'quick-models' : 'quick-name');
           } else {
             setScreen('quick-api-key');
@@ -586,13 +592,12 @@ export const App: React.FC<AppProps> = ({
   }
 
   if (screen === 'quick-api-key') {
-    const shouldConfigureModels =
-      Boolean(provider?.requiresModelMapping) || providerKey === 'zai' || providerKey === 'minimax';
+    const shouldConfigureModels = shouldShowModelSetup(activeCapabilities);
     return (
       <ApiKeyScreen
         providerLabel={provider?.label || 'Provider'}
         providerKey={providerKey || undefined}
-        envVarName={provider?.authMode === 'authToken' ? 'ANTHROPIC_AUTH_TOKEN' : 'ANTHROPIC_API_KEY'}
+        envVarName={activeCapabilities.credential.envVar}
         value={apiKey}
         onChange={setApiKey}
         onSubmit={() => setScreen(shouldConfigureModels ? 'quick-models' : 'quick-name')}
@@ -603,12 +608,14 @@ export const App: React.FC<AppProps> = ({
 
   // Consolidated model mapping screen for quick setup
   if (screen === 'quick-models') {
-    const skipApiKey = (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional;
+    const shouldPromptCredential = shouldPromptForCredential(activeCapabilities, apiKeyDetectedFrom);
     return (
       <ModelConfigScreen
         title="Model Configuration"
-        subtitle="Map Claude Code model aliases to your provider"
+        subtitle="Map provider model slots"
         providerKey={providerKey || undefined}
+        modelDefaults={activeCapabilities.models.defaults}
+        guidance={activeCapabilities.models.guidance}
         opusValue={modelOpus}
         sonnetValue={modelSonnet}
         haikuValue={modelHaiku}
@@ -616,7 +623,7 @@ export const App: React.FC<AppProps> = ({
         onSonnetChange={setModelSonnet}
         onHaikuChange={setModelHaiku}
         onComplete={() => setScreen('quick-name')}
-        onBack={() => setScreen(skipApiKey ? 'quick-intro' : 'quick-api-key')}
+        onBack={() => setScreen(shouldPromptCredential ? 'quick-api-key' : 'quick-intro')}
       />
     );
   }
@@ -640,7 +647,7 @@ export const App: React.FC<AppProps> = ({
         <Divider />
         {apiKeyDetectedFrom && (
           <Box marginTop={1}>
-            <Text color={colors.success}>Detected API key from {apiKeyDetectedFrom}.</Text>
+            <Text color={colors.success}>Detected provider credential in environment.</Text>
           </Box>
         )}
         <Box marginY={1}>
@@ -650,7 +657,7 @@ export const App: React.FC<AppProps> = ({
             onChange={setName}
             onSubmit={() => {
               setProgressLines([]);
-              setScreen('create-running');
+              setScreen('quick-review');
             }}
             placeholder={name || providerKey || 'my-variant'}
             hint="Press Enter to continue"
@@ -662,30 +669,48 @@ export const App: React.FC<AppProps> = ({
     );
   }
 
+  if (screen === 'quick-review') {
+    return (
+      <SummaryScreen
+        data={{
+          name,
+          providerLabel: provider?.label || providerKey || '',
+          providerKey: providerKey || undefined,
+          brandLabel: 'Auto (match provider)',
+          baseUrl: effectiveBaseUrl,
+          apiKey,
+          apiKeySource: apiKeyDetectedFrom || undefined,
+          modelSonnet: modelOverrides.sonnet,
+          modelOpus: modelOverrides.opus,
+          modelHaiku: modelOverrides.haiku,
+          rootDir,
+          binDir,
+          claudeVersion,
+          usePromptPack,
+          promptPackLabel: describePromptPack(usePromptPack, activeCapabilities),
+          installSkill,
+          shellEnv,
+          shellEnvLabel: activeCapabilities.shellEnv.configurable
+            ? describeShellEnv(shellEnv, activeCapabilities)
+            : undefined,
+          capabilities: buildCapabilityRows(activeCapabilities),
+        }}
+        onConfirm={() => {
+          setProgressLines([]);
+          setScreen('create-running');
+        }}
+        onBack={() => setScreen('quick-name')}
+        onCancel={() => setScreen('home')}
+      />
+    );
+  }
+
   if (screen === 'create-provider') {
     return (
       <ProviderSelectScreen
         providers={providerList}
         onSelect={(value) => {
-          const selected = providers.getProvider(value);
-          const defaults = providerDefaults(value);
-          const keyDefaults =
-            value === 'zai' ? resolveZaiApiKey() : { value: '', detectedFrom: null, skipPrompt: false };
-          const prefillModels = value === 'zai' || value === 'minimax';
-          setProviderKey(value);
-          setName(selected?.defaultVariantName || (value === 'mirror' ? 'mclaude' : value));
-          setBaseUrl(selected?.baseUrl || '');
-          setApiKey(keyDefaults.value);
-          setApiKeyDetectedFrom(keyDefaults.detectedFrom);
-          setModelOpus(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_OPUS_MODEL ?? '').trim() : '');
-          setModelSonnet(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_SONNET_MODEL ?? '').trim() : '');
-          setModelHaiku(prefillModels ? String(selected?.env?.ANTHROPIC_DEFAULT_HAIKU_MODEL ?? '').trim() : '');
-          setExtraEnv([]);
-          setBrandKey('auto');
-          setUsePromptPack(defaults.promptPack);
-          setInstallSkill(defaults.skillInstall);
-          setShellEnv(keyDefaults.detectedFrom === 'Z_AI_API_KEY' ? false : defaults.shellEnv);
-          setScreen('create-intro');
+          applyProviderSelection(value, 'create-intro');
         }}
       />
     );
@@ -696,6 +721,7 @@ export const App: React.FC<AppProps> = ({
       <ProviderIntroScreen
         providerKey={providerKey || 'zai'}
         providerLabel={provider?.label || providerKey || 'Provider'}
+        capabilities={activeCapabilities}
         isQuickSetup={false}
         onContinue={() => setScreen('create-brand')}
         onBack={() => setScreen('create-provider')}
@@ -706,7 +732,7 @@ export const App: React.FC<AppProps> = ({
   if (screen === 'create-brand') {
     const items = [
       { label: 'Auto (match provider)', value: 'auto' },
-      { label: 'None (keep default Claude Code look)', value: 'none' },
+      { label: 'None (keep default runtime look)', value: 'none' },
       ...brandList.map((brand) => ({
         label: `${brand.label} - ${brand.description}`,
         value: brand.key,
@@ -732,10 +758,9 @@ export const App: React.FC<AppProps> = ({
   }
 
   if (screen === 'create-name') {
-    // CCRouter goes to its own URL config screen, mirror skips base URL entirely
     const getNextScreen = () => {
-      if (providerKey === 'ccrouter') return 'create-ccrouter-url';
-      if (providerKey === 'mirror') return 'create-skill-install'; // Mirror: skip base URL and API key
+      if (activeCapabilities.endpoint.kind === 'router-url') return 'create-ccrouter-url';
+      if (activeCapabilities.endpoint.kind === 'none') return 'create-skill-install';
       return 'create-base-url';
     };
     const nextScreen = getNextScreen();
@@ -772,11 +797,8 @@ export const App: React.FC<AppProps> = ({
   }
 
   if (screen === 'create-base-url') {
-    // Skip API key for: zai with detected key, or any provider with credentialOptional
-    const skipApiKey = (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional;
-    const shouldConfigureModels =
-      Boolean(provider?.requiresModelMapping) || providerKey === 'zai' || providerKey === 'minimax';
-    // promptPackMode is deprecated - skip mode selection, go directly to skill-install
+    const shouldPromptCredential = shouldPromptForCredential(activeCapabilities, apiKeyDetectedFrom);
+    const shouldConfigureModels = shouldShowModelSetup(activeCapabilities);
     const nextScreen = 'create-skill-install';
     return (
       <Frame>
@@ -784,11 +806,13 @@ export const App: React.FC<AppProps> = ({
         <Divider />
         <Box marginY={1}>
           <TextField
-            label="ANTHROPIC_BASE_URL"
+            label="Base URL"
             value={baseUrl}
             onChange={setBaseUrl}
             onSubmit={() =>
-              setScreen(skipApiKey ? (shouldConfigureModels ? 'create-models' : nextScreen) : 'create-api-key')
+              setScreen(
+                !shouldPromptCredential ? (shouldConfigureModels ? 'create-models' : nextScreen) : 'create-api-key'
+              )
             }
             placeholder={provider?.baseUrl || 'Leave blank for defaults'}
             hint="Leave blank to keep provider defaults"
@@ -801,15 +825,13 @@ export const App: React.FC<AppProps> = ({
   }
 
   if (screen === 'create-api-key') {
-    // promptPackMode is deprecated - skip mode selection, go directly to skill-install
     const nextScreen = 'create-skill-install';
-    const shouldConfigureModels =
-      Boolean(provider?.requiresModelMapping) || providerKey === 'zai' || providerKey === 'minimax';
+    const shouldConfigureModels = shouldShowModelSetup(activeCapabilities);
     return (
       <ApiKeyScreen
         providerLabel={provider?.label || 'Provider'}
         providerKey={providerKey || undefined}
-        envVarName={provider?.authMode === 'authToken' ? 'ANTHROPIC_AUTH_TOKEN' : 'ANTHROPIC_API_KEY'}
+        envVarName={activeCapabilities.credential.envVar}
         value={apiKey}
         onChange={setApiKey}
         onSubmit={() => setScreen(shouldConfigureModels ? 'create-models' : nextScreen)}
@@ -820,17 +842,17 @@ export const App: React.FC<AppProps> = ({
 
   // Consolidated model mapping screen for create flow
   if (screen === 'create-models') {
-    // promptPackMode is deprecated - skip mode selection, go directly to skill-install
     const nextScreen = 'create-skill-install';
-    const backScreen =
-      (providerKey === 'zai' && apiKeyDetectedFrom === 'Z_AI_API_KEY') || provider?.credentialOptional
-        ? 'create-base-url'
-        : 'create-api-key';
+    const backScreen = shouldPromptForCredential(activeCapabilities, apiKeyDetectedFrom)
+      ? 'create-api-key'
+      : 'create-base-url';
     return (
       <ModelConfigScreen
         title="Model Configuration"
-        subtitle="Map Claude Code model aliases to your provider"
+        subtitle="Map provider model slots"
         providerKey={providerKey || undefined}
+        modelDefaults={activeCapabilities.models.defaults}
+        guidance={activeCapabilities.models.guidance}
         opusValue={modelOpus}
         sonnetValue={modelSonnet}
         haikuValue={modelHaiku}
@@ -852,7 +874,6 @@ export const App: React.FC<AppProps> = ({
           title="Apply provider prompt pack?"
           onSelect={(value) => {
             setUsePromptPack(value);
-            // promptPackMode is deprecated - go directly to skill-install
             setScreen('create-skill-install');
           }}
         />
@@ -861,8 +882,6 @@ export const App: React.FC<AppProps> = ({
       </Frame>
     );
   }
-
-  // NOTE: create-prompt-pack-mode screen removed - promptPackMode is deprecated
 
   if (screen === 'create-skill-install') {
     return (
@@ -877,8 +896,8 @@ export const App: React.FC<AppProps> = ({
           title="Install dev-browser skill?"
           onSelect={(value) => {
             setInstallSkill(value);
-            if (providerKey === 'zai') {
-              if (apiKeyDetectedFrom === 'Z_AI_API_KEY') {
+            if (activeCapabilities.shellEnv.configurable) {
+              if (!shouldPromptForCredential(activeCapabilities, apiKeyDetectedFrom)) {
                 setShellEnv(false);
                 setScreen('create-env-confirm');
               } else {
@@ -901,7 +920,7 @@ export const App: React.FC<AppProps> = ({
         <Header title="Shell Environment" subtitle="Write API key to your shell profile" />
         <Divider />
         <YesNoSelect
-          title="Write Z_AI_API_KEY to your shell profile?"
+          title={`Write ${activeCapabilities.shellEnv.envVar} to your shell profile?`}
           onSelect={(value) => {
             setShellEnv(value);
             setScreen('create-env-confirm');
@@ -967,9 +986,13 @@ export const App: React.FC<AppProps> = ({
           binDir,
           claudeVersion,
           usePromptPack,
-          promptPackMode,
+          promptPackLabel: describePromptPack(usePromptPack, activeCapabilities),
           installSkill,
           shellEnv,
+          shellEnvLabel: activeCapabilities.shellEnv.configurable
+            ? describeShellEnv(shellEnv, activeCapabilities)
+            : undefined,
+          capabilities: buildCapabilityRows(activeCapabilities),
         }}
         onConfirm={() => {
           setProgressLines([]);
@@ -1038,8 +1061,8 @@ export const App: React.FC<AppProps> = ({
           let env: Record<string, unknown> = {};
           try {
             const raw = fs.readFileSync(settingsPath, 'utf8');
-            const parsed = JSON.parse(raw) as { env?: Record<string, unknown> };
-            env = parsed.env ?? {};
+            const parsed = safeJsonParse<{ env?: Record<string, unknown> }>(raw);
+            env = parsed?.env ?? {};
           } catch {
             // If settings.json doesn't exist yet (or is malformed), fall back to provider defaults.
           }
@@ -1084,11 +1107,15 @@ export const App: React.FC<AppProps> = ({
 
   // Consolidated model configuration screen for existing variants
   if (screen === 'manage-models' && selectedVariant) {
+    const selectedProvider = selectedVariant.provider ? providers.getProvider(selectedVariant.provider) : null;
+    const selectedCapabilities = getTuiProviderCapabilities(selectedVariant.provider || 'custom', selectedProvider);
     return (
       <ModelConfigScreen
         title="Configure Models"
         subtitle={`Update model mapping for ${selectedVariant.name}`}
         providerKey={selectedVariant.provider}
+        modelDefaults={selectedCapabilities.models.defaults}
+        guidance={selectedCapabilities.models.guidance}
         opusValue={modelOpus}
         sonnetValue={modelSonnet}
         haikuValue={modelHaiku}

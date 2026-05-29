@@ -47,7 +47,7 @@ export const RouterUrlScreen: React.FC<RouterUrlScreenProps> = ({ value, onChang
       {/* URL Input */}
       <Box marginY={1}>
         <TextField
-          label="ANTHROPIC_BASE_URL"
+          label="Base URL"
           value={value}
           onChange={onChange}
           onSubmit={onSubmit}

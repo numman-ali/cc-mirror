@@ -2,9 +2,9 @@
 
 cc-mirror models each provider as a small template that defines:
 
-- What **base URL** to use (`ANTHROPIC_BASE_URL`)
+- What **base URL** to use
 - What **auth mode** to use (API key vs auth token vs none)
-- What **default model mapping** to set (Opus/Sonnet/Haiku)
+- What **default model slots** to set (Primary/Balanced/Fast)
 - What **variant wrapper splash** and labels to show
 
 The goal is to keep provider wiring predictable, while still allowing users to override anything via `settings.json`.
@@ -21,18 +21,18 @@ The goal is to keep provider wiring predictable, while still allowing users to o
 Each provider is a `ProviderTemplate` in `src/providers/index.ts`:
 
 - `key`, `label`, `description`
-- `baseUrl`: default `ANTHROPIC_BASE_URL` (empty means "use Claude Code defaults")
+- `baseUrl`: default provider endpoint
 - `env`: default per-variant environment values (models, splash, timeouts, etc.)
 - `authMode`:
-  - `apiKey`: cc-mirror writes `ANTHROPIC_API_KEY` (zai, minimax, kimi)
-  - `authToken`: cc-mirror writes `ANTHROPIC_AUTH_TOKEN` (openrouter, vercel, ollama, nanogpt, gatewayz). Some providers also set `ANTHROPIC_API_KEY` via `authTokenAlsoSetsApiKey`.
+  - `apiKey`: cc-mirror writes the legacy API-key slot
+  - `authToken`: cc-mirror writes the auth-token slot (zai, minimax, kimi, openrouter, vercel, ollama, nanogpt, gatewayz). Some providers also set the legacy API-key slot via `authTokenAlsoSetsApiKey`.
   - `none`: cc-mirror does not set auth or base URL (mirror — user authenticates normally)
   - CC Router uses `authToken` with `credentialOptional: true` (optional placeholder token)
-- `requiresModelMapping`: if true, CLI/TUI requires Opus/Sonnet/Haiku mapping (OpenRouter-style gateways)
+- `requiresModelMapping`: if true, CLI/TUI requires Primary/Balanced/Fast mapping (OpenRouter-style gateways)
 - `credentialOptional`: if true, UI can skip API key entry (example: `mirror`)
 - `experimental`: hides the provider from the default list
 - `noPromptPack`: disables prompt-pack overlays (example: `mirror`)
-- `requiresEmptyApiKey`: some gateways require `ANTHROPIC_API_KEY=''` even when using auth tokens
+- `requiresEmptyApiKey`: some gateways require the legacy API-key slot to be empty even when using auth tokens
 - `authTokenAlsoSetsApiKey`: for providers that accept either header
 
 ## How Env Is Built
@@ -45,26 +45,40 @@ cc-mirror writes per-variant env into `~/.cc-mirror/<variant>/config/settings.js
 High-level behavior:
 
 - Start with `provider.env`
-- Apply auth (`ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN`) and base URL override
-- Apply model overrides (Opus/Sonnet/Haiku) if specified
+- Apply auth and base URL override
+- Apply model overrides (Primary/Balanced/Fast) if specified
 - Apply extra `--env KEY=VALUE` entries
 - Add cc-mirror safety defaults (for per-variant installs):
+  - `DISABLE_UPDATES=1`
   - `DISABLE_AUTOUPDATER=1`
-  - `DISABLE_AUTO_MIGRATE_TO_NATIVE=1`
   - `DISABLE_INSTALLATION_CHECKS=1`
+  - `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
+  - `DISABLE_TELEMETRY=1`
+  - `DISABLE_ERROR_REPORTING=1`
+  - `ENABLE_TOOL_SEARCH=false`
+  - `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=0`
 
-## Model Mapping
+## Update Policy
 
-Model mapping is always expressed via Claude Code’s env vars:
+`cc-mirror update <name>` refreshes cc-mirror-managed defaults to the current provider profile while preserving user-owned data. Managed defaults include provider base URLs, defaulted model slots, update/install/privacy flags, provider-managed MCP servers, provider-required deny rules, and managed tweakcc startup/banner settings.
+
+Credentials and custom env keys are preserved. Explicit `--model-*` overrides passed during update become the new model aliases for that variant.
+
+## Model Slots
+
+Model slots are stored in the runtime model alias env vars:
 
 - `ANTHROPIC_DEFAULT_OPUS_MODEL`
 - `ANTHROPIC_DEFAULT_SONNET_MODEL`
 - `ANTHROPIC_DEFAULT_HAIKU_MODEL`
 
+Startup/default model selection is written to top-level `settings.json` `model` where supported, instead of forcing
+`ANTHROPIC_MODEL` for new installs.
+
 Users can edit these later using:
 
 - CLI: `cc-mirror update <name> --settings-only --model-opus ... --model-sonnet ... --model-haiku ...`
-- TUI: Manage → Configure Models
+- TUI: Manage -> Configure Models
 
 ## Adding A New Provider (Checklist)
 

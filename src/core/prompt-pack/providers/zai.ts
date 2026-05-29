@@ -30,11 +30,12 @@ const buildZaiContract = () =>
 Provider: z.ai (GLM)
 
 <authentication>
-- Use API-key auth only.
-- Ignore ANTHROPIC_AUTH_TOKEN if present.
+- Use Z.ai Coding Plan auth.
 - Required env:
-  - ANTHROPIC_API_KEY (Claude Code API-key mode)
+  - ANTHROPIC_AUTH_TOKEN (Claude Code auth-token mode)
+  - ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic
   - Z_AI_API_KEY (for zai-cli)
+- ANTHROPIC_API_KEY is intentionally unused for this variant.
 </authentication>
 
 <tool_info>

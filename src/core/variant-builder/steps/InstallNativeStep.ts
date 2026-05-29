@@ -1,5 +1,5 @@
 /**
- * InstallNativeStep - Installs Claude Code via native binary download
+ * InstallNativeStep - Installs the native runtime binary
  */
 
 import { DEFAULT_CLAUDE_NATIVE_CACHE_DIR } from '../../constants.js';
@@ -16,7 +16,7 @@ export class InstallNativeStep implements BuildStep {
 
   async executeAsync(ctx: BuildContext): Promise<void> {
     const { prefs, paths, state } = ctx;
-    await ctx.report(`Installing Claude Code (native) ${prefs.resolvedClaudeVersion}...`);
+    await ctx.report(`Installing native runtime ${prefs.resolvedClaudeVersion}...`);
 
     const install = await installNativeClaudeAsync({
       nativeDir: paths.nativeDir,
@@ -30,6 +30,6 @@ export class InstallNativeStep implements BuildStep {
     state.nativeResolvedVersion = install.resolvedVersion;
     // Record the *resolved* version for provenance, even if the user pinned "stable"/"latest".
     state.claudeBinary = `native:${install.resolvedVersion}`;
-    state.notes.push(`Claude Code native: ${install.resolvedVersion} (${install.platform})`);
+    state.notes.push(`Native runtime: ${install.resolvedVersion} (${install.platform})`);
   }
 }

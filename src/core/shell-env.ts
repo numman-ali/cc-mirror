@@ -48,9 +48,14 @@ const readSettingsApiKey = (configDir: string): string | null => {
   const settingsPath = path.join(configDir, SETTINGS_FILE);
   if (!fs.existsSync(settingsPath)) return null;
   const settings = readJson<SettingsFile>(settingsPath);
-  const key = settings?.env?.ANTHROPIC_API_KEY;
-  if (typeof key !== 'string') return null;
-  return normalizeApiKey(key);
+  const env = settings?.env;
+  if (!env) return null;
+  for (const key of [env.Z_AI_API_KEY, env.ANTHROPIC_AUTH_TOKEN, env.ANTHROPIC_API_KEY]) {
+    if (typeof key !== 'string') continue;
+    const normalized = normalizeApiKey(key);
+    if (normalized) return normalized;
+  }
+  return null;
 };
 
 const renderBlock = (apiKey: string) => `${BLOCK_START}\nexport Z_AI_API_KEY="${apiKey}"\n${BLOCK_END}\n`;

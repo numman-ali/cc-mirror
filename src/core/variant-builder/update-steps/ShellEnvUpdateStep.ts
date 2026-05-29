@@ -3,6 +3,7 @@
  */
 
 import { ensureZaiShellEnv } from '../../shell-env.js';
+import { getProviderCapability } from '../../../providers/index.js';
 import type { UpdateContext, UpdateStep } from '../types.js';
 
 export class ShellEnvUpdateStep implements UpdateStep {
@@ -21,7 +22,10 @@ export class ShellEnvUpdateStep implements UpdateStep {
   private async configure(ctx: UpdateContext, isAsync: boolean): Promise<void> {
     const { opts, meta, prefs, state } = ctx;
 
-    if (prefs.shellEnvEnabled && meta.provider === 'zai') {
+    const profile = getProviderCapability(meta.provider);
+    const managesZaiKey = profile?.features.shellEnv.exports.includes('Z_AI_API_KEY') ?? false;
+
+    if (prefs.shellEnvEnabled && managesZaiKey) {
       if (isAsync) {
         await ctx.report('Configuring shell environment...');
       } else {
@@ -38,7 +42,7 @@ export class ShellEnvUpdateStep implements UpdateStep {
       } else if (shellResult.message) {
         state.notes.push(`Z_AI_API_KEY: ${shellResult.message}`);
       }
-    } else if (meta.provider === 'zai' && opts.shellEnv === false) {
+    } else if (managesZaiKey && opts.shellEnv === false) {
       state.notes.push('Z_AI_API_KEY not written to shell profile. Set it manually in your shell rc file.');
     }
   }
