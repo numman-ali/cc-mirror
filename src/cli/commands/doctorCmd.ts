@@ -3,6 +3,9 @@
  */
 
 import { spawnSync } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import * as core from '../../core/index.js';
 import { isWindows } from '../../core/paths.js';
 import { collectDoctorSecretValues, enrichDoctorReport, printDoctor, sanitizeDoctorText } from '../doctor.js';
@@ -25,6 +28,18 @@ type LiveDoctorResult = {
   liveDurationMs?: number;
   liveStdout?: string;
   liveStderr?: string;
+  liveErrorSummary?: string;
+};
+
+const readLiveErrorSummary = (debugFile: string, secrets: string[]): string | undefined => {
+  if (!fs.existsSync(debugFile)) return undefined;
+  const debugText = sanitizeDoctorText(fs.readFileSync(debugFile, 'utf8'), secrets);
+  const usefulLines = debugText
+    .split(/\r?\n/)
+    .filter((line) => /\[(ERROR|WARN)\]|API error|Invalid Authentication|invalid_authentication/i.test(line))
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return usefulLines.slice(-4).join('\n') || undefined;
 };
 
 /**
@@ -63,13 +78,17 @@ export function runDoctorCommand({ opts }: DoctorCommandOptions): void {
   const parsedTimeout = typeof rawTimeout === 'string' && rawTimeout.trim().length > 0 ? Number(rawTimeout) : NaN;
   const timeoutMs = Number.isFinite(parsedTimeout) && parsedTimeout > 0 ? parsedTimeout : 20_000;
 
-  const runProbe = (wrapperPath: string) => {
+  const runProbe = (wrapperPath: string, name: string) => {
     const env = { ...process.env, CC_MIRROR_SPLASH: '0' };
-    const args = ['-p', prompt];
+    const debugFile = path.join(os.tmpdir(), `cc-mirror-doctor-${process.pid}-${name}-${Date.now()}.log`);
+    const args = ['--debug-file', debugFile, '-p', prompt];
     if (isWindows) {
-      return spawnSync('cmd.exe', ['/c', wrapperPath, ...args], { env, encoding: 'utf8', timeout: timeoutMs });
+      return {
+        child: spawnSync('cmd.exe', ['/c', wrapperPath, ...args], { env, encoding: 'utf8', timeout: timeoutMs }),
+        debugFile,
+      };
     }
-    return spawnSync(wrapperPath, args, { env, encoding: 'utf8', timeout: timeoutMs });
+    return { child: spawnSync(wrapperPath, args, { env, encoding: 'utf8', timeout: timeoutMs }), debugFile };
   };
 
   const results: LiveDoctorResult[] = enriched.map((item) => {
@@ -89,11 +108,13 @@ export function runDoctorCommand({ opts }: DoctorCommandOptions): void {
     }
 
     const started = Date.now();
-    const child = runProbe(item.wrapperPath);
+    const { child, debugFile } = runProbe(item.wrapperPath, item.name);
     const duration = Date.now() - started;
     const timedOut = Boolean((child.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT');
     const liveOk = child.status === 0 && !timedOut;
     const secrets = collectDoctorSecretValues(rootDir, item.name);
+    const liveErrorSummary = liveOk ? undefined : readLiveErrorSummary(debugFile, secrets);
+    if (fs.existsSync(debugFile)) fs.rmSync(debugFile, { force: true });
 
     return {
       ...base,
@@ -103,6 +124,7 @@ export function runDoctorCommand({ opts }: DoctorCommandOptions): void {
       liveDurationMs: duration,
       liveStdout: sanitizeDoctorText((child.stdout ?? '').toString().trim(), secrets) || undefined,
       liveStderr: sanitizeDoctorText((child.stderr ?? '').toString().trim(), secrets) || undefined,
+      liveErrorSummary,
     };
   });
 
@@ -129,6 +151,8 @@ export function runDoctorCommand({ opts }: DoctorCommandOptions): void {
     }
     if (item.liveStderr) {
       console.log(`  stderr: ${item.liveStderr.split(/\r?\n/)[0]}`);
+    } else if (item.liveErrorSummary) {
+      console.log(`  error: ${item.liveErrorSummary.split(/\r?\n/)[0]}`);
     }
   }
 }

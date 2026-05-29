@@ -5,7 +5,7 @@
 import * as core from '../../core/index.js';
 import { getWrapperPath } from '../../core/paths.js';
 import type { ParsedArgs } from '../args.js';
-import { getModelOverridesFromArgs, printSummary } from '../utils/index.js';
+import { buildExtraEnv, getModelOverridesFromArgs, printSummary } from '../utils/index.js';
 
 export interface UpdateCommandOptions {
   opts: ParsedArgs;
@@ -31,13 +31,23 @@ export async function runUpdateCommand({ opts }: UpdateCommandOptions): Promise<
   const shellEnv = opts['no-shell-env'] ? false : opts['shell-env'] ? true : undefined;
   const settingsOnly = Boolean(opts['settings-only']);
   const modelOverrides = getModelOverridesFromArgs(opts);
+  const apiKeyFlag = typeof opts['api-key'] === 'string' ? (opts['api-key'] as string) : '';
+  const authTokenFlag = typeof opts['auth-token'] === 'string' ? (opts['auth-token'] as string) : '';
+  const apiKey = authTokenFlag || apiKeyFlag || undefined;
+  const extraEnv = buildExtraEnv(opts);
   const rawTweakccStdio = opts['tweakcc-stdio'] as string | undefined;
   const tweakccStdio =
     rawTweakccStdio === 'inherit' || opts.verbose ? 'inherit' : rawTweakccStdio === 'pipe' ? 'pipe' : 'pipe';
 
+  if ((apiKey || extraEnv.length > 0) && !target && names.length > 1) {
+    throw new Error('Provide a variant name when updating credentials or env values.');
+  }
+
   for (const name of names) {
     const result = await core.updateVariantAsync(rootDir, name, {
       binDir,
+      apiKey,
+      extraEnv,
       claudeVersion: opts['claude-version'] as string | undefined,
       brand: opts.brand as string | undefined,
       noTweak: Boolean(opts.noTweak),

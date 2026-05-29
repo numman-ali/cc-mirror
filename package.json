@@ -1,6 +1,6 @@
 {
   "name": "cc-mirror",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "type": "module",
   "description": "Provider-native coding variants with custom providers, tweakcc theming, and battle-tested defaults",
   "author": "Numman Ali",

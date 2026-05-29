@@ -167,7 +167,7 @@ Want to use different models? CC-MIRROR supports multiple providers:
 
 | Provider       | Subscribe                                                     | Get Key/Token                                                    | Docs                                                             |
 | -------------- | ------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
-| **Kimi**       | https://www.kimi.com/code                                     | https://www.kimi.com/code/console                                | https://platform.kimi.ai/docs/guide/agent-support                |
+| **Kimi**       | https://www.kimi.com/code                                     | https://platform.kimi.ai/console/api-keys                        | https://platform.kimi.ai/docs/guide/agent-support                |
 | **MiniMax**    | https://platform.minimax.io/subscribe/coding-plan             | https://platform.minimax.io/user-center/payment/coding-plan      | https://platform.minimax.io/docs                                 |
 | **Z.ai**       | https://z.ai/subscribe                                        | https://z.ai/manage-apikey/apikey-list                           | https://z.ai/docs                                                |
 | **OpenRouter** | https://openrouter.ai/account                                 | https://openrouter.ai/keys                                       | https://openrouter.ai/docs                                       |

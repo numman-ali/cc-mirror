@@ -32,7 +32,7 @@ COMMANDS
   doctor                       Health check all variants
   tweak <name>                 Launch tweakcc customization
 
-OPTIONS (create/quick)
+OPTIONS (create/quick/update)
   --name <name>                Variant name (becomes CLI command)
   --provider <name>            Provider: kimi | minimax | zai | openrouter | vercel | ollama | nanogpt | ccrouter | mirror | gatewayz
   --api-key <key>              Provider API key
@@ -74,6 +74,7 @@ EXAMPLES
   npx cc-mirror quick --provider zai --api-key "$Z_AI_API_KEY"
   npx cc-mirror apply mirror
   npx cc-mirror update mirror --claude-version latest
+  npx cc-mirror update kimi --api-key "$MOONSHOT_API_KEY"
   npx cc-mirror doctor
 
 LEARN MORE

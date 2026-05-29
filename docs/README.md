@@ -90,7 +90,7 @@ docs/
 
 | Provider     | Subscribe                                                     | Get Key/Token                                                    | Docs                                                             |
 | ------------ | ------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `kimi`       | https://www.kimi.com/code                                     | https://www.kimi.com/code/console                                | https://platform.kimi.ai/docs/guide/agent-support                |
+| `kimi`       | https://www.kimi.com/code                                     | https://platform.kimi.ai/console/api-keys                        | https://platform.kimi.ai/docs/guide/agent-support                |
 | `minimax`    | https://platform.minimax.io/subscribe/coding-plan             | https://platform.minimax.io/user-center/payment/coding-plan      | https://platform.minimax.io/docs                                 |
 | `zai`        | https://z.ai/subscribe                                        | https://z.ai/manage-apikey/apikey-list                           | https://z.ai/docs                                                |
 | `openrouter` | https://openrouter.ai/account                                 | https://openrouter.ai/keys                                       | https://openrouter.ai/docs                                       |

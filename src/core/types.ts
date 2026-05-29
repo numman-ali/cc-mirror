@@ -127,6 +127,10 @@ export interface CreateVariantParams {
 
 export interface UpdateVariantOptions {
   binDir?: string;
+  /** Replace the provider credential during update. */
+  apiKey?: string;
+  /** Extra KEY=VALUE env entries to write during update. */
+  extraEnv?: string[];
   /** Claude Code version or channel: stable | latest | x.y.z */
   claudeVersion?: string;
   brand?: string;

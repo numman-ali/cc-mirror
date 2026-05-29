@@ -122,6 +122,7 @@ test('Provider Feature Matrix', async (t) => {
     assert.equal(kimi.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'kimi-k2.6');
     assert.equal(kimi.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'kimi-k2.6');
     assert.equal(kimi.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'kimi-k2.6');
+    assert.equal(kimi.env.ANTHROPIC_MODEL, 'kimi-k2.6');
     assert.equal(kimi.env.CLAUDE_CODE_SUBAGENT_MODEL, 'kimi-k2.6');
   });
 
@@ -129,7 +130,7 @@ test('Provider Feature Matrix', async (t) => {
     const minimax = getProvider('minimax');
     assert.ok(minimax, 'minimax provider should exist');
     assert.equal(minimax.authMode, 'authToken', 'minimax should use auth token mode');
-    assert.equal(minimax.env.ANTHROPIC_MODEL, undefined, 'minimax startup model should be stored in settings.model');
+    assert.equal(minimax.env.ANTHROPIC_MODEL, 'MiniMax-M2.7');
     assert.equal(
       minimax.env.ANTHROPIC_SMALL_FAST_MODEL,
       'MiniMax-M2.7',

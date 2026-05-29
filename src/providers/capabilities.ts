@@ -60,6 +60,7 @@ export interface ProviderCapabilityProfile {
     display?: Partial<Record<ModelAlias, ModelAliasDisplay>>;
     customModelOption?: ModelAliasDisplay & { model: string };
     startupAlias?: ModelAlias;
+    startupEnv?: 'ANTHROPIC_MODEL';
     smallFastAlias?: ModelAlias;
     subagentModel?: string;
     staleModels?: readonly string[];
@@ -228,6 +229,7 @@ export const getManagedSettingsEnvKeys = (profile?: ProviderCapabilityProfile): 
     'ANTHROPIC_DEFAULT_OPUS_MODEL',
     'ANTHROPIC_DEFAULT_SONNET_MODEL',
     'ANTHROPIC_DEFAULT_HAIKU_MODEL',
+    'ANTHROPIC_MODEL',
     'ANTHROPIC_SMALL_FAST_MODEL',
     'CLAUDE_CODE_SUBAGENT_MODEL',
     'ANTHROPIC_CUSTOM_MODEL_OPTION',
@@ -323,6 +325,7 @@ export const PROVIDER_CAPABILITIES: Record<string, ProviderCapabilityProfile> = 
         description: 'MiniMax coding model',
       },
       startupAlias: 'sonnet',
+      startupEnv: 'ANTHROPIC_MODEL',
       smallFastAlias: 'haiku',
       staleModels: MINIMAX_STALE_MODELS,
     },
@@ -357,6 +360,7 @@ export const PROVIDER_CAPABILITIES: Record<string, ProviderCapabilityProfile> = 
         description: 'Moonshot Kimi coding model',
       },
       startupAlias: 'sonnet',
+      startupEnv: 'ANTHROPIC_MODEL',
       smallFastAlias: 'haiku',
       subagentModel: KIMI_DEFAULT_MODEL,
       staleModels: KIMI_STALE_MODELS,
@@ -660,6 +664,10 @@ export const buildCapabilityEnv = (opts: {
   if (aliases.opus) env.ANTHROPIC_DEFAULT_OPUS_MODEL = aliases.opus;
   if (aliases.sonnet) env.ANTHROPIC_DEFAULT_SONNET_MODEL = aliases.sonnet;
   if (aliases.haiku) env.ANTHROPIC_DEFAULT_HAIKU_MODEL = aliases.haiku;
+  if (profile.models.startupEnv) {
+    const startupModel = resolveStartupModelSetting(profile, opts.modelOverrides);
+    if (startupModel) env[profile.models.startupEnv] = startupModel;
+  }
   Object.assign(env, buildModelDisplayEnv(profile.models.display));
   Object.assign(env, buildCustomModelOptionEnv(profile.models.customModelOption));
 
@@ -724,6 +732,7 @@ export const buildCapabilityMetadata = (opts: {
         aliases: modelAliases,
         display: opts.profile.models.display,
         startup: opts.profile.models.startupAlias ? modelAliases[opts.profile.models.startupAlias] : undefined,
+        startupEnv: opts.profile.models.startupEnv,
         smallFast: opts.profile.models.smallFastAlias ? modelAliases[opts.profile.models.smallFastAlias] : undefined,
       },
       promptPack: {

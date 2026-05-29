@@ -97,11 +97,11 @@ export const PROVIDER_EDUCATION: Record<string, ProviderEducation> = {
     hasPromptPack: false,
     setupLinks: {
       subscribe: 'https://www.kimi.com/code',
-      apiKey: 'https://www.kimi.com/code/console',
+      apiKey: 'https://platform.kimi.ai/console/api-keys',
       docs: 'https://platform.kimi.ai/docs/guide/agent-support',
     },
     setupNote:
-      'Subscribe to Kimi Code, create an API key in the console, and cc-mirror will configure the Moonshot endpoint.',
+      'Subscribe to Kimi Code, create a Moonshot API key in the Kimi API Platform, and cc-mirror will configure the Moonshot endpoint.',
   },
 
   openrouter: {

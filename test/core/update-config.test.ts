@@ -147,7 +147,7 @@ test('ConfigUpdateStep migrates stale MiniMax model and auth settings', () => {
     assert.equal(settings.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'MiniMax-M2.7');
     assert.equal(settings.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'MiniMax-M2.7');
     assert.equal(settings.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'MiniMax-M2.7');
-    assert.equal(settings.env.ANTHROPIC_MODEL, undefined);
+    assert.equal(settings.env.ANTHROPIC_MODEL, 'MiniMax-M2.7');
     assert.equal(settings.env.ANTHROPIC_SMALL_FAST_MODEL, 'MiniMax-M2.7');
     assert.equal(settings.env.ANTHROPIC_DEFAULT_SONNET_MODEL_NAME, 'MiniMax-M2.7');
     assert.equal(settings.model, 'MiniMax-M2.7');
@@ -211,6 +211,40 @@ test('ConfigUpdateStep preserves credentials and custom env while adding managed
   }
 });
 
+test('ConfigUpdateStep can rotate credentials during update', () => {
+  const rootDir = makeTempDir();
+  try {
+    const notes: string[] = [];
+    const ctx = makeContext(rootDir, 'kimi', notes);
+    ctx.opts = { ...ctx.opts, apiKey: 'new-kimi-key' };
+    const settingsPath = path.join(ctx.meta.configDir, 'settings.json');
+    fs.writeFileSync(
+      settingsPath,
+      JSON.stringify(
+        {
+          env: {
+            ANTHROPIC_AUTH_TOKEN: 'old-kimi-key',
+            ANTHROPIC_API_KEY: '',
+            CUSTOM_ENV: 'keep-user-value',
+          },
+        },
+        null,
+        2
+      )
+    );
+
+    new ConfigUpdateStep().execute(ctx);
+
+    const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8')) as UpdatedSettings;
+    assert.equal(settings.env.ANTHROPIC_AUTH_TOKEN, 'new-kimi-key');
+    assert.equal(settings.env.ANTHROPIC_API_KEY, '');
+    assert.equal(settings.env.CUSTOM_ENV, 'keep-user-value');
+    assert.equal(settings.env.ANTHROPIC_MODEL, 'kimi-k2.6');
+  } finally {
+    cleanup(rootDir);
+  }
+});
+
 test('ConfigUpdateStep moves Kimi to K2.6 Moonshot defaults while preserving the credential', () => {
   const rootDir = makeTempDir();
   try {
@@ -248,7 +282,7 @@ test('ConfigUpdateStep moves Kimi to K2.6 Moonshot defaults while preserving the
     assert.equal(settings.env.ANTHROPIC_DEFAULT_OPUS_MODEL, 'kimi-k2.6');
     assert.equal(settings.env.ANTHROPIC_DEFAULT_SONNET_MODEL, 'kimi-k2.6');
     assert.equal(settings.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, 'kimi-k2.6');
-    assert.equal(settings.env.ANTHROPIC_MODEL, undefined);
+    assert.equal(settings.env.ANTHROPIC_MODEL, 'kimi-k2.6');
     assert.equal(settings.env.CC_MIRROR_UNSET_AUTH_TOKEN, undefined);
     assert.equal(settings.env.CLAUDE_CODE_SUBAGENT_MODEL, 'kimi-k2.6');
     assert.equal(settings.env.ANTHROPIC_DEFAULT_SONNET_MODEL_NAME, 'Kimi K2.6');

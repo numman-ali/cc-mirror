@@ -48,6 +48,16 @@ const getCredentialKeys = (profile: ProviderCapabilityProfile): string[] => {
   return profile.auth.emptyApiKey ? keys.filter((key) => key !== 'ANTHROPIC_API_KEY') : keys;
 };
 
+const hasExplicitCredentialUpdate = (profile: ProviderCapabilityProfile, opts: UpdateContext['opts']): boolean => {
+  if ((opts.apiKey ?? '').trim().length > 0) return true;
+  const credentialKeys = new Set(getCredentialKeys(profile));
+  return (opts.extraEnv ?? []).some((entry) => {
+    const idx = entry.indexOf('=');
+    if (idx === -1) return false;
+    return credentialKeys.has(entry.slice(0, idx).trim());
+  });
+};
+
 const USER_OWNED_MODEL_KEYS = new Set([
   'ANTHROPIC_DEFAULT_OPUS_MODEL',
   'ANTHROPIC_DEFAULT_SONNET_MODEL',
@@ -121,6 +131,8 @@ export class ConfigUpdateStep implements UpdateStep {
     const envDefaults = buildEnv({
       providerKey: meta.provider,
       baseUrl,
+      apiKey: opts.apiKey,
+      extraEnv: opts.extraEnv,
       modelOverrides: opts.modelOverrides,
     });
     envDefaults.TWEAKCC_CONFIG_DIR = meta.tweakDir;
@@ -136,6 +148,7 @@ export class ConfigUpdateStep implements UpdateStep {
       ],
       credentialKeys: getCredentialKeys(profile),
       removeKeys: ['DISABLE_AUTO_MIGRATE_TO_NATIVE', 'CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION', 'ANTHROPIC_MODEL'],
+      preserveCredentials: !hasExplicitCredentialUpdate(profile, opts),
     });
     const startupModelUpdated = ensureSettingsModel(
       meta.configDir,

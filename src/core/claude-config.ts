@@ -181,6 +181,7 @@ export type ManagedEnvSyncOptions = {
   managedKeys: string[];
   credentialKeys?: string[];
   removeKeys?: string[];
+  preserveCredentials?: boolean;
 };
 
 export const syncSettingsManagedEnv = (configDir: string, opts: ManagedEnvSyncOptions): boolean => {
@@ -190,6 +191,7 @@ export const syncSettingsManagedEnv = (configDir: string, opts: ManagedEnvSyncOp
   const managedKeys = new Set(opts.managedKeys);
   const credentialKeys = new Set(opts.credentialKeys ?? []);
   const removeKeys = new Set(opts.removeKeys ?? []);
+  const preserveCredentials = opts.preserveCredentials ?? true;
   let changed = false;
 
   for (const key of managedKeys) {
@@ -209,7 +211,10 @@ export const syncSettingsManagedEnv = (configDir: string, opts: ManagedEnvSyncOp
   for (const [key, value] of Object.entries(opts.desiredEnv)) {
     if (value === undefined) continue;
     const shouldPreserveCredential =
-      credentialKeys.has(key) && String(value).trim() !== '' && Boolean(toStringOrNull(env[key]));
+      preserveCredentials &&
+      credentialKeys.has(key) &&
+      String(value).trim() !== '' &&
+      Boolean(toStringOrNull(env[key]));
     if (shouldPreserveCredential) continue;
     if (env[key] !== value) {
       env[key] = value;

@@ -68,7 +68,7 @@ test('TUI create flow applies tweakcc by default', async () => {
 
   await send(app.stdin, enter); // summary -> create
 
-  const created = await waitFor(() => calls.create.length > 0);
+  const created = await waitFor(() => calls.create.length > 0, 150);
   assert.ok(created);
   assert.equal(calls.create.length, 1);
   assert.equal(calls.create[0].name, 'zai');
